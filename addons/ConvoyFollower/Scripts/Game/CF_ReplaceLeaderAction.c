@@ -17,17 +17,31 @@ class CF_ReplaceLeaderAction : ScriptedUserAction
 	override bool CanBePerformedScript(IEntity user)
 	{
 		CF_DriverControllerComponent driver = CF_DriverControllerComponent.Cast(GetOwner().FindComponent(CF_DriverControllerComponent));
-		if (!driver || !driver.CanAssign(user))
+		if (!driver)
+			return false;
+		// Only the server has any dedicated-profile vehicle search override.
+		if (!Replication.IsServer())
+			return true;
+		if (!driver.CanAssign(user))
 		{
-			SetCannotPerformReason("Place an empty wheeled vehicle within 35 m of the driver");
+			SetCannotPerformReason("Place an empty wheeled vehicle within the configured search radius of the driver");
 			return false;
 		}
-		if (Replication.IsServer() && !CF_ConvoySession.CanReplace(user, driver))
+		if (!CF_ConvoySession.CanReplace(user, driver))
 		{
 			SetCannotPerformReason("Start a convoy first or wait for the current driver to board");
 			return false;
 		}
 		return true;
+	}
+
+	override void OnRejected(IEntity pUserEntity)
+	{
+		if (System.IsConsoleApp() || !GetGame() || !GetGame().GetPlayerController())
+			return;
+		SCR_HintManagerComponent.ShowCustomHint(
+			"Could not replace leader. Check the driver and empty vehicle, or wait for boarding or release to finish.",
+			"Convoy", 7.0, true);
 	}
 
 	override bool HasLocalEffectOnlyScript()

@@ -12,14 +12,23 @@ Convoy Follower adds US and Soviet **Convoy Driver** AI groups that a player can
 The prepared example is `Worlds/Tests/ConvoyFollower_Arland.ent`: it places a US spawn, three driver groups, and four empty M923A1 transport trucks. Add two more one-member driver groups and two assigned trucks to test a five-truck unloading line. Open it with:
 
 ```powershell
-npm run workbench:open -- --editor world --project addons/ConvoyFollower/addon.gproj --world Worlds/Tests/ConvoyFollower_Arland.ent --execute
+npm run workbench:open -- --editor world --project addons/ConvoyFollower/addon.gproj --world Worlds/Tests/ConvoyFollower_Arland.ent --authorize-local-test-scripts --execute
 ```
+
+Press **F5** in World Editor to preview this local test. The opt-in authorization flag applies only to this Workbench launch and avoids the script authorization dialog during automated F5 tests.
 
 For a longer staged run, [the Everon night demo](convoy-everon-demo.md) has a southern US spawn, an LAV for the player, three truck/driver pairs, a supply source, and an unload location near Levie. Its scenario header requests 22:00; bare F5 preview may inherit the parent world's time.
 
 For Soviet parity, open `Worlds/Tests/ConvoyFollower_Arland_USSR.ent` in the same addon. It places an USSR spawn, three Soviet driver groups beside three Ural4320 transports, and a UAZ for the player. Use **Start convoy** on the first driver, **Add to convoy** on the others, then test the front Ural's rear **Pull off and regroup** action at a stopped arrival. This scene passed headless validation and packaging; Soviet player controls and the Ural rear menu still need an in-game check. Its staging apron is reused from the US Game Master test and is not the vanilla Soviet Conflict base.
 
 ## What players do
+
+### Destination and return in four steps
+
+1. **Stop and pull up.** Park the player's lead vehicle on a clear road and let the trucks settle behind it. The owner may stay seated while they arrive; stopping or getting out does not release a truck.
+2. **Unload and release the front truck.** Get out, unload its supplies yourself, then stand within 2.5 m of the rear cargo area of the front occupied M923A1 or standard Ural4320 transport. The player who started the convoy can choose **Pull off and regroup** in the existing rear scroll menu once that truck has reached the stopping spot. This order sends only that truck toward a nearby return slot.
+3. **Wait for the next truck.** The next truck approaches the same unloading spot only after the released truck physically clears the bay and parks. Repeat the unload and rear-menu order for each truck you want to release. If the release order is unavailable because there is no safe road slot, drive to a clearer place. If an accepted release fails and the outbound line holds, use **Resume convoy following** at the front truck's rear menu before driving on.
+4. **Choose the next direction.** To return, drive the player's lead vehicle homeward past the parked return line; the intended behavior is to merge parked and still-waiting trucks into one following convoy. **Regroup convoy for return** at a parked truck's rear menu is the explicit alternative. Driving onward with no return trigger resumes only the unreleased trucks; parked trucks keep waiting. The return crossing and road maneuvers still need live gameplay verification.
 
 - Approach an idle Convoy Driver on foot. Use **Follow me on foot** to bring a driver toward a vehicle, or give a convoy order while the driver is already beside an empty vehicle.
 - Use **Start convoy in closest empty vehicle** on the first driver. Wait until they occupy the driver seat. Use **Add to convoy in closest empty vehicle** on more drivers while on foot. Then drive away in the player's vehicle.
@@ -40,6 +49,7 @@ Addon authors can edit `Configs/CF_ConvoySettings.conf` in the Workbench Config 
 - During ordinary outbound driving, a truck that passes the vehicle it follows holds instead of chasing a waypoint behind itself. The server can swap two adjacent drivers in the chain after their same-road order remains clear for several seconds; it leaves ambiguous bends and unloading/return maneuvers untouched. Test this with two and three trucks before relying on recovery in a public scenario.
 - This addon does not choose delivery destinations, load cargo, or unload cargo. The player drives the lead vehicle and gives the driver orders. No map-maker return marker is required by the current code; it derives nearby road positions from the route and vehicles. Leave a clear road and room for the convoy to turn and park. A blocked or narrow road can prevent the return maneuver.
 - The **Pull off and regroup**, **Resume convoy following**, and **Regroup convoy for return** rear-menu integrations are scoped to the vanilla M923A1 transport cargo part and the standard Ural4320 transport cargo part. Covered Ural inheritance and other wheeled vehicles need separate checks; they may be selected by the nearest-vehicle boarding action but should not be assumed to have these rear actions. A narrow, blocked, or disconnected road can still prevent parking. The driver remains in the convoy if release fails, and preflight failure does not play a false stuck call.
+- A custom player-held command menu is possible in Reforger ([scripted menu actions](https://community.bistudio.com/wiki/Arma_Reforger%3ACreating_a_User_Action), [commanding menu modding](https://community.bistudio.com/wiki/Arma_Reforger%3ACommanding_Menu_Modding)), but this addon currently uses nearby driver interactions and the existing rear cargo menu. A phone or radio command menu is future work and is not required for the current release controls.
 - The group is registered for Game Master through `Configs/Editor/PlaceableEntities/CF_Groups.conf` and the additive `EditorModeEdit.et` override. A scenario can place the group prefab directly even when it does not use Game Master.
 - Three-truck following and leader voice playback were observed in a live preview. A later live test logged passenger riding, confirmed-hit radio playback, leader loss and chain retargeting. The new stopped pull-up and unloading/return code passed Workbench script validation and packaging on September 24, 2026, but still needs an in-game check of the driving paths, rear-menu visibility, five-truck handoff, and return crossing. Sustained driving after a middle truck is lost, exact stopped spacing, and public multiplayer use also need direct player checks.
 

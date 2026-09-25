@@ -46,6 +46,11 @@ class CF_ConvoySession
 	protected int m_iShiftIndex;
 	protected int m_iShiftPolls;
 	protected vector m_vUnloadAnchor;
+	// The first truck's stopped road position is the unloading bay. Later
+	// trucks approach this same place rather than completing a wide MOVE at
+	// the player's parked vehicle and stopping short of the cargo point.
+	protected vector m_vUnloadBayPosition;
+	protected bool m_bUnloadBayPositionValid;
 	protected IEntity m_OriginalLeadVehicle;
 	protected bool m_bUnloadAnchorLock;
 	protected bool m_bUnloadReleaseBlocked;
@@ -64,6 +69,7 @@ class CF_ConvoySession
 	protected int m_iOrderInversionPolls;
 	protected int m_iOrderRewireCooldownPolls;
 	protected bool m_bOrderRecoveryDeferredLogged;
+	protected string m_sReleasePlanFailureReason;
 
 	protected static int GetPlayerId(IEntity user)
 	{
@@ -201,6 +207,14 @@ class CF_ConvoySession
 		return session.TryFindReleaseSlot(waitingPoint) || session.CanShiftReturnLineForGap();
 	}
 
+	static string GetReleasePlanFailureReason(IEntity user)
+	{
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session || session.m_sReleasePlanFailureReason.IsEmpty())
+			return "No clear waiting spot behind the convoy";
+		return session.m_sReleasePlanFailureReason;
+	}
+
 	static bool ReleaseAtUnload(IEntity user, CF_DriverControllerComponent driver)
 	{
 		if (!Replication.IsServer() || !CanReleaseAtUnload(user, driver))
@@ -228,14 +242,26 @@ class CF_ConvoySession
 		{
 			// No driving order was issued. This is a route preflight failure,
 			// not evidence that the truck is stuck.
-			Print("[ConvoyFollower] UNLOAD_RELEASE_REJECTED: no reachable, clear road slot behind the convoy; driver remains at bay");
+			Print("[ConvoyFollower] UNLOAD_RELEASE_REJECTED: " + session.m_sReleasePlanFailureReason + "; driver remains at bay");
 			return false;
+		}
+		if (session.m_aReturnQueue.IsEmpty())
+		{
+			Vehicle firstTruck = driver.CF_GetAssignedVehicle();
+			if (!firstTruck)
+				return false;
+			session.m_vUnloadBayPosition = firstTruck.GetOrigin();
+			session.m_bUnloadBayPositionValid = true;
+			Print("[ConvoyFollower] UNLOAD_BAY_RECORDED: " + session.m_vUnloadBayPosition);
 		}
 
 		session.m_UnloadHead = driver;
 		session.m_bUnloadAnchorLock = true;
 		session.m_bUnloadReleaseBlocked = false;
 		session.ResetReturnCrossing();
+		SCR_PlayerController radioController = session.GetOrderingController();
+		if (radioController)
+			radioController.CF_DiscardQueuedConvoyRadioEvent(CF_RadioEvent.STUCK);
 		foreach (CF_DriverControllerComponent unit : session.m_aUnits)
 		{
 			if (unit)
@@ -302,6 +328,7 @@ class CF_ConvoySession
 	protected bool TryFindReleaseSlot(out vector waitingPoint)
 	{
 		waitingPoint = vector.Zero;
+		m_sReleasePlanFailureReason = "No clear waiting spot behind the convoy";
 		if (m_aUnits.IsEmpty())
 			return false;
 		CF_DriverControllerComponent front = m_UnloadHead;
@@ -315,7 +342,15 @@ class CF_ConvoySession
 		bool hasParked = nearest && nearest.CF_GetAssignedVehicle();
 		if (hasParked)
 			nearestPosition = nearest.CF_GetAssignedVehicle().GetOrigin();
-		return front.CF_FindReturnUnloadWaitingPoint(outboundTail, nearestPosition, hasParked, waitingPoint);
+		bool allowRecordedFallback = m_aUnits.Count() == 1;
+		if (!front.CF_FindReturnUnloadWaitingPoint(outboundTail, nearestPosition, hasParked,
+			allowRecordedFallback, waitingPoint))
+		{
+			m_sReleasePlanFailureReason = front.CF_GetReleasePlanFailureReason();
+			return false;
+		}
+		m_sReleasePlanFailureReason = string.Empty;
+		return true;
 	}
 
 	protected void StartHeadDeparture(vector waitingPoint)
@@ -404,6 +439,7 @@ class CF_ConvoySession
 				unit.CF_HoldForUnloadQueue();
 		}
 		Print("[ConvoyFollower] UNLOAD_RELEASE_FAILED: " + reason + "; outbound line held");
+		CF_NotifyOwnerFailure(CF_ConvoyFailureEvent.UNLOAD_BLOCKED);
 	}
 
 	// Called only after the controller verifies the released truck reached
@@ -451,6 +487,7 @@ class CF_ConvoySession
 			unit.CF_HoldForUnloadQueue();
 		}
 		Print("[ConvoyFollower] UNLOAD_RELEASE_FAILED: front turn did not settle; outbound queue held");
+		CF_NotifyOwnerFailure(CF_ConvoyFailureEvent.UNLOAD_BLOCKED);
 		// The route controller logs the observed failure. Do not translate
 		// every failed unload maneuver into a radio claim that the truck is
 		// mechanically stuck.
@@ -514,8 +551,35 @@ class CF_ConvoySession
 		return true;
 	}
 
+	// Once an outbound truck is in RETURN_BLOCKED, the unload flags have
+	// already been cleared. Keep recovery available from that truck's rear
+	// cargo menu instead of leaving it seated with no usable owner action.
+	static bool CanRetryBlockedReturn(IEntity user, CF_DriverControllerComponent driver)
+	{
+		CF_ConvoySession session = GetForPlayer(user);
+		return session && driver && session.FindUnit(driver) >= 0 &&
+			driver.CF_IsReturnBlockedForActions() && driver.CF_IsBoarded() &&
+			!session.m_UnloadHead && !session.m_PendingDriver;
+	}
+
+	static bool RetryBlockedReturn(IEntity user, CF_DriverControllerComponent driver)
+	{
+		if (!Replication.IsServer() || !CanRetryBlockedReturn(user, driver))
+			return false;
+		return driver.CF_RetryBlockedReturn();
+	}
+
 	protected void ResumeUnloadQueueAtAnchor()
 	{
+		// OnUnloadBayCleared calls this only after the released truck has
+		// reached its waiting slot. Keep the next truck held if the original
+		// bay is no longer reachable or another vehicle occupies it.
+		if (!m_aUnits.IsEmpty() && m_bUnloadBayPositionValid &&
+			!m_aUnits[0].CF_SetUnloadBayGoal(m_vUnloadBayPosition, m_vUnloadAnchor))
+		{
+			FailUnloadSequence("original unload bay is blocked or no longer reachable");
+			return;
+		}
 		for (int i = 0; i < m_aUnits.Count(); i++)
 		{
 			CF_DriverControllerComponent unit = m_aUnits[i];
@@ -846,6 +910,7 @@ class CF_ConvoySession
 					m_iReturnPendingPolls = 0;
 					ResetReturnCrossing();
 					Print("[ConvoyFollower] CONVOY_RETURN_BLOCKED: turn or roster preflight failed; owner must drive back and retry crossing");
+					CF_NotifyOwnerFailure(CF_ConvoyFailureEvent.RETURN_MERGE_BLOCKED);
 				}
 			}
 		}
@@ -917,13 +982,14 @@ class CF_ConvoySession
 			float stepZ = playerPosition[2] - m_vLastOwnerVehiclePosition[2];
 			float stepLength = Math.Sqrt(stepX * stepX + stepZ * stepZ);
 			float homewardStep = stepX * homeX + stepZ * homeZ;
-			vector forward = ownerVehicle.GetWorldTransformAxis(2);
-			float headingHome = forward[0] * homeX + forward[2] * homeZ;
-			if (homewardStep >= 1.5 && stepLength <= 35.0 && headingHome >= 0.35)
+			// The actual crossing and homeward movement are the signal. A sharp
+			// road bend can leave the vehicle facing sideways at this instant even
+			// though it has already passed the return line toward home.
+			if (homewardStep >= 1.5 && stepLength <= 35.0)
 			{
 				m_bReturnPending = true;
 				m_iReturnPendingPolls = 0;
-				Print("[ConvoyFollower] CONVOY_RETURN_CROSSING: owner passed parked return line heading home");
+				Print("[ConvoyFollower] CONVOY_RETURN_CROSSING: owner passed parked return line moving home");
 			}
 		}
 		m_vLastOwnerVehiclePosition = playerPosition;
@@ -997,7 +1063,7 @@ class CF_ConvoySession
 		foreach (CF_DriverControllerComponent outboundUnit : m_aUnits)
 		{
 			outboundUnit.CF_SetConvoyTarget(predecessor, activated.Count() + 1);
-			if (outboundUnit.CF_AbortUnloadForReturn(m_OrderingPlayer))
+			if (outboundUnit.CF_AbortUnloadForReturn(m_OrderingPlayer, Vector(homeX, 0, homeZ)))
 			{
 				activated.Insert(outboundUnit);
 				predecessor = outboundUnit;
@@ -1188,12 +1254,24 @@ class CF_ConvoySession
 			return;
 
 		int index = FindUnit(driver);
-		if (index < 0)
-			return;
-
 		SCR_PlayerController controller = GetOrderingController();
 		if (!controller)
 			return;
+		if (index < 0)
+		{
+			// A truck in the parked return line still belongs to this owner.
+			// Relay a confirmed hit with its stable identity; routine movement
+			// calls from outside the active chain remain silent.
+			if (eventId != CF_RadioEvent.UNDER_FIRE || !IsOwnedRadioMember(driver) ||
+				!driver.CF_IsBoarded())
+				return;
+			int parkedIdentity = GetIdentityNumber(driver);
+			if (parkedIdentity <= 0 || parkedIdentity > 10)
+				return;
+			Print("[ConvoyFollower] RADIO_PARKED_RELAY: unit " + parkedIdentity + ", event " + eventId);
+			controller.CF_SendConvoyRadioCall(eventId, parkedIdentity);
+			return;
+		}
 
 		if (index == 0)
 		{
@@ -1323,6 +1401,12 @@ class CF_ConvoySession
 		return index + 1;
 	}
 
+	bool IsOwnedRadioMember(CF_DriverControllerComponent driver)
+	{
+		return driver && (FindUnit(driver) >= 0 || m_aReturnQueue.Contains(driver) ||
+			m_aStrandedUnits.Contains(driver));
+	}
+
 	bool IsCurrentLeader(CF_DriverControllerComponent driver)
 	{
 		return !m_aUnits.IsEmpty() && m_aUnits[0] == driver;
@@ -1412,6 +1496,15 @@ class CF_ConvoySession
 			return null;
 
 		return SCR_PlayerController.Cast(manager.GetPlayerController(m_iOrderingPlayerId));
+	}
+
+	void CF_NotifyOwnerFailure(int failureId)
+	{
+		if (!Replication.IsServer())
+			return;
+		SCR_PlayerController controller = GetOrderingController();
+		if (controller)
+			controller.CF_SendConvoyFailure(failureId);
 	}
 
 	// A disconnected player or dead original character must not leave a

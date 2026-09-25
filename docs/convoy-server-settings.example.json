@@ -6,6 +6,6 @@
   "m_fRoutineSpacingSeconds": 15,
   "m_fExceptionRepeatSeconds": 45,
   "m_iMaxConvoyUnits": 5,
-  "m_fMovingGap": 12,
+  "m_fMovingGap": 20,
   "m_fStoppedGap": 10
 }

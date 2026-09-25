@@ -20,18 +20,33 @@ class CF_AssignTruckAction : ScriptedUserAction
 		if (!controller)
 			return false;
 
+		// A dedicated server may override the vehicle search radius. The client
+		// does not have that profile value, so leave vehicle eligibility to the
+		// authoritative server-first check below.
+		if (!Replication.IsServer())
+			return true;
+
 		if (!controller.CanAssign(user))
 		{
-			SetCannotPerformReason("Place an empty wheeled vehicle within 35 m of the driver");
+			SetCannotPerformReason("Place an empty wheeled vehicle within the configured search radius of the driver");
 			return false;
 		}
-		if (Replication.IsServer() && !CF_ConvoySession.CanStart(user, controller))
+		if (!CF_ConvoySession.CanStart(user, controller))
 		{
 			SetCannotPerformReason("You already have a convoy or this driver is unavailable");
 			return false;
 		}
 
 		return true;
+	}
+
+	override void OnRejected(IEntity pUserEntity)
+	{
+		if (System.IsConsoleApp() || !GetGame() || !GetGame().GetPlayerController())
+			return;
+		SCR_HintManagerComponent.ShowCustomHint(
+			"Could not start convoy. Check this driver, a nearby empty wheeled vehicle, and any existing convoy.",
+			"Convoy", 7.0, true);
 	}
 
 	override bool HasLocalEffectOnlyScript()

@@ -6,7 +6,7 @@ Use Enfusion Workbench for most addon work. The harness also launches a clean lo
 
 ## Working loop
 
-From `C:\Users\marco\Desktop\REFORGER` in PowerShell:
+From the repository root in PowerShell:
 
 1. Check the installation and mod cache: `npm run cli -- doctor --mod <WorkshopID>`.
 2. Open the addon: `npm run workbench:open -- --editor script --project '<path-to-addon.gproj>' --execute`. Use `--editor resource` or `--editor world` when needed. This helper dry-runs without `--execute`.

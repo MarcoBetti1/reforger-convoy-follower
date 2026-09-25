@@ -3,15 +3,18 @@ import { existsSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const USAGE = `Record one named Workbench or Reforger window with ffmpeg gdigrab (dry run by default)
+const USAGE = `Record a named window or a selected monitor with ffmpeg (dry run by default)
 
-  npm run convoy:record -- --window-title "<exact window title>" --duration-seconds 60 --output .cache/test-videos/convoy.mp4 [--fps 30] [--ffmpeg <ffmpeg.exe>] --execute
+  npm run convoy:record -- --backend gdigrab --window-title "<exact window title>" --duration-seconds 60 --output .cache/test-videos/convoy.mp4 [--fps 30] --execute
+  npm run convoy:record -- --backend ddagrab --output-idx 1 --duration-seconds 60 --output .cache/test-videos/convoy.mp4 [--fps 8] --execute
 
-The title must match an existing window. The helper refuses to overwrite an existing file. It captures only that window, not the full desktop.
+gdigrab captures only the named window but has produced a stale frame with Workbench gameplay on this machine. ddagrab uses Desktop Duplication and captures the entire selected monitor. Confirm the monitor index and keep other windows off it. The helper refuses to overwrite an existing file.
 `;
 
 export interface RecordOptions {
-  windowTitle: string;
+  backend: "gdigrab" | "ddagrab";
+  windowTitle?: string;
+  outputIndex?: number;
   durationSeconds: number;
   fps: number;
   output: string;
@@ -29,29 +32,47 @@ export function parseRecordArgs(args: string[]): RecordOptions {
       execute = true;
       continue;
     }
-    if (!["--window-title", "--duration-seconds", "--output", "--fps", "--ffmpeg"].includes(flag)) {
+    if (!["--backend", "--window-title", "--output-idx", "--duration-seconds", "--output", "--fps", "--ffmpeg"].includes(flag)) {
       throw new Error(`Unknown option: ${flag}\n\n${USAGE}`);
     }
     const value = args[++i];
     if (!value || value.startsWith("--") || values.has(flag)) throw new Error(`Expected one value after ${flag}.`);
     values.set(flag, value);
   }
+  const backend = values.get("--backend") ?? "gdigrab";
+  if (backend !== "gdigrab" && backend !== "ddagrab") throw new Error("--backend must be gdigrab or ddagrab.");
   const windowTitle = values.get("--window-title")?.trim();
+  const outputIndexText = values.get("--output-idx");
+  const outputIndex = outputIndexText === undefined ? undefined : Number(outputIndexText);
   const output = values.get("--output");
-  if (!windowTitle || !output) throw new Error("--window-title and --output are required.");
+  if (!output) throw new Error("--output is required.");
+  if (backend === "gdigrab" && (!windowTitle || outputIndex !== undefined)) {
+    throw new Error("gdigrab requires --window-title and does not accept --output-idx.");
+  }
+  if (backend === "ddagrab" && (windowTitle || outputIndex === undefined || !Number.isInteger(outputIndex) || outputIndex < 0)) {
+    throw new Error("ddagrab requires a nonnegative --output-idx and captures the entire monitor; omit --window-title.");
+  }
   const durationSeconds = Number(values.get("--duration-seconds") ?? "60");
   const fps = Number(values.get("--fps") ?? "30");
   if (!Number.isInteger(durationSeconds) || durationSeconds < 1 || durationSeconds > 7200) {
     throw new Error("--duration-seconds must be an integer from 1 through 7200.");
   }
   if (!Number.isInteger(fps) || fps < 1 || fps > 120) throw new Error("--fps must be an integer from 1 through 120.");
-  if (windowTitle.includes("\n") || windowTitle.includes("\r")) throw new Error("Window title must be one line.");
+  if (windowTitle?.includes("\n") || windowTitle?.includes("\r")) throw new Error("Window title must be one line.");
   const resolvedOutput = path.resolve(output);
   if (path.extname(resolvedOutput).toLowerCase() !== ".mp4") throw new Error("--output must end in .mp4.");
-  return { windowTitle, durationSeconds, fps, output: resolvedOutput, ffmpeg: values.get("--ffmpeg") ?? "ffmpeg", execute };
+  return { backend, windowTitle, outputIndex, durationSeconds, fps, output: resolvedOutput, ffmpeg: values.get("--ffmpeg") ?? "ffmpeg", execute };
 }
 
 export function recordCommand(options: RecordOptions): string[] {
+  if (options.backend === "ddagrab") {
+    return [
+      "-hide_banner", "-n", "-f", "lavfi", "-i", `ddagrab=output_idx=${options.outputIndex}:framerate=${options.fps}`,
+      "-vf", "hwdownload,format=bgra,format=yuv420p", "-t", String(options.durationSeconds),
+      "-an", "-c:v", "libx264", "-preset", "ultrafast", "-crf", "23",
+      "-pix_fmt", "yuv420p", options.output,
+    ];
+  }
   return [
     "-hide_banner", "-n", "-f", "gdigrab", "-framerate", String(options.fps),
     "-i", `title=${options.windowTitle}`, "-t", String(options.durationSeconds),

@@ -12,6 +12,15 @@ class CF_RadioEvent
 	static const int UNDER_FIRE = 8;
 }
 
+// These are control failures, not claims that a vehicle was hit or stuck.
+// Keep them audible-independent so a server owner can disable voices.
+class CF_ConvoyFailureEvent
+{
+	static const int UNLOAD_BLOCKED = 1;
+	static const int RETURN_TURN_BLOCKED = 2;
+	static const int RETURN_MERGE_BLOCKED = 3;
+}
+
 modded class SCR_PlayerController
 {
 	// Mirrored for local ScriptedUserAction visibility; the server still checks
@@ -38,6 +47,13 @@ modded class SCR_PlayerController
 	bool CF_HasActiveConvoy()
 	{
 		return m_iCFConvoyMemberCount > 0;
+	}
+
+	// The owner sees this replicated count. Server profile overrides may set
+	// a lower limit, but every configuration is clamped to five units.
+	bool CF_IsAtHardConvoyLimit()
+	{
+		return m_iCFConvoyMemberCount >= 5;
 	}
 
 	void CF_SetConvoyMemberCount(int count)
@@ -124,6 +140,60 @@ modded class SCR_PlayerController
 			return;
 
 		Rpc(CF_RpcClearConvoyRadioQueue);
+	}
+
+	void CF_SendConvoyFailure(int failureId)
+	{
+		if (!Replication.IsServer())
+			return;
+		Rpc(CF_RpcDoConvoyFailure, failureId);
+	}
+
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void CF_RpcDoConvoyFailure(int failureId)
+	{
+		if (System.IsConsoleApp() || this != GetGame().GetPlayerController())
+			return;
+		string message;
+		if (failureId == CF_ConvoyFailureEvent.UNLOAD_BLOCKED)
+			message = "Truck could not clear the unload spot. Check the route, then retry Pull off and regroup or use Resume convoy following.";
+		else if (failureId == CF_ConvoyFailureEvent.RETURN_TURN_BLOCKED)
+			message = "A truck could not turn toward home. Clear its route, then use Retry return turn at the rear of that truck.";
+		else if (failureId == CF_ConvoyFailureEvent.RETURN_MERGE_BLOCKED)
+			message = "Return convoy could not regroup. Check the parked trucks, then use Regroup convoy for return again.";
+		else
+			return;
+		SCR_HintManagerComponent.ShowCustomHint(message, "Convoy", 7.0, true);
+		Print("[ConvoyFollower] OWNER_CONTROL_FAILURE_SHOWN: " + failureId);
+	}
+
+	// A release order makes an earlier driving-stall report obsolete, but
+	// under-fire and lost calls remain useful. Only remove pending calls;
+	// a line already audible is allowed to finish naturally.
+	void CF_DiscardQueuedConvoyRadioEvent(int eventId)
+	{
+		if (!Replication.IsServer())
+			return;
+		Rpc(CF_RpcDiscardQueuedConvoyRadioEvent, eventId);
+	}
+
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void CF_RpcDiscardQueuedConvoyRadioEvent(int eventId)
+	{
+		if (System.IsConsoleApp() || this != GetGame().GetPlayerController())
+			return;
+		int removed = 0;
+		for (int i = m_CFRadioEvents.Count() - 1; i >= 0; i--)
+		{
+			if (m_CFRadioEvents[i] != eventId)
+				continue;
+			m_CFRadioEvents.RemoveOrdered(i);
+			m_CFRadioUnits.RemoveOrdered(i);
+			m_CFRadioPacks.RemoveOrdered(i);
+			removed++;
+		}
+		if (removed > 0)
+			Print("[ConvoyFollower] RADIO_STALE_EVENT_DISCARDED: event " + eventId + ", pending " + removed);
 	}
 
 	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]

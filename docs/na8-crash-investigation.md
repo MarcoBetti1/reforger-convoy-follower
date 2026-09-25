@@ -27,7 +27,7 @@ No bandage, epinephrine, or storage-transfer error is logged between the 22:01:4
 
 ## Evidence and routing
 
-The original session folders are under `%USERPROFILE%\Documents\My Games\ArmaReforger\logs`. The September 22 folder was no longer present in that directory when checked after the September 24 crash; its logs and dump were preserved earlier in `C:\Users\marco\Desktop\ArmaReforger-NA8-crash-evidence-2026-09-24.zip`.
+The original session folders are under `%USERPROFILE%\Documents\My Games\ArmaReforger\logs`. The September 22 folder was no longer present in that directory when checked after the September 24 crash; its logs and dump were preserved earlier in a private desktop archive named `ArmaReforger-NA8-crash-evidence-2026-09-24.zip`.
 
 Ask the W.C.S NA8 maintainers to correlate the crashes with their server and mod state. Ask Bohemia Interactive to symbolize the dump instruction at build 1.8.0.13, RVA `0x8197CA`, because the faulting instruction is in the game executable. A code fix recommendation should wait for a symbolized native stack or a reproducible server/mod condition. The downloaded W.C.S addons on this machine are packaged `data.pak` files, not the development source.
 

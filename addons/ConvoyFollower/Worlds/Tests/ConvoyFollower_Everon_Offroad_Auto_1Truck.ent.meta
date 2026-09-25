@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{A0B10CE5D3F27149}Worlds/Tests/ConvoyFollower_Everon_Offroad_Auto_1Truck.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

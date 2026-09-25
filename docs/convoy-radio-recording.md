@@ -1,6 +1,6 @@
-# Convoy Follower voice recording sheet
+# Convoy Follower voice recording sheet (earlier prototype)
 
-These are prerecorded, private radio-style calls for the player who ordered a driver. The game selects a clip when the corresponding state changes; it does not generate speech while playing. The current addon includes processed clips for all eight listed events per driver. Seven events are wired for playback; under-fire remains disabled pending a reliable trigger. Live audible playback still needs the player's test.
+This sheet records the first two-driver voice prototype. Its processed clips remain in the source project, but the current convoy uses one leader voice for the owner; see the [leader recording sheet](convoy-leader-recording.md) and [generated pack notes](convoy-generated-voice.md). The older prototype had no under-fire trigger. The current build reports confirmed hits rather than nearby shots.
 
 ## Script
 
@@ -17,16 +17,18 @@ The user recorded the list once as **Driver One** and again as **Driver Two** in
 | Rejoined after being lost | "Driver One to lead. I have you again. Moving." |
 | Threat detected (optional, pending live validation) | "Driver One to lead. Taking fire nearby." |
 
-Use a calm, concise delivery. The stuck and threat lines can sound more urgent without shouting. The phrase "taking fire nearby" intentionally reports the AI's perceived threat; the signal does not always prove a shot actually hit the truck.
+Use a calm, concise delivery. The stuck and threat lines can sound more urgent without shouting. The phrase "taking fire nearby" reflected the original prototype plan; the current leader call is tied to confirmed driver or vehicle damage.
 
 ## Recording and delivery
 
 - One continuous recording is fine. Leave roughly two seconds of quiet between lines, and record the Driver One set before the Driver Two set. A separate file for each line is also fine.
 - Record your clean voice in a quiet room at a consistent microphone distance. Leave a little silence at the beginning and end; avoid clipping, music, reverb, noise reduction, and radio/static effects. We will process the raw recording into a consistent radio sound.
 - Preferred file: mono, 48 kHz, 16- or 24-bit PCM WAV. If your recorder only exports M4A or another common audio format, send that instead; it can be converted before Workbench import. WAV is a supported Enfusion source asset.
-- Attach the recording to this conversation, or place it at `C:\Users\marco\Desktop\REFORGER\recordings\convoy-voice.wav` and tell me when it is ready. The exact filename can differ.
+- Attach the recording to this conversation, or place it at `recordings/convoy-voice.wav` under the repository root and tell me when it is ready. The exact filename can differ.
 
 ## Integration notes
+
+These notes describe the earlier independent-driver design.
 
 Each driver will receive a stable callsign when the player orders it. The server detects state changes, then targets only the ordering player's client for playback. Local radio-style audio meets the requirement that this player can hear calls at any distance without an in-game radio item or frequency. The audio should be throttled so short state changes do not flood the player. In particular, the under-fire line must wait for a confirmed, low-noise threat signal.
 

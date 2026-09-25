@@ -1,4 +1,5 @@
-// Reports confirmed hits on an active convoy driver or their assigned truck.
+// Reports confirmed hits on an owned, seated convoy driver or their truck,
+// including trucks parked in the return line.
 // The existing convoy session sends the report privately in Unit One's voice.
 class CF_UnderFireMonitorComponentClass : ScriptComponentClass
 {
@@ -127,7 +128,7 @@ class CF_UnderFireMonitorComponent : ScriptComponent
 
 	protected void OnDamage(notnull BaseDamageContext damageContext)
 	{
-		if (!Replication.IsServer() || !m_DriverController || !m_DriverController.CF_IsActiveConvoyMember())
+		if (!Replication.IsServer() || !m_DriverController || !m_DriverController.CF_IsOwnedSeatedConvoyMember())
 			return;
 
 		// The driver might be walking to a truck, leaving one, or waiting for a

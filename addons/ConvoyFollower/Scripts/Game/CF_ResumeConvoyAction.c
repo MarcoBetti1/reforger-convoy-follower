@@ -27,6 +27,15 @@ class CF_ResumeConvoyAction : CF_ReleaseAtUnloadAction
 		return true;
 	}
 
+	override void OnRejected(IEntity pUserEntity)
+	{
+		if (System.IsConsoleApp() || !GetGame() || !GetGame().GetPlayerController())
+			return;
+		SCR_HintManagerComponent.ShowCustomHint(
+			"Nothing to resume yet, or a truck is still clearing the unload spot. Wait for it to settle or use the current front truck.",
+			"Convoy", 7.0, true);
+	}
+
 	override void PerformAction(IEntity pOwnerEntity, IEntity pUserEntity)
 	{
 		CF_DriverControllerComponent driver = GetConvoyDriver();

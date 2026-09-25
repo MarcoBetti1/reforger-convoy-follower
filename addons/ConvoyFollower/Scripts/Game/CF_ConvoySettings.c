@@ -8,7 +8,7 @@ class CF_ConvoySettings : ScriptAndConfig
 	protected static const string CF_PROFILE_OVERRIDE = "$profile:ConvoyFollowerSettings.json";
 	protected static ref CF_ConvoySettings s_Settings;
 
-	[Attribute(defvalue: "12", params: "6 40 0.5", category: "Spacing", desc: "Moving waypoint completion radius in metres. Road routing and vehicle collision may make the visible gap larger.")]
+	[Attribute(defvalue: "20", params: "6 40 0.5", category: "Spacing", desc: "Moving waypoint completion radius in metres. Road routing and vehicle collision may make the visible gap larger.")]
 	float m_fMovingGap;
 	[Attribute(defvalue: "10", params: "4 30 0.5", category: "Spacing", desc: "Completion radius used for the final approach to a stopped predecessor, in metres. Must not exceed moving gap.")]
 	float m_fStoppedGap;
@@ -137,7 +137,7 @@ class CF_ConvoySettings : ScriptAndConfig
 
 	protected void SetDefaults()
 	{
-		m_fMovingGap = 12.0;
+		m_fMovingGap = 20.0;
 		m_fStoppedGap = 10.0;
 		m_fTruckSearchRadius = 35.0;
 		m_iMaxConvoyUnits = 5;

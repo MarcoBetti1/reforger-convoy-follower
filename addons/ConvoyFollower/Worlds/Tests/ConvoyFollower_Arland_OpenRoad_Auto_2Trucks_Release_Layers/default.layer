@@ -1,0 +1,42 @@
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1331.34 15.4287 3337.98
+}
+
+SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1331.34 15.4287 3335.98
+}
+
+SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1304.8 12.7968 3338.4
+}
+
+SCR_AIGroup CF_SmokeGroup2 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1276.49 10.7173 3347.27
+}
+
+Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1300.8 12.7968 3334.4
+ angles 0 92 0
+}
+
+Vehicle CF_SmokeFollower2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1272.49 10.7173 3343.27
+ angles 0 92 0
+}
+
+Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1327.34 15.4287 3331.98
+ angles 0 92 0
+ components {
+  CF_SmokeProbeComponent "{8D7B0030DB86CB55}" {
+   m_iExpectedTrucks 2
+   m_bStraightReleaseRoadGoal 1
+  }
+  CF_UnloadSequenceProbeComponent "{94004A7211ED52CC}" {
+  }
+  CF_ConvoyFilmCameraComponent "{5EDB83429767AE10}" {
+   m_iExpectedTrucks 2
+   m_iFilmBayMode 1
+  }
+ }
+}

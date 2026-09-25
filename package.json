@@ -17,6 +17,7 @@
     "client:run": "tsx src/client-cli.ts",
     "convoy:test": "tsx src/convoy-smoke-cli.ts",
     "convoy:record": "tsx src/convoy-record-cli.ts",
+    "convoy:clip": "tsx src/convoy-video-cli.ts",
     "logs:summary": "tsx src/log-summary-cli.ts",
     "workbench": "tsx src/workbench-cli.ts",
     "workbench:open": "tsx src/workbench-open.ts",

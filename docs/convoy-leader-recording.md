@@ -43,7 +43,7 @@ The leader makes routine ready, moving, and holding calls for the whole convoy. 
 
 Prefer mono, 48 kHz, 16- or 24-bit PCM WAV. Any clean WAV is usable if your recorder does not offer those settings. Leave a short quiet lead-in and tail, avoid clipping, and **do not add static, clicks, music, reverb, or a radio filter**. The local processor adds the approved smooth opening and closing squelch around each complete call, with no synthetic click. It also applies the same band-limited voice treatment to every take.
 
-Attach the WAV to this task, or place it in `C:\Users\marco\Desktop\REFORGER\recordings` and give its filename. Keep your original file; processing reads it without changing it. If you flub a line, pause, say it again, and tell us which take to use. We will mark exact cut times after listening.
+Attach the WAV to this task, or place it in the repository's `recordings/` directory and give its filename. Keep your original file; processing reads it without changing it. If you flub a line, pause, say it again, and tell us which take to use. We will mark exact cut times after listening.
 
 ## Developer processing
 

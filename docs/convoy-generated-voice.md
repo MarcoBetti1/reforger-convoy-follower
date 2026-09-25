@@ -56,8 +56,36 @@ preserve the urgent message meanings. The level audit in
 `.cache/convoy-generated-level-audit.json` found peaks from -7.77 to -5.54 dBFS,
 active RMS from -20.45 to -19.44 dBFS, and quiet outer edges on every clip.
 Workbench validated all five script configurations and packed a fresh `data.pak`
-in `.cache/workbench-runs/convoy-kokoro-pack/output/`. These are screening steps. Actual in-game
-audibility and preference between voice packs still require a player test.
+in `.cache/workbench-runs/convoy-kokoro-pack/output/`. Those were screening steps;
+the following F5 capture adds in-game playback evidence.
+
+## In-game playback check, September 25
+
+A local Workbench F5 run loaded a temporary profile override with pack 1 and a
+100% routine-call chance. The source configuration stayed at `m_iVoicePack 0`,
+so the player's recorded voice remains the packaged default. The run log at
+`.cache/workbench-gui-runs/2026-09-25T08-43-09-573Z-12424/script.log` recorded
+`SETTINGS_PROFILE_APPLIED: voice true, pack 1`, followed by `RADIO_PLAY` for
+whole-convoy FOLLOWING at 03:44:02.854 and Unit Two REJOINED at 03:44:17.923.
+
+WASAPI loopback captured the actual Workbench/game output on the default
+Windows headset endpoint in `.cache/test-videos/convoy-generated-release-rerun.wav`
+(48 kHz stereo, 283.0 seconds). The first call starts at WAV offset 15.977 s;
+its waveform correlates 0.999 with `leader_following_c.wav` and local Whisper
+recognized “We're moving with you. Keep us inside,” close to the intended
+“We're moving with you. Keep us in sight.” The second starts at offset 31.049 s;
+it correlates 0.959 with `unit_2_rejoined_c.wav` and Whisper recognized its
+entire line, “Unit Two is moving back into line.” Short extracts are in
+`.cache/test-videos/convoy-generated-following-in-game.wav` and
+`.cache/test-videos/convoy-generated-unit2-rejoined-in-game.wav`. These paths
+are ignored local evidence, not committed audio assets.
+
+The capture confirms two generated lines reached the player's audio output and
+were intelligible to the local readback. It does not establish a listener's
+preference for the generated timbre, test every call, prove repeat alternation
+in play, or verify server-wide muting. Keep pack 0 as default until the owner
+has heard the short captured clip and chooses whether to replace the approved
+recorded voice for the out-of-box experience.
 
 The new generated pack has only the existing eight gameplay event categories.
 Release, return, and dropped-unit lines from the separate recording plan are

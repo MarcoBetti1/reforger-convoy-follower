@@ -23,7 +23,7 @@ Bohemia's [official process](https://community.bistudio.com/wiki/Arma_Reforger%3
 
 **Description draft:** Place a Convoy Driver group near an empty wheeled vehicle. A player can order the first driver to follow their vehicle, then add more drivers into a chain where each follows the truck ahead. Drivers can be staged on foot, ride as passengers, and report useful convoy events through optional private radio voice calls. Players load and unload supplies manually. Scenario makers can place the group prefab directly and tune documented addon settings in Workbench. See the included quickstart for setup and controls.
 
-After the unloading test passes, the listing can also describe the M923A1 rear **Pull off and regroup** order and the player-led return sequence. Keep that feature out of the public listing until its menu, five-truck road maneuver, and return crossing are observed in game.
+After the unloading test passes, the listing can also describe the M923A1 rear **Pull off and regroup** order and the player-led return sequence. Keep that feature out of the public listing until its menu, one-to-three-truck road maneuver, and return crossing are observed in game. The configurable five-truck hard cap still needs a separate boundary check before it is advertised.
 
 Check the final claims against the last in-game test before copying this description into Workbench. Do not promise autonomous cargo delivery, support for every truck, or an in-game settings menu.
 

@@ -66,7 +66,7 @@ class CF_ReleaseAtUnloadAction : ScriptedUserAction
 		}
 		if (Replication.IsServer() && !CF_ConvoySession.CanPlanReleaseAtUnload(user, driver))
 		{
-			SetCannotPerformReason("No clear road slot behind convoy; stop on a wider road");
+			SetCannotPerformReason(CF_ConvoySession.GetReleasePlanFailureReason(user));
 			return false;
 		}
 		return true;
