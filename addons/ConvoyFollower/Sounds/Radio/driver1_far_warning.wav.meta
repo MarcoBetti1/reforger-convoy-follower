@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{7CE712E04B7A46EF}Sounds/Radio/driver1_far_warning.wav"
+ Configurations {
+  WAVResourceClass PC {
+  }
+ }
+}

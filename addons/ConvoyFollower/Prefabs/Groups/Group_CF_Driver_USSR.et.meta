@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{18A8FAF9C3034738}Prefabs/Groups/Group_CF_Driver_USSR.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{6DA11AE57061451A}Sounds/Radio/driver2_stuck.wav"
+ Configurations {
+  WAVResourceClass PC {
+  }
+ }
+}

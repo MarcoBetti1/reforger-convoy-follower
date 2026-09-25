@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{A736F034F11893C2}Configs/CF_ConvoySettings.conf"
+ Configurations {
+  CONFResourceClass PC {
+  }
+  CONFResourceClass HEADLESS : PC {
+  }
+ }
+}

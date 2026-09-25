@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{A789408CD35D4255}Sounds/Radio/driver1_rejoined.wav"
+ Configurations {
+  WAVResourceClass PC {
+  }
+ }
+}

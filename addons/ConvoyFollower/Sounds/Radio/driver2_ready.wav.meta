@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{6E531308420F4C21}Sounds/Radio/driver2_ready.wav"
+ Configurations {
+  WAVResourceClass PC {
+  }
+ }
+}

@@ -1,0 +1,94 @@
+SCR_ChimeraCharacter : "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Crew.et" {
+ ID "0E9E1FE998F7414A"
+ components {
+  CharacterWeaponManagerComponent "{5C9CA676383262FD}" {
+   DefaultWeaponIndex 2
+  }
+  CharacterWeaponSlotComponent "{520EA1D2F659CFAB}" {
+   WeaponTemplate ""
+  }
+  CharacterWeaponSlotComponent "{520EA1D2F659CFDC}" {
+   WeaponTemplate "{C0F7DD85A86B2900}Prefabs/Weapons/Handguns/PM/Handgun_PM.et"
+  }
+  SCR_InventoryStorageManagerComponent "{520EA1D2DB118DE5}" {
+   InitialInventoryItems {
+    ItemsInitConfigurationItem "{5D7CC173E6675BF7}" {
+     PrefabsToSpawn {
+      "{8B853CDD11BA916E}Prefabs/Weapons/Magazines/Magazine_9x18_PM_8rnd_Ball.et" "{8B853CDD11BA916E}Prefabs/Weapons/Magazines/Magazine_9x18_PM_8rnd_Ball.et" "{8B853CDD11BA916E}Prefabs/Weapons/Magazines/Magazine_9x18_PM_8rnd_Ball.et"
+     }
+    }
+   }
+  }
+  SCR_EditableCharacterComponent "{520EA1D2F659C85C}" {
+   m_UIInfo SCR_EditableEntityUIInfo "{5298E609432D192D}" {
+    Name "Convoy Driver (USSR)"
+    m_sFaction "USSR"
+    m_aAuthoredLabels + {
+     1001
+    }
+   }
+  }
+  ActionsManagerComponent "{520EA1D2F659CE02}" {
+   additionalActions + {
+    CF_FollowOnFootAction "{B8355944A88C4288}" {
+     ParentContextList {
+      "default"
+     }
+     UIInfo SCR_ActionUIInfo "{321864C148BF4447}" {
+      Name "Follow me on foot"
+     }
+     VisibilityRange 2.5
+    }
+    CF_StopOnFootAction "{4EA3966E69A94053}" {
+     ParentContextList {
+      "default"
+     }
+     UIInfo SCR_ActionUIInfo "{417CEF57D10349B8}" {
+      Name "Stop following on foot"
+     }
+     VisibilityRange 2.5
+    }
+    CF_AssignTruckAction "{B805914427504544}" {
+     ParentContextList {
+      "default"
+     }
+     UIInfo SCR_ActionUIInfo "{6B0E6BF12B614D46}" {
+      Name "Start convoy in closest empty vehicle"
+     }
+     VisibilityRange 2.5
+    }
+    CF_AddConvoyAction "{43617AEA7C4242E6}" {
+     ParentContextList {
+      "default"
+     }
+     UIInfo SCR_ActionUIInfo "{45416288F7E64B62}" {
+      Name "Add to convoy in closest empty vehicle"
+     }
+     VisibilityRange 2.5
+    }
+    CF_ReplaceLeaderAction "{39AD83555F684FCA}" {
+     ParentContextList {
+      "default"
+     }
+     UIInfo SCR_ActionUIInfo "{C97C6E681D2F4F86}" {
+      Name "Replace convoy leader with this driver"
+     }
+     VisibilityRange 2.5
+    }
+    CF_StandDownAction "{4D352B73DEA14A84}" {
+     ParentContextList {
+      "default"
+     }
+     UIInfo SCR_ActionUIInfo "{8AD8A747FA9240DB}" {
+      Name "Stand down"
+     }
+     VisibilityRange 2.5
+    }
+   }
+  }
+  CF_DriverControllerComponent "{00BF6F4F608247C0}" {
+  }
+  CF_UnderFireMonitorComponent "{0A8DA0B8AD8B4764}" {
+  }
+ }
+}

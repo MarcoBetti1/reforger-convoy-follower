@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{60C4F6FFF2E9CC39}Sounds/LeaderGenerated/unit_2_rejoined_b.wav"
+ Configurations {
+  WAVResourceClass PC {
+  }
+  WAVResourceClass XBOX_ONE : PC {
+  }
+  WAVResourceClass XBOX_SERIES : PC {
+  }
+  WAVResourceClass PS4 : PC {
+  }
+  WAVResourceClass PS5 : PC {
+  }
+  WAVResourceClass HEADLESS : PC {
+  }
+ }
+}

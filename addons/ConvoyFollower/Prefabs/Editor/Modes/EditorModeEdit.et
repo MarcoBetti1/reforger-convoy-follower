@@ -1,0 +1,11 @@
+SCR_EditorModeEntity : "{E56F54E533ACE527}Prefabs/Editor/Modes/EditorModeBase.et" {
+ ID "54F0A77282A3AA3B"
+ components {
+  SCR_PlacingEditorComponent "{5145484399BAA2E7}" {
+   m_Registries {
+    SCR_PlaceableEntitiesRegistry "{3476B64DCDB931A3}" : "{C11423AD13D88E9D}Configs/Editor/PlaceableEntities/CF_Groups.conf" {
+    }
+   }
+  }
+ }
+}

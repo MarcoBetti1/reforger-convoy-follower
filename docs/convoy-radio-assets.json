@@ -1,0 +1,161 @@
+{
+  "note": "Original user recordings remain outside the addon. Do not alter them.",
+  "processor": "tools/prepare_convoy_radio.py",
+  "output_format": "mono 48000 Hz PCM 16-bit WAV",
+  "sources": {
+    "driver1": {
+      "filename": "driver1.wav",
+      "sha256": "6e5002f44bdd0c42f9ecd20f71fce0c08e9556acf0348574d7f1fbf684980f87"
+    },
+    "driver2": {
+      "filename": "driver2.wav",
+      "sha256": "e64684aed4458eb9191705ca5d1e090c36f58e1535c76f3b33b529308a31fc12"
+    }
+  },
+  "clips": [
+    {
+      "driver": "driver1",
+      "event": "ready",
+      "spoken_words": "Driver One to lead. In position and ready.",
+      "source_start_seconds": 0.7,
+      "source_end_seconds": 4.48,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver1_ready.wav",
+      "sha256": "b7240cb08f2841f92935d91935795e4d0c441d123d9d6510789d41d6d7752a32"
+    },
+    {
+      "driver": "driver1",
+      "event": "holding",
+      "spoken_words": "Driver One to lead. Holding here.",
+      "source_start_seconds": 6.75,
+      "source_end_seconds": 9.29,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver1_holding.wav",
+      "sha256": "e7ff2001c36851135139b63b3174ae5696dafd2c9f71e4952f5173100a4da81c"
+    },
+    {
+      "driver": "driver1",
+      "event": "following",
+      "spoken_words": "Driver One to lead. Moving behind you.",
+      "source_start_seconds": 10.79,
+      "source_end_seconds": 13.1,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver1_following.wav",
+      "sha256": "bff951fc1afccbd990411ca6b1e13bd7c69f18770e1e1bfcb1390f3db314a25e"
+    },
+    {
+      "driver": "driver1",
+      "event": "far_warning",
+      "spoken_words": "Driver One to lead. You're getting far ahead. Slow down a bit.",
+      "source_start_seconds": 14.13,
+      "source_end_seconds": 17.48,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver1_far_warning.wav",
+      "sha256": "b187f4121a27b92c6998b8989dab65245febde1a392633e1e59014f22bc0b5dd"
+    },
+    {
+      "driver": "driver1",
+      "event": "stuck",
+      "spoken_words": "Driver One to lead. I'm stuck. Working my way clear.",
+      "source_start_seconds": 18.51,
+      "source_end_seconds": 21.69,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver1_stuck.wav",
+      "sha256": "0b769568ac2abaec2c63faf6b9a6bcc99fb6365423271d878f79ee292267dd2b"
+    },
+    {
+      "driver": "driver1",
+      "event": "lost",
+      "spoken_words": "Driver One to lead. I've lost you. Holding position.",
+      "source_start_seconds": 23.39,
+      "source_end_seconds": 26.72,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver1_lost.wav",
+      "sha256": "de2a7c0f424d9a920d84d644381daf7f20891f45f08af64ed7391a07a4802325"
+    },
+    {
+      "driver": "driver1",
+      "event": "rejoined",
+      "spoken_words": "Driver One to lead. I have you again. Moving.",
+      "source_start_seconds": 28.17,
+      "source_end_seconds": 30.98,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver1_rejoined.wav",
+      "sha256": "60b497b69e6d640f0469d339893fc3ea5036a0b4657510c741e459d8080e10d7"
+    },
+    {
+      "driver": "driver1",
+      "event": "under_fire",
+      "spoken_words": "Driver One to lead. Taking fire nearby.",
+      "source_start_seconds": 32.23,
+      "source_end_seconds": 35.04,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver1_under_fire.wav",
+      "sha256": "64367996a68911007d705fd925cfe4c4c9dece04b08a62b1b1ef73cf6d0e730f"
+    },
+    {
+      "driver": "driver2",
+      "event": "ready",
+      "spoken_words": "Driver Two to lead. Ready to go.",
+      "source_start_seconds": 14.02,
+      "source_end_seconds": 16.88,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver2_ready.wav",
+      "sha256": "b65cc8e502a8eee1d98f4b5f4632b4118fb7ab0d6838e8d79b77988a4d67168a"
+    },
+    {
+      "driver": "driver2",
+      "event": "holding",
+      "spoken_words": "Driver Two to lead. Holding here.",
+      "source_start_seconds": 17.94,
+      "source_end_seconds": 20.49,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver2_holding.wav",
+      "sha256": "50a33f749f420e9fe763c94be31905e723ab524404e35117ab4ebb7867fd098c"
+    },
+    {
+      "driver": "driver2",
+      "event": "following",
+      "spoken_words": "Driver Two to lead. I'm following you.",
+      "source_start_seconds": 21.97,
+      "source_end_seconds": 24.34,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver2_following.wav",
+      "sha256": "ee8fa35eeb23bef2c867027e03f9788744bb4fea1615a73c0304d24c464f52f5"
+    },
+    {
+      "driver": "driver2",
+      "event": "far_warning",
+      "spoken_words": "Driver Two to lead. You're getting far. Slow down.",
+      "source_start_seconds": 25.78,
+      "source_end_seconds": 28.78,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver2_far_warning.wav",
+      "sha256": "3b5e35628074a5f8704e1b4c6adb8c3b7a8d071ad6bde5fd838a3ee4e7adb1eb"
+    },
+    {
+      "driver": "driver2",
+      "event": "stuck",
+      "spoken_words": "Driver Two to lead. I got stuck. I'm coming.",
+      "source_start_seconds": 29.89,
+      "source_end_seconds": 33.03,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver2_stuck.wav",
+      "sha256": "fe96bd8f30133761ade87ae4eca9fe30171fc03254b929f3b516e54750e1be52"
+    },
+    {
+      "driver": "driver2",
+      "event": "lost",
+      "spoken_words": "Driver Two to lead. I lost you. I'm holding here.",
+      "source_start_seconds": 34.57,
+      "source_end_seconds": 37.74,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver2_lost.wav",
+      "sha256": "33446b31e22d15dbbdc403df4dec69b587124e826b2f1dd4d8ab9c5d4b556cd1"
+    },
+    {
+      "driver": "driver2",
+      "event": "rejoined",
+      "spoken_words": "Driver Two to lead. I see you again. Following.",
+      "source_start_seconds": 38.94,
+      "source_end_seconds": 42.17,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver2_rejoined.wav",
+      "sha256": "461416683b8215c2b0d35a85b089776b83081b7a11a593d6606c7f297e1f8847"
+    },
+    {
+      "driver": "driver2",
+      "event": "under_fire",
+      "spoken_words": "Driver Two to lead. I'm taking shots.",
+      "source_start_seconds": 43.53,
+      "source_end_seconds": 46.35,
+      "output": "addons/ConvoyFollower/Sounds/Radio/driver2_under_fire.wav",
+      "sha256": "47109590ad720e1a35ed6f5234f91a817256086576fabb9dfede723455b3af46"
+    }
+  ]
+}

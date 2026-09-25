@@ -1,0 +1,11 @@
+{
+  "m_bVoiceEnabled": true,
+  "m_iVoicePack": 0,
+  "m_iRoutineCallChancePercent": 40,
+  "m_fRoutineRepeatSeconds": 45,
+  "m_fRoutineSpacingSeconds": 15,
+  "m_fExceptionRepeatSeconds": 45,
+  "m_iMaxConvoyUnits": 5,
+  "m_fMovingGap": 12,
+  "m_fStoppedGap": 10
+}

@@ -1,0 +1,7 @@
+CF_LAVSpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ ID "3C05F11A17424774"
+ m_sLeadVehicleName "CF_EveronLeadLAV"
+ m_Info SCR_UIInfo "{56B4CC4ECACA2C37}" {
+  Name "Convoy staging - Regina sports ground"
+ }
+}

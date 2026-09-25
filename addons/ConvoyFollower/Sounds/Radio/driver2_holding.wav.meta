@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{50BAB39CB56A45F5}Sounds/Radio/driver2_holding.wav"
+ Configurations {
+  WAVResourceClass PC {
+  }
+ }
+}

@@ -1,0 +1,422 @@
+{
+  "source_filename": "unit.wav",
+  "source_sha256": "876091751860fec3a9453f8ff1b1216ae93e0c1660abc58df897768a2f26f788",
+  "cut_sheet": "docs/convoy-leader-cuts.json",
+  "cut_sheet_sha256": "7e6f10b2f36a6870726b20d01482ca0e1fb4c7f3dd193254641115f41adb4a81",
+  "processor": "tools/render_convoy_leader_radio.py",
+  "format": "mono 48000 Hz 16-bit PCM WAV",
+  "clip_count": 58,
+  "notes": "Aggregate leader calls plus Unit 1-10 exception reports. Unit 1 is reserved; current member chain starts at Unit 2. Under-fire clips are assets only until a gameplay trigger is verified.",
+  "clips": [
+    {
+      "name": "leader_ready",
+      "path": "addons/ConvoyFollower/Sounds/Leader/leader_ready.wav",
+      "resource": "{584D811CFC5A1FDD}Sounds/Leader/leader_ready.wav",
+      "duration_seconds": 1.115,
+      "sha256": "afa55a5087c74fe008e01fcd574c05b854af341609e8de9c675e09532d26500f"
+    },
+    {
+      "name": "leader_following",
+      "path": "addons/ConvoyFollower/Sounds/Leader/leader_following.wav",
+      "resource": "{615074549B357F41}Sounds/Leader/leader_following.wav",
+      "duration_seconds": 1.285,
+      "sha256": "7a63bc04ce77e048319e8eb0236af06cb13ec2de819d71c961888f4ca42ef6f1"
+    },
+    {
+      "name": "leader_holding",
+      "path": "addons/ConvoyFollower/Sounds/Leader/leader_holding.wav",
+      "resource": "{BFE8F488BF57D2FE}Sounds/Leader/leader_holding.wav",
+      "duration_seconds": 1.201,
+      "sha256": "c89b598f57cd54a68aba05ec7e0715b90127a5d04974b856cba4b01293519c73"
+    },
+    {
+      "name": "leader_far_warning",
+      "path": "addons/ConvoyFollower/Sounds/Leader/leader_far_warning.wav",
+      "resource": "{6C3F645931625D60}Sounds/Leader/leader_far_warning.wav",
+      "duration_seconds": 2.456,
+      "sha256": "601a4eb6a37bfc946ac239349da00661ff6eefc7e71de296c2433d73ff8f3c04"
+    },
+    {
+      "name": "leader_stuck",
+      "path": "addons/ConvoyFollower/Sounds/Leader/leader_stuck.wav",
+      "resource": "{53F4F4C000E11BAA}Sounds/Leader/leader_stuck.wav",
+      "duration_seconds": 1.711,
+      "sha256": "d15ea3c604c9e098dd481d712c4a698aa41222eb31e7fb75995f8a81323969c6"
+    },
+    {
+      "name": "leader_lost",
+      "path": "addons/ConvoyFollower/Sounds/Leader/leader_lost.wav",
+      "resource": "{A8D5244856339D99}Sounds/Leader/leader_lost.wav",
+      "duration_seconds": 2.166,
+      "sha256": "d05acab0cc8d4e4e8ab5d9c0a94b3453c7886c002bc76b6baef1f531a3a02be4"
+    },
+    {
+      "name": "leader_rejoined",
+      "path": "addons/ConvoyFollower/Sounds/Leader/leader_rejoined.wav",
+      "resource": "{DF524D8E854388F7}Sounds/Leader/leader_rejoined.wav",
+      "duration_seconds": 1.92,
+      "sha256": "009599c7f2ffe199fc61e0d21bc4dbbc2ec4dd92c8102e58b486c2197092715a"
+    },
+    {
+      "name": "leader_under_fire",
+      "path": "addons/ConvoyFollower/Sounds/Leader/leader_under_fire.wav",
+      "resource": "{DF48D538CB07B6C2}Sounds/Leader/leader_under_fire.wav",
+      "duration_seconds": 1.75,
+      "sha256": "f30b65960b809453bb18520904cdb64a004d63e643e557aca7432996f6580bd1"
+    },
+    {
+      "name": "unit_1_far_warning",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_1_far_warning.wav",
+      "resource": "{1E6C3A9EDDFD88BD}Sounds/Leader/unit_1_far_warning.wav",
+      "duration_seconds": 2.302,
+      "sha256": "bd00dccb6481c3164269c12f8c8b03f3df3e69c8fc3f68cc950814dbe3578ed0"
+    },
+    {
+      "name": "unit_1_stuck",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_1_stuck.wav",
+      "resource": "{09C5008997BB4FF2}Sounds/Leader/unit_1_stuck.wav",
+      "duration_seconds": 1.939,
+      "sha256": "eb6304e32d04c6913321dd339b8abc21c490fb24d0b45f693149a7e9b33a65cb"
+    },
+    {
+      "name": "unit_1_lost",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_1_lost.wav",
+      "resource": "{AF58E12E5E445735}Sounds/Leader/unit_1_lost.wav",
+      "duration_seconds": 2.545,
+      "sha256": "51203cae17eebcbe5a73ba1022c488c5565fd02a3deb29b0b3374bd63feb0026"
+    },
+    {
+      "name": "unit_1_rejoined",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_1_rejoined.wav",
+      "resource": "{95379F5B61B6023C}Sounds/Leader/unit_1_rejoined.wav",
+      "duration_seconds": 2.401,
+      "sha256": "71f8d5b1cb0301304704f4f1fe0bae672ad1e6c0cfa519c0bfc1c634782c7aa0"
+    },
+    {
+      "name": "unit_1_under_fire",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_1_under_fire.wav",
+      "resource": "{0FB34B4A7F6ADF56}Sounds/Leader/unit_1_under_fire.wav",
+      "duration_seconds": 2.19,
+      "sha256": "4a98b93e4b57215c938060588e73ce520c3cb8757c3b81190878a3cb5fb8e701"
+    },
+    {
+      "name": "unit_2_far_warning",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_2_far_warning.wav",
+      "resource": "{EC6A7D7167B6D127}Sounds/Leader/unit_2_far_warning.wav",
+      "duration_seconds": 2.3,
+      "sha256": "20e267fb7ca19a5b6234b8104b8c680274f9dff7e59562c505b516610902c214"
+    },
+    {
+      "name": "unit_2_stuck",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_2_stuck.wav",
+      "resource": "{D5AAE39CB02A840E}Sounds/Leader/unit_2_stuck.wav",
+      "duration_seconds": 1.937,
+      "sha256": "944b1cf7fae78f6c008b6eee9ace309c20abd56b78691716b7424305fee857ae"
+    },
+    {
+      "name": "unit_2_lost",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_2_lost.wav",
+      "resource": "{26B87501B35FD114}Sounds/Leader/unit_2_lost.wav",
+      "duration_seconds": 2.543,
+      "sha256": "7b2476926b7379fbbe66466f1a2a16d5ee1cbb71d6b182060fd1d4f5c96ca756"
+    },
+    {
+      "name": "unit_2_rejoined",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_2_rejoined.wav",
+      "resource": "{3F48D580FE1145FB}Sounds/Leader/unit_2_rejoined.wav",
+      "duration_seconds": 2.399,
+      "sha256": "74df4ed51baf7e98441262787018ffb3a188fb42629b2da714f3c574d65f0cf3"
+    },
+    {
+      "name": "unit_2_under_fire",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_2_under_fire.wav",
+      "resource": "{25B8DD2733A4A3E6}Sounds/Leader/unit_2_under_fire.wav",
+      "duration_seconds": 2.188,
+      "sha256": "f7d99d43d07be84dd81fd8e70569e0ea4edcf5ff7f014a7b4ded0bbde7cfef52"
+    },
+    {
+      "name": "unit_3_far_warning",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_3_far_warning.wav",
+      "resource": "{ABAE7CFFF5AB960D}Sounds/Leader/unit_3_far_warning.wav",
+      "duration_seconds": 2.377,
+      "sha256": "f6aec5985b2b5e9dac74024aa8b77609d39d061e0da8d119d127465f95553de5"
+    },
+    {
+      "name": "unit_3_stuck",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_3_stuck.wav",
+      "resource": "{18639F97B8F456EA}Sounds/Leader/unit_3_stuck.wav",
+      "duration_seconds": 2.013,
+      "sha256": "714b5764f2ad0c5cf9a0b811d43380dc86f649f2bcc3141324c3c35964654165"
+    },
+    {
+      "name": "unit_3_lost",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_3_lost.wav",
+      "resource": "{9CF3C8ABFD9ECA77}Sounds/Leader/unit_3_lost.wav",
+      "duration_seconds": 2.619,
+      "sha256": "06344c2e2eecf0e4960510d8f751157699f13f8f5a82a6d6e1557066a0e497fc"
+    },
+    {
+      "name": "unit_3_rejoined",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_3_rejoined.wav",
+      "resource": "{61EF184437F488F5}Sounds/Leader/unit_3_rejoined.wav",
+      "duration_seconds": 2.475,
+      "sha256": "fec620b075d9fa2fdd8f5bd203d806f9c17a74f7da0817b83f9697e0a1b37b64"
+    },
+    {
+      "name": "unit_3_under_fire",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_3_under_fire.wav",
+      "resource": "{A49DC8378A61A04B}Sounds/Leader/unit_3_under_fire.wav",
+      "duration_seconds": 2.264,
+      "sha256": "ea965fc0e2723ca8726c608ed2feb215b6866cb1f148e8bc89aed85ea575d31c"
+    },
+    {
+      "name": "unit_4_far_warning",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_4_far_warning.wav",
+      "resource": "{9C2F4DB94D1EF81E}Sounds/Leader/unit_4_far_warning.wav",
+      "duration_seconds": 2.428,
+      "sha256": "d900d9616d4bb43ee4678fa12fdee0d0254b0a3388204d698682c109a4bcab33"
+    },
+    {
+      "name": "unit_4_stuck",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_4_stuck.wav",
+      "resource": "{FC21525BFDF8CADF}Sounds/Leader/unit_4_stuck.wav",
+      "duration_seconds": 2.064,
+      "sha256": "d074d504f96155f033de344a71adb510de4a11703143f2dbd1fcd9002df1b909"
+    },
+    {
+      "name": "unit_4_lost",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_4_lost.wav",
+      "resource": "{2EF93990D9514490}Sounds/Leader/unit_4_lost.wav",
+      "duration_seconds": 2.67,
+      "sha256": "7cf43fb69096ceae89464c3fd6f69c885c66308e1e64c813bcdbb6f53a8180f0"
+    },
+    {
+      "name": "unit_4_rejoined",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_4_rejoined.wav",
+      "resource": "{93E19D9ECC468E3D}Sounds/Leader/unit_4_rejoined.wav",
+      "duration_seconds": 2.526,
+      "sha256": "efadbce502a70e357062d35f36cf8ee3d0d5a7b66d053ad4ac63386d18de03e8"
+    },
+    {
+      "name": "unit_4_under_fire",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_4_under_fire.wav",
+      "resource": "{82B8122E58B8C438}Sounds/Leader/unit_4_under_fire.wav",
+      "duration_seconds": 2.315,
+      "sha256": "00e0f6748b89948e84382123301a6b610c7a2d2a65a5279da8a1c6ec9fdca661"
+    },
+    {
+      "name": "unit_5_far_warning",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_5_far_warning.wav",
+      "resource": "{FD3491FC9BD26655}Sounds/Leader/unit_5_far_warning.wav",
+      "duration_seconds": 2.457,
+      "sha256": "989b767d9c76b26435ee160c4f4152ffda56a55b594b48e677e79b6d5ea6077f"
+    },
+    {
+      "name": "unit_5_stuck",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_5_stuck.wav",
+      "resource": "{990F7A4B057A6F47}Sounds/Leader/unit_5_stuck.wav",
+      "duration_seconds": 2.094,
+      "sha256": "3b9fa5631b78d077f05c8e3c22eac9703780e854dbebe560808036c5c8e29e5b"
+    },
+    {
+      "name": "unit_5_lost",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_5_lost.wav",
+      "resource": "{83E6BFC4E86F6A86}Sounds/Leader/unit_5_lost.wav",
+      "duration_seconds": 2.699,
+      "sha256": "dd666795cd49a7dc8cd62dd0fcd8e6c9e689be5c90cffaba004a8117d8f89623"
+    },
+    {
+      "name": "unit_5_rejoined",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_5_rejoined.wav",
+      "resource": "{F0E8AB9D90B7127C}Sounds/Leader/unit_5_rejoined.wav",
+      "duration_seconds": 2.555,
+      "sha256": "f9896d313071ddd694308a63abeef4c3fd2b60c471b3b39274a263e8192e38fa"
+    },
+    {
+      "name": "unit_5_under_fire",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_5_under_fire.wav",
+      "resource": "{887D8C182F8B21B4}Sounds/Leader/unit_5_under_fire.wav",
+      "duration_seconds": 2.344,
+      "sha256": "eee0a9bcf99866258932cc48966cd3b27be9fa13359c7aeb9079cf448966af75"
+    },
+    {
+      "name": "unit_6_far_warning",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_6_far_warning.wav",
+      "resource": "{8F4B0274D757D4E7}Sounds/Leader/unit_6_far_warning.wav",
+      "duration_seconds": 2.611,
+      "sha256": "d4cf6a00be9937319154d945032d439447f47e0599c792afe5fc0ff649aaf7a7"
+    },
+    {
+      "name": "unit_6_stuck",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_6_stuck.wav",
+      "resource": "{5178066D0D11CE22}Sounds/Leader/unit_6_stuck.wav",
+      "duration_seconds": 2.247,
+      "sha256": "42488a3b94b3075368331280bd13375209a7537f25af0816c1738e34804c7cb7"
+    },
+    {
+      "name": "unit_6_lost",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_6_lost.wav",
+      "resource": "{4D79A302306533AD}Sounds/Leader/unit_6_lost.wav",
+      "duration_seconds": 2.853,
+      "sha256": "1f9e91be26259a6b1db1726016a7ae68885820d881d60c8f25be51979a948383"
+    },
+    {
+      "name": "unit_6_rejoined",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_6_rejoined.wav",
+      "resource": "{BEB266E3BF75542C}Sounds/Leader/unit_6_rejoined.wav",
+      "duration_seconds": 2.709,
+      "sha256": "c1ed5dfade9918be019cf4e807592b36cdda13327fa0e9ddb5907569d00a15cb"
+    },
+    {
+      "name": "unit_6_under_fire",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_6_under_fire.wav",
+      "resource": "{5A32158F1FD6AC78}Sounds/Leader/unit_6_under_fire.wav",
+      "duration_seconds": 2.498,
+      "sha256": "17222ba4cc4a34e87ff9a1a1c4cb5144303b9cbc0ba3822dcf7b5cd71b79ef1b"
+    },
+    {
+      "name": "unit_7_far_warning",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_7_far_warning.wav",
+      "resource": "{A58F6686E0A3E781}Sounds/Leader/unit_7_far_warning.wav",
+      "duration_seconds": 2.392,
+      "sha256": "ce876ee7d432e7a7d180e2c8d1c81afe2539d735594f2dd14f26b6ba89da17c8"
+    },
+    {
+      "name": "unit_7_stuck",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_7_stuck.wav",
+      "resource": "{43F77ED30C6ECFB4}Sounds/Leader/unit_7_stuck.wav",
+      "duration_seconds": 2.028,
+      "sha256": "97adef345757cf8f04e3da6744777dc55500b0d6dde806877e139e13b2d0ceeb"
+    },
+    {
+      "name": "unit_7_lost",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_7_lost.wav",
+      "resource": "{2318481006BDBA56}Sounds/Leader/unit_7_lost.wav",
+      "duration_seconds": 2.634,
+      "sha256": "49a219c142abcd68dc2334ebd3dad9b33c338c0b50c86cd5d9c2b1d67d38b966"
+    },
+    {
+      "name": "unit_7_rejoined",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_7_rejoined.wav",
+      "resource": "{9953648C21EDEE5C}Sounds/Leader/unit_7_rejoined.wav",
+      "duration_seconds": 2.49,
+      "sha256": "6c435ce816b4da83b5f2fcfec0b0fb62379ffe6b791dfa34c957eb69e2b7846f"
+    },
+    {
+      "name": "unit_7_under_fire",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_7_under_fire.wav",
+      "resource": "{086660F046BE980D}Sounds/Leader/unit_7_under_fire.wav",
+      "duration_seconds": 2.279,
+      "sha256": "226a59ec5d920e74331f6114eca610cd3c5c8a57405bff2adb202c3ac44a7583"
+    },
+    {
+      "name": "unit_8_far_warning",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_8_far_warning.wav",
+      "resource": "{7BC36F9BACD06E86}Sounds/Leader/unit_8_far_warning.wav",
+      "duration_seconds": 2.519,
+      "sha256": "7451a7dbc1bfe483b48e4f53f973db4c6cdbb35fb54e3552abc0add84edc80eb"
+    },
+    {
+      "name": "unit_8_stuck",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_8_stuck.wav",
+      "resource": "{2E64C9BC4429A471}Sounds/Leader/unit_8_stuck.wav",
+      "duration_seconds": 2.155,
+      "sha256": "9fb2590490dc2742f87cbc96946930a96e831e000e27ddc348ed3a5b83851402"
+    },
+    {
+      "name": "unit_8_lost",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_8_lost.wav",
+      "resource": "{9110C3A7DEE7505D}Sounds/Leader/unit_8_lost.wav",
+      "duration_seconds": 2.761,
+      "sha256": "cc25ecaddd42050d0d1b675f8ab7b4f8cdb04bbcb77424dec45c29bc09e8fea2"
+    },
+    {
+      "name": "unit_8_rejoined",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_8_rejoined.wav",
+      "resource": "{69FD3955E6403E03}Sounds/Leader/unit_8_rejoined.wav",
+      "duration_seconds": 2.617,
+      "sha256": "a529e9e4acbb3e03bb9f0ed71cf945fec1361dcbc150c21305f77f6fd418096d"
+    },
+    {
+      "name": "unit_8_under_fire",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_8_under_fire.wav",
+      "resource": "{9193503E4FF87B80}Sounds/Leader/unit_8_under_fire.wav",
+      "duration_seconds": 2.406,
+      "sha256": "ff8216a0ce3776f2f3c7ec06f888b6dbf36856fae9df51e9506c48e0ee62975b"
+    },
+    {
+      "name": "unit_9_far_warning",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_9_far_warning.wav",
+      "resource": "{C51C402B070AE172}Sounds/Leader/unit_9_far_warning.wav",
+      "duration_seconds": 2.424,
+      "sha256": "a93d95975f2cc66f217e5f685489ab673292fe7a4bcd421dbba7b0a608cac77b"
+    },
+    {
+      "name": "unit_9_stuck",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_9_stuck.wav",
+      "resource": "{380650FFDCF46D33}Sounds/Leader/unit_9_stuck.wav",
+      "duration_seconds": 2.061,
+      "sha256": "6e9527f3a7ace8fc68c9e3a598e79a6daf06e2561c846ae85ad1207c94877bc3"
+    },
+    {
+      "name": "unit_9_lost",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_9_lost.wav",
+      "resource": "{B9C467D6CF1394EE}Sounds/Leader/unit_9_lost.wav",
+      "duration_seconds": 2.666,
+      "sha256": "73fdf70a50a59a1165c25cc3611861af1d5cb31350b39738b6bf6eca205938fe"
+    },
+    {
+      "name": "unit_9_rejoined",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_9_rejoined.wav",
+      "resource": "{23F2F39380E71D9D}Sounds/Leader/unit_9_rejoined.wav",
+      "duration_seconds": 2.522,
+      "sha256": "b02760b5215a709d33d302b5813bd2d57249a647e1fabb33203bad4f618ce96d"
+    },
+    {
+      "name": "unit_9_under_fire",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_9_under_fire.wav",
+      "resource": "{B166932DBF80B8ED}Sounds/Leader/unit_9_under_fire.wav",
+      "duration_seconds": 2.311,
+      "sha256": "daaa749a974b1e50ae0c4babead28ae4e46683dc5274a524332b6a2a6f99ace0"
+    },
+    {
+      "name": "unit_10_far_warning",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_10_far_warning.wav",
+      "resource": "{4B5CED2AD9FB2E90}Sounds/Leader/unit_10_far_warning.wav",
+      "duration_seconds": 2.337,
+      "sha256": "f7a747cb80363750eb2dd0babb693ddb2420d5bbd78f1d303aba949ef701d00c"
+    },
+    {
+      "name": "unit_10_stuck",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_10_stuck.wav",
+      "resource": "{F7AEFD0E23DA7FD2}Sounds/Leader/unit_10_stuck.wav",
+      "duration_seconds": 1.973,
+      "sha256": "560314d6cc1502f0b705ca8795b00c52067b64a5177a628291765935971ac44e"
+    },
+    {
+      "name": "unit_10_lost",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_10_lost.wav",
+      "resource": "{9E3F052E78A7D531}Sounds/Leader/unit_10_lost.wav",
+      "duration_seconds": 2.579,
+      "sha256": "d822839313c9f009ce2b21db83e461c874ad67686a48630ec9a73de5a73c9ab9"
+    },
+    {
+      "name": "unit_10_rejoined",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_10_rejoined.wav",
+      "resource": "{C17274AC854735BA}Sounds/Leader/unit_10_rejoined.wav",
+      "duration_seconds": 2.435,
+      "sha256": "ddb55c491ac20f6011e45248b98702fcdfb6a48d03fd278d8edc6e36cbb75721"
+    },
+    {
+      "name": "unit_10_under_fire",
+      "path": "addons/ConvoyFollower/Sounds/Leader/unit_10_under_fire.wav",
+      "resource": "{031858CB1B822A90}Sounds/Leader/unit_10_under_fire.wav",
+      "duration_seconds": 2.224,
+      "sha256": "9014682d3c9c965493789e7dd08c407466ac7ab71a43b7dbdab5864429eb0ab5"
+    }
+  ],
+  "effect": "approved fuller click-free opening/closing squelch, band-limited voice",
+  "squelch_template": "tools/assets/convoy_radio_squelch_no_click.wav",
+  "squelch_template_sha256": "ea466586462b3cf8ae1f9ff9efe6108bfaab15d4018c6c67a8f778d393dc5340",
+  "approved_preview_sha256": "afa55a5087c74fe008e01fcd574c05b854af341609e8de9c675e09532d26500f"
+}

@@ -1,0 +1,42 @@
+GenericEntity : "{278E487E19D82680}Prefabs/Vehicles/Core/Vehicle_Cargo_Base.et" {
+ ID "A091062001D94926"
+ components {
+  ActionsManagerComponent "{2CD4A765B4482F53}" {
+   additionalActions + {
+    CF_ReleaseAtUnloadAction "{73E1D5CF0C754478}" {
+     ParentContextList {
+      "door_rear"
+     }
+     UIInfo SCR_ActionUIInfo "{143C7BEF79AA44AA}" {
+      Name "Pull off and regroup"
+      m_sIconName "veh_trunk"
+     }
+     VisibilityRange 2.5
+     "Sort Priority" 17
+    }
+    CF_ResumeConvoyAction "{F01E6B11A51B9F12}" {
+     ParentContextList {
+      "door_rear"
+     }
+     UIInfo SCR_ActionUIInfo "{F01E6B11A51B9F13}" {
+      Name "Resume convoy following"
+      m_sIconName "veh_trunk"
+     }
+     VisibilityRange 2.5
+     "Sort Priority" 16
+    }
+    CF_ReturnConvoyAction "{F01E6B11A51B9F16}" {
+     ParentContextList {
+      "door_rear"
+     }
+     UIInfo SCR_ActionUIInfo "{F01E6B11A51B9F17}" {
+      Name "Regroup convoy for return"
+      m_sIconName "veh_trunk"
+     }
+     VisibilityRange 2.5
+     "Sort Priority" 15
+    }
+   }
+  }
+ }
+}

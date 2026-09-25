@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{FCD32FA28F31441E}Worlds/Tests/ConvoyFollower_Arland_Auto_2Trucks.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

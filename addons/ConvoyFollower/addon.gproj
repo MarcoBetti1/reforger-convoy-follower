@@ -1,0 +1,8 @@
+GameProject {
+ ID "ConvoyFollower"
+ GUID "5A5FB20BD40C7C70"
+ TITLE "Convoy Follower"
+ Dependencies {
+  "58D0FB3206B6F859"
+ }
+}

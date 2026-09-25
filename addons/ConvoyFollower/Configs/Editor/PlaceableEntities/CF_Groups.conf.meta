@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{C11423AD13D88E9D}Configs/Editor/PlaceableEntities/CF_Groups.conf"
+ Configurations {
+  CONFResourceClass PC {
+  }
+  CONFResourceClass HEADLESS : PC {
+  }
+ }
+}

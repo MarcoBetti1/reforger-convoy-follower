@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{F79AEBDB5FFE4416}Sounds/Radio/driver1_under_fire.wav"
+ Configurations {
+  WAVResourceClass PC {
+  }
+ }
+}

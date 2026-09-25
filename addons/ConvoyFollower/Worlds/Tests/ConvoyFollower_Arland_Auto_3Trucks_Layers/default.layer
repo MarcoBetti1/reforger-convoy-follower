@@ -1,0 +1,47 @@
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1164.042 1.125 3318.75
+}
+
+SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1172.5 1.1 3308.5
+}
+
+SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1161.297 1.106 3323.894
+}
+
+SCR_AIGroup CF_SmokeGroup2 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1150.776 1.137 3333.931
+}
+
+SCR_AIGroup CF_SmokeGroup3 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1140.255 1.168 3343.968
+}
+
+Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1157.656 1.125 3322.784
+ angles 0 135 0
+}
+
+Vehicle CF_SmokeFollower2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1147.135 1.156 3332.821
+ angles 0 135 0
+}
+
+Vehicle CF_SmokeFollower3 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1136.614 1.187 3342.858
+ angles 0 135 0
+}
+
+Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1168.177 1.094 3312.747
+ angles 0 135 0
+ components {
+  CF_SmokeProbeComponent "{8D7B0030DB86CB55}" {
+   m_iExpectedTrucks 3
+  }
+ }
+}
+
+
+

@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{0C43A145B44EB35F}Prefabs/Characters/Character_CF_Driver.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

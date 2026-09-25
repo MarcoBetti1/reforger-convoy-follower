@@ -1,0 +1,18 @@
+SCR_AIGroup : "{EACD97CF4A702FAE}Prefabs/Groups/BLUFOR/Group_US_Base.et" {
+ ID "F2FABBF3BD44B5CB"
+ components {
+  SCR_EditableGroupComponent "{50D291F6C83FA532}" {
+   m_UIInfo SCR_EditableGroupUIInfo "{5298E609432D192D}" {
+    Name "Convoy Driver"
+    m_sFaction "US"
+    m_aAuthoredLabels + {
+     1001
+    }
+   }
+  }
+ }
+ m_faction "US"
+ m_aUnitPrefabSlots {
+  "{0C43A145B44EB35F}Prefabs/Characters/Character_CF_Driver.et"
+ }
+}

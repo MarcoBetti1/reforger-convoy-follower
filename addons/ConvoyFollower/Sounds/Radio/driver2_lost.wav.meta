@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{52A36B7191CA45B5}Sounds/Radio/driver2_lost.wav"
+ Configurations {
+  WAVResourceClass PC {
+  }
+ }
+}

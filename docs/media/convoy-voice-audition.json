@@ -1,0 +1,47 @@
+[
+  {
+    "label": "Original READY",
+    "start_seconds": 0.0,
+    "duration_seconds": 1.115
+  },
+  {
+    "label": "Generated READY B",
+    "start_seconds": 1.815,
+    "duration_seconds": 2.137
+  },
+  {
+    "label": "Generated READY C",
+    "start_seconds": 4.652,
+    "duration_seconds": 2.073
+  },
+  {
+    "label": "Original STUCK",
+    "start_seconds": 7.425,
+    "duration_seconds": 2.013
+  },
+  {
+    "label": "Generated STUCK B",
+    "start_seconds": 10.138,
+    "duration_seconds": 2.983
+  },
+  {
+    "label": "Generated STUCK C",
+    "start_seconds": 13.821,
+    "duration_seconds": 2.997
+  },
+  {
+    "label": "Original UNDER FIRE",
+    "start_seconds": 17.518,
+    "duration_seconds": 1.75
+  },
+  {
+    "label": "Generated UNDER FIRE B",
+    "start_seconds": 19.968,
+    "duration_seconds": 2.378
+  },
+  {
+    "label": "Generated UNDER FIRE C",
+    "start_seconds": 23.046,
+    "duration_seconds": 2.121
+  }
+]

@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{D9D55208E06B44D1}Sounds/Radio/driver2_following.wav"
+ Configurations {
+  WAVResourceClass PC {
+  }
+ }
+}

@@ -1,0 +1,29 @@
+SCR_SpawnPoint : "{4FEA25583D0975F7}Prefabs/MP/Spawning/SpawnPoint_USSR.et" {
+ coords 1164.042 1.125 3318.75
+ m_Info SCR_UIInfo "{56B4CC4ECACA2C37}" {
+  Name "Soviet convoy staging"
+ }
+}
+SCR_AIGroup : "{18A8FAF9C3034738}Prefabs/Groups/Group_CF_Driver_USSR.et" {
+ coords 1161.297 1.106 3323.894
+}
+SCR_AIGroup : "{18A8FAF9C3034738}Prefabs/Groups/Group_CF_Driver_USSR.et" {
+ coords 1150.776 1.137 3333.931
+}
+SCR_AIGroup : "{18A8FAF9C3034738}Prefabs/Groups/Group_CF_Driver_USSR.et" {
+ coords 1140.255 1.168 3343.968
+}
+$grp Vehicle : "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et" {
+ Ural4320_transport1 {
+  coords 1157.656 1.125 3322.784
+ }
+ Ural4320_transport2 {
+  coords 1147.135 1.156 3332.821
+ }
+ Ural4320_transport3 {
+  coords 1136.614 1.187 3342.858
+ }
+}
+Vehicle : "{259EE7B78C51B624}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469.et" {
+ coords 1168.177 1.094 3312.747
+}

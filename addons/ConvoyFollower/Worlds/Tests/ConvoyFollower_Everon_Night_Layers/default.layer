@@ -1,0 +1,87 @@
+SCR_SpawnPoint : "{E70EB9D863AF40F8}Prefabs/MP/Spawning/CF_LAVSpawnPoint_US.et" {
+ coords 7239.0 138.9 2440.0
+ m_Info SCR_UIInfo "{56B4CC4ECACA2C37}" {
+  Name "Convoy staging - Regina sports ground"
+ }
+}
+Vehicle CF_EveronLeadLAV : "{0FBF8F010F81A4E5}Prefabs/Vehicles/Wheeled/LAV25/LAV25.et" {
+ coords 7233.0 138.9 2438.0
+ angles 0 180 0
+}
+SCR_AIGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 7240.0 138.9 2454.0
+}
+SCR_AIGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 7240.0 138.9 2469.0
+}
+SCR_AIGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 7240.0 138.9 2484.0
+}
+$grp Vehicle : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ M923A1_transport1 {
+  coords 7233.0 138.9 2452.0
+  angles 0 180 0
+ }
+ M923A1_transport2 {
+  coords 7233.0 138.9 2467.0
+  angles 0 180 0
+ }
+ M923A1_transport3 {
+  coords 7233.0 138.9 2482.0
+  angles 0 180 0
+ }
+}
+GenericEntity : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+ coords 7218.0 138.9 2467.0
+ angles 0 90 0
+ components {
+  SCR_ResourceComponent "{5D8AA552F85C2FBB}" {
+   m_aContainers {
+    SCR_ResourceContainerVirtual "{5D8AA552C6324D54}" {
+     m_fResourceValueCurrent 1800
+     m_fResourceValueMax 3000
+     m_vBoundingVolumeMins -2 0 -2
+     m_vBoundingVolumeMaxs 2 2 2
+    }
+   }
+  }
+ }
+ {
+  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+   coords 0 0 0
+  }
+ }
+}
+GameEntity : "{0E94F28FD722B1D8}Prefabs/Props/Military/Generators/GeneratorFloodlight_US_01.et" {
+ coords 7219.0 138.9 2440.0
+ angles 0 90 0
+}
+GameEntity : "{0E94F28FD722B1D8}Prefabs/Props/Military/Generators/GeneratorFloodlight_US_01.et" {
+ coords 7219.0 138.9 2488.0
+ angles 0 90 0
+}
+GenericEntity : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+ coords 7445.0 142.167 4724.0
+ angles 0 90 0
+ components {
+  SCR_ResourceComponent "{5D8AA552F85C2FBB}" {
+   m_aContainers {
+    SCR_ResourceContainerVirtual "{5D8AA552C6324D54}" {
+     m_fResourceValueCurrent 0
+     m_fResourceValueMax 3000
+     m_vBoundingVolumeMins -2 0 -2
+     m_vBoundingVolumeMaxs 2 2 2
+    }
+   }
+  }
+ }
+ {
+  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+   coords 0 0 0
+  }
+ }
+}
+GameEntity : "{0E94F28FD722B1D8}Prefabs/Props/Military/Generators/GeneratorFloodlight_US_01.et" {
+ coords 7450.0 142.167 4732.0
+ angles 0 180 0
+}

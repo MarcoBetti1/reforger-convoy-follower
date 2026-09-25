@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{E2C7751867D04A19}Missions/ConvoyFollower_Everon_Night.conf"
+ Configurations {
+  CONFResourceClass PC {
+  }
+  CONFResourceClass HEADLESS : PC {
+  }
+ }
+}
