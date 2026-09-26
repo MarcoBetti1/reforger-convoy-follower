@@ -1,0 +1,37 @@
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1375.06 20.1534 3336.05
+}
+
+SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1375.06 20.1534 3334.05
+}
+
+SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1350.99 17.515 3335.1
+}
+
+Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1346.99 17.515 3331.1
+ angles 0 92 0
+ components {
+  CF_SurfaceContactProbeComponent "{ADF406155F083E64}" {
+  }
+ }
+}
+
+Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1371.06 20.1534 3330.05
+ angles 0 92 0
+ components {
+  CF_SurfaceContactProbeComponent "{3998401CB6247930}" {
+  }
+  CF_PacedRoadProbeComponent "{F06A2406CA5B329B}" {
+   m_bPacedAutoExit 1
+   m_iExpectedTrucks 1
+   m_sPacedWorld "Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_AutoExit_1Truck.ent"
+  }
+  CF_ConvoyFilmCameraComponent "{51C1F5173E4A7D17}" {
+   m_iExpectedTrucks 1
+  }
+ }
+}

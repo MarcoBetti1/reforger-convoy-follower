@@ -24,6 +24,12 @@ Use [OpenRoad PanelPilot](../addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_A
 
 Require actual Hold callback/order/state evidence, then actual Close Map and restored native input state. Only after map closure should a supported Up/M input comparison proceed. An automatically opened map, a highlighted button or successful tool return is insufficient. The observer is bounded to approximately 240 world seconds; missing events outside its coverage or after the trace budget is exhausted are inconclusive. The completed v3 run produced zero down/up/click callbacks, orders or map closure; its resolver was never exercised and Up/M were not delivered. Normal cleanup retains 11 runtime and 64 shutdown errors. This is not a demonstrated command, menu-close or powered-player-driving fix. The prior v2 run removed slot errors but did not establish those actions; preserve its 11 runtime errors and unobserved normal lifecycle separately.
 
+## Optional native shutdown for the paced one-follower control
+
+`Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_AutoExit_1Truck.ent` copies the existing paced one-follower geometry and enables only the new default-off `m_bPacedAutoExit` test option, with its own resource identity. It requests native standalone closure 30 seconds after the real `PACED_RESULT`, preserving the 60 m gap and 180-second/2 m hold gates. It refuses Workbench, network/console sessions, stale world/component identity, and cleanup; deletion cancels the callback. Normal driver prefabs and the original worlds remain unchanged.
+
+The first frozen `CF7B2B77...` run (`.cache/client/runs/paced-native-close-1truck-v1/`) failed driving spacing at 140.223 m, retained identities, and completed 180.363 seconds of hold with follower maximum drift 0.0116703 m. Native close then ran after 30.0164 seconds, followed by cleanup, `Game destroyed` and natural process exit before the launcher timer. This verifies that isolated shutdown path, not a driving fix, error-free lifecycle, Workbench runtime guard test or normal human input. See the [current validation record](convoy-validation-current.md) for final error classification and package provenance.
+
 ## Arrival, Hold, and Resume: one or two followers
 
 Worlds under `Worlds/Tests`:

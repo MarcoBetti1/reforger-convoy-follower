@@ -33,6 +33,16 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 {
 	[Attribute(defvalue: "", desc: "Exact isolated paced world resource, for report binding")]
 	protected string m_sPacedWorld;
+	[Attribute(defvalue: "0", desc: "Opt-in isolated offline client: request native exit 30 seconds after PACED_RESULT; never exits Workbench")]
+	protected bool m_bPacedAutoExit;
+	// Weak identity snapshots prevent a delayed callback closing another world.
+	protected IEntity m_PacedExitOwner;
+	protected World m_PacedExitWorld;
+	protected string m_sPacedExitWorldFile;
+	protected float m_fPacedTerminalMs;
+	protected bool m_bPacedExitPending;
+	protected bool m_bPacedExitRequested;
+	protected bool m_bPacedDeleting;
 	protected ref array<ref CF_PacedRoadTruckSample> m_PacedTrucks = {};
 	protected ref CF_NativeCruiseControl m_PacedCruise;
 	protected ref SCR_AIWaitBehavior m_PacedWait;
@@ -65,6 +75,7 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 	protected static const float PACED_MAX_DRIFT_M = 2.0;
 	protected static const float PACED_OBSERVATION_MS = 180000.0;
 	protected static const float PACED_TIMEOUT_MS = 480000.0;
+	protected static const int PACED_EXIT_DELAY_MS = 30000;
 
 	override void OnPostInit(IEntity owner)
 	{
@@ -72,13 +83,23 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 			return;
 		m_fPacedStartMs = GetGame().GetWorld().GetWorldTime();
 		m_sPacedRun = EntityKey(owner) + "_" + m_fPacedStartMs;
+		if (m_bPacedAutoExit)
+		{
+			m_PacedExitOwner = owner;
+			m_PacedExitWorld = GetGame().GetWorld();
+			m_sPacedExitWorldFile = GetGame().GetWorldFile();
+		}
 		super.OnPostInit(owner);
-		Print("[ConvoyFollower] PACED_INIT: run_id=" + m_sPacedRun + " world=" + m_sPacedWorld +
-			" expected=" + m_iExpectedTrucks + " lead_cap_kmh=25 peak_gap_m=60 observation_s=180 max_drift_m=2 timeout_s=480" +
-			" fixture_change=controlled_native_lead_and_entry_barrier legacy_worlds_unchanged=true follower_writes=false" +
-			" native_cruise=" + CF_ConvoySettings.Get().m_bNativeCruiseEnabled +
-			" moving_gap=" + CF_ConvoySettings.Get().m_fMovingGap + " stopped_gap=" + CF_ConvoySettings.Get().m_fStoppedGap +
-			" completion_radius=" + CF_ConvoySettings.Get().GetMoveCompletionRadius());
+		CF_ConvoySettings settings = CF_ConvoySettings.Get();
+		string initMessage = "[ConvoyFollower] PACED_INIT: run_id=" + m_sPacedRun + " world=" + m_sPacedWorld;
+		initMessage += " expected=" + m_iExpectedTrucks + " lead_cap_kmh=25 peak_gap_m=60 observation_s=180 max_drift_m=2 timeout_s=480";
+		initMessage += " fixture_change=controlled_native_lead_and_entry_barrier legacy_worlds_unchanged=true follower_writes=false";
+		initMessage += " native_cruise=" + settings.m_bNativeCruiseEnabled;
+		initMessage += " stable_follow_waypoints=" + settings.m_bStableFollowWaypoints;
+		initMessage += " auto_exit=" + m_bPacedAutoExit + " auto_exit_delay_s=30";
+		initMessage += " moving_gap=" + settings.m_fMovingGap + " stopped_gap=" + settings.m_fStoppedGap;
+		initMessage += " completion_radius=" + settings.GetMoveCompletionRadius();
+		Print(initMessage);
 	}
 
 	protected bool PacedWorldAlive()
@@ -705,6 +726,76 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 			" peak_gap_m=" + m_fPacedPeakGap + " observation_samples=" + m_iObservationSamples +
 			" first_failure=" + m_sFirstFailure + " owned_lead_park_retained=" + m_bPacedHoldingLead);
 		GetGame().GetCallqueue().Remove(Poll);
+		SchedulePacedExit();
+	}
+
+	// This is a supplemental capture grace period, not a new physical PASS
+	// gate. The terminal result and required observation remain unchanged.
+	protected string PacedExitRefusal()
+	{
+#ifdef WORKBENCH
+		return "workbench";
+#else
+		if (!m_bPacedAutoExit)
+			return "option_disabled";
+		if (m_bPacedDeleting || !m_bPacedTerminal || !m_bFinished || m_sPacedRun.IsEmpty())
+			return "terminal_owner_not_live";
+		if (!GetGame() || !GetGame().GetWorld() || CF_ConvoySession.CF_IsWorldCleanup())
+			return "world_missing_or_cleanup";
+		if (!GetGame().InPlayMode())
+			return "not_in_play_mode";
+		if (System.IsConsoleApp() || RplSession.Mode() != RplMode.None || !Replication.IsServer())
+			return "not_offline_client";
+		if (!m_PacedExitOwner || GetOwner() != m_PacedExitOwner || !m_PacedExitWorld ||
+			GetGame().GetWorld() != m_PacedExitWorld || m_PacedExitOwner.GetWorld() != m_PacedExitWorld)
+			return "world_or_component_changed";
+		if (m_sPacedExitWorldFile.IsEmpty() || GetGame().GetWorldFile() != m_sPacedExitWorldFile)
+			return "world_resource_changed_or_unknown";
+		return "";
+#endif
+	}
+
+	protected void SchedulePacedExit()
+	{
+		if (!m_bPacedAutoExit || m_bPacedExitPending || m_bPacedExitRequested)
+			return;
+		string reason = PacedExitRefusal();
+		if (!reason.IsEmpty())
+		{
+			Print("[ConvoyFollower] PACED_EXIT_REFUSED: run_id=" + m_sPacedRun + " phase=schedule reason=" + reason);
+			return;
+		}
+		m_fPacedTerminalMs = GetGame().GetWorld().GetWorldTime();
+		m_bPacedExitPending = true;
+		Print("[ConvoyFollower] PACED_EXIT_SCHEDULED: run_id=" + m_sPacedRun + " world=" + m_sPacedExitWorldFile +
+			" delay_s=30 supplemental_capture_only=true terminal_failed=" + m_bPacedFailed);
+		GetGame().GetCallqueue().CallLater(RequestPacedExit, PACED_EXIT_DELAY_MS, false);
+	}
+
+	protected void RequestPacedExit()
+	{
+		if (!m_bPacedExitPending || m_bPacedExitRequested)
+			return;
+		m_bPacedExitPending = false;
+		string reason = PacedExitRefusal();
+		if (!reason.IsEmpty())
+		{
+			Print("[ConvoyFollower] PACED_EXIT_REFUSED: run_id=" + m_sPacedRun + " phase=request reason=" + reason);
+			return;
+		}
+#ifndef WORKBENCH
+		float elapsedMs = GetGame().GetWorld().GetWorldTime() - m_fPacedTerminalMs;
+		if (elapsedMs < PACED_EXIT_DELAY_MS)
+		{
+			Print("[ConvoyFollower] PACED_EXIT_REFUSED: run_id=" + m_sPacedRun +
+				" phase=request reason=post_terminal_delay_not_elapsed elapsed_ms=" + elapsedMs);
+			return;
+		}
+		m_bPacedExitRequested = true;
+		Print("[ConvoyFollower] PACED_EXIT_REQUESTED: run_id=" + m_sPacedRun + " world=" + m_sPacedExitWorldFile +
+			" elapsed_s=" + elapsedMs / 1000.0 + " terminal_failed=" + m_bPacedFailed + " shutdown_completed=false");
+		GetGame().RequestClose();
+#endif
 	}
 
 	override protected void Poll()
@@ -819,11 +910,18 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 
 	override void OnDelete(IEntity owner)
 	{
+		m_bPacedDeleting = true;
 		if (GetGame())
 		{
+			GetGame().GetCallqueue().Remove(RequestPacedExit);
 			GetGame().GetCallqueue().Remove(Poll);
 			GetGame().GetCallqueue().Remove(LogOpenRoadSurvey);
 		}
+		if (m_bPacedExitPending)
+			Print("[ConvoyFollower] PACED_EXIT_REFUSED: run_id=" + m_sPacedRun + " phase=delete reason=owner_deleted_before_request");
+		m_bPacedExitPending = false;
+		m_PacedExitOwner = null;
+		m_PacedExitWorld = null;
 		bool mayReset = CanControlLead();
 		if (m_bPacedStarted && mayReset && m_PilotWaypoint)
 		{

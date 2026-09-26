@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{C181B02664ED430A}Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_AutoExit_1Truck.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

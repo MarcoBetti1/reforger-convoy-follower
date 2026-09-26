@@ -169,6 +169,8 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected float m_fNextStoppedTrailDiagnosticMs;
 	protected float m_fNextForwardLaneDiagnosticMs;
 	protected float m_fNextFollowWaitDiagnosticMs;
+	protected float m_fNextStableWaypointDiagnosticMs;
+	protected int m_iStableWaypointDiagnosticCount;
 	protected bool m_bStopSettleIssued;
 	protected bool m_bArrivalCloseLogged;
 	protected bool m_bOrderInversionLogged;
@@ -3838,6 +3840,40 @@ class CF_DriverControllerComponent : ScriptComponent
 		// In that case create a fresh order; otherwise only move the active one.
 		if (!HasOwnWaypointInGroup())
 			return IssueMoveWaypoint(destination);
+
+		// Opt-in comparison: let native AI finish its current fixed MOVE
+		// while the predecessor is genuinely moving. Retaining an order is
+		// not applying this requested goal or reporting physical completion.
+		if (CF_ConvoySettings.Get().m_bStableFollowWaypoints && m_iState == CF_FOLLOWING &&
+			m_LeadVehicle && m_fTargetStillSeconds < CF_STOP_DETECT_SECONDS)
+		{
+			float targetSpeedKmh = 0;
+			CarControllerComponent targetCar = CarControllerComponent.Cast(m_LeadVehicle.FindComponent(CarControllerComponent));
+			if (targetCar && targetCar.GetSimulation())
+				targetSpeedKmh = targetCar.GetSimulation().GetSpeedKmh();
+			if (targetSpeedKmh > 1.5)
+			{
+				// Separate diagnostic counters never reset waypoint age or goal.
+				float nowMs = GetGame().GetWorld().GetWorldTime();
+				if (m_iStableWaypointDiagnosticCount <= 64 && nowMs >= m_fNextStableWaypointDiagnosticMs)
+				{
+					m_fNextStableWaypointDiagnosticMs = nowMs + 5000;
+					if (m_iStableWaypointDiagnosticCount < 64)
+					{
+						string retained = "[ConvoyFollower] FOLLOW_MOVE_RETAINED: Unit " + m_iUnitNumber;
+						retained += " state=" + m_iState + " update_applied=false";
+						retained += " current_goal=" + m_Waypoint.GetOrigin() + " requested_goal=" + destination;
+						retained += " last_goal=" + m_vLastWaypointPosition + " waypoint_age_s=" + m_fWaypointSeconds;
+						retained += " target_kmh=" + targetSpeedKmh + " still_s=" + m_fTargetStillSeconds;
+						Print(retained);
+					}
+					else
+						Print("[ConvoyFollower] FOLLOW_MOVE_RETAINED_LIMIT: Unit " + m_iUnitNumber + " limit=64 later_retention_unlogged=true");
+					m_iStableWaypointDiagnosticCount++;
+				}
+				return true;
+			}
+		}
 
 		vector previousGoal = m_vLastWaypointPosition;
 		float previousAge = m_fWaypointSeconds;

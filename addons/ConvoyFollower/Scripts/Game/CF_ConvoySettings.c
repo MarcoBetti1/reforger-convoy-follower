@@ -14,6 +14,8 @@ class CF_ConvoySettings : ScriptAndConfig
 	float m_fMoveCompletionRadius;
 	[Attribute(defvalue: "1", category: "Navigation", desc: "Use native AI cruise pacing for ordinary predecessor following and explicit Hold. The convoy must be the only cruise-speed writer for its assigned trucks. Native steering and obstacle navigation remain in control.")]
 	bool m_bNativeCruiseEnabled;
+	[Attribute(defvalue: "0", category: "Navigation", desc: "Experimental: keep an existing ordinary-following MOVE destination fixed while the predecessor is moving. Completed-waypoint recovery remains enabled. May increase stop/start motion; leave disabled outside controlled comparisons.")]
+	bool m_bStableFollowWaypoints;
 	[Attribute(defvalue: "10", params: "4 30 0.5", category: "Spacing", desc: "Completion radius used for the final approach to a stopped predecessor, in metres. Must not exceed moving gap.")]
 	float m_fStoppedGap;
 	[Attribute(defvalue: "35", params: "5 100 1", category: "Formation", desc: "Search radius in metres for the closest empty wheeled vehicle when assigning a driver.")]
@@ -125,6 +127,7 @@ class CF_ConvoySettings : ScriptAndConfig
 		m_fMovingGap = ProfileFloat(context, "m_fMovingGap", m_fMovingGap);
 		m_fMoveCompletionRadius = ProfileFloat(context, "m_fMoveCompletionRadius", m_fMoveCompletionRadius);
 		m_bNativeCruiseEnabled = ProfileBool(context, "m_bNativeCruiseEnabled", m_bNativeCruiseEnabled);
+		m_bStableFollowWaypoints = ProfileBool(context, "m_bStableFollowWaypoints", m_bStableFollowWaypoints);
 		m_fStoppedGap = ProfileFloat(context, "m_fStoppedGap", m_fStoppedGap);
 		m_fTruckSearchRadius = ProfileFloat(context, "m_fTruckSearchRadius", m_fTruckSearchRadius);
 		m_iMaxConvoyUnits = ProfileInt(context, "m_iMaxConvoyUnits", m_iMaxConvoyUnits);
@@ -153,6 +156,7 @@ class CF_ConvoySettings : ScriptAndConfig
 		m_fMovingGap = 20.0;
 		m_fMoveCompletionRadius = 0;
 		m_bNativeCruiseEnabled = true;
+		m_bStableFollowWaypoints = false;
 		m_fStoppedGap = 10.0;
 		m_fTruckSearchRadius = 35.0;
 		m_iMaxConvoyUnits = 5;

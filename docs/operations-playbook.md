@@ -1,5 +1,9 @@
 # Reforger operations playbook
 
+## September 26 input-delivery boundary
+
+Fresh Notepad **Add New Tab** accessibility input failed with `coordinate input geometry is unavailable`; after a fresh screenshot, Ctrl+N failed with `failed to activate captured window`. No empty tab or positive key-delivery control was established, and the selected unsaved document was left untouched. The on-screen keyboard reports higher Windows integrity; a close click returned but it remained listed and visible, so removal and causality remain unproved. Stop repeated ungrounded inputs, preserve the boundary, and use a verified empty-document keypress control before another game input comparison. See [the input investigation](convoy-input-investigation.md). These generic lessons are mirrored in the independent harness; they do not establish an addon-panel defect or justify changing OS security settings.
+
 This is the working record for making local mod experiments repeatable. It records what we observed on this Windows machine separately from commands documented by Bohemia. Update an entry after a real run; do not treat a Workshop description as a gameplay test.
 
 ## Current machine
