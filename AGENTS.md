@@ -4,6 +4,8 @@ This is the Convoy Follower addon repository. Reusable tools and operating lesso
 
 Read [docs/convoy-validation-current.md](docs/convoy-validation-current.md) first for the current build and observed results, then [docs/convoy-feature-courses.md](docs/convoy-feature-courses.md) for focused fixtures. [docs/harness-handoff.md](docs/harness-handoff.md) and [docs/operations-playbook.md](docs/operations-playbook.md) retain launch instructions and historical observations. Their dated run results are not the latest release status. Update the playbook when a UI step is verified or fails. The Raven investigation is closed.
 
+[docs/convoy-development-brief.md](docs/convoy-development-brief.md) is the revised product direction, superseding the earlier bounded overnight brief. [docs/convoy-development-reset.md](docs/convoy-development-reset.md) is its adaptive roadmap. The documentation-only setup is complete; the user subsequently updated and resumed the saved goal on September 26. Preserve newer code and evidence rather than resetting to revisions quoted in the brief.
+
 ## Fast paths verified on this machine
 
 - Start with `npm run cli -- doctor --mod <WorkshopID>` to check installs and caches.

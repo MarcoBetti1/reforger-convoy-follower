@@ -2,6 +2,8 @@
 
 The user requested finishing the active test, saving a stopping point, and pausing until tomorrow. Do not resume automatically. This remains an unfinished release-readiness goal.
 
+**Later documentation-only reconciliation, September 26:** [the revised brief](convoy-development-brief.md) supersedes the earlier bounded overnight product direction, with [an updated roadmap](convoy-development-reset.md). This checkpoint remains the historical restart evidence; its hashes, results, and unrun experiments are preserved. The basic supply loop is an intermediate milestone, followed by complete arrival, regrouping, return, and release polish. Saving the brief did not resume the goal or run any implementation or tests; await the user's explicit update and resumption.
+
 ## What was learned
 
 - Normal engine preparation reduced follower startup lag from nine to five seconds.

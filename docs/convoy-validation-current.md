@@ -2,13 +2,15 @@
 
 Updated 2026-09-26 UTC. This is the concise status; the [edge-case matrix](convoy-edge-case-matrix.md) retains earlier runs. The mod is **not yet release ready**.
 
-**Paused at the user's request.** Read [the restart note](convoy-pause-2026-09-26.md) before resuming. No game, Workbench, or recorder was left running.
+**Resumed by the updated active goal, September 26.** The [pause checkpoint](convoy-pause-2026-09-26.md) remains historical evidence. Startup confirmed no Reforger client or Workbench process was running. Current investigation: native AI lead activity ownership, sustained hold, and physical restart, independently of follower tuning.
+
+**Completed documentation-only setup, September 26:** the complete [revised development brief](convoy-development-brief.md) supersedes the earlier bounded overnight direction. Saving it did not activate the goal or run implementation/live tests; the later active goal authorized resumption. The evidence below and frozen checkpoint are preserved.
 
 ## Test selection
 
 Use the [short feature courses](convoy-feature-courses.md) first for individual controls, terrain, and parking faults. Preserve full Arland/Everon routes for final integration. A short fixture must exercise the real controller and measure movement; geometry and accepted orders have separate results.
 
-The [development reflection](convoy-development-reset.md) now prioritizes route guidance and a simple physical following/supply loop. Long optional return sequences are deferred while that foundation is proved.
+The [adaptive roadmap](convoy-development-reset.md) prioritizes dependable movement and a complete basic supply trip as intermediate milestones. Assignment, individual commands, recovery, arrival, regrouping, return, multiplayer, and release polish remain in scope. Sequence their tests around established foundations; deferred work is not removed from the product goal.
 
 ## Evidence
 
