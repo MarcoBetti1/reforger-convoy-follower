@@ -1,6 +1,12 @@
-# Bounded reverse recovery — next product change
+# Bounded reverse recovery — candidate and product decision
 
-September 26, 2026. Design only: no source change, build or run. Root owns live validation. Preserve the failed v2/v3/v4 evidence and the private v4 recovery-handoff correction.
+September 26, 2026. The design below is implemented in private `reverse-recovery-v1` through `v4` candidates. Five-configuration builds and native geometry checks passed; the latest focused physical run still fails during arrival. See [current validation](convoy-validation-current.md#reverse-tracking-useful-travel-arrival-remains-the-blocker) for outcomes. It is not promoted. Root owns live validation. Preserve the earlier `loaded-pair-trip-v2/v3/v4` evidence; those names refer to different runs.
+
+## Current decision
+
+Keep the next change tied to completing the supply trip. V4 travelled successfully and accepted bounded reverse station corrections, then failed at `reverse_corridor_lost` after the tail's arrival handoff. That reason is shared by a corridor-length check and a residual-projection check; the recorded samples do not prove a lateral route departure. Review the numerical/geometry guard before changing maneuver policy. A focused correction must retain actual movement, local history and ownership requirements, then be tested physically and through the existing loaded trip.
+
+A separate later arrival option is to capture a tail's already safe, stable recorded-route gap behind a stopped predecessor, avoiding an unnecessary extra 10 m direct approach. Such a policy must prove its own low speed/stability, retain assignments/history, and verify real unloading eligibility. It cannot claim completion of an approach that never ran. Do not combine this change with the current guard comparison.
 
 ## Decision and evidence
 
@@ -30,6 +36,6 @@ In `.cache/client/runs/loaded-pair-trip-v4/logs/console.log`, Unit Two retained 
 
 The existing direct original-follow machinery can target the actual immediate predecessor, preserving the daisy chain. However, changing from guide to vehicle requires exact retirement and a new native lease/order, may cut across a bend or leave the recorded corridor, and cannot count as uninterrupted guide movement. `CF_CreateEntityFollow(..., "moving_follow")` currently routes tails back into the guide, so a fallback would require an explicit bounded mode, cancellation/timeout and new observer handling. Reacquisition would still need the local physical cursor proof above; a direct order cannot authorize a remote join or erase a real off-route failure. Defer this broader fallback unless bounded local tracking proves insufficient. If later used, expose it as degraded real-predecessor recovery and start fresh movement evidence when the guide is physically reacquired.
 
-## Next implementation step
+## Original implementation step — completed in private candidates
 
-Prepare a private candidate based on the exact reviewed v4 source: opt-in physical reverse projection and separate local/high-water values, the minimal controller/readback adaptation, and focused additions to the existing geometry probe. Review the small diff and run the geometry fixture before repeating the same frozen two-loaded-truck trip. Keep the 60 m peak, original cargo conservation, 180 s arrival, real Hold/unload and separate Resume20 m/3-powered gates. No further arrival-specific patch or full-trip retry is justified before this route behavior is addressed.
+The private candidates implement opt-in physical reverse projection and separate local/high-water values, the controller/readback adaptation, and focused additions to the existing geometry probe. Native geometry validation reached 97 passing cases. Physical stop/Hold/Resume remains incomplete, so the complete loaded trip has not been repeated with this candidate. Keep the 60 m peak, original cargo conservation, 180 s arrival, real Hold/unload and separate Resume20 m/3-powered gates. Continue from the current decision above rather than restarting implementation of this plan.

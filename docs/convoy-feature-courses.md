@@ -155,4 +155,12 @@ V6 (`5EA78318...`) passed the declared uphill-thrust and neutral-release calibra
 
 ## Running clean comparisons
 
+### September 26 command-only stop/Resume comparison
+
+The private `ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent` course reuses the existing loaded-pair coordinator with an explicit default-off command-only mode. It skips cargo workers and transfer phases (`cargo_tested=false`), preserving the ordinary native lead, real server Hold/Resume, original assignments and independent physical movement checks. It is not a normal-input or delivery test.
+
+The first candidate reused older Release-scene positions and failed before the rear truck moved: the current unjoined route-entry guard requires lateral offset at most 2 m and compatible heading. A second candidate copied the proven loaded-trip positions, but review caught an inherited 180 m minimum to the short goal before game launch. Both controls are preserved. The useful comparison now reuses the complete proven loaded-trip start **and normal native goal selection**, omitting cargo only. Avoid another custom-pilot or shortened-layout redesign while this established route can exercise the transition.
+
+Exact results and candidate hashes belong in [current validation](convoy-validation-current.md). The course does not fix the player-facing limitation on initially offset trucks; retain that as a separate forming-convoy improvement.
+
 Keep addon scripts and worlds unchanged while Workbench is open. Stop/close it before editing and repacking. Retain failed logs and recordings with the build that produced them. For packed-client tests, use an isolated addon parent directory and an explicit addon GUID; see [the operations playbook](operations-playbook.md). Use full-map long routes, tricky turns, multiplayer, player input, and audio as separate final acceptance gates.
