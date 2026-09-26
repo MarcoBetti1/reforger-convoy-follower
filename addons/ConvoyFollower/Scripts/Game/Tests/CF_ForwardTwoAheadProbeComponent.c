@@ -8,6 +8,10 @@ class CF_ForwardTwoAheadProbeComponentClass : ScriptComponentClass
 
 class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 {
+	[Attribute(defvalue: "0", params: "0 1 1", desc: "Use the atlas road-23 fixed shoulder and physical pass corridor")]
+	protected bool m_bRoad23Fixture;
+	[Attribute(defvalue: "0", params: "0 1 1", desc: "Use the atlas road-81 index-9 shoulder and physical pass corridor")]
+	protected bool m_bRoad81Fixture;
 	protected Vehicle m_Lead;
 	protected ChimeraCharacter m_Player;
 	protected ChimeraCharacter m_Pilot;
@@ -17,6 +21,7 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 	protected ref array<Vehicle> m_Trucks = {};
 	protected ref array<CF_DriverControllerComponent> m_Drivers = {};
 	protected ref array<vector> m_vResumeStarts = {};
+	protected ref array<vector> m_vResumeOrigins = {};
 	protected ref array<float> m_fResumePaths = {};
 	protected vector m_vBay;
 	protected vector m_vFirstPark;
@@ -33,6 +38,7 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 	protected IEntity m_eShoulderOccupant;
 	protected bool m_bScriptDriving;
 	protected bool m_bPilotBypass;
+	protected bool m_bRoad81LeadStaged;
 	protected bool m_bFinished;
 	protected int m_iStage;
 	protected int m_iStageTicks;
@@ -64,8 +70,10 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 		car.SetPersistentHandBrake(false);
 		if (!sim.EngineIsOn())
 			sim.EngineStart();
-		if (sim.GetGear() < 1)
-			sim.SetGear(1);
+		// Gear index 1 is neutral; the official vehicleGO sample uses 2.
+		if (sim.GetGear() != 2)
+			sim.SetGear(2);
+		sim.SetClutch(1);
 		vector current = m_Lead.GetOrigin();
 		vector facing = m_Lead.GetWorldTransformAxis(2);
 		vector driveGoal = m_vScriptRoadGoal;
@@ -262,7 +270,16 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 		}
 		candidate[1] = candidateSurface + (original[1] - originalSurface);
 		float roadGap = RoadDistance(candidate);
-		if (roadGap < 9.0 || roadGap > 20.0 ||
+		float minimumRoadGap = 9.0;
+		float maximumRoadGap = 20.0;
+		if (label == "road81_index9_bay_south9_fixed")
+		{
+			minimumRoadGap = 8.0;
+			maximumRoadGap = 10.0;
+			Print("[ConvoyFollower] AUTO_TWO_AHEAD_ROAD81_OFFSET_PREFLIGHT: target=" + candidate +
+				" measured_road_dist=" + roadGap + " required=8..10");
+		}
+		if (roadGap < minimumRoadGap || roadGap > maximumRoadGap ||
 			vector.Distance(candidate, m_Trucks[0].GetOrigin()) < 9.0 ||
 			vector.Distance(candidate, m_Trucks[1].GetOrigin()) < 12.0 ||
 			vector.Distance(candidate, m_Trucks[2].GetOrigin()) < 12.0)
@@ -316,16 +333,52 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 		aiWorld.GetRoadNetworkManager().GetClosestRoad(original, currentRoad, currentRoadGap);
 		bool wideFixture = currentRoad && currentRoad.GetWidth() >= 8.0 &&
 			vector.DistanceXZ(original, Vector(1445.0, 0, 3050.0)) < 35.0;
+		bool road23Fixture = m_bRoad23Fixture && currentRoad && currentRoad.GetWidth() >= 8.0 &&
+			vector.DistanceXZ(original, Vector(1467.18, 0, 2510.25)) < 25.0;
+		bool road81Fixture = m_bRoad81Fixture && currentRoad && currentRoad.GetWidth() >= 8.0 &&
+			vector.DistanceXZ(original, Vector(1479.70, 0, 3060.25)) < 25.0;
 		if (wideFixture)
 			desiredAhead = Vector(1527.0, 37.1, 3069.0);
+		if (road23Fixture)
+			desiredAhead = Vector(1527.29, 36.54, 2569.36);
+		if (road81Fixture)
+			desiredAhead = Vector(1563.69, 40.32, 3071.69);
 		vector connectedAhead;
 		if (!aiWorld.GetRoadNetworkManager().GetReachableWaypointInRoad(
 			m_Trucks[0].GetOrigin(), desiredAhead, 25.0, connectedAhead) ||
 			vector.Distance(connectedAhead, original) < 75.0)
 		{
 			Print("[ConvoyFollower] AUTO_TWO_AHEAD_SHOULDER_REJECT: road_ahead_unavailable desired=" +
-				desiredAhead + " resolved=" + connectedAhead + " wide=" + wideFixture);
+				desiredAhead + " resolved=" + connectedAhead + " wide=" + wideFixture +
+				" road23=" + road23Fixture + " road81=" + road81Fixture);
 			return false;
+		}
+		if (road81Fixture)
+		{
+			// Bay-side shoulder, not the forward-road lead point. Staging once
+			// when the owner reaches the goal lets followers settle behind it.
+			vector road81Shoulder = Vector(1478.08, 0, 3069.00);
+			float shoulderStageGap = vector.DistanceXZ(original, road81Shoulder);
+			Print("[ConvoyFollower] AUTO_TWO_AHEAD_EARLY_SHOULDER_PREFLIGHT: original=" +
+				original + " target=" + road81Shoulder + " planar_gap=" + shoulderStageGap);
+			if (shoulderStageGap > 25.0)
+			{
+				Print("[ConvoyFollower] AUTO_TWO_AHEAD_SHOULDER_REJECT: road81 shoulder too far from parked lead " +
+					shoulderStageGap);
+				return false;
+			}
+			return TryStageLeadAt(world, original, road81Shoulder, "road81_index9_bay_south9_fixed");
+		}
+		if (road23Fixture)
+		{
+			vector road23Shoulder = Vector(1468.78, 0, 2527.06);
+			if (vector.DistanceXZ(original, road23Shoulder) > 30.0)
+			{
+				Print("[ConvoyFollower] AUTO_TWO_AHEAD_SHOULDER_REJECT: road23 shoulder too far from parked lead " +
+					vector.DistanceXZ(original, road23Shoulder));
+				return false;
+			}
+			return TryStageLeadAt(world, original, road23Shoulder, "road23_atlas_fixed");
 		}
 		if (wideFixture)
 		{
@@ -374,6 +427,12 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 		BaseRoad road;
 		float roadGap;
 		aiWorld.GetRoadNetworkManager().GetClosestRoad(m_vFirstPark, road, roadGap);
+		if (m_bRoad23Fixture)
+			return road && road.GetWidth() >= 8.0 && roadGap <= 5.0 &&
+				vector.DistanceXZ(m_vFirstPark, Vector(1527.29, 0, 2569.36)) < 35.0;
+		if (m_bRoad81Fixture)
+			return road && road.GetWidth() >= 8.0 && roadGap <= 5.0 &&
+				vector.DistanceXZ(m_vFirstPark, Vector(1563.69, 0, 3071.69)) < 35.0;
 		return road && road.GetWidth() >= 8.0 && roadGap <= 5.0 &&
 			vector.DistanceXZ(m_vFirstPark, Vector(1520.0, 0, 3068.0)) < 50.0;
 	}
@@ -399,11 +458,15 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 	protected bool TryBuildPilotBypass(float lateralOffset)
 	{
 		BaseWorld world = GetGame().GetWorld();
-		// The test lead is staged on the positive-Z shoulder. Stay on that
-		// side of the mapped road while physically passing the parked trucks.
+		// Stay on the side used by the test lead. A later atlas fixture may
+		// stage on the opposite shoulder; never drive toward the parked lane.
 		vector shoulderSide = Vector(-m_vBayAxis[2], 0, m_vBayAxis[0]);
+		vector shoulderOffset = m_vLeadShoulder - m_vBay;
+		float signedSide = shoulderOffset[0] * shoulderSide[0] + shoulderOffset[2] * shoulderSide[2];
+		if (signedSide < 0)
+			shoulderSide = shoulderSide * -1.0;
 		Print("[ConvoyFollower] AUTO_TWO_AHEAD_BYPASS_SIDE: shoulder_normal=" + shoulderSide +
-			" lateral_offset_m=" + lateralOffset + " staged_lead=" + m_Lead.GetOrigin() +
+			" signed_shoulder_m=" + signedSide + " lateral_offset_m=" + lateralOffset + " staged_lead=" + m_Lead.GetOrigin() +
 			" staged_lead_road_gap=" + RoadDistance(m_Lead.GetOrigin()));
 		m_aPilotBypassGoals.Clear();
 		m_aPilotBypassGoals.Insert(m_Trucks[1].GetOrigin() - m_vBayAxis * 22.0 + shoulderSide * lateralOffset);
@@ -419,6 +482,9 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 			float segmentLength = vector.DistanceXZ(previous, target);
 			int samples = (int)(segmentLength / 5.0) + 1;
 			float priorSurface = world.GetSurfaceY(previous[0], previous[2]);
+			float maxRoadGap = 11.0;
+			if (targetIndex == 0)
+				maxRoadGap = 20.0; // checked connector from the parked shoulder
 			for (int sampleIndex = 1; sampleIndex <= samples; sampleIndex++)
 			{
 				float fraction = (float)sampleIndex / samples;
@@ -426,11 +492,12 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 				float surface = world.GetSurfaceY(sample[0], sample[2]);
 				float rise = surface - priorSurface;
 				float roadGap = RoadDistance(sample);
-				if (rise > 1.5 || rise < -1.5 || roadGap > 11.0)
+				if (rise > 1.5 || rise < -1.5 || roadGap > maxRoadGap)
 				{
 					Print("[ConvoyFollower] AUTO_TWO_AHEAD_BYPASS_REJECT: offset=" + lateralOffset +
 						" target=" + targetIndex + " sample=" + sampleIndex +
-						" point=" + sample + " grade_step=" + rise + " road_gap=" + roadGap);
+						" point=" + sample + " grade_step=" + rise + " road_gap=" + roadGap +
+						" allowed_road_gap=" + maxRoadGap);
 					return false;
 				}
 				sample[1] = surface;
@@ -609,6 +676,16 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 		}
 		if (m_iStage == 0)
 		{
+			if (m_bRoad81Fixture && !m_bRoad81LeadStaged && m_RouteProbe.CF_HasReachedRoadGoalWithDrive())
+			{
+				if (!AllDriversSeated() || !StageParkedLeadOnShoulder())
+				{
+					Finish("FAIL road81 early shoulder preflight rejected after physical lead arrival");
+					return;
+				}
+				m_bRoad81LeadStaged = true;
+				Print("[ConvoyFollower] AUTO_TWO_AHEAD_EARLY_SHOULDER_STAGED: waiting for normal three-truck road arrival");
+			}
 			if (!m_RouteProbe.CF_HasPassedRoadArrival())
 			{
 				if (m_iStageTicks >= 300)
@@ -621,7 +698,12 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 				return;
 			}
 			m_vBay = m_Trucks[0].GetOrigin();
-			if (!StageParkedLeadOnShoulder())
+			if (m_bRoad81Fixture && !m_bRoad81LeadStaged)
+			{
+				Finish("FAIL road81 lead was not staged before follower arrival");
+				return;
+			}
+			if (!m_bRoad81Fixture && !StageParkedLeadOnShoulder())
 			{
 				Finish("FAIL no level, clear shoulder for test lead");
 				return;
@@ -641,8 +723,13 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 			}
 			if (!CF_ConvoySession.CanReleaseAtUnload(m_Player, m_Drivers[0]))
 			{
+				if (m_iStageTicks % 5 == 0)
+					Print("[ConvoyFollower] AUTO_TWO_AHEAD_RELEASE_WAIT: reason=" +
+						m_Drivers[0].CF_GetReleaseEligibilityReason() +
+						" bay_gap=" + vector.Distance(m_Trucks[0].GetOrigin(), m_vBay));
 				if (m_iStageTicks >= 25)
-					Finish("FAIL Unit 1 did not regain release-ready after shoulder staging");
+					Finish("FAIL Unit 1 did not become release-ready at staged shoulder: " +
+						m_Drivers[0].CF_GetReleaseEligibilityReason());
 				return;
 			}
 			bool accepted1 = CF_ConvoySession.CF_PanelPullAhead(m_Player, 1);
@@ -830,6 +917,7 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 			for (int i = 0; i < 3; i++)
 			{
 				m_vResumeStarts.Insert(m_Trucks[i].GetOrigin());
+				m_vResumeOrigins.Insert(m_Trucks[i].GetOrigin());
 				m_fResumePaths.Insert(0);
 			}
 			ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
@@ -861,16 +949,31 @@ class CF_ForwardTwoAheadProbeComponent : ScriptComponent
 				m_fResumePaths[i] = m_fResumePaths[i] + vector.Distance(m_Trucks[i].GetOrigin(), m_vResumeStarts[i]);
 				m_vResumeStarts[i] = m_Trucks[i].GetOrigin();
 			}
+			float ownerProgress = ProjectFromBay(m_Lead.GetOrigin()) - ProjectFromBay(m_vOwnerResumeStart);
+			float goalClosure = vector.DistanceXZ(m_vOwnerResumeStart, m_vScriptRoadGoal) -
+				vector.DistanceXZ(m_Lead.GetOrigin(), m_vScriptRoadGoal);
+			float unit1Progress = ProjectFromBay(m_Trucks[0].GetOrigin()) - ProjectFromBay(m_vResumeOrigins[0]);
+			float unit2Progress = ProjectFromBay(m_Trucks[1].GetOrigin()) - ProjectFromBay(m_vResumeOrigins[1]);
+			float unit3Progress = ProjectFromBay(m_Trucks[2].GetOrigin()) - ProjectFromBay(m_vResumeOrigins[2]);
 			if (m_iStageTicks % 5 == 0)
 			{
 				LogOrderPosition("AUTO_TWO_AHEAD_POST_RESUME");
 				Print("[ConvoyFollower] AUTO_TWO_AHEAD_MOVEMENT: owner=" + m_fOwnerResumePath +
-					" followers=" + m_fResumePaths[0] + "," + m_fResumePaths[1] + "," + m_fResumePaths[2]);
+					" followers=" + m_fResumePaths[0] + "," + m_fResumePaths[1] + "," + m_fResumePaths[2] +
+					" owner_forward=" + ownerProgress + " goal_closure=" + goalClosure);
+				LogLeadDriveState("AUTO_TWO_AHEAD_RESUME_DRIVETRAIN");
 			}
 			if (m_fOwnerResumePath >= 30.0 && m_fResumePaths[0] >= 12.0 &&
 				m_fResumePaths[1] >= 12.0 && m_fResumePaths[2] >= 10.0 &&
+				ownerProgress >= 25.0 && goalClosure >= 20.0 &&
+				unit1Progress >= 10.0 && unit2Progress >= 10.0 && unit3Progress >= 8.0 &&
 				RoadDistance(m_Lead.GetOrigin()) <= 8.0 && SnapshotShowsChain())
+			{
+				Print("[ConvoyFollower] AUTO_TWO_AHEAD_FORWARD_PROGRESS: owner=" + ownerProgress +
+					" goal_closure=" + goalClosure + " unit1=" + unit1Progress +
+					" unit2=" + unit2Progress + " unit3=" + unit3Progress);
 				Finish("PASS two forward trucks parked in order, owner physically passed line, explicit resume rebuilt chain, all three drove again");
+			}
 			else if (m_iStageTicks >= 120)
 				Finish("FAIL resumed owner or one of three linked trucks did not physically move on road");
 		}

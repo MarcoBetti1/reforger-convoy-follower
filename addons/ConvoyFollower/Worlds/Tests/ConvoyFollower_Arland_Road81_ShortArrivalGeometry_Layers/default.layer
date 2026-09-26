@@ -1,0 +1,9 @@
+// Inert test-only anchor; the probe reads mapped road geometry and exits.
+Vehicle CF_ShortGeometryAnchor : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1300.85 34.818 3013.01
+ angles 0 76.1 0
+ components {
+  CF_ShortArrivalGeometryProbeComponent "{1B6CF7D583E2940A}" {
+  }
+ }
+}

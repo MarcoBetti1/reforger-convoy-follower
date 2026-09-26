@@ -1,0 +1,59 @@
+// Test-only road-23 atlas candidate. Four measured road-center starts are
+// about 20 m apart; the player lead must physically drive to the bay before
+// any shoulder staging or forward release. Static corridor clearance is not
+// a substitute for the strict owner-pass and three-truck rejoin gates.
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1454.5 36.35 2330.5
+}
+
+SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1454.5 36.3 2326.42
+}
+
+SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1454.5 36.25 2306.42
+}
+
+SCR_AIGroup CF_SmokeGroup2 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1454.5 36.2 2286.42
+}
+
+SCR_AIGroup CF_SmokeGroup3 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1454.5 36.1 2266.42
+}
+
+Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1459.09 36.29 2306.42
+ angles 0 0.71 0
+}
+
+Vehicle CF_SmokeFollower2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1458.88 36.22 2286.42
+ angles 0 0.51 0
+}
+
+Vehicle CF_SmokeFollower3 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1458.63 36.14 2266.42
+ angles 0 0.94 0
+}
+
+Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1459.43 36.34 2326.42
+ angles 0 0.65 0
+ components {
+  CF_SmokeProbeComponent "{8D7B0030DB86CB55}" {
+   m_iExpectedTrucks 3
+   m_bRoad23Goal 1
+   m_iMaxTestSeconds 600
+  }
+  CF_ForwardTwoAheadProbeComponent "{E77B15992F96A812}" {
+   m_bRoad23Fixture 1
+  }
+  CF_ConvoyFilmCameraComponent "{5EDB83429767AE10}" {
+   m_iExpectedTrucks 3
+   m_iCameraSide -1
+   m_iFilmBayMode 1
+   m_iFilmForwardMode 1
+  }
+ }
+}

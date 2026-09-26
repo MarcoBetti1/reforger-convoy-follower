@@ -13,6 +13,10 @@ class CF_SmokeProbeComponent : ScriptComponent
 	protected bool m_bStraightReleaseRoadGoal;
 	[Attribute(defvalue: "0", params: "0 1 1", desc: "Use the surveyed eight-metre Arland road goal for the separate wide-road forward-line fixture")]
 	protected bool m_bWideRoadGoal;
+	[Attribute(defvalue: "0", params: "0 1 1", desc: "Use the separate road-23 atlas corridor goal for a physical three-truck pass test")]
+	protected bool m_bRoad23Goal;
+	[Attribute(defvalue: "0", params: "0 1 1", desc: "Use the surveyed road-81 atlas bay for a physical three-truck pass test")]
+	protected bool m_bRoad81Goal;
 	[Attribute(defvalue: "300", params: "120 600 1", desc: "Maximum total test seconds; pause-resume needs an extra owner-on-foot interval")]
 	protected int m_iMaxTestSeconds;
 	[Attribute(defvalue: "210", params: "120 450 1", desc: "Maximum drive seconds including any planned stop or owner exit")]
@@ -142,6 +146,13 @@ class CF_SmokeProbeComponent : ScriptComponent
 	bool CF_HasPassedRoadArrival()
 	{
 		return m_bRoadArrivalPassed;
+	}
+
+	// Test-only handoff point for a scenario whose lead truck parks on a
+	// surveyed shoulder before the follower trucks finish their arrival.
+	bool CF_HasReachedRoadGoalWithDrive()
+	{
+		return m_bRoadGoalReached && m_fLeadPath >= CF_MIN_LEAD_PATH;
 	}
 
 	void CF_ReleaseLeadBrakeForReturn()
@@ -377,8 +388,54 @@ class CF_SmokeProbeComponent : ScriptComponent
 			Print("[ConvoyFollower] AUTO_ROUTE_EXPLICIT: connected width-8 road goal=" + m_vRoadGoal +
 				" from=" + m_vInitialLeadPosition + " mapped_width=" + wideRoad.GetWidth());
 		}
+		else if (m_bRoad81Goal)
+		{
+			vector desiredRoad81Goal = Vector(1479.70, 35.52, 3060.25);
+			vector resolvedRoad81Goal;
+			bool connectedRoad81Goal = roads.GetReachableWaypointInRoad(
+				m_vInitialLeadPosition, desiredRoad81Goal, 25.0, resolvedRoad81Goal);
+			BaseRoad road81;
+			float road81Gap;
+			roads.GetClosestRoad(resolvedRoad81Goal, road81, road81Gap);
+			if (!connectedRoad81Goal || vector.Distance(desiredRoad81Goal, resolvedRoad81Goal) > 8.0 ||
+				vector.DistanceXZ(m_vInitialLeadPosition, resolvedRoad81Goal) < 175.0 ||
+				!road81 || road81.GetWidth() < 8.0 || road81Gap > 5.0)
+			{
+				Print("[ConvoyFollower] AUTO_ROUTE_EXPLICIT: FAIL road81 goal unavailable desired=" +
+					desiredRoad81Goal + " resolved=" + resolvedRoad81Goal +
+					" connected=" + connectedRoad81Goal + " road_gap=" + road81Gap);
+				return false;
+			}
+			m_vRoadGoal = resolvedRoad81Goal;
+			bestScore = 1000000.0;
+			Print("[ConvoyFollower] AUTO_ROUTE_EXPLICIT: connected road81 width-8 goal=" +
+				m_vRoadGoal + " from=" + m_vInitialLeadPosition + " mapped_width=" + road81.GetWidth());
+		}
+		else if (m_bRoad23Goal)
+		{
+			vector desiredRoad23Goal = Vector(1467.18, 35.36, 2510.25);
+			vector resolvedRoad23Goal;
+			bool connectedRoad23Goal = roads.GetReachableWaypointInRoad(
+				m_vInitialLeadPosition, desiredRoad23Goal, 25.0, resolvedRoad23Goal);
+			BaseRoad road23;
+			float road23Gap;
+			roads.GetClosestRoad(resolvedRoad23Goal, road23, road23Gap);
+			if (!connectedRoad23Goal || vector.Distance(desiredRoad23Goal, resolvedRoad23Goal) > 8.0 ||
+				vector.DistanceXZ(m_vInitialLeadPosition, resolvedRoad23Goal) < 175.0 ||
+				!road23 || road23.GetWidth() < 8.0 || road23Gap > 5.0)
+			{
+				Print("[ConvoyFollower] AUTO_ROUTE_EXPLICIT: FAIL road23 goal unavailable desired=" +
+					desiredRoad23Goal + " resolved=" + resolvedRoad23Goal +
+					" connected=" + connectedRoad23Goal + " road_gap=" + road23Gap);
+				return false;
+			}
+			m_vRoadGoal = resolvedRoad23Goal;
+			bestScore = 1000000.0;
+			Print("[ConvoyFollower] AUTO_ROUTE_EXPLICIT: connected road23 width-8 goal=" +
+				m_vRoadGoal + " from=" + m_vInitialLeadPosition + " mapped_width=" + road23.GetWidth());
+		}
 		vector initialForward = m_Lead.GetWorldTransformAxis(2);
-		for (int radiusIndex = 0; radiusIndex < 3 && !m_bStraightReleaseRoadGoal && !m_bWideRoadGoal; radiusIndex++)
+		for (int radiusIndex = 0; radiusIndex < 3 && !m_bStraightReleaseRoadGoal && !m_bWideRoadGoal && !m_bRoad23Goal && !m_bRoad81Goal; radiusIndex++)
 		{
 			float radius = 160.0 + radiusIndex * 70.0;
 			for (int directionIndex = 0; directionIndex < directions.Count(); directionIndex++)

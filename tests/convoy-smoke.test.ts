@@ -174,6 +174,7 @@ describe("convoy smoke runner", () => {
       "SCRIPT : [ConvoyFollower] FORWARD_OUTBOUND_HOLD_COMPLETE: Unit 3 seated",
       "SCRIPT : [ConvoyFollower] FORWARD_WAIT_RESUME_LINE: owner passed parked line",
       "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_POST_RESUME: owner/Unit1/Unit2/Unit3 positions",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_FORWARD_PROGRESS: owner=31 goal_closure=28 unit1=14 unit2=13 unit3=10",
       "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_RESULT: PASS two trucks parked and convoy resumed",
     ];
     const good = summarizeSmokeLog([...base, ...sequence].join("\n"), 3, "forward-twoahead");
@@ -181,6 +182,9 @@ describe("convoy smoke runner", () => {
     expect(good.twoAheadParkingPassed).toBe(true);
     expect(good.twoAheadHoldObserved).toBe(true);
     expect(good.twoAheadHoldPassed).toBe(true);
+    expect(good.twoAheadForwardProgressPassed).toBe(true);
+    expect(summarizeSmokeLog([...base, ...sequence].join("\n").replace("owner=31", "owner=-31"), 3, "forward-twoahead").passed).toBe(false);
+    expect(summarizeSmokeLog([...base, ...sequence].join("\n").replace("unit3=10", "unit3=0"), 3, "forward-twoahead").passed).toBe(false);
     expect(summarizeSmokeLog([...base, ...sequence.slice(0, 2), sequence.at(-1)!].join("\n"), 3, "forward-twoahead").passed).toBe(false);
     expect(summarizeSmokeLog([...base, ...sequence.slice(0, -1),
       "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_RESULT: FAIL physical inversion",
@@ -235,6 +239,7 @@ describe("convoy smoke runner", () => {
       "SCRIPT : [ConvoyFollower] FORWARD_OUTBOUND_HOLD_COMPLETE: Unit 3 seated",
       "SCRIPT : [ConvoyFollower] FORWARD_WAIT_RESUME_LINE: owner passed parked line",
       "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_POST_RESUME: owner/Unit1/Unit2/Unit3 positions",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_FORWARD_PROGRESS: owner=31 goal_closure=28 unit1=14 unit2=13 unit3=10",
       "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_RESULT: PASS physical chain resumed",
     ];
     const report = summarizeSmokeLog(log.join("\n"), 3, "forward-twoahead-wide");
@@ -244,6 +249,68 @@ describe("convoy smoke runner", () => {
     expect(summarizeSmokeLog([...log.slice(0, -1),
       "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_RESULT: FAIL no owner pass",
     ].join("\n"), 3, "forward-twoahead-wide").passed).toBe(false);
+  });
+
+  it("requires the full physical resume gate in the separate road-23 atlas fixture", () => {
+    expect(parseSmokeArgs(["--trucks", "3", "--variant", "forward-twoahead-road23"]).variant).toBe("forward-twoahead-road23");
+    expect(() => parseSmokeArgs(["--trucks", "2", "--variant", "forward-twoahead-road23"])).toThrow("requires --trucks 3");
+    const layer = readFileSync(path.resolve("addons", "ConvoyFollower", "Worlds", "Tests",
+      "ConvoyFollower_Arland_Road23_Auto_3Trucks_ForwardTwoAhead_Layers", "default.layer"), "utf8");
+    expect(layer).toContain("m_bRoad23Goal 1");
+    expect(layer).toContain("m_bRoad23Fixture 1");
+    const prefix = [
+      "WORLD : Entities load '$ConvoyFollower:Worlds/Tests/ConvoyFollower_Arland_Road23_Auto_3Trucks_ForwardTwoAhead.ent'",
+      "SCRIPT : [ConvoyFollower] AUTO_INIT: expected=3",
+      "SCRIPT : SCR_BaseGameMode::OnGameStateChanged = GAME",
+      "SCRIPT : [ConvoyFollower] AUTO_EN_ROUTE_METRICS: max_gap=125 warning_s=0 no_progress_s=4",
+      "SCRIPT : [ConvoyFollower] AUTO_RESULT: PASS stable road arrival",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_PARKED: Unit 1",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_BAY_CLEAR: Unit 1",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_PARKED: Unit 2",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_BAY_CLEAR: Unit 2",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_PARKED: spacing=19 projected_order_spacing=18",
+      "SCRIPT : [ConvoyFollower] FORWARD_OUTBOUND_HOLD_REQUESTED: owner passed 20m",
+      "SCRIPT : [ConvoyFollower] FORWARD_OUTBOUND_HOLD_COMPLETE: Unit 3 seated",
+    ];
+    expect(summarizeSmokeLog(prefix.join("\n"), 3, "forward-twoahead-road23").passed).toBe(false);
+    const complete = [...prefix,
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_RESUME_LINE: owner passed parked line",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_POST_RESUME: owner/Unit1/Unit2/Unit3 positions",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_FORWARD_PROGRESS: owner=31 goal_closure=28 unit1=14 unit2=13 unit3=10",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_RESULT: PASS physical chain resumed",
+    ];
+    expect(summarizeSmokeLog(complete.join("\n"), 3, "forward-twoahead-road23").passed).toBe(true);
+  });
+
+  it("requires the full physical resume gate in the separate road-81 atlas fixture", () => {
+    expect(parseSmokeArgs(["--trucks", "3", "--variant", "forward-twoahead-road81"]).variant).toBe("forward-twoahead-road81");
+    expect(() => parseSmokeArgs(["--trucks", "2", "--variant", "forward-twoahead-road81"])).toThrow("requires --trucks 3");
+    const layer = readFileSync(path.resolve("addons", "ConvoyFollower", "Worlds", "Tests",
+      "ConvoyFollower_Arland_Road81_Auto_3Trucks_ForwardTwoAhead_Layers", "default.layer"), "utf8");
+    expect(layer).toContain("m_bRoad81Goal 1");
+    expect(layer).toContain("m_bRoad81Fixture 1");
+    const prefix = [
+      "WORLD : Entities load '$ConvoyFollower:Worlds/Tests/ConvoyFollower_Arland_Road81_Auto_3Trucks_ForwardTwoAhead.ent'",
+      "SCRIPT : [ConvoyFollower] AUTO_INIT: expected=3",
+      "SCRIPT : SCR_BaseGameMode::OnGameStateChanged = GAME",
+      "SCRIPT : [ConvoyFollower] AUTO_EN_ROUTE_METRICS: max_gap=125 warning_s=0 no_progress_s=4",
+      "SCRIPT : [ConvoyFollower] AUTO_RESULT: PASS stable road arrival",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_PARKED: Unit 1",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_BAY_CLEAR: Unit 1",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_PARKED: Unit 2",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_BAY_CLEAR: Unit 2",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_PARKED: spacing=19 projected_order_spacing=18",
+      "SCRIPT : [ConvoyFollower] FORWARD_OUTBOUND_HOLD_REQUESTED: owner passed 20m",
+      "SCRIPT : [ConvoyFollower] FORWARD_OUTBOUND_HOLD_COMPLETE: Unit 3 seated",
+    ];
+    expect(summarizeSmokeLog(prefix.join("\n"), 3, "forward-twoahead-road81").passed).toBe(false);
+    const complete = [...prefix,
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_RESUME_LINE: owner passed parked line",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_POST_RESUME: owner/Unit1/Unit2/Unit3 positions",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_FORWARD_PROGRESS: owner=31 goal_closure=28 unit1=14 unit2=13 unit3=10",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_RESULT: PASS physical chain resumed",
+    ];
+    expect(summarizeSmokeLog(complete.join("\n"), 3, "forward-twoahead-road81").passed).toBe(true);
   });
 
   it("rejects a gameplay PASS when the selected F5 run has an engine or script error", () => {
@@ -271,6 +338,34 @@ describe("convoy smoke runner", () => {
     const sameErrorDuringGame = summarizeSmokeLog([...goodRun, knownBaseLoad].join("\n"), 2, "forward-wait");
     expect(sameErrorDuringGame.passed).toBe(false);
     expect(sameErrorDuringGame.errorLines).toHaveLength(1);
+
+    // Vanilla Arland loads this exact base helipad after GAME and AUTO_INIT.
+    // It is excused only in the adjacent prefab-load sequence before gameplay.
+    const vanillaHelipadPrefab = 'WORLD : Entity prefab load @"{472BE7BF1240C1CE}Prefabs/Compositions/Misc/SubCompositions/Utility/Helipad_Lights_US_01.et"';
+    const vanillaHelipadLoad = "WORLD (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)";
+    const gameplayStarted = "SCRIPT : [ConvoyFollower] AUTO_PLAYER: spawned and possessed test character";
+    const withVanillaHelipadLoad = summarizeSmokeLog([
+      ...goodRun.slice(0, 3), vanillaHelipadPrefab, vanillaHelipadLoad, gameplayStarted, ...goodRun.slice(3),
+    ].join("\n"), 2, "forward-wait");
+    expect(withVanillaHelipadLoad.passed).toBe(true);
+    expect(withVanillaHelipadLoad.errorLines).toHaveLength(0);
+    expect(withVanillaHelipadLoad.baselineLoadErrorLines).toEqual([vanillaHelipadLoad]);
+    const helipadErrorDuringGame = summarizeSmokeLog([
+      ...goodRun.slice(0, 3), gameplayStarted, vanillaHelipadPrefab, vanillaHelipadLoad, ...goodRun.slice(3),
+    ].join("\n"), 2, "forward-wait");
+    expect(helipadErrorDuringGame.passed).toBe(false);
+    expect(helipadErrorDuringGame.errorLines).toEqual([vanillaHelipadLoad]);
+    const noHelipadAssetContext = summarizeSmokeLog([
+      ...goodRun.slice(0, 3), vanillaHelipadLoad, gameplayStarted, ...goodRun.slice(3),
+    ].join("\n"), 2, "forward-wait");
+    expect(noHelipadAssetContext.passed).toBe(false);
+    expect(noHelipadAssetContext.errorLines).toEqual([vanillaHelipadLoad]);
+    const changedHelipadOffset = vanillaHelipadLoad.replace("2307(0x903)", "2308(0x904)");
+    const unknownHelipadError = summarizeSmokeLog([
+      ...goodRun.slice(0, 3), vanillaHelipadPrefab, changedHelipadOffset, gameplayStarted, ...goodRun.slice(3),
+    ].join("\n"), 2, "forward-wait");
+    expect(unknownHelipadError.passed).toBe(false);
+    expect(unknownHelipadError.errorLines).toEqual([changedHelipadOffset]);
   });
 
   it("keeps appended Workbench previews from supplying stale pass evidence", () => {
@@ -358,4 +453,64 @@ describe("convoy smoke runner", () => {
     expect(() => parseSmokeArgs(["--trucks", "2", "--keep-open", "--duration-seconds", "30"])).toThrow("cannot be combined");
     expect(() => parseSmokeArgs(["--trucks", "2", "--require-pass"])).toThrow("requires --report");
   });
+
+  it("requires measured movement and authoritative Hold/Resume in the short-arrival fixture", () => {
+    for (const trucks of [1, 2] as const) {
+      expect(parseSmokeArgs(["--trucks", String(trucks), "--variant", "short-arrival"]).variant).toBe("short-arrival");
+      const basename = `ConvoyFollower_Arland_Road81_ShortArrival_${trucks}Truck${trucks === 1 ? "" : "s"}`;
+      const world = readFileSync(path.resolve("addons/ConvoyFollower/Worlds/Tests", `${basename}.ent`), "utf8");
+      const layer = readFileSync(path.resolve("addons/ConvoyFollower/Worlds/Tests", `${basename}_Layers/default.layer`), "utf8");
+      expect(world).toMatch(/^SubScene\s*\{/);
+      expect(world).not.toContain("CF_SmokeLead");
+      expect((layer.match(/SCR_AIGroup\s+CF_SmokeGroup\d\s*:/g) ?? []).length).toBe(trucks);
+      expect((layer.match(/Vehicle\s+CF_Smoke/g) ?? []).length).toBe(trucks + 1);
+      expect((layer.match(/CF_ShortArrivalProbeComponent/g) ?? []).length).toBe(1);
+      const log = shortArrivalLog(trucks);
+      const report = summarizeSmokeLog(log, trucks, "short-arrival");
+      expect(report.passed).toBe(true);
+      expect(report.shortArrivalPhysicalPassed).toBe(true);
+      expect(report.enRouteMetrics).toBeUndefined();
+      expect(summarizeSmokeLog(log.replace("SHORT_ARRIVAL_HOLD_COMPLETED", "SHORT_ARRIVAL_HOLD_PENDING"), trucks, "short-arrival").passed).toBe(false);
+      expect(summarizeSmokeLog(log.replaceAll("second_displacement=25", "second_displacement=0"), trucks, "short-arrival").passed).toBe(false);
+      expect(summarizeSmokeLog(log.replace("signed_arc_progress=52", "signed_arc_progress=-52"), trucks, "short-arrival").passed).toBe(false);
+      expect(summarizeSmokeLog(log.replace("second_arc_progress=58", "second_arc_progress=-58"), trucks, "short-arrival").passed).toBe(false);
+      expect(summarizeSmokeLog(log.replace("second_elevation_gain=2", "second_elevation_gain=-2"), trucks, "short-arrival").passed).toBe(false);
+      expect(summarizeSmokeLog(log.replaceAll("gear=2", "gear=1"), trucks, "short-arrival").passed).toBe(false);
+      expect(summarizeSmokeLog(log.replace("SHORT_ARRIVAL_RESUME_STATE: completed: convoy following", "SHORT_ARRIVAL_RESUME_STATE: accepted: resuming"), trucks, "short-arrival").passed).toBe(false);
+    }
+    expect(() => parseSmokeArgs(["--trucks", "3", "--variant", "short-arrival"])).toThrow("requires --trucks 1 or 2");
+  });
+
+  it("keeps short-arrival errors and pre-terminal member loss fatal while ignoring teardown loss", () => {
+    const clean = shortArrivalLog(2);
+    const memberLoss = "SCRIPT : [ConvoyFollower] CONVOY_UNIT_REMOVED: Unit2 test failure";
+    expect(summarizeSmokeLog(clean.replace("SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_RESULT:", `${memberLoss}\nSCRIPT : [ConvoyFollower] SHORT_ARRIVAL_RESULT:`), 2, "short-arrival").passed).toBe(false);
+    expect(summarizeSmokeLog(`${clean}\n${memberLoss}`, 2, "short-arrival").passed).toBe(true);
+    expect(summarizeSmokeLog(`${clean}\nSCRIPT (E): runtime failure`, 2, "short-arrival").passed).toBe(false);
+    const editReload = `${clean}\nINIT : Workbench Reload Game\nSCRIPT : [ConvoyFollower] SHORT_ARRIVAL_INIT: expected=2`;
+    expect(summarizeSmokeLog(editReload, 2, "short-arrival").passed).toBe(true);
+    expect(summarizeSmokeLog(clean, 1, "short-arrival").passed).toBe(false);
+    expect(summarizeSmokeLog(clean.replace("SCRIPT : SCR_BaseGameMode::", "SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_INIT: expected=2 duplicate\nSCRIPT : SCR_BaseGameMode::"), 2, "short-arrival").passed).toBe(false);
+  });
 });
+
+function shortArrivalLog(trucks: 1 | 2): string {
+  return [
+    `WORLD : Entities load '$ConvoyFollower:Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrival_${trucks}Truck${trucks === 1 ? "" : "s"}.ent'`,
+    `SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_INIT: expected=${trucks} owner pilot`,
+    "SCRIPT : SCR_BaseGameMode::OnGameStateChanged = GAME",
+    ...Array.from({ length: trucks }, (_, i) => `SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_ORDER: unit=${i + 1} accepted=true`),
+    "SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_DRIVETRAIN: stage=2 engine=true rpm=1600 gear=2 clutch=1 throttle=0.28 brake=0",
+    "SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_LEAD_STOP: physical_path=53 physical_displacement=52 goal_gap=8 signed_arc_progress=52",
+    "SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_SETTLED: stable_seconds=8 lead_path=54",
+    "SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_HOLD_ORDER: accepted=true state=executing: approaching",
+    "SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_HOLD_COMPLETED: all trucks stationary and seated",
+    "SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_RESUME_ORDER: accepted=true state=accepted: resuming",
+    "SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_RESUME_STATE: completed: convoy following",
+    "SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_DRIVETRAIN: stage=5 engine=true rpm=1600 gear=2 clutch=1 throttle=0.28 brake=0",
+    "SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_SECOND_COMPLETE: all moved",
+    "SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_FINAL: stage=6 speed=0 road_gap=1 path=114 second_path=60 second_displacement=58 bay_gap=61 postframe_ticks=1200 signed_arc_progress=110 second_arc_progress=58 second_elevation_gain=2",
+    ...Array.from({ length: trucks }, (_, i) => `SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_UNIT: unit=${i + 1} path=90 second_path=30 gap=13 road_gap=2 speed=0 seated=true inverted=false second_displacement=25`),
+    "SCRIPT : [ConvoyFollower] SHORT_ARRIVAL_RESULT: PASS authoritative Hold/Resume and both physical legs",
+  ].join("\n");
+}

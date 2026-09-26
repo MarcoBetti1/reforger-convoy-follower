@@ -104,7 +104,7 @@ def main() -> None:
         "processor": "tools/render_convoy_leader_radio.py",
         "format": staged_manifest["format"],
         "clip_count": len(checked),
-        "notes": "Aggregate leader calls plus Unit 1-10 exception reports. Unit 1 is reserved; current member chain starts at Unit 2. Under-fire clips are assets only until a gameplay trigger is verified.",
+        "notes": "Aggregate leader calls plus Unit 1-10 exception reports. The current convoy uses Units 1-5; clips for Units 6-10 are legacy extras. Confirmed driver or assigned-vehicle hits can trigger under-fire calls; near misses do not.",
         "clips": [],
     }
     for entry, source, guid, meta_text, duration in checked:

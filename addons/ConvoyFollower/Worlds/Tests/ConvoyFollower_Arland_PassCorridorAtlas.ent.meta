@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{84D9C0A79E42B631}Worlds/Tests/ConvoyFollower_Arland_PassCorridorAtlas.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

@@ -1,27 +1,31 @@
+// Test-only copy of the Regina sports-ground one-truck staging. Runtime
+// survey chooses an unobstructed 60-100 m field goal before any drive.
 SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
- coords 1375.06 20.1534 3336.05
+ coords 7239.0 138.9 2440.0
 }
 
 SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
- coords 1375.06 20.1534 3334.05
+ coords 7240.0 138.9 2435.0
 }
 
 SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
- coords 1350.99 17.515 3335.1
+ coords 7240.0 138.9 2454.0
 }
 
 Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
- coords 1346.99 17.515 3331.1
- angles 0 92 0
+ coords 7233.0 138.9 2452.0
+ angles 0 180 0
 }
 
 Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
- coords 1371.06 20.1534 3330.05
- angles 0 92 0
+ coords 7233.0 138.9 2438.0
+ angles 0 180 0
  components {
-  CF_SurfaceContactProbeComponent "{9048B36F17D2AEC5}" {
+  CF_SurfaceContactProbeComponent "{ECB13D0849F72560}" {
   }
-  CF_SmokeProbeComponent "{8D7B0030DB86CB55}" {
+  CF_EveronOffroadProbeComponent "{8B5CAD039C91B102}" {
+  }
+  CF_ConvoyFilmCameraComponent "{EC18D42F6B0448A9}" {
    m_iExpectedTrucks 1
   }
  }

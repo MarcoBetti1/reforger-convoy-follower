@@ -1,0 +1,29 @@
+// Test-only visible road81 index9 arrival. Exact centers/tangents were
+// surveyed in GAME; actor clearance and movement remain F5 proof gates.
+// One owner-driven lead + one AI follower. No runtime vehicle reposition.
+SCR_SpawnPoint CF_ShortArrivalSpawn : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1423.0 37.2 3040.5
+}
+
+SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1403.4 37.16 3036.0
+}
+
+Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1402.61 37.1625 3038.90
+ angles 0 74.83 0
+}
+
+Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1421.87 37.1938 3044.28
+ angles 0 74.23 0
+ components {
+  CF_SurfaceContactProbeComponent "{7C34A8916D02BE50}" {
+  }
+  CF_ShortArrivalProbeComponent "{9E02AC764531DB8F}" {
+   m_iExpectedTrucks 1
+  }
+  CF_ShortArrivalFilmCameraComponent "{B8F67092AD453C1E}" {
+  }
+ }
+}

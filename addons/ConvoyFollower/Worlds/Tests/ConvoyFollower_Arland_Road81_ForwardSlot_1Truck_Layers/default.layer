@@ -1,0 +1,23 @@
+// The previously surveyed road81 arrival bay. Starts only; no runtime teleport.
+SCR_SpawnPoint CF_ForwardSlotSpawn : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1478.08 35.35 3073.0
+}
+SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1468.0 36.15 3053.5
+}
+Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1469.93 36.02 3057.51
+ angles 0 75.11 0
+}
+Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1478.08 35.35 3069.0
+ angles 0 75.11 0
+ components {
+  CF_ForwardSlotProbeComponent "{54DA23F689BC107E}" {
+  }
+  CF_ConvoyFilmCameraComponent "{BC62E38AF407951D}" {
+   m_iExpectedTrucks 1
+   m_iCameraSide -1
+  }
+ }
+}

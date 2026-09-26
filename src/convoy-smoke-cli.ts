@@ -12,12 +12,10 @@ const WORLDS: Record<number, string> = {
   3: "Worlds/Tests/ConvoyFollower_Arland_Auto_3Trucks.ent",
 };
 
-type SmokeVariant = "harbor" | "open-road" | "release" | "release-wide" | "pause-resume" | "forward-wait" | "forward-blocked" | "forward-twoahead" | "forward-twoahead-wide";
+type SmokeVariant = "harbor" | "open-road" | "short-arrival" | "release" | "release-wide" | "pause-resume" | "forward-wait" | "forward-blocked" | "forward-twoahead" | "forward-twoahead-wide" | "forward-twoahead-road23" | "forward-twoahead-road81";
 
-// Workbench 1.8.0.13 reports these same base-world data warnings on every
-// Arland F5 load on this machine, before any ConvoyFollower probe initializes.
-// Keep the list exact and narrow: a changed offset or an error during gameplay
-// must be reviewed rather than silently excused.
+// Workbench 1.8.0.13 reports these base-world data warnings before the probe
+// initializes. Keep the list exact and narrow: changed offsets still fail.
 const KNOWN_WORKBENCH_LOAD_ERRORS = new Set([
   "Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
   "Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
@@ -27,9 +25,17 @@ const KNOWN_WORKBENCH_LOAD_ERRORS = new Set([
   "Unknown keyword/data 'Parent' at offset 44617(0xae49)",
   "Unknown keyword/data 'Parent' at offset 45590(0xb216)",
 ]);
+// Vanilla Arland loads this helipad prefab after GAME and AUTO_INIT in both
+// Workbench and the packed client, but before the first convoy gameplay action.
+const KNOWN_HELIPAD_LOAD_ERROR = "Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)";
+const KNOWN_HELIPAD_PREFAB_LOAD = /\bWORLD\s*:\s*Entity prefab load @"\{472BE7BF1240C1CE\}Prefabs\/Compositions\/Misc\/SubCompositions\/Utility\/Helipad_Lights_US_01\.et"\s*$/;
 
 function worldFor(trucks: 1 | 2 | 3, variant: SmokeVariant): string {
   if (variant === "harbor") return WORLDS[trucks];
+  if (variant === "short-arrival") {
+    if (trucks === 3) throw new Error("The short-arrival variant requires --trucks 1 or 2.");
+    return `Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrival_${trucks}Truck${trucks === 1 ? "" : "s"}.ent`;
+  }
   if (variant === "release") {
     if (trucks !== 2) throw new Error("The release variant requires --trucks 2.");
     return "Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_Release.ent";
@@ -58,13 +64,21 @@ function worldFor(trucks: 1 | 2 | 3, variant: SmokeVariant): string {
     if (trucks !== 3) throw new Error("The forward-twoahead-wide variant requires --trucks 3.");
     return "Worlds/Tests/ConvoyFollower_Arland_WideRoad_Auto_3Trucks_ForwardTwoAhead.ent";
   }
+  if (variant === "forward-twoahead-road23") {
+    if (trucks !== 3) throw new Error("The forward-twoahead-road23 variant requires --trucks 3.");
+    return "Worlds/Tests/ConvoyFollower_Arland_Road23_Auto_3Trucks_ForwardTwoAhead.ent";
+  }
+  if (variant === "forward-twoahead-road81") {
+    if (trucks !== 3) throw new Error("The forward-twoahead-road81 variant requires --trucks 3.");
+    return "Worlds/Tests/ConvoyFollower_Arland_Road81_Auto_3Trucks_ForwardTwoAhead.ent";
+  }
   return `Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_${trucks}Truck${trucks === 1 ? "" : "s"}.ent`;
 }
 
 const USAGE = `Convoy Follower scripted road-route test runner (dry run by default)
 
-  npm run convoy:test -- --trucks 1|2|3 [--variant harbor|open-road|release|release-wide|pause-resume|forward-wait|forward-blocked|forward-twoahead|forward-twoahead-wide] [--duration-seconds 360 | --keep-open] [--run-dir <new-directory>] [--profile <isolated-directory>] [--addons-dir <packed-addons-root>] [--game <ArmaReforgerSteam.exe>] [--execute]
-  npm run convoy:test -- --trucks 1|2|3 [--variant harbor|open-road|release|release-wide|pause-resume|forward-wait|forward-blocked|forward-twoahead|forward-twoahead-wide] --report <console.log> [--require-pass]
+  npm run convoy:test -- --trucks 1|2|3 [--variant harbor|open-road|short-arrival|release|release-wide|pause-resume|forward-wait|forward-blocked|forward-twoahead|forward-twoahead-wide|forward-twoahead-road23|forward-twoahead-road81] [--duration-seconds 360 | --keep-open] [--run-dir <new-directory>] [--profile <isolated-directory>] [--addons-dir <packed-addons-root>] [--game <ArmaReforgerSteam.exe>] [--execute]
+  npm run convoy:test -- --trucks 1|2|3 [--variant harbor|open-road|short-arrival|release|release-wide|pause-resume|forward-wait|forward-blocked|forward-twoahead|forward-twoahead-wide|forward-twoahead-road23|forward-twoahead-road81] --report <console.log> [--require-pass]
 
 Pack the addon first. Each auto world has a test-only probe that attempts player possession, convoy orders, and a sustained road drive. The 1-truck scene also orders explicit unload release. The report distinguishes script-observed movement from visual gameplay proof. Standalone client behavior still needs a live test.
 `;
@@ -107,6 +121,9 @@ export interface SmokeReport {
   twoAheadParkingPassed?: boolean;
   twoAheadHoldObserved?: boolean;
   twoAheadHoldPassed?: boolean;
+  twoAheadForwardProgressPassed?: boolean;
+  shortArrivalResult?: string;
+  shortArrivalPhysicalPassed?: boolean;
   errorLines: string[];
   baselineLoadErrorLines: string[];
   passed: boolean;
@@ -144,7 +161,8 @@ export function parseSmokeArgs(argv: string[], now = new Date(), pid = process.p
   const count = Number(values.get("--trucks"));
   if (count !== 1 && count !== 2 && count !== 3) throw new Error("--trucks must be 1, 2, or 3.");
   const variant = values.get("--variant") ?? "harbor";
-  if (variant !== "harbor" && variant !== "open-road" && variant !== "release" && variant !== "release-wide" && variant !== "pause-resume" && variant !== "forward-wait" && variant !== "forward-blocked" && variant !== "forward-twoahead" && variant !== "forward-twoahead-wide") throw new Error("--variant must be harbor, open-road, release, release-wide, pause-resume, forward-wait, forward-blocked, forward-twoahead, or forward-twoahead-wide.");
+  if (variant !== "harbor" && variant !== "open-road" && variant !== "short-arrival" && variant !== "release" && variant !== "release-wide" && variant !== "pause-resume" && variant !== "forward-wait" && variant !== "forward-blocked" && variant !== "forward-twoahead" && variant !== "forward-twoahead-wide" && variant !== "forward-twoahead-road23" && variant !== "forward-twoahead-road81") throw new Error("--variant must be harbor, open-road, short-arrival, release, release-wide, pause-resume, forward-wait, forward-blocked, forward-twoahead, forward-twoahead-wide, forward-twoahead-road23, or forward-twoahead-road81.");
+  if (variant === "short-arrival" && count === 3) throw new Error("The short-arrival variant requires --trucks 1 or 2.");
   if (variant === "release" && count !== 2) throw new Error("The release variant requires --trucks 2.");
   if (variant === "release-wide" && count !== 2) throw new Error("The release-wide variant requires --trucks 2.");
   if (variant === "pause-resume" && count !== 2) throw new Error("The pause-resume variant requires --trucks 2.");
@@ -152,6 +170,8 @@ export function parseSmokeArgs(argv: string[], now = new Date(), pid = process.p
   if (variant === "forward-blocked" && count !== 2) throw new Error("The forward-blocked variant requires --trucks 2.");
   if (variant === "forward-twoahead" && count !== 3) throw new Error("The forward-twoahead variant requires --trucks 3.");
   if (variant === "forward-twoahead-wide" && count !== 3) throw new Error("The forward-twoahead-wide variant requires --trucks 3.");
+  if (variant === "forward-twoahead-road23" && count !== 3) throw new Error("The forward-twoahead-road23 variant requires --trucks 3.");
+  if (variant === "forward-twoahead-road81" && count !== 3) throw new Error("The forward-twoahead-road81 variant requires --trucks 3.");
   if (keepOpen && values.has("--duration-seconds")) throw new Error("--keep-open and --duration-seconds cannot be combined.");
   if (values.has("--report") && (execute || keepOpen || values.has("--duration-seconds"))) {
     throw new Error("--report reads an existing log and cannot launch a client.");
@@ -180,13 +200,17 @@ export function parseSmokeArgs(argv: string[], now = new Date(), pid = process.p
 
 export function summarizeSmokeLog(logText: string, trucks: 1 | 2 | 3, variant: SmokeVariant = "harbor"): SmokeReport {
   const expectedWorld = worldFor(trucks, variant);
+  const isTwoAheadVariant = variant === "forward-twoahead" || variant === "forward-twoahead-wide" || variant === "forward-twoahead-road23" || variant === "forward-twoahead-road81";
+  const isShortArrival = variant === "short-arrival";
+  const initName = isShortArrival ? "SHORT_ARRIVAL_INIT" : "AUTO_INIT";
+  const initPattern = new RegExp(`\\[ConvoyFollower\\]\\s+${initName}:`);
   const lines = logText.split(/\r?\n/);
   // Workbench appends F5 previews and an edit-mode reload to one console.log.
   // The edit-mode reload creates another AUTO_INIT without entering GAME.
   // Report the last actual F5 session, not that trailing editor instance.
   let lastInit = -1;
   for (let index = lines.length - 1; index >= 0; index -= 1) {
-    if (/\[ConvoyFollower\]\s+AUTO_INIT:/.test(lines[index])) {
+    if (initPattern.test(lines[index])) {
       lastInit = index;
       break;
     }
@@ -203,7 +227,7 @@ export function summarizeSmokeLog(logText: string, trucks: 1 | 2 | 3, variant: S
   if (lastGame >= 0 && lastReload > lastGame) {
     runEnd = lastReload;
     for (let index = lastGame; index >= 0; index -= 1) {
-      if (/\[ConvoyFollower\]\s+AUTO_INIT:/.test(lines[index])) {
+      if (initPattern.test(lines[index])) {
         selectedInit = index;
         break;
       }
@@ -225,6 +249,10 @@ export function summarizeSmokeLog(logText: string, trucks: 1 | 2 | 3, variant: S
   const counts: Record<string, number> = {};
   const errors: string[] = [];
   const baselineLoadErrors: string[] = [];
+  const firstConvoyGameplayEvent = currentRunLines.findIndex((line) => {
+    const event = /\[ConvoyFollower\]\s+([A-Z][A-Z0-9_]+):/.exec(line);
+    return Boolean(event && !event[1].endsWith("_INIT"));
+  });
   let autoResult: string | undefined;
   let releaseResult: string | undefined;
   let sequenceResult: string | undefined;
@@ -232,6 +260,7 @@ export function summarizeSmokeLog(logText: string, trucks: 1 | 2 | 3, variant: S
   let forwardResult: string | undefined;
   let forwardBlockedResult: string | undefined;
   let twoAheadResult: string | undefined;
+  let shortArrivalResult: string | undefined;
   let enRouteMetrics: EnRouteMetrics | undefined;
   for (const line of eventLines) {
     const event = /\[ConvoyFollower\]\s+([A-Z][A-Z0-9_]+):/.exec(line);
@@ -250,6 +279,8 @@ export function summarizeSmokeLog(logText: string, trucks: 1 | 2 | 3, variant: S
     if (forwardBlocked) forwardBlockedResult = forwardBlocked[1].trim();
     const twoAhead = /\[ConvoyFollower\]\s+AUTO_TWO_AHEAD_RESULT:\s*(.+)/.exec(line);
     if (twoAhead) twoAheadResult = twoAhead[1].trim();
+    const shortArrival = /\[ConvoyFollower\]\s+SHORT_ARRIVAL_RESULT:\s*(.+)/.exec(line);
+    if (shortArrival) shortArrivalResult = shortArrival[1].trim();
     const metrics = /\[ConvoyFollower\]\s+AUTO_EN_ROUTE_METRICS:\s+max_gap=([0-9.]+)\s+warning_s=(\d+)\s+no_progress_s=(\d+)/.exec(line);
     if (metrics) enRouteMetrics = {
       maxGap: Number(metrics[1]),
@@ -259,12 +290,19 @@ export function summarizeSmokeLog(logText: string, trucks: 1 | 2 | 3, variant: S
   }
   // Errors can occur during world/entity setup before AUTO_INIT. Keep the
   // event counts scoped to the probe, but inspect the whole selected F5 run.
-  // Only the seven observed base-world load messages above are exempt, and
-  // only before this run's probe init. Report them separately for visibility.
+  // Seven base-world messages are exempt only before probe init. The exact
+  // vanilla helipad prefab warning is also exempt in its adjacent asset-load
+  // sequence before any convoy action; GAME alone is not a reliable boundary.
   for (let index = 0; index < currentRunLines.length; index += 1) {
     const line = currentRunLines[index];
     if (!/\b(?:ENGINE|WORLD|RESOURCES|SCRIPT|RPL)\s*\(E\):/.test(line)) continue;
     const worldError = /\bWORLD\s*\(E\):\s*(.+)$/.exec(line);
+    if (worldError && selectedInit >= 0 && firstConvoyGameplayEvent >= 0 && index < firstConvoyGameplayEvent &&
+      worldError[1].trim() === KNOWN_HELIPAD_LOAD_ERROR &&
+      KNOWN_HELIPAD_PREFAB_LOAD.test(currentRunLines[index - 1] ?? "")) {
+      if (baselineLoadErrors.length < 30) baselineLoadErrors.push(line.trim());
+      continue;
+    }
     if (worldError && selectedInit >= 0 && index < selectedInit - runStart &&
       KNOWN_WORKBENCH_LOAD_ERRORS.has(worldError[1].trim())) {
       if (baselineLoadErrors.length < 30) baselineLoadErrors.push(line.trim());
@@ -274,7 +312,7 @@ export function summarizeSmokeLog(logText: string, trucks: 1 | 2 | 3, variant: S
   }
   const observedWorld = currentRunLines.some((line) => worldLine.test(line));
   const enteredGame = enteredGameState(currentRunLines.join("\n"));
-  const observedExpectedCount = selectedInit >= 0 && new RegExp(`\\[ConvoyFollower\\]\\s+AUTO_INIT:\\s+expected=${trucks}(?:\\D|$)`).test(lines[selectedInit]);
+  const observedExpectedCount = selectedInit >= 0 && new RegExp(`\\[ConvoyFollower\\]\\s+${initName}:\\s+expected=${trucks}(?:\\D|$)`).test(lines[selectedInit]);
   const qualityPassed = enRouteMetrics !== undefined &&
     enRouteMetrics.warningSeconds < 8 && enRouteMetrics.noProgressSeconds < 15;
   const routePassed = autoResult?.startsWith("PASS") && qualityPassed;
@@ -299,7 +337,46 @@ export function summarizeSmokeLog(logText: string, trucks: 1 | 2 | 3, variant: S
       /\[ConvoyFollower\]\s+FORWARD_OUTBOUND_HOLD_COMPLETE:/.test(line));
   const twoAheadHoldPassed = twoAheadParkingPassed &&
     twoAheadHoldObserved && !twoAheadStageStallOrRemoval;
-  const passed = observedWorld && enteredGame && observedExpectedCount && Boolean(routePassed) && errors.length === 0 &&
+  const shortResultIndex = eventLines.findIndex((line) => /\[ConvoyFollower\]\s+SHORT_ARRIVAL_RESULT:/.test(line));
+  const shortLines = eventLines.slice(0, shortResultIndex >= 0 ? shortResultIndex + 1 : undefined);
+  const metric = (line: string, key: string): number => {
+    const match = new RegExp(`(?:^|\\s)${key}=(-?[0-9.]+)(?:\\s|$)`).exec(line);
+    return match ? Number(match[1]) : Number.NaN;
+  };
+  const twoAheadForwardProgressPassed = twoAheadStageLines.some((line) =>
+    /\[ConvoyFollower\]\s+AUTO_TWO_AHEAD_FORWARD_PROGRESS:/.test(line) &&
+    metric(line, "owner") >= 25 && metric(line, "goal_closure") >= 20 &&
+    metric(line, "unit1") >= 10 && metric(line, "unit2") >= 10 && metric(line, "unit3") >= 8);
+  const finalShortLead = shortLines.filter((line) => /\[ConvoyFollower\]\s+SHORT_ARRIVAL_FINAL:/.test(line)).at(-1) ?? "";
+  const shortUnitEvidence = Array.from({ length: trucks }, (_, i) => {
+    const unit = i + 1;
+    const finalUnit = shortLines.filter((line) => new RegExp(`\\[ConvoyFollower\\]\\s+SHORT_ARRIVAL_UNIT:\\s+unit=${unit}\\s`).test(line)).at(-1) ?? "";
+    const accepted = shortLines.some((line) => new RegExp(`\\[ConvoyFollower\\]\\s+SHORT_ARRIVAL_ORDER:\\s+unit=${unit}\\s+accepted=true`).test(line));
+    return accepted && metric(finalUnit, "path") >= 35 && metric(finalUnit, "second_path") >= 20 &&
+      metric(finalUnit, "second_displacement") >= 20 && metric(finalUnit, "gap") <= 30 &&
+      metric(finalUnit, "road_gap") <= 6 && metric(finalUnit, "speed") <= 2 &&
+      /\bseated=true\b/.test(finalUnit) && /\binverted=false\b/.test(finalUnit);
+  }).every(Boolean);
+  const shortLiveProbeCount = currentRunLines.filter((line) => initPattern.test(line)).length;
+  const shortArrivalPhysicalPassed = shortLiveProbeCount === 1 && Boolean(shortArrivalResult?.startsWith("PASS")) && shortUnitEvidence &&
+    metric(finalShortLead, "path") >= 80 && metric(finalShortLead, "second_path") >= 35 &&
+    metric(finalShortLead, "second_displacement") >= 30 && metric(finalShortLead, "road_gap") <= 6 &&
+    metric(finalShortLead, "signed_arc_progress") >= 80 && metric(finalShortLead, "second_arc_progress") >= 30 &&
+    metric(finalShortLead, "second_elevation_gain") >= 1 &&
+    metric(finalShortLead, "speed") <= 2 &&
+    [2, 5].every((stage) => shortLines.some((line) => /SHORT_ARRIVAL_DRIVETRAIN:/.test(line) &&
+      metric(line, "stage") === stage && /\bengine=true\b/.test(line) && metric(line, "gear") === 2 &&
+      metric(line, "clutch") >= 0.9 && metric(line, "throttle") > 0 && metric(line, "brake") === 0)) &&
+    shortLines.some((line) => /SHORT_ARRIVAL_LEAD_STOP:/.test(line) && metric(line, "physical_path") >= 45 && metric(line, "physical_displacement") >= 45 && metric(line, "signed_arc_progress") >= 45 && metric(line, "goal_gap") <= 9) &&
+    shortLines.some((line) => /SHORT_ARRIVAL_SETTLED:/.test(line) && metric(line, "stable_seconds") >= 8) &&
+    shortLines.some((line) => /SHORT_ARRIVAL_HOLD_ORDER:\s+accepted=true/.test(line)) &&
+    shortLines.some((line) => /SHORT_ARRIVAL_HOLD_COMPLETED:/.test(line)) &&
+    shortLines.some((line) => /SHORT_ARRIVAL_RESUME_ORDER:\s+accepted=true/.test(line)) &&
+    shortLines.some((line) => /SHORT_ARRIVAL_RESUME_STATE:\s+completed: convoy following/.test(line)) &&
+    shortLines.some((line) => /SHORT_ARRIVAL_SECOND_COMPLETE:/.test(line)) &&
+    !shortLines.some((line) => /\[ConvoyFollower\]\s+(?:STUCK_TERMINAL|CONVOY_UNIT_REMOVED|CONVOY_ENDED):/.test(line));
+  const passed = observedWorld && enteredGame && observedExpectedCount &&
+    Boolean(isShortArrival ? shortArrivalPhysicalPassed : routePassed) && errors.length === 0 &&
     ((variant !== "release" && variant !== "release-wide") || Boolean(sequenceResult?.startsWith("PASS"))) &&
     (variant !== "release-wide" || ((counts.AUTO_SEQUENCE_PARKED ?? 0) >= 1 &&
       (counts.AUTO_SEQUENCE_RETURN_MERGED ?? 0) >= 1 &&
@@ -308,7 +385,7 @@ export function summarizeSmokeLog(logText: string, trucks: 1 | 2 | 3, variant: S
     (variant !== "forward-wait" || Boolean(forwardResult?.startsWith("PASS"))) &&
     (variant !== "forward-blocked" || (Boolean(forwardBlockedResult?.startsWith("PASS")) &&
       blockedLaneReasonSeen && !counts.FORWARD_WAIT_REQUESTED)) &&
-    ((variant !== "forward-twoahead" && variant !== "forward-twoahead-wide") || (twoAheadHoldPassed && Boolean(twoAheadResult?.startsWith("PASS")) &&
+    (!isTwoAheadVariant || (twoAheadHoldPassed && twoAheadForwardProgressPassed && Boolean(twoAheadResult?.startsWith("PASS")) &&
       (counts.AUTO_TWO_AHEAD_POST_RESUME ?? 0) >= 1 && (counts.FORWARD_WAIT_RESUME_LINE ?? 0) >= 1));
   return {
     expectedWorld,
@@ -325,13 +402,18 @@ export function summarizeSmokeLog(logText: string, trucks: 1 | 2 | 3, variant: S
     forwardResult,
     forwardBlockedResult,
     twoAheadResult,
-    ...(variant === "forward-twoahead" || variant === "forward-twoahead-wide" ? { twoAheadParkingPassed, twoAheadHoldObserved, twoAheadHoldPassed } : {}),
+    ...(isShortArrival ? { shortArrivalResult, shortArrivalPhysicalPassed } : {}),
+    ...(isTwoAheadVariant ? { twoAheadParkingPassed, twoAheadHoldObserved, twoAheadHoldPassed, twoAheadForwardProgressPassed } : {}),
     errorLines: errors,
     baselineLoadErrorLines: baselineLoadErrors,
     passed,
     interpretation: errors.length > 0
       ? "The selected F5 run contains engine, world, resource, script, or replication errors. Inspect them before treating any gameplay PASS marker as valid."
-      : variant === "forward-twoahead" || variant === "forward-twoahead-wide"
+      : isShortArrival
+      ? passed
+        ? "Script observed a physical short approach, stationary arrival, authoritative Hold/Resume, and renewed displacement by every seated assigned truck. This fixture tests arrival controls; sustained route following and actual UI input remain separate gates."
+        : "The short-arrival gate failed. It requires authoritative Hold/Resume plus measured road position, seating, and physical displacement from every truck; accepted orders or a terminal PASS string alone are insufficient."
+      : isTwoAheadVariant
       ? passed
         ? "Script observed two separated seated forward parks, a physical owner-vehicle pass, explicit roster rechain, and renewed movement of all three trucks. Review video for turn and spacing quality."
         : twoAheadParkingPassed && !twoAheadHoldObserved
@@ -377,14 +459,17 @@ function printReport(report: SmokeReport): void {
   if (report.forwardResult) process.stdout.write(`Forward-wait sequence: ${report.forwardResult}\n`);
   if (report.forwardBlockedResult) process.stdout.write(`Forward lane-blocked sequence: ${report.forwardBlockedResult}\n`);
   if (report.twoAheadResult) process.stdout.write(`Two-ahead and explicit resume sequence: ${report.twoAheadResult}\n`);
+  if (report.shortArrivalResult) process.stdout.write(`Short arrival, Hold, and Resume: ${report.shortArrivalResult}\n`);
+  if (report.shortArrivalPhysicalPassed !== undefined) process.stdout.write(`Short-arrival physical/authoritative gate: ${report.shortArrivalPhysicalPassed ? "PASS" : "FAIL"}\n`);
   if (report.twoAheadParkingPassed !== undefined) {
     process.stdout.write(`Two-ahead physical parking gate: ${report.twoAheadParkingPassed ? "PASS" : "FAIL"}\n`);
     process.stdout.write(`Outbound hold requested and completed: ${report.twoAheadHoldObserved ? "yes" : "no"}\n`);
     process.stdout.write(`Unreleased follower hold gate (completed without stuck terminal/removal): ${report.twoAheadHoldPassed ? "PASS" : "FAIL"}\n`);
+    process.stdout.write(`Resumed positive forward/goal progress: ${report.twoAheadForwardProgressPassed ? "PASS" : "FAIL"}\n`);
   }
   process.stdout.write(`Engine/world/resource/script/replication error lines (first 30): ${report.errorLines.length}\n`);
   if (report.baselineLoadErrorLines.length > 0) {
-    process.stdout.write(`Known pre-init Workbench world-load errors ignored: ${report.baselineLoadErrorLines.length}\n`);
+    process.stdout.write(`Known base-asset world-load errors ignored before gameplay: ${report.baselineLoadErrorLines.length}\n`);
   }
   process.stdout.write(`Smoke gate: ${report.passed ? "PASS" : "FAIL"}\n`);
   process.stdout.write(`${report.interpretation}\n`);

@@ -28,6 +28,7 @@ class CF_ConvoySession
 	protected static const float CF_ORDER_REWIRE_MAX_LATERAL = 7.0;
 
 	protected static ref map<int, ref CF_ConvoySession> s_mSessions = new map<int, ref CF_ConvoySession>();
+	protected static bool s_bWorldCleanup;
 
 	protected int m_iOrderingPlayerId;
 	protected IEntity m_OrderingPlayer;
@@ -85,9 +86,95 @@ class CF_ConvoySession
 	protected string m_sPanelOrderState;
 	protected float m_fPanelOrderDeadlineMs;
 
+	static bool CF_IsWorldCleanup()
+	{
+		return s_bWorldCleanup;
+	}
+
+	static void CF_OnWorldStart()
+	{
+		s_bWorldCleanup = false;
+	}
+
+	// This is called by the engine's pre-unload event, not by a match-state
+	// guess. Normal in-game driver death/deletion still uses roster rewiring.
+	static void CF_OnBeforeWorldCleanup()
+	{
+		if (s_bWorldCleanup)
+			return;
+		s_bWorldCleanup = true;
+		int sessionCount = s_mSessions.Count();
+		foreach (int playerId, CF_ConvoySession session : s_mSessions)
+		{
+			if (session)
+				session.ShutdownForWorldCleanup();
+		}
+		s_mSessions.Clear();
+		if (sessionCount > 0)
+			Print("[ConvoyFollower] WORLD_CLEANUP: detached " + sessionCount + " sessions without issuing AI orders");
+	}
+
+	protected void CancelScheduledPolls()
+	{
+		m_bUnloadPollScheduled = false;
+		if (!GetGame())
+			return;
+		GetGame().GetCallqueue().Remove(PollUnloadSequence);
+		GetGame().GetCallqueue().Remove(PollReturnShift);
+	}
+
+	protected void ShutdownForWorldCleanup()
+	{
+		m_bSessionClosed = true;
+		CancelScheduledPolls();
+		// Repeated references are harmless: driver detachment is idempotent.
+		foreach (CF_DriverControllerComponent active : m_aUnits)
+		{
+			if (active)
+				active.CF_DetachForWorldCleanup();
+		}
+		foreach (CF_DriverControllerComponent parked : m_aReturnQueue)
+		{
+			if (parked)
+				parked.CF_DetachForWorldCleanup();
+		}
+		foreach (CF_DriverControllerComponent ahead : m_aForwardWait)
+		{
+			if (ahead)
+				ahead.CF_DetachForWorldCleanup();
+		}
+		foreach (CF_DriverControllerComponent stranded : m_aStrandedUnits)
+		{
+			if (stranded)
+				stranded.CF_DetachForWorldCleanup();
+		}
+		if (m_PendingDriver)
+			m_PendingDriver.CF_DetachForWorldCleanup();
+		if (m_UnloadHead)
+			m_UnloadHead.CF_DetachForWorldCleanup();
+		if (m_ShiftingReturn)
+			m_ShiftingReturn.CF_DetachForWorldCleanup();
+		m_aUnits.Clear();
+		m_aReturnQueue.Clear();
+		m_aForwardWait.Clear();
+		m_aStrandedUnits.Clear();
+		m_aIdentityDrivers.Clear();
+		m_aIdentityNumbers.Clear();
+		m_PendingDriver = null;
+		m_LeaderBeingReplaced = null;
+		m_UnloadHead = null;
+		m_ShiftingReturn = null;
+		m_OrderInversionCandidate = null;
+		m_OrderingPlayer = null;
+		m_OriginalLeadVehicle = null;
+		m_ReturnMarkerVehicle = null;
+		m_iPendingOperation = CF_PENDING_NONE;
+		m_iUnloadPhase = CF_UNLOAD_NONE;
+	}
+
 	protected static int GetPlayerId(IEntity user)
 	{
-		if (!user || !GetGame())
+		if (s_bWorldCleanup || !user || !GetGame())
 			return 0;
 
 		PlayerManager manager = GetGame().GetPlayerManager();
@@ -1002,7 +1089,7 @@ class CF_ConvoySession
 
 	protected void PollReturnShift()
 	{
-		if (!Replication.IsServer() || m_iUnloadPhase != CF_UNLOAD_SHIFTING || !m_UnloadHead)
+		if (m_bSessionClosed || !Replication.IsServer() || m_iUnloadPhase != CF_UNLOAD_SHIFTING || !m_UnloadHead)
 			return;
 		if (!m_ShiftingReturn || !m_ShiftingReturn.CF_IsBoarded())
 		{
@@ -1848,7 +1935,7 @@ class CF_ConvoySession
 
 	void OnDriverBoarded(CF_DriverControllerComponent driver)
 	{
-		if (!Replication.IsServer() || !driver || driver != m_PendingDriver || !driver.CF_IsBoarded())
+		if (m_bSessionClosed || !Replication.IsServer() || !driver || driver != m_PendingDriver || !driver.CF_IsBoarded())
 			return;
 
 		int operation = m_iPendingOperation;
@@ -1914,7 +2001,7 @@ class CF_ConvoySession
 
 	void OnDriverUnavailable(CF_DriverControllerComponent driver)
 	{
-		if (!Replication.IsServer() || !driver)
+		if (m_bSessionClosed || !Replication.IsServer() || !driver)
 			return;
 		if (driver == m_UnloadHead)
 			OnUnloadDepartureFailed(driver);
@@ -1977,7 +2064,7 @@ class CF_ConvoySession
 
 	void OnDriverStatus(CF_DriverControllerComponent driver, int eventId)
 	{
-		if (!Replication.IsServer() || !driver)
+		if (m_bSessionClosed || !Replication.IsServer() || !driver)
 			return;
 
 		int index = FindUnit(driver);
@@ -2285,6 +2372,7 @@ class CF_ConvoySession
 	protected void CloseSession()
 	{
 		m_bSessionClosed = true;
+		CancelScheduledPolls();
 		m_UnloadHead = null;
 		m_iUnloadPhase = CF_UNLOAD_NONE;
 		m_aReturnQueue.Clear();
@@ -2302,5 +2390,22 @@ class CF_ConvoySession
 		Print("[ConvoyFollower] CONVOY_ENDED: no units remain");
 		if (s_mSessions.Contains(m_iOrderingPlayerId) && s_mSessions.Get(m_iOrderingPlayerId) == this)
 			s_mSessions.Remove(m_iOrderingPlayerId);
+	}
+}
+
+// The installed engine API explicitly calls this before world entities are
+// deleted. Run our quiet detach before the base game's own cleanup listeners.
+modded class ArmaReforgerScripted
+{
+	override bool OnGameStart()
+	{
+		CF_ConvoySession.CF_OnWorldStart();
+		return super.OnGameStart();
+	}
+
+	override protected void OnBeforeWorldCleanup()
+	{
+		CF_ConvoySession.CF_OnBeforeWorldCleanup();
+		super.OnBeforeWorldCleanup();
 	}
 }

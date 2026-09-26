@@ -1,10 +1,12 @@
-# Reforger local test workspace
+# Convoy Follower for Arma Reforger
 
-Local tools and notes for repeatable Arma Reforger mod research, scenario tests, and addon validation. The older MCP helper remains available for inspecting local files and documentation.
+Addon source, recorded radio assets, repeatable gameplay tests, and development notes for a player-led AI vehicle convoy. Unit One follows the player, later drivers follow the truck ahead, and the leader speaks for the convoy.
 
 ## Current focus
 
-This repository contains the Reforger test harness and the [Convoy Follower addon](addons/ConvoyFollower/README.md). The harness supports a Workbench-first loop: open a prepared Arland or Everon scene, validate and pack the addon, launch a local world, and inspect logs. An autonomous one-, two-, and three-truck gameplay test and video capture loop is under development; it is not yet evidence of reliable driving. Start with the [map-maker quickstart](docs/convoy-mapmaker-quickstart.md) for the addon, the [automated smoke test](docs/convoy-automated-smoke.md) for the test matrix, or the [harness handoff](docs/harness-handoff.md) for the tooling. The [operations playbook](docs/operations-playbook.md) records observed UI behavior.
+The [addon](addons/ConvoyFollower/README.md) is under active release testing. Autonomous one-, two-, and three-truck road runs and video capture exist, but repeatability, offroad behavior, and the complete unload/pass/return loop remain under test. Start with the [map-maker quickstart](docs/convoy-mapmaker-quickstart.md), the [short feature courses](docs/convoy-feature-courses.md), or the [full driving tests](docs/convoy-automated-smoke.md). The [navigation plan](docs/convoy-navigation-release-plan.md) explains the internal driving module and release gates.
+
+The reusable **Reforger Agent Harness** has its own independent public repository: [MarcoBetti1/reforger-agent-harness](https://github.com/MarcoBetti1/reforger-agent-harness). The local tools retained here run this mod's tests. General launchers, Workbench automation, and reusable machine-operation lessons are maintained in the harness repository; convoy behavior, scenes, audio, and acceptance evidence belong here.
 
 ## What is in this repo
 

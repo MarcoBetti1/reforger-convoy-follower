@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{C93B6E8A42D5170F}Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrivalGeometry.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

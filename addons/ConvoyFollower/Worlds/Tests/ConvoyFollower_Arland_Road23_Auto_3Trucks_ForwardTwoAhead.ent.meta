@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{977212BA060741BB}Worlds/Tests/ConvoyFollower_Arland_Road23_Auto_3Trucks_ForwardTwoAhead.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

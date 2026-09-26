@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{02793054D93049F5}Worlds/Tests/ConvoyFollower_Arland_RoadPolylineGeometry.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

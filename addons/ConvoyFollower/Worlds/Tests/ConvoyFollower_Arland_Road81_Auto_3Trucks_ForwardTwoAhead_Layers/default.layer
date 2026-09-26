@@ -1,0 +1,58 @@
+// Test-only road-81 atlas candidate 9. Four connected, surveyed width-8 road
+// starts are about 20 m apart. Outbound driving, two physical forward parks,
+// a player-lead bypass, and resumed convoy movement remain live test gates.
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1298.8 34.9 3018.0
+}
+
+SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1299.7 34.9 3018.0
+}
+
+SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1280.3 34.3 3013.1
+}
+
+SCR_AIGroup CF_SmokeGroup2 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1260.9 34.3 3008.1
+}
+
+SCR_AIGroup CF_SmokeGroup3 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1241.6 35.3 3002.8
+}
+
+Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1281.45 34.24 3008.14
+ angles 0 75.43 0
+}
+
+Vehicle CF_SmokeFollower2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1262.09 34.26 3003.13
+ angles 0 76.03 0
+}
+
+Vehicle CF_SmokeFollower3 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1242.82 35.28 2997.81
+ angles 0 72.47 0
+}
+
+Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1300.85 34.92 3013.01
+ angles 0 76.09 0
+ components {
+  CF_SmokeProbeComponent "{8D7B0030DB86CB55}" {
+   m_iExpectedTrucks 3
+   m_bRoad81Goal 1
+   m_iMaxTestSeconds 600
+  }
+  CF_ForwardTwoAheadProbeComponent "{E77B15992F96A812}" {
+   m_bRoad81Fixture 1
+  }
+  CF_ConvoyFilmCameraComponent "{5EDB83429767AE10}" {
+   m_iExpectedTrucks 3
+   m_iCameraSide -1
+   m_iFilmBayMode 1
+   m_iFilmForwardMode 1
+  }
+ }
+}

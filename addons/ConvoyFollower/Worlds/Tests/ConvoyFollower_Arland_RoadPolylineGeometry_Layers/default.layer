@@ -1,0 +1,13 @@
+// The geometry probe is independent of vehicle AI and issues no movement.
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1329.0 15.4287 3337.98
+}
+
+Vehicle CF_RoadPolylineGeometryAnchor : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1327.34 15.4287 3331.98
+ angles 0 92 0
+ components {
+  CF_RoadPolylineGeometryProbeComponent "{567AEFF3A21D40A5}" {
+  }
+ }
+}

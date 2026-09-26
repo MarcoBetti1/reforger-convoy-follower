@@ -1,0 +1,25 @@
+// Test-only atlas. Three empty M923 proxies are repositioned to each selected
+// width-8 road station; no convoy order or movement is counted as a pass.
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1392.14 37.1 3036.06
+}
+
+Vehicle CF_SurveyPark1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1518.26 36.42 3067.12
+ angles 0 76.3 0
+}
+
+Vehicle CF_SurveyPark2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1494.7 35.42 3063.44
+ angles 0 76.3 0
+}
+
+Vehicle CF_SurveyLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1441.25 36.45 3059.3
+ angles 0 76.3 0
+ components {
+  CF_PassCorridorSurveyProbeComponent "{A7D4B30501ECB690}" {
+   m_bAtlas 1
+  }
+ }
+}

@@ -68,6 +68,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected static const float CF_STOP_SETTLE_DISTANCE = 14.0;
 	protected static const float CF_STOPPED_TRAIL_BACK_DISTANCE = 12.0;
 	protected static const float CF_STOPPED_TRAIL_MAX_TARGET_DISTANCE = 24.0;
+	protected static const float CF_STOPPED_TRAIL_DIAGNOSTIC_INTERVAL_MS = 10000.0;
 	protected static const float CF_STOPPED_ROAD_GOAL_RADIUS = 4.0;
 	// A successor can stop a few metres before its saved cargo-bay MOVE goal
 	// while still being close enough to unload at the same road position.
@@ -155,6 +156,8 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected float m_fWaypointSeconds;
 	protected float m_fStuckSeconds;
 	protected float m_fTargetStillSeconds;
+	protected float m_fNextStoppedTrailDiagnosticMs;
+	protected float m_fNextForwardLaneDiagnosticMs;
 	protected bool m_bStopSettleIssued;
 	protected bool m_bArrivalCloseLogged;
 	protected bool m_bOrderInversionLogged;
@@ -1036,15 +1039,50 @@ class CF_DriverControllerComponent : ScriptComponent
 		float leadLateral = toLead[0] * travel[2] - toLead[2] * travel[0];
 		if (leadLateral < 0)
 			leadLateral = -leadLateral;
-		if (leadAhead > -4.0 && leadAhead < 30.0 && leadLateral < 8.0)
-		{
-			m_sReleasePlanFailureReason = "Move your lead vehicle off the driving lane to let this truck pass";
-			return false;
-		}
 		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
 		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
 		{
 			m_sReleasePlanFailureReason = "Vehicle road navigation is unavailable here";
+			return false;
+		}
+		RoadNetworkManager roads = aiWorld.GetRoadNetworkManager();
+		BaseRoad departureRoad;
+		float truckRoadDistance;
+		roads.GetClosestRoad(current, departureRoad, truckRoadDistance);
+		ref array<vector> departurePoints = {};
+		if (departureRoad)
+			departureRoad.GetPoints(departurePoints);
+		float laneClearance;
+		bool laneMapped = departureRoad && truckRoadDistance <= 8.0 &&
+			CF_RoadPolyline.TryForwardCorridorClearance(departurePoints, current,
+				travel, 30.0, lead, laneClearance);
+		float nowMs = GetGame().GetWorld().GetWorldTime();
+		if (nowMs >= m_fNextForwardLaneDiagnosticMs)
+		{
+			m_fNextForwardLaneDiagnosticMs = nowMs + 10000.0;
+			Print("[ConvoyFollower] FORWARD_WAIT_LANE_SCAN: Unit " + m_iUnitNumber +
+				" truck=" + current + " lead=" + lead + " travel=" + travel +
+				" approach_ahead=" + leadAhead + " approach_lateral=" + leadLateral +
+				" road_gap=" + truckRoadDistance + " mapped=" + laneMapped +
+				" corridor_clearance=" + laneClearance + " required=8");
+		}
+		if (!laneMapped)
+		{
+			m_sReleasePlanFailureReason = "Cannot verify a clear forward road here; choose another stopping place";
+			return false;
+		}
+		// Use the actual forward road corridor. A successor can enter the bay
+		// diagonally, so its short recent approach can point toward a safely
+		// shoulder-parked lead even though the forward road is clear. The same
+		// eight-metre clearance still applies, including the truck-to-road join.
+		if (laneClearance < 8.0)
+		{
+			m_sReleasePlanFailureReason = "Move your lead vehicle off the driving lane to let this truck pass";
+			return false;
+		}
+		if (alreadyParked >= 3)
+		{
+			m_sReleasePlanFailureReason = "Forward waiting line is full here (three trucks); resume it or use another stop";
 			return false;
 		}
 		// Reserve the farthest slot first, leaving space for later trucks to
@@ -1055,7 +1093,6 @@ class CF_DriverControllerComponent : ScriptComponent
 		// Follow the actual approach road's points. A parked lead may be angled
 		// toward the shoulder; projecting its facing for 85 m can miss a bend
 		// even when the same road remains connected and clear.
-		RoadNetworkManager roads = aiWorld.GetRoadNetworkManager();
 		vector desired;
 		if (!TryGetForwardRoadArcPoint(roads, current, lead, travel, distanceAhead, desired))
 		{
@@ -1113,84 +1150,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		road.GetPoints(points);
 		if (points.Count() < 2)
 			return false;
-		int closestSegment = -1;
-		float closestProgress;
-		float closestDistance = 1000000.0;
-		vector closestDirection = vector.Zero;
-		for (int i = 0; i < points.Count() - 1; i++)
-		{
-			vector start = points[i];
-			vector end = points[i + 1];
-			float dx = end[0] - start[0];
-			float dz = end[2] - start[2];
-			float lengthSquared = dx * dx + dz * dz;
-			if (lengthSquared < 0.01)
-				continue;
-			float progress = ((lead[0] - start[0]) * dx + (lead[2] - start[2]) * dz) / lengthSquared;
-			if (progress < 0.0)
-				progress = 0.0;
-			else if (progress > 1.0)
-				progress = 1.0;
-			vector projected = Vector(start[0] + dx * progress, lead[1], start[2] + dz * progress);
-			float distance = vector.DistanceXZ(lead, projected);
-			if (distance >= closestDistance)
-				continue;
-			closestDistance = distance;
-			closestSegment = i;
-			closestProgress = progress;
-			float length = Math.Sqrt(lengthSquared);
-			closestDirection = Vector(dx / length, 0, dz / length);
-		}
-		if (closestSegment < 0 || closestDistance > 24.0)
-			return false;
-		float alignment = closestDirection[0] * travel[0] + closestDirection[2] * travel[2];
-		if (alignment < 0.25 && alignment > -0.25)
-			return false;
-		bool increasing = alignment > 0.0;
-		float remaining = distanceAhead;
-		int segment = closestSegment;
-		float progressAlongSegment = closestProgress;
-		while (segment >= 0 && segment < points.Count() - 1)
-		{
-			vector a = points[segment];
-			vector b = points[segment + 1];
-			float segmentLength = vector.DistanceXZ(a, b);
-			if (segmentLength < 0.01)
-			{
-				if (increasing)
-					segment++;
-				else
-					segment--;
-				continue;
-			}
-			float available;
-			if (increasing)
-				available = (1.0 - progressAlongSegment) * segmentLength;
-			else
-				available = progressAlongSegment * segmentLength;
-			if (remaining <= available)
-			{
-				float goalProgress = progressAlongSegment;
-				if (increasing)
-					goalProgress += remaining / segmentLength;
-				else
-					goalProgress -= remaining / segmentLength;
-				goal = a + (b - a) * goalProgress;
-				return true;
-			}
-			remaining -= available;
-			if (increasing)
-			{
-				segment++;
-				progressAlongSegment = 0.0;
-			}
-			else
-			{
-				segment--;
-				progressAlongSegment = 1.0;
-			}
-		}
-		return false;
+		return CF_RoadPolyline.TryWalk(points, lead, travel, distanceAhead, goal);
 	}
 
 	// Width is a conservative nominal-road preflight, not proof that shoulders,
@@ -2191,15 +2151,36 @@ class CF_DriverControllerComponent : ScriptComponent
 	// Near a stopped predecessor, aiming at its exact center across a junction
 	// made trucks cut the corner and settle well off the mapped road. Keep the
 	// final road MOVE on a point the predecessor actually drove through.
+	protected void CF_LogStoppedTrailGoalReject(string reason, string detail)
+	{
+		if (!Replication.IsServer() || !GetGame() || !GetGame().GetWorld())
+			return;
+		float nowMs = GetGame().GetWorld().GetWorldTime();
+		if (nowMs < m_fNextStoppedTrailDiagnosticMs)
+			return;
+		m_fNextStoppedTrailDiagnosticMs = nowMs + CF_STOPPED_TRAIL_DIAGNOSTIC_INTERVAL_MS;
+		Print("[ConvoyFollower] STOPPED_TRAIL_GOAL_REJECT: Unit " + m_iUnitNumber +
+			" reason=" + reason + " samples=" + m_aLeadTrailPositions.Count() +
+			" has_truck=" + (m_Truck != null) +
+			" has_trail_target=" + (m_LeadTrailTarget != null) + " " + detail);
+	}
+
 	protected bool CF_TryGetStoppedTrailRoadGoal(IEntity target, out vector roadGoal)
 	{
 		roadGoal = vector.Zero;
 		if (!target || !m_Truck || target != m_LeadTrailTarget ||
 			m_aLeadTrailPositions.Count() < 2)
+		{
+			CF_LogStoppedTrailGoalReject("MISSING_TRAIL", "requested_target_present=" +
+				(target != null) + " target_matches_trail=" + (target == m_LeadTrailTarget));
 			return false;
+		}
 		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
 		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
+		{
+			CF_LogStoppedTrailGoalReject("NO_ROAD_NETWORK", "");
 			return false;
+		}
 		float desiredBack = CF_ConvoySettings.Get().m_fStoppedGap;
 		if (desiredBack < 10.0)
 			desiredBack = 10.0;
@@ -2227,13 +2208,29 @@ class CF_DriverControllerComponent : ScriptComponent
 			vector candidate = recent + (previous - recent) * fraction;
 			float targetDistance = vector.Distance(candidate, target.GetOrigin());
 			if (targetDistance < 8.0 || targetDistance > CF_STOPPED_TRAIL_MAX_TARGET_DISTANCE)
+			{
+				CF_LogStoppedTrailGoalReject("CANDIDATE_GEOMETRY", "candidate=" + candidate +
+					" target_gap=" + targetDistance + " route_back=" + routeBack +
+					" desired_back=" + desiredBack);
 				return false;
+			}
 			if (!aiWorld.GetRoadNetworkManager().GetReachableWaypointInRoad(
 				m_Truck.GetOrigin(), candidate, 6.0, roadGoal))
+			{
+				CF_LogStoppedTrailGoalReject("ROAD_UNREACHABLE", "candidate=" + candidate +
+					" target_gap=" + targetDistance + " truck=" + m_Truck.GetOrigin());
 				return false;
-			return vector.Distance(roadGoal, candidate) <= 6.0 &&
-				vector.Distance(roadGoal, target.GetOrigin()) >= 8.0;
+			}
+			float projectedGap = vector.Distance(roadGoal, candidate);
+			float projectedTargetGap = vector.Distance(roadGoal, target.GetOrigin());
+			if (projectedGap > 6.0 || projectedTargetGap < 8.0)
+				CF_LogStoppedTrailGoalReject("PROJECTED_GAP", "candidate=" + candidate +
+					" road_goal=" + roadGoal + " projection_gap=" + projectedGap +
+					" target_gap=" + projectedTargetGap);
+			return projectedGap <= 6.0 && projectedTargetGap >= 8.0;
 		}
+		CF_LogStoppedTrailGoalReject("INSUFFICIENT_ROUTE", "route_back=" + routeBack +
+			" desired_back=" + desiredBack);
 		return false;
 	}
 
@@ -3878,6 +3875,17 @@ class CF_DriverControllerComponent : ScriptComponent
 				vector activeUnloadWaypointPosition = vector.Zero;
 				if (activeUnloadWaypoint)
 					activeUnloadWaypointPosition = activeUnloadWaypoint.GetOrigin();
+				CarControllerComponent departureCar = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+				VehicleWheeledSimulation departureSim;
+				if (departureCar)
+					departureSim = departureCar.GetSimulation();
+				if (departureSim)
+					Print("[ConvoyFollower] UNLOAD_DEPART_BRAKE: Unit " + m_iUnitNumber +
+						" captured=" + m_bUnloadSlotBrakeCaptured + " owned=" + m_bOwnVehicleBrake +
+						" speed=" + departureSim.GetSpeedKmh() + " brake=" + departureSim.GetBrake() +
+						" throttle=" + departureSim.GetThrottle() + " gear=" + departureSim.GetGear() +
+						" handbrake=" + departureSim.IsHandbrakeOn() +
+						" persistent=" + departureCar.GetPersistentHandBrake() + " seated=" + CF_IsBoarded());
 				Print("[ConvoyFollower] UNLOAD_DEPART_STATUS: Unit " + m_iUnitNumber +
 					" phase=" + m_iUnloadTurnPhase + " origin=" + m_Truck.GetOrigin() +
 					" slot=" + m_vUnloadWaitingPoint +
@@ -4521,8 +4529,42 @@ class CF_DriverControllerComponent : ScriptComponent
 		}
 	}
 
+	// World teardown must not call StandDown/ResetToIdle: both can notify the
+	// session or create fresh AI orders. All referenced entities are unloading.
+	void CF_DetachForWorldCleanup()
+	{
+		if (m_Driver)
+		{
+			ClearEventMask(m_Driver, EntityEvent.FRAME);
+			ClearEventMask(m_Driver, EntityEvent.POSTFRAME);
+		}
+		m_iState = CF_IDLE;
+		m_bOwnVehicleBrake = false;
+		m_Session = null;
+		m_Predecessor = null;
+		m_Waypoint = null;
+		m_Group = null;
+		m_Driver = null;
+		m_Leader = null;
+		m_LeadVehicle = null;
+		m_LastPlayerVehicle = null;
+		m_UnloadAnchorVehicle = null;
+		m_Truck = null;
+		m_Candidate = null;
+		m_PassengerVehicle = null;
+		m_LeadTrailTarget = null;
+		m_ReturnPassVehicle = null;
+		m_aRecentTruckPositions.Clear();
+		m_aLeadTrailPositions.Clear();
+	}
+
 	override void OnDelete(IEntity owner)
 	{
+		if (CF_ConvoySession.CF_IsWorldCleanup())
+		{
+			CF_DetachForWorldCleanup();
+			return;
+		}
 		if (m_Driver)
 		{
 			ClearEventMask(m_Driver, EntityEvent.FRAME);

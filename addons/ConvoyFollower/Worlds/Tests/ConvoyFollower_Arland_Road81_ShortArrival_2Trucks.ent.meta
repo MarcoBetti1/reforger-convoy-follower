@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{F168BC7D024E9A35}Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrival_2Trucks.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}
