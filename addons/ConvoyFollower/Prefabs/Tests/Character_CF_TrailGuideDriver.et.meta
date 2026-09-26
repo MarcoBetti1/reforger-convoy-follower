@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{987C140975E85C5C}Prefabs/Tests/Character_CF_TrailGuideDriver.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

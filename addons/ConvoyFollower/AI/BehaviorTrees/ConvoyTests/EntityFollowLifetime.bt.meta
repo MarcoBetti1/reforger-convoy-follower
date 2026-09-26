@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{11F7FA3D360892BD}AI/BehaviorTrees/ConvoyTests/EntityFollowLifetime.bt"
+ Configurations {
+  BehaviorTreeResourceClass PC {
+  }
+  BehaviorTreeResourceClass HEADLESS : PC {
+  }
+ }
+}

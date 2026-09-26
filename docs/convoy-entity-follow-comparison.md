@@ -2,6 +2,8 @@
 
 September 26, 2026. This is an isolated prototype result, not a production promotion or release pass. The [current validation record](convoy-validation-current.md) remains authoritative for later results.
 
+The legacy `EntityFollow_1Truck`/`2Trucks`/`3Trucks` worlds below are historical frozen-package fixtures. Their copied-tree dependency and runnable world variants were retired from canonical source by the [authored source checkpoint](convoy-authored-source-checkpoint.md); use their original private packages to inspect these results. They are not launch instructions for the current clean addon.
+
 ## Why this experiment
 
 The ordinary MOVE baseline repeatedly changed waypoint destinations. Its one-follower run reached a 140.223 m peak separation and reproduced a backward native path connector. Retaining fixed MOVE destinations avoided that particular reverse in a separate two-follower comparison but made gaps worse through completion, Idle, and restart cycles.

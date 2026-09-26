@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{CA8E704723F09B11}Prefabs/Tests/AIWaypoint_CF_EntityFollow.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

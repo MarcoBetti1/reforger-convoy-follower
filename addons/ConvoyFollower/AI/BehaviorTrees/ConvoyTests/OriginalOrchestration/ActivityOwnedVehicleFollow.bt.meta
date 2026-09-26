@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{976835B5116F4BC5}AI/BehaviorTrees/ConvoyTests/OriginalOrchestration/ActivityOwnedVehicleFollow.bt"
+ Configurations {
+  BehaviorTreeResourceClass PC {
+  }
+  BehaviorTreeResourceClass HEADLESS : PC {
+  }
+ }
+}

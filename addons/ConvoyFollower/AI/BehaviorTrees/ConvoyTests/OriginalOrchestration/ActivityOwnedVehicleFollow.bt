@@ -1,0 +1,119 @@
+BehaviorTree "{976835B5116F4BC5}AI/BehaviorTrees/ConvoyTests/OriginalOrchestration/ActivityOwnedVehicleFollow.bt" {
+ Name "AI/BehaviorTrees/ConvoyTests/OriginalOrchestration/ActivityOwnedVehicleFollow.bt"
+ Nodes {
+  RootNode Root {
+   Name "Original owned vehicle follow"
+   Nodes {
+    Selector "Run bound order or report refusal" {
+     Name "Run bound order or report refusal"
+     Nodes {
+      Sequence "Admit one settled pilot" {
+       Name "Admit one settled pilot"
+       Nodes {
+        CF_OriginalFollowBegin "Read exact immutable lease" {
+         Name "Read exact immutable lease"
+         OutPorts {
+          SingleOutputPortContainer Entity { Port 0 PortName "Entity" }
+          SingleOutputPortContainer Distance { Port 1 PortName "DesiredDistance" }
+          SingleOutputPortContainer Receiver { Port 2 PortName "Receiver" }
+          SingleOutputPortContainer Priority { Port 3 PortName "PriorityLevel" }
+          SingleOutputPortContainer Related { Port 4 PortName "WaypointRelated" }
+         }
+        }
+        CF_OriginalFollowGuard "Require original live order throughout" {
+         Name "Require original live order throughout"
+         UseChildResult 1
+         ForceNodeResult None
+         AbortType AbortChildrenBranch
+         Nodes {
+          Sequence "One formation owner then native requests" {
+           Name "One formation owner then native requests"
+           Nodes {
+            SCR_AISendGoalMessage_KeepFormation "Bind exact pilot to this activity" {
+             Name "Bind exact pilot to this activity"
+             InPorts {
+              SingleInputPortContainer Receiver { Port 2 PortName "Receiver" }
+              SingleInputPortContainer Priority { Port 3 PortName "PriorityLevel" }
+              SingleInputPortContainer Related { Port 4 PortName "IsWaypointRelated" }
+             }
+            }
+            Repeater "Retain activity across native request completion" {
+             Name "Retain activity across native request completion"
+             RepeatTimes -1
+             Nodes {
+              Selector "Move or block owned order" {
+               Name "Move or block owned order"
+               Nodes {
+                Sequence "One guarded native request" {
+                 Name "One guarded native request"
+                 Nodes {
+                  CF_OriginalFollowRequest "Record request admission" {
+                   Name "Record request admission"
+                  }
+                  AITaskGroupMoveToEntity "Move group to bound entity" {
+                   Name "Move group to bound entity"
+                   InEntity 0
+                   InPrecisionXZ 1
+                   InPrecisionY -1
+                   PrecisionXZ 1
+                   RequestResult 5
+                   FailedHandlerId 6
+                  }
+                  CF_OriginalFollowRequestDone "Record native request completion" {
+                   Name "Record native request completion"
+                  }
+                  AITaskIdle "Yield after successful request" {
+                   Name "Yield after successful request"
+                   Period 0.25
+                   PeriodRandom 0
+                  }
+                 }
+                }
+                CF_OriginalFollowRetire "Report failed request without seat policy" {
+                 Name "Report failed request without seat policy"
+                 InPorts {
+                  SingleInputPortContainer Result { Port 5 PortName "MoveResult" }
+                  SingleInputPortContainer Handler { Port 6 PortName "FailedHandlerId" }
+                 }
+                }
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+      CF_OriginalFollowRetire "Report revoked or invalid order" {
+       Name "Report revoked or invalid order"
+       InPorts {
+        SingleInputPortContainer Result { Port -1 PortName "MoveResult" }
+        SingleInputPortContainer Handler { Port -1 PortName "FailedHandlerId" }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+ Variables {
+  BtVariableEntity nativeTarget { Flags 0 Desc "Exact real predecessor or owned guide" }
+  BtVariableScalar completionDistance { Flags 0 Desc "Immutable activity distance" }
+  BtVariableEntity originalPilotAgent { Flags 0 Desc "Only formation recipient" }
+  BtVariableScalar priorityLevel { Flags 0 Desc "Immutable activity priority level" }
+  BtVariableBool waypointRelated { Flags 0 Desc "Own waypoint relation" }
+  BtVariableInteger moveResult { Flags 0 Desc "Native request result, diagnostic on refusal" }
+  BtVariableInteger failedHandler { Flags 0 Desc "Native failed handler, diagnostic only" }
+ }
+ VariablesRefs {
+  VariableReference nativeTarget { VariableType 0 }
+  VariableReference completionDistance { VariableType 1 }
+  VariableReference originalPilotAgent { VariableType 2 }
+  VariableReference priorityLevel { VariableType 3 }
+  VariableReference waypointRelated { VariableType 4 }
+  VariableReference moveResult { VariableType 5 }
+  VariableReference failedHandler { VariableType 6 }
+ }
+}

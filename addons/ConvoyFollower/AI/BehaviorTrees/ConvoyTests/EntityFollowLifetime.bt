@@ -1,0 +1,14 @@
+BehaviorTree "{11F7FA3D360892BD}AI/BehaviorTrees/ConvoyTests/EntityFollowLifetime.bt" {
+ Name "AI/BehaviorTrees/ConvoyTests/EntityFollowLifetime.bt"
+ Nodes {
+  RootNode Root {
+   Name "Root"
+   Nodes {
+    AITaskReturnState "Owned waypoint lifetime" {
+     Name "Owned waypoint lifetime"
+     Result RUNNING
+    }
+   }
+  }
+ }
+}

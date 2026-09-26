@@ -1,0 +1,12 @@
+CF_TrailGuideWaypoint : "{49CED34BBCD060F0}Prefabs/AI/Waypoints/AIWaypoint_Base.et" {
+ ID "38ADDBD22C944C9A"
+ Type "Follow"
+ Title "Private recorded guide comparison"
+ AIBehaviorTree "{11F7FA3D360892BD}AI/BehaviorTrees/ConvoyTests/EntityFollowLifetime.bt"
+ AIBehaviorTreeMoveTo "{11F7FA3D360892BD}AI/BehaviorTrees/ConvoyTests/EntityFollowLifetime.bt"
+ CompletionRadius 1
+ Autocomplete 0
+ CompletionType Any
+ m_EntityWaypointParameters SCR_AIEntityWaypointParameters "{A7EB50E948C729CD}" {
+ }
+}

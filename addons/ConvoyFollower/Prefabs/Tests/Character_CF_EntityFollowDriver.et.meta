@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{78A3EB106EFC9541}Prefabs/Tests/Character_CF_EntityFollowDriver.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

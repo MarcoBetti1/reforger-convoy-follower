@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{F1418F3E681BA55E}Prefabs/Tests/AIWaypoint_CF_TrailGuide.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

@@ -2,6 +2,8 @@
 
 September 26, 2026. This is an experimental driving adapter, not shipped behavior or a release pass.
 
+The legacy `TrailGuide_1Truck` world below is available in its preserved private comparison packages, not the current clean canonical source. Its copied-tree dependency was retired by the [authored source checkpoint](convoy-authored-source-checkpoint.md). The newer `OriginalTailGuide_2Trucks` experiment uses the authored activity and has separate evidence; do not transfer outcomes between them.
+
 ## Question and preserved control
 
 Would native AI follow more reliably if its moving target advanced along the real predecessor's recorded route, instead of targeting that vehicle directly? The actual convoy chain, safety checks and native cruise controller still use the real predecessor. Only the private native movement target changes to an owned nonphysical guide; vehicle transforms and driving controls are not scripted by this adapter.
