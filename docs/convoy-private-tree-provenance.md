@@ -2,7 +2,9 @@
 
 Reviewed September 26, 2026. This resolves the scope of the current question; it does not grant redistribution rights or change a live package.
 
-The experimental entity-follow activity currently references a locally copied Bohemia behavior tree. An original orchestration graph exists separately but is inactive and has not demonstrated equivalent physical behavior. Preserve both and the independent ownership review in `.cache/entity-follow-guarded-orchestration-review.md`.
+The legacy experimental entity-follow activity still references the locally copied `ActivityEntityFollow.bt`. Distinguish the original inactive `ActivityVehicleEntityLoop.bt` from the newer authored `ActivityOwnedVehicleFollow.bt`: the latter has now been physically tested through its exact order lease. Its one-follower course passed the bounded physical gate while failing strict runtime/shutdown gates; its two-follower course failed spacing. See [the experiment record](convoy-original-follow-experiment.md). These results do not establish production or release readiness. Preserve the copied control, original graphs and independent ownership reviews locally.
+
+The source export audit in `.cache/original-follow-release-export-audit.md` confirms the copied body remains reachable through the shared activity factory's no-lease branch. Omitting only that BT from Git would leave legacy fixtures incomplete. A clean public export needs the authored graph and its full script dependency closure, a factory that creates only admitted original activities, removal of the copied branch and dependent runnable legacy fixtures from the export, and a newly generated resource database/package checked for excluded content. Keep current private source snapshots and comparison packs unchanged while preparing that separate boundary. This is a technical dependency finding; it does not grant redistribution rights.
 
 Bohemia's [data-modding reference](https://community.bistudio.com/wiki/Arma_Reforger:Data_Modding_Basics) describes behavior-tree replacement and limited modification, without inheritance. That describes technical capabilities, not a public source license.
 

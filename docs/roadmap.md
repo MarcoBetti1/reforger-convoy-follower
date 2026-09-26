@@ -1,6 +1,6 @@
 # Roadmap
 
-**Current execution status — September 26, 2026:** the user subsequently resumed the full revised goal; saved-goal state is active (`updatedAt: 1790433506`). Earlier setup-only statements below record the completed documentation turn. Continue from current code and evidence under the latest user instructions, preserving all newer work. The previous turn made documentation progress; it did not run tests or change implementation.
+**Current execution status — September 26, 2026:** the user has now explicitly resumed the full revised goal (`updatedAt: 1790436067`). The documentation-only setup is complete; setup restrictions retained below describe that earlier turn. Continue from the current validation boundary and preserve newer source and evidence. The preceding turn made documentation progress. The next command comparison addresses the observed explicit-Hold ownership failure independently of tail-guidance changes.
 
 ## Current product direction — September 26, 2026
 
@@ -10,11 +10,13 @@ The complete brief is saved unchanged and reconciled with the existing roadmap. 
 
 ## Current development boundary
 
-Preserve mod checkpoint `3737f08`, harness checkpoint `419dba5`, and all newer local source and frozen evidence. The [current validation record](convoy-validation-current.md) owns exact results and hashes; the historical commits quoted in the brief must not reset that progress.
+Preserve mod checkpoint `4f56f64`, its earlier `3737f08` history, harness checkpoint `419dba5`, and all newer local source and frozen evidence. The [current validation record](convoy-validation-current.md) owns exact results and hashes; the historical commits quoted in the brief must not reset that progress.
 
 The [original Follow graph experiment](convoy-original-follow-experiment.md) has a one-follower physical PASS / strict full-run FAIL. Its two-follower run has closed normally with a known second-link spacing failure; final independent analysis confirms physical and strict full-run FAIL. It remains private and unpromoted: arrival reversals, interrupted-order/Resume behavior, copied-comparator distribution, and broader driving still require work. Earlier failed entity-follow, trail-guide and pacing comparisons remain preserved in validation and their experiment records.
 
-Queued after the user's update and explicit resumption: finish the existing two-follower evidence review, use its saved spacing diagnosis to select a discriminating movement comparison, and independently review and validate the staged command-lifecycle repair with real server Hold/Resume. Do not change driving tuning and command semantics in the same comparison. Ordinary desktop input remains unresolved; engine-action calibration does not prove it.
+The newer private command repair, parked-lead policy and Hold/Resume fixture have compiled and run as `FA913F7A...`. Their baseline passed its bounded travel and 180-second hold checks, but actual Hold released the arrival Wait and failed physically; Resume was never reached. Preserve natural closure, nine runtime / 62 shutdown errors, and the distinction between observed normal-revocation repair and unobserved parked-lead admission. The tail-guide movement candidate remains cache-only, reviewed but uncompiled and unrun.
+
+Queued after the user's goal update and explicit resumption: address the evidenced explicit-Hold ownership gap, then compare a new immutable package without relaxing existing gates. Separately use the finalized two-follower spacing diagnosis and staged tail-guide candidate for a discriminating movement comparison. Preserve all source and manifests; do not change driving tuning and command semantics in the same comparison. Ordinary desktop input remains unresolved; engine-action calibration does not prove it. This setup starts none of that work.
 
 The playable milestones are dependable movement/hold/restart; a complete supply trip through ordinary player controls; multiple followers and interruptions; complete assignment, individual commands, arrival/regroup/return; and a polished, supported release candidate covering feedback, multiplayer, configuration, performance, and distribution. The first supply trip is an intermediate milestone. Preserve the predecessor chain, one radio spokesperson, and five-follower cap excluding the player's lead vehicle. Autonomous live verification, actual cargo transfer, human input restoration, multiplayer evidence, and a real-map demonstration remain required.
 
