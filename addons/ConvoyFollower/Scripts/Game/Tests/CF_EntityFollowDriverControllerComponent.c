@@ -316,6 +316,13 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		lease.Record("bound_before_add_waypoint");
 	}
 
+	// Default remains terminal. Ordinary tails may admit one narrowly typed
+	// recovery while the native request still has exact executing ownership.
+	bool CF_TryRecoverOriginalMoveFailure(CF_OriginalFollowLease lease, int result, int handler)
+	{
+		return false;
+	}
+
 	void CF_BlockOriginalFollow(CF_OriginalFollowLease lease, string reason)
 	{
 		if (!lease || lease != m_OriginalFollowLease || lease.Generation != m_iOriginalFollowGeneration)

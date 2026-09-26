@@ -19,6 +19,9 @@ class CF_OriginalFollowLease
 	float PriorityLevel;
 	bool Revoked;
 	bool Failed;
+	// A typed native failure accepted by the controller for a separate,
+	// bounded arrival recovery. This failed lease can never execute again.
+	bool ArrivalRecoveryOwned;
 	protected int m_Logs;
 	protected int m_Activation;
 	protected int m_Requests;
@@ -226,6 +229,14 @@ class CF_OriginalFollowLease
 			Controller.CF_BlockOriginalFollow(this, reason);
 	}
 
+	void RecordArrivalRecoveryFailure(int result, int handler)
+	{
+		Failed = true;
+		Revoked = true;
+		ArrivalRecoveryOwned = true;
+		Record("native_request_failed_recovery_pending_move_" + result + "_handler_" + handler);
+	}
+
 	void ActivationStarted()
 	{
 		m_Activation++;
@@ -409,17 +420,22 @@ class CF_OriginalFollowRetire : CF_OriginalFollowTask
 		// Revocation precedes controller-owned removal. A final tree callback
 		// can still execute during that native handover; it is not a request
 		// failure and must not poison a safely deferred, still-owned slot.
-		if (activity.Lease.Revoked && !activity.Lease.Failed)
+		if (activity.Lease.Revoked && (!activity.Lease.Failed || activity.Lease.ArrivalRecoveryOwned))
 		{
 			activity.Lease.Record("revoked_callback_no_request_failure");
 			return ENodeResult.RUNNING;
 		}
 		int result = -1;
 		int handler = -1;
-		GetVariableIn("MoveResult", result);
-		GetVariableIn("FailedHandlerId", handler);
+		bool hasResult = GetVariableIn("MoveResult", result);
+		bool hasHandler = GetVariableIn("FailedHandlerId", handler);
 		string reason;
-		activity.Lease.Executing(owner, reason);
+		bool exactExecution = activity.Lease.Executing(owner, reason);
+		// The outer guard-failure node has disconnected result ports. It must
+		// never enter request recovery, even if a previous result was 3.
+		if (hasResult && hasHandler && exactExecution &&
+			activity.Lease.Controller.CF_TryRecoverOriginalMoveFailure(activity.Lease, result, handler))
+			return ENodeResult.RUNNING;
 		activity.Lease.Block("guard_or_request_failure_" + reason + "_move_" + result + "_handler_" + handler);
 		return ENodeResult.RUNNING;
 	}
