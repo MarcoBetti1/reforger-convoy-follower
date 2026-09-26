@@ -128,6 +128,28 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 		return count;
 	}
 
+	// Read-only observer seams. The fixed private fixture keeps its original
+	// class/mode requirements; ordinary fixtures adapt only these readers.
+	protected CF_TrailGuideDriverControllerComponent MixedTail(CF_DriverControllerComponent driver, int unit)
+	{
+		return CF_OriginalTailGuideDriverComponent.Cast(driver);
+	}
+
+	protected bool MixedModesMatch(int unit, CF_EntityFollowDriverControllerComponent driver, CF_TrailGuideDriverControllerComponent tail)
+	{
+		return !((unit == 1 && CF_TrailGuideDriverControllerComponent.Cast(driver)) || (unit == 2 && !tail));
+	}
+
+	protected void ReadMixedTail(CF_TrailGuideDriverControllerComponent tail, CF_OriginalTailGuideReadback route)
+	{
+		CF_OriginalTailGuideDriverComponent.Cast(tail).CF_ReadOriginalTailGuide(route);
+	}
+
+	protected bool MixedTailReady(CF_TrailGuideDriverControllerComponent tail, CF_OriginalTailGuideReadback route)
+	{
+		return tail.CF_IsTrailGuidePrototypeEnabled() && !tail.CF_IsTrailGuideBlocked();
+	}
+
 	protected void ObserveMixedUnit(int unit)
 	{
 		CF_OriginalTailGuideEvidence evidence = m_MixedUnits[unit - 1];
@@ -157,13 +179,13 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 			return;
 		}
 		CF_EntityFollowDriverControllerComponent driver = CF_EntityFollowDriverControllerComponent.Cast(sample.Driver);
-		CF_OriginalTailGuideDriverComponent tail = CF_OriginalTailGuideDriverComponent.Cast(sample.Driver);
+		CF_TrailGuideDriverControllerComponent tail = MixedTail(sample.Driver, unit);
 		if (!driver || !driver.CF_IsEntityFollowPrototypeEnabled() || driver.CF_HasEntityFallbackFailure())
 		{
 			MixedFailure("private_controller_missing_or_failed", unit);
 			return;
 		}
-		if ((unit == 1 && CF_TrailGuideDriverControllerComponent.Cast(driver)) || (unit == 2 && !tail))
+		if (!MixedModesMatch(unit, driver, tail))
 		{
 			MixedFailure("direct_and_guide_mode_assignment_mismatch", unit);
 			return;
@@ -174,11 +196,11 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 		bool routeBound;
 		if (tail)
 		{
-			tail.CF_ReadOriginalTailGuide(route);
+			ReadMixedTail(tail, route);
 			guide = CF_TrailGuideEntity.Cast(tail.CF_GetTrailGuideEntity());
 			routePredecessor = tail.CF_GetTrailRealPredecessor();
 			routeBound = evidence.AssignmentEstablished && route.HasHistory && routePredecessor == predecessor.Truck;
-			if (!tail.CF_IsTrailGuidePrototypeEnabled() || tail.CF_IsTrailGuideBlocked())
+			if (!MixedTailReady(tail, route))
 				MixedFailure("tail_guide_disabled_or_blocked", unit);
 			if ((m_bPacedStarted || evidence.ObservedEpoch > 0) && !routeBound)
 				MixedFailure("missing_actual_predecessor_history", unit);

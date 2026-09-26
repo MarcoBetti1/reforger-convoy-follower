@@ -77,7 +77,14 @@ SCR_ChimeraCharacter : "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_
     }
    }
   }
-  CF_DriverControllerComponent "{E7F041D76B47D760}" {
+  CF_ConvoyFollowDriverControllerComponent "{E7F041D76B47D760}" {
+   m_bEntityFollowPrototype 1
+   m_bOriginalFollowGraph 1
+   m_bEntityCapturedWait 1
+   m_bEntityRearPacing 0
+   m_bTrailGuidePrototype 0
+   m_bTrailPrejoinLookahead 1
+   m_bTrailProjectionCorrection 1
   }
   CF_UnderFireMonitorComponent "{9B41820E9CB74991}" {
   }

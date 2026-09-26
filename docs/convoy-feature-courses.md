@@ -1,5 +1,13 @@
 # Short feature courses
 
+## Current ordinary-driver courses
+
+The September 26 integration uses normal driver prefabs and session recruitment. `Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_1Truck.ent` covers travel, a three-minute arrival stop, explicit server Hold and powered Resume. `Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_2Trucks.ent` covers the real predecessor chain, travel and three-minute arrival stop. Both passed their unchanged physical gates on pack `7ED4448F...`; runtime/shutdown errors remain. The native AI lead requests 20 km/h. Observers do not supply the follower movement fix.
+
+These are automated movement/command fixtures. They do not establish normal player input, two-driver explicit Hold/Resume, Soviet behavior or cargo delivery. Use the [current validation record](convoy-validation-current.md) for exact results and the [Supply Day scene](convoy-supply-showcase.md) for the intended complete player trip.
+
+## Earlier focused fixtures
+
 Use these small, visible scenes to diagnose one behavior before rerunning the [full driving tests](convoy-automated-smoke.md). The [edge-case matrix](convoy-edge-case-matrix.md) records actual run outcomes. World loading, order acceptance, and a clean pack are separate from a driving PASS.
 
 ## Controlled native-lead road comparison: one, two or three followers

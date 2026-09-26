@@ -77,7 +77,14 @@ SCR_ChimeraCharacter : "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR
     }
    }
   }
-  CF_DriverControllerComponent "{00BF6F4F608247C0}" {
+  CF_ConvoyFollowDriverControllerComponent "{00BF6F4F608247C0}" {
+   m_bEntityFollowPrototype 1
+   m_bOriginalFollowGraph 1
+   m_bEntityCapturedWait 1
+   m_bEntityRearPacing 0
+   m_bTrailGuidePrototype 0
+   m_bTrailPrejoinLookahead 1
+   m_bTrailProjectionCorrection 1
   }
   CF_UnderFireMonitorComponent "{0A8DA0B8AD8B4764}" {
   }

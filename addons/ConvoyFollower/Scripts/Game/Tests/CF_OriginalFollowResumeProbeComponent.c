@@ -388,7 +388,7 @@ class CF_OriginalFollowResumeProbeComponent : CF_EntityFollowRoadProbeComponent
 		params.Transform[3] = m_vRestartGoal;
 		SCR_AIWaypoint waypoint = SCR_AIWaypoint.Cast(GetGame().SpawnEntityPrefabLocal(prefab, null, params));
 		if (!waypoint) return false;
-		if (!m_PacedCruise.Request(m_Pilot, m_Lead, 25, "original_resume_native_lead"))
+		if (!m_PacedCruise.Request(m_Pilot, m_Lead, m_fPacedLeadSpeedKmh, "original_resume_native_lead"))
 		{
 			SCR_EntityHelper.DeleteEntityAndChildren(waypoint);
 			return false;
