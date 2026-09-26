@@ -1,6 +1,6 @@
 # Reforger workspace instructions
 
-**Active goal resumed after the setup handoff.** The user subsequently instructed continuation of the full revised goal; saved-goal status was verified active at updatedAt `1790430698`. Research, implementation, autonomous live testing and repository sync are now authorized. The preceding setup completed documentation reconciliation only; its restrictions in historical paragraphs below do not undo this later resumption. Preserve newer code and evidence and continue from the current validation boundary.
+**Current execution status — September 26, 2026:** the user subsequently resumed the full revised goal; saved-goal state is active (`updatedAt: 1790433506`). Earlier setup-only statements below record the completed documentation turn. Continue from current code and evidence under the latest user instructions, preserving all newer work. The previous turn made documentation progress; it did not run tests or change implementation.
 
 This is the Convoy Follower addon repository. Reusable tools and operating lessons also live independently at `C:/Users/marco/Desktop/reforger-agent-harness` and https://github.com/MarcoBetti1/reforger-agent-harness. Keep mod worlds, scripts, assets, and scenario-specific reporters here. Sync generic harness improvements to that separate repository.
 
