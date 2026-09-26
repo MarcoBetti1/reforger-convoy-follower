@@ -2,10 +2,17 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const WORLD = "Worlds/Tests/ConvoyFollower_Everon_Offroad_Survey_1Truck.ent";
+export type OffroadFixture = "everon" | "arland";
+export type SurfaceRequirement = "unpaved" | "off-network";
+const WORLDS: Record<OffroadFixture, string> = {
+  everon: "Worlds/Tests/ConvoyFollower_Everon_Offroad_Survey_1Truck.ent",
+  arland: "Worlds/Tests/ConvoyFollower_Arland_ClearField_Offroad_1Truck.ent",
+};
 const PREFIX = /\[ConvoyFollower\]\s+([A-Z0-9_]+):\s*(.*)$/;
 
 export interface OffroadReport {
+  surfaceRequirement: SurfaceRequirement;
+  movingSurfaceSamples: Record<string, { unpaved: number; pavedOrUnknown: number }>;
   expectedWorld: string;
   observedWorld: boolean;
   enteredGame: boolean;
@@ -35,7 +42,8 @@ function boolField(text: string, name: string): boolean | undefined {
 
 // A load or GAME transition is not a driving result. Select the most recent
 // actual game interval and ignore its trailing Workbench editor re-init.
-export function summarizeOffroadLog(logText: string): OffroadReport {
+export function summarizeOffroadLog(logText: string, fixture: OffroadFixture = "everon", surfaceRequirement: SurfaceRequirement = "unpaved"): OffroadReport {
+  const expectedWorld = WORLDS[fixture];
   const lines = logText.split(/\r?\n/);
   let gameIndex = -1;
   for (let index = lines.length - 1; index >= 0; index -= 1) {
@@ -57,7 +65,16 @@ export function summarizeOffroadLog(logText: string): OffroadReport {
     }
   }
   const run = initIndex >= 0 ? lines.slice(initIndex, end) : [];
-  const observedWorld = lines.slice(0, end).some((line) => line.replaceAll("\\", "/").includes(WORLD));
+  let lastLoadedFixture: string | undefined;
+  for (const line of lines.slice(0, initIndex + 1)) {
+    const normalized = line.replaceAll("\\", "/");
+    for (const world of Object.values(WORLDS)) {
+      if (normalized.includes(world)) lastLoadedFixture = world;
+    }
+  }
+  const initWorld = initIndex >= 0 ? /\bworld=(\S+)/.exec(lines[initIndex])?.[1] : undefined;
+  const expectedLabel = path.posix.basename(expectedWorld, ".ent");
+  const observedWorld = lastLoadedFixture === expectedWorld && (initWorld === undefined || initWorld === expectedLabel);
   const enteredGame = gameIndex >= 0 && initIndex >= 0 && gameIndex < end;
   const eventCounts: Record<string, number> = {};
   const failureEvents: string[] = [];
@@ -76,11 +93,28 @@ export function summarizeOffroadLog(logText: string): OffroadReport {
   const maxStreak: [number, number] = [0, 0];
   const previousSecond = [-1, -1];
   const observedOffroadPath = [0, 0];
+  const surfaceGroups = new Map<string, { truck: string; wheels: Set<number>; unpaved: boolean }>();
   for (const line of run) {
     const event = PREFIX.exec(line);
     if (!event) continue;
     const [, name, detail] = event;
     eventCounts[name] = (eventCounts[name] ?? 0) + 1;
+    if (name === "TEST_WHEEL_SURFACE") {
+      const truck = /\btruck=(\S+)/.exec(detail)?.[1];
+      const sample = numberField(detail, "sample");
+      const wheel = numberField(detail, "wheel");
+      const speed = numberField(detail, "speed_kmh");
+      const material = /\bmaterial=(.*?)\s+speed_kmh=/.exec(detail)?.[1] ?? "";
+      if (truck && sample !== undefined && wheel !== undefined && speed !== undefined && Math.abs(speed) >= 1) {
+        const key = `${truck}:${sample}`;
+        const group = surfaceGroups.get(key) ?? { truck, wheels: new Set<number>(), unpaved: true };
+        group.wheels.add(wheel);
+        // An unmapped taxiway can be concrete. Require every observed wheel
+        // in this moving sample to touch a known natural ground material.
+        group.unpaved &&= /\/(?:grass[^/]*|dirt[^/]*|soil[^/]*|gravel[^/]*|sand[^/]*|mud[^/]*)\.gamemat$/i.test(material);
+        surfaceGroups.set(key, group);
+      }
+    }
     if (["LOST", "STUCK_TERMINAL", "CONVOY_UNIT_REMOVED", "REBOARD_STARTED", "ORDER_INVERSION"].includes(name)) {
       failureEvents.push(line);
     }
@@ -118,8 +152,21 @@ export function summarizeOffroadLog(logText: string): OffroadReport {
       previousSecond[vehicle] = second ?? -1;
     }
   }
+  const movingSurfaceSamples: OffroadReport["movingSurfaceSamples"] = {};
+  for (const group of surfaceGroups.values()) {
+    const counts = movingSurfaceSamples[group.truck] ??= { unpaved: 0, pavedOrUnknown: 0 };
+    if (group.unpaved && group.wheels.size >= 4) counts.unpaved += 1;
+    else counts.pavedOrUnknown += 1;
+  }
   const failures: string[] = [];
-  if (!observedWorld) failures.push("Expected isolated Everon offroad world was not observed.");
+  if (surfaceRequirement === "unpaved") {
+    for (const truck of ["CF_SmokeLead", "CF_SmokeFollower1"]) {
+      if ((movingSurfaceSamples[truck]?.unpaved ?? 0) < 2) {
+        failures.push(`${truck} needs at least two moving samples with four or more wheels on known unpaved ground; road-network distance is not surface evidence.`);
+      }
+    }
+  }
+  if (!observedWorld) failures.push(`Expected isolated ${fixture} offroad world was not observed for this run.`);
   if (!enteredGame) failures.push("No actual GAME interval with the offroad probe was observed.");
   if (routeLength === undefined || routeLength < 60 || routeLength > 100) failures.push("No surveyed 60–100 m route was selected.");
   if (!acceptedOrder || !observedDrive) failures.push("Production convoy order and physical drive start were not both observed.");
@@ -134,29 +181,36 @@ export function summarizeOffroadLog(logText: string): OffroadReport {
   if (observedOffroadPath.some((metres) => metres < 40)) failures.push("Position samples do not corroborate 40 m offroad for both trucks.");
   if (typeof finalMetrics.goal_gap !== "number" || finalMetrics.goal_gap > 10) failures.push("Lead must settle within 10 m of the selected goal.");
   if (typeof finalMetrics.link_gap !== "number" || finalMetrics.link_gap < 7 || finalMetrics.link_gap > 30) failures.push("Final follower gap must remain between 7 and 30 m.");
-  if (typeof finalMetrics.max_link_gap !== "number" || finalMetrics.max_link_gap > 100) failures.push("The following link exceeded its 100 m test bound or lacks evidence.");
+  if (typeof finalMetrics.max_link_gap !== "number" || finalMetrics.max_link_gap > 60) failures.push("The following link exceeded its 60 m short-course bound or lacks evidence; catching up only after the lead stops is insufficient.");
   if (typeof finalMetrics.max_nonprogress_s !== "number" || finalMetrics.max_nonprogress_s >= 15) failures.push("The follower stopped making progress for too long or lacks evidence.");
   if (typeof finalMetrics.settled_s !== "number" || finalMetrics.settled_s < 10 || finalMetrics.seated_chain !== true) failures.push("A seated assigned chain must settle for ten consecutive seconds.");
   if (failureEvents.length) failures.push("The selected run contains a lost, stuck, removed, reboarded, inverted, or failed convoy event.");
   if (errorLines.length) failures.push("The selected probe run contains engine or script errors.");
   return {
-    expectedWorld: WORLD, observedWorld, enteredGame, routeLength, result, finalMetrics,
+    surfaceRequirement, movingSurfaceSamples,
+    expectedWorld, observedWorld, enteredGame, routeLength, result, finalMetrics,
     independentlyObservedMovingSeconds: maxStreak, eventCounts, failureEvents, errorLines,
     failures, passed: failures.length === 0,
     interpretation: failures.length === 0
-      ? "Strict log evidence supports a physical one-truck offroad run. Inspect the gameplay video before making a visual demonstration claim."
-      : "Offroad acceptance remains unproved; a geometry candidate or GAME transition alone is insufficient.",
+      ? `Strict log evidence supports a physical one-truck ${surfaceRequirement} run. Inspect the gameplay video before making a visual demonstration claim.`
+      : "Requested terrain and following acceptance remain unproved; a geometry candidate or GAME transition alone is insufficient.",
   };
 }
 
 export function runOffroadReport(argv: string[]): number {
   const logIndex = argv.indexOf("--log");
-  const allowed = new Set(["--log", "--require-pass"]);
+  const fixtureIndex = argv.indexOf("--fixture");
+  const surfaceIndex = argv.indexOf("--surface");
+  const allowed = new Set(["--log", "--fixture", "--surface", "--require-pass"]);
   if (logIndex < 0 || !argv[logIndex + 1] || argv[logIndex + 1].startsWith("--") ||
-      argv.some((arg, index) => index !== logIndex + 1 && !allowed.has(arg))) {
-    throw new Error("Usage: npx tsx src/convoy-offroad-report.ts --log <console.log> [--require-pass]");
+      (fixtureIndex >= 0 && !["everon", "arland"].includes(argv[fixtureIndex + 1] ?? "")) ||
+      (surfaceIndex >= 0 && !["unpaved", "off-network"].includes(argv[surfaceIndex + 1] ?? "")) ||
+      argv.some((arg, index) => index !== logIndex + 1 && (fixtureIndex < 0 || index !== fixtureIndex + 1) && (surfaceIndex < 0 || index !== surfaceIndex + 1) && !allowed.has(arg))) {
+    throw new Error("Usage: npx tsx src/convoy-offroad-report.ts --log <console.log> [--fixture everon|arland] [--surface unpaved|off-network] [--require-pass]");
   }
-  const report = summarizeOffroadLog(readFileSync(path.resolve(argv[logIndex + 1]), "utf8"));
+  const fixture = fixtureIndex >= 0 ? argv[fixtureIndex + 1] as OffroadFixture : "everon";
+  const surface = surfaceIndex >= 0 ? argv[surfaceIndex + 1] as SurfaceRequirement : "unpaved";
+  const report = summarizeOffroadLog(readFileSync(path.resolve(argv[logIndex + 1]), "utf8"), fixture, surface);
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
   return argv.includes("--require-pass") && !report.passed ? 1 : 0;
 }

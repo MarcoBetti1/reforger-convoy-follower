@@ -106,7 +106,10 @@ class CF_ForwardSlotProbeComponent : CF_ShortArrivalProbeComponent
 			bool ready = CF_ConvoySession.CanReleaseAtUnload(m_Player, m_TestDriver);
 			if (m_iStageSeconds % 5 == 0)
 				Print("[ConvoyFollower] FORWARD_SLOT_READY: ready=" + ready +
-					" reason=" + m_TestDriver.CF_GetReleaseEligibilityReason());
+					" reason=" + m_TestDriver.CF_GetReleaseEligibilityReason() +
+					" lead_gap=" + vector.Distance(m_Lead.GetOrigin(), m_TestTruck.GetOrigin()) +
+					" truck_speed=" + TruckSpeed(m_TestTruck) +
+					" road_gap=" + RoadGap(m_TestTruck.GetOrigin()));
 			if (!ready)
 			{
 				if (m_iStageSeconds > 65)

@@ -1,0 +1,10 @@
+// Geometry-only meadow survey. The inert anchor stays on the known road;
+// candidate start/goal heights are measured in GAME before a driving scene
+// is authored. No convoy driver, moving test truck or vehicle reposition.
+GenericEntity CF_ClearFieldSurveyAnchor {
+ coords 1479.70 35.52 3060.25
+ components {
+  CF_ClearFieldSurveyProbeComponent "{791C58EAB263D40F}" {
+  }
+ }
+}

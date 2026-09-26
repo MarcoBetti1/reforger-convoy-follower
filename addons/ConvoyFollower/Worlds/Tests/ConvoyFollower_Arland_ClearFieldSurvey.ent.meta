@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{E603B2D815A47C90}Worlds/Tests/ConvoyFollower_Arland_ClearFieldSurvey.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

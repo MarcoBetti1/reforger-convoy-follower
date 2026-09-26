@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { summarizeOffroadLog } from "../src/convoy-offroad-report.js";
+import { runOffroadReport, summarizeOffroadLog } from "../src/convoy-offroad-report.js";
 
 function physicalLog(): string {
   const lines = [
@@ -16,6 +16,13 @@ function physicalLog(): string {
       lines.push(`SCRIPT : [ConvoyFollower] OFFROAD_POSITION: vehicle=${vehicle} seconds=${second} step=6 offroad_path=${second * 6} road_dist=25 road_width=8 offroad=true`);
     }
   }
+  for (const truck of ["CF_SmokeLead", "CF_SmokeFollower1"]) {
+    for (const sample of [1, 2]) {
+      for (const wheel of [0, 1, 2, 3, 4, 5]) {
+        lines.push(`SCRIPT : [ConvoyFollower] TEST_WHEEL_SURFACE: sample=${sample} truck=${truck} wheel=${wheel} material={A5388C69AEDCBF4A}Common/Materials/Game/grass_lush.gamemat speed_kmh=15`);
+      }
+    }
+  }
   lines.push("SCRIPT : [ConvoyFollower] OFFROAD_FINAL: lead_path=92 follower_path=80 lead_offroad_path=92 follower_offroad_path=80 lead_offroad_moving_s=13 follower_offroad_moving_s=12 lead_displacement=90 follower_displacement=77 goal_gap=6 link_gap=19 max_link_gap=41 settled_s=10 seated_chain=true max_nonprogress_s=4");
   lines.push("SCRIPT : [ConvoyFollower] OFFROAD_RESULT: PASS physical offroad one-truck chain and settled goal");
   return lines.join("\n");
@@ -26,6 +33,30 @@ describe("strict offroad physical report", () => {
     const report = summarizeOffroadLog(physicalLog());
     expect(report.passed).toBe(true);
     expect(report.independentlyObservedMovingSeconds).toEqual([8, 8]);
+  });
+
+  it("accepts Arland only when that fixture is explicitly selected", () => {
+    const log = physicalLog().replaceAll("ConvoyFollower_Everon_Offroad_Survey_1Truck", "ConvoyFollower_Arland_ClearField_Offroad_1Truck");
+    expect(summarizeOffroadLog(log, "arland").passed).toBe(true);
+    expect(summarizeOffroadLog(log).passed).toBe(false);
+    expect(summarizeOffroadLog(physicalLog(), "arland").passed).toBe(false);
+  });
+
+  it("does not reuse an older matching world for a new fixture's PASS", () => {
+    const arland = physicalLog().replaceAll("ConvoyFollower_Everon_Offroad_Survey_1Truck", "ConvoyFollower_Arland_ClearField_Offroad_1Truck");
+    const combined = physicalLog() + "\nWorkbench Reload Game\n" + arland;
+    expect(summarizeOffroadLog(combined).passed).toBe(false);
+    expect(summarizeOffroadLog(combined, "arland").passed).toBe(true);
+  });
+
+  it("rejects a mismatched explicit probe world label", () => {
+    const log = physicalLog().replace("OFFROAD_INIT: expected=1", "OFFROAD_INIT: expected=1 world=ConvoyFollower_Arland_ClearField_Offroad_1Truck");
+    expect(summarizeOffroadLog(log).passed).toBe(false);
+  });
+
+  it("rejects missing or unsupported fixture arguments before reading a log", () => {
+    expect(() => runOffroadReport(["--log", "unused", "--fixture"])).toThrow("--fixture everon|arland");
+    expect(() => runOffroadReport(["--log", "unused", "--fixture", "unknown"])).toThrow("--fixture everon|arland");
   });
 
   it("never accepts a surveyed route or GAME alone", () => {
@@ -42,6 +73,22 @@ describe("strict offroad physical report", () => {
     expect(report.result).toMatch(/^PASS/);
     expect(report.passed).toBe(false);
     expect(report.independentlyObservedMovingSeconds).toEqual([0, 0]);
+  });
+
+  it("rejects an unmapped concrete taxiway as unpaved, but can report the off-network comparison", () => {
+    const log = physicalLog().replaceAll("grass_lush.gamemat", "concrete.gamemat");
+    expect(summarizeOffroadLog(log).passed).toBe(false);
+    expect(summarizeOffroadLog(log, "everon", "off-network").passed).toBe(true);
+  });
+
+  it("does not infer natural ground from parked contacts or missing follower samples", () => {
+    expect(summarizeOffroadLog(physicalLog().replaceAll("speed_kmh=15", "speed_kmh=0")).passed).toBe(false);
+    const log = physicalLog().split("\n").filter(line => !line.includes("truck=CF_SmokeFollower1")).join("\n");
+    expect(summarizeOffroadLog(log).passed).toBe(false);
+  });
+
+  it("rejects catching up only after the lead has pulled far away", () => {
+    expect(summarizeOffroadLog(physicalLog().replace("max_link_gap=41", "max_link_gap=91")).passed).toBe(false);
   });
 
   it.each(["LOST", "STUCK_TERMINAL", "CONVOY_UNIT_REMOVED", "REBOARD_STARTED"])("rejects %s even after a later physical PASS", (event) => {

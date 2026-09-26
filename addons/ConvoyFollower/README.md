@@ -1,5 +1,7 @@
 # Convoy Follower test handoff
 
+**Development build; release gates remain open.** Read the [current validation checkpoint](../../docs/convoy-validation-current.md) for the latest pack and live results. Use the [short feature courses](../../docs/convoy-feature-courses.md) to isolate faults; retain the full Arland/Everon routes for final integration. Earlier observations below are preserved as history, not current-build certification.
+
 ## Open the prepared scene in Workbench
 
 From the repository root in PowerShell:

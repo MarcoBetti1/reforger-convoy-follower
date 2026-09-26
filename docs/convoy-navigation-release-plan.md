@@ -1,5 +1,7 @@
 # Convoy navigation and release plan
 
+The user's latest request prioritizes the core following loop and smaller independent building blocks. Read the [development reflection and milestones](convoy-development-reset.md) for the current execution order; the detailed scenarios below remain final coverage targets. Do not let optional parking/return sequences or a broken scripted owner pilot block simple physical follower tests.
+
 ## Decision on splitting the mod
 
 Keep one player-facing addon for now. Split driving **inside the source** into a small, server-owned navigation contract before considering a second Workshop dependency. The current driver controller mixes boarding, following, road targeting, stuck recovery, arrival, return parking, and radio state in one large component. Extracting a separate downloadable addon before its interface and dirt-road behavior are proven would add an installation dependency without making driving reliable. A reusable driving addon becomes worthwhile only after the same navigation component works with a non-convoy caller in an independent test scene and has a versioned API.

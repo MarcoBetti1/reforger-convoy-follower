@@ -3,10 +3,10 @@ SCR_SpawnPoint CF_ForwardSlotSpawn : "{5A2220DD0C16958B}Prefabs/MP/Spawning/Spaw
  coords 1478.08 35.35 3073.0
 }
 SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
- coords 1468.0 36.15 3053.5
+ coords 1469.93 36.15 3054.01
 }
 Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
- coords 1469.93 36.02 3057.51
+ coords 1471.86 36.02 3058.02
  angles 0 75.11 0
 }
 Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {

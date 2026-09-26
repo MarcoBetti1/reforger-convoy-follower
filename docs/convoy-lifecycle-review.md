@@ -23,7 +23,7 @@ Expected shutdown evidence is one `WORLD_CLEANUP: detached N sessions without is
 
 ## Validation gates
 
-Source diff check passed. Workbench compile and live lifecycle verification are pending the shared validation run; this note does not claim the shutdown fix has run in game yet.
+The feature-courses-v3 pack passed all five Workbench configurations. Live client exits in `short-arrival-1truck-v2` (21:45:48) and `forward-slot-1truck-v1` (21:49:34) each detached one active session before world destruction, with no subsequent convoy AI orders. Both scenarios failed their own fixture gates; those failures do not invalidate the observed shutdown sequence. A parked/queued convoy exit, same-process restart, and in-game member removal still need the checks below.
 
 1. Start an active convoy, including a parked/queued truck, then exit the world normally. Verify the cleanup marker precedes entity teardown and no new convoy waypoints/orders follow it.
 2. In a separate active run, delete or kill a middle driver. Verify normal removal and predecessor rewiring still happen while the world remains active.

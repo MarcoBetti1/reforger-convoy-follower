@@ -1,0 +1,8 @@
+// Deterministic native guidance tests only. No physical driving claim.
+GenericEntity CF_DrivenRouteGeometryAnchor {
+ coords 1479.70 35.52 3060.25
+ components {
+  CF_DrivenRouteGeometryProbeComponent "{681B73E2D9254CA0}" {
+  }
+ }
+}

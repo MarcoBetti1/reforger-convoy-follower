@@ -1,6 +1,8 @@
 # Reforger workspace instructions
 
-This repository is the local test harness and research record. The first addon, `addons/ConvoyFollower`, is under development with prepared Arland and Everon test scenes. Start with [docs/harness-handoff.md](docs/harness-handoff.md), then read [docs/operations-playbook.md](docs/operations-playbook.md) before controlling the game or Workbench. Update the playbook when a UI step is verified or fails. Keep Workshop descriptions separate from observed gameplay; [docs/raven-field-notes.md](docs/raven-field-notes.md) records the completed Raven probe.
+This is the Convoy Follower addon repository. Reusable tools and operating lessons also live independently at `C:/Users/marco/Desktop/reforger-agent-harness` and https://github.com/MarcoBetti1/reforger-agent-harness. Keep mod worlds, scripts, assets, and scenario-specific reporters here. Sync generic harness improvements to that separate repository.
+
+Read [docs/convoy-validation-current.md](docs/convoy-validation-current.md) first for the current build and observed results, then [docs/convoy-feature-courses.md](docs/convoy-feature-courses.md) for focused fixtures. [docs/harness-handoff.md](docs/harness-handoff.md) and [docs/operations-playbook.md](docs/operations-playbook.md) retain launch instructions and historical observations. Their dated run results are not the latest release status. Update the playbook when a UI step is verified or fails. The Raven investigation is closed.
 
 ## Fast paths verified on this machine
 
@@ -17,6 +19,12 @@ This repository is the local test harness and research record. The first addon, 
 
 ## UI and test discipline
 
+- Use a small, visible course for immediate feature debugging: fixed starting geometry, one behavior, bounded timeout, physical state assertions, and a reproducible pack. Keep full Arland/Everon routes for final integration. A surveyed clear lane is not proof of driving, and an accepted command is not completion.
+- Do not change addon source, worlds, or the resource database while source Workbench/F5 is open. Close it first. Parallel source edits are allowed during a standalone client run only when that client loads a frozen copied pack in a separate addon directory. Record the pack hash.
+- Launch packed tests with explicit `--addon 5A5FB20BD40C7C70` and `--addons-dir <parent>` containing `ConvoyFollower_5A5FB20BD40C7C70/addon.gproj` and `data.pak`. Keep duplicate copies of that GUID out of the same parent. `--expect-game` verifies startup, never the scenario result.
+- Before relying on a scripted test pilot, establish powered movement toward the intended goal. Log controls before physics and measure signed progress; downhill coasting or cumulative motion alone is insufficient. Diagnose a broken fixture before changing follower logic.
+- The final scripted-owner calibration still failed after explicit physics wake: controls were overwritten before physics. Use the already working native AI lead/passenger-owner fixture for immediate following comparisons; do not repeat the same control-write matrix. Road-network distance alone does not establish dirt/grass: the Arland candidate was a concrete taxiway. Require moving wheel material evidence for unpaved claims.
+- Keep the full console log plus a snapshot taken at the scenario terminal marker. Report gameplay and shutdown errors separately; never discard shutdown errors to imply a clean full lifecycle.
 - Current release acceptance scope: establish autonomous repeatable one-, two-, and three-truck driving runs, inspect real gameplay and logs, and capture a demonstration video before calling the mod ready. The September 25 user request supersedes the earlier plan for user-led first-person testing. The target is a reliable Workbench and CLI loop with no user intervention.
 - The game client must start with its executable directory as its working directory; `client:run` handles this. Do not use the normal client profile with its large enabled-mod set as a clean baseline.
 - Windows desktop capture targets one selected window. Keep Reforger windowed at a stable size; select or activate the current returned game window before clicking. Observe, perform one action, and recapture. Do not reuse coordinates or a window handle after a transition.

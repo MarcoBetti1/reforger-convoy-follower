@@ -1,5 +1,7 @@
 # Reforger harness handoff
 
+**Current entry point:** [validation checkpoint](convoy-validation-current.md) and [short feature courses](convoy-feature-courses.md). Build names and results below describe earlier milestones. Generic tooling is maintained separately in [Reforger Agent Harness](https://github.com/MarcoBetti1/reforger-agent-harness); this repository keeps the convoy-specific scenes and evidence.
+
 ## Scope
 
 Use Enfusion Workbench for most addon work. The harness also launches a clean local world or a private Conflict server and collects logs. Current release work requires autonomous one-, two-, and three-truck driving runs with visual and log evidence, followed by a demonstration video. See [the automated smoke-test guide](convoy-automated-smoke.md) for the current test worlds and its limits.
