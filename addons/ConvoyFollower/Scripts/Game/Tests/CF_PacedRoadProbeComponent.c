@@ -35,6 +35,8 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 	protected string m_sPacedWorld;
 	[Attribute(defvalue: "0", desc: "Opt-in isolated offline client: request native exit 30 seconds after PACED_RESULT; never exits Workbench")]
 	protected bool m_bPacedAutoExit;
+	[Attribute(defvalue: "25", params: "15 25 1", desc: "Fixture native lead cruise cap in km/h; existing worlds retain 25, declared cooperative worlds may request 15-25")]
+	protected float m_fPacedLeadSpeedKmh;
 	// Weak identity snapshots prevent a delayed callback closing another world.
 	protected IEntity m_PacedExitOwner;
 	protected World m_PacedExitWorld;
@@ -71,7 +73,6 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 	protected bool m_bPacedDriftFailed;
 	protected bool m_bPacedTerminal;
 	protected bool m_bPacedPathEnded;
-	protected static const float PACED_LEAD_KMH = 25.0;
 	protected static const float PACED_MAX_LINK_M = 60.0;
 	protected static const float PACED_MAX_DRIFT_M = 2.0;
 	protected static const float PACED_OBSERVATION_MS = 180000.0;
@@ -95,7 +96,7 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 		super.OnPostInit(owner);
 		CF_ConvoySettings settings = CF_ConvoySettings.Get();
 		string initMessage = "[ConvoyFollower] PACED_INIT: run_id=" + m_sPacedRun + " world=" + m_sPacedWorld;
-		initMessage += " expected=" + m_iExpectedTrucks + " lead_cap_kmh=25 peak_gap_m=60 observation_s=180 max_drift_m=2 timeout_s=480";
+		initMessage += " expected=" + m_iExpectedTrucks + " lead_cap_kmh=" + m_fPacedLeadSpeedKmh + " peak_gap_m=60 observation_s=180 max_drift_m=2 timeout_s=480";
 		initMessage += " fixture_change=controlled_native_lead_and_entry_barrier legacy_worlds_unchanged=true follower_writes=false";
 		initMessage += " native_cruise=" + settings.m_bNativeCruiseEnabled;
 		initMessage += " stable_follow_waypoints=" + settings.m_bStableFollowWaypoints;
@@ -324,7 +325,7 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 			m_PilotWaypoint = null;
 		if (!m_PacedCruise)
 			m_PacedCruise = new CF_NativeCruiseControl();
-		return m_PacedCruise.Request(m_Pilot, m_Lead, PACED_LEAD_KMH, "paced_fixture_lead_25");
+		return m_PacedCruise.Request(m_Pilot, m_Lead, m_fPacedLeadSpeedKmh, "paced_fixture_lead_configured");
 	}
 
 	override protected bool StartAIDrive()
@@ -346,7 +347,7 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 		}
 		Print("[ConvoyFollower] PACED_DRIVE_BEGIN: run_id=" + m_sPacedRun + " tick=" + m_iPacedTick +
 			" seconds=" + PacedSeconds() + " leg=1 start=" + m_Lead.GetOrigin() + " goal=" + m_vRoadGoal +
-			" lead_cap_kmh=25 progress_basis=previous_vehicle_forward_per_sample fixture_follower_engine_writes=false");
+			" lead_cap_kmh=" + m_fPacedLeadSpeedKmh + " progress_basis=previous_vehicle_forward_per_sample fixture_follower_engine_writes=false");
 		Print("[ConvoyFollower] PACED_PATH_INIT: run_id=" + m_sPacedRun +
 			" drive_window_s=120 read_interval_ms=200 summary_interval_ms=1000 raw_points_per_path=128 raw_records_per_unit=3200" +
 			" trigger=waypoint_action_brake_reverse_navlink_resolution phase=POSTFRAME native_actions_written=false");
@@ -818,6 +819,14 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 	{
 		if (!PacedWorldAlive() || m_bPacedTerminal)
 			return;
+		// Reject invalid fixture configuration before setup or any lead control request.
+		// The positive bounded comparison also rejects NaN; never silently clamp.
+		if (!(m_fPacedLeadSpeedKmh >= 15.0 && m_fPacedLeadSpeedKmh <= 25.0))
+		{
+			NoteFailure("fixture", "invalid_lead_speed_kmh_" + m_fPacedLeadSpeedKmh);
+			EndPaced();
+			return;
+		}
 		m_iPacedTick++;
 		bool blockedAtBarrier = false;
 		if (!m_bPacedStarted && m_iStage == 2 && m_iNextOrder == m_iExpectedTrucks)
@@ -858,7 +867,7 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 					return;
 				}
 			}
-			float cap = PACED_LEAD_KMH;
+			float cap = m_fPacedLeadSpeedKmh;
 			if (m_bPacedHoldingLead)
 				cap = 0;
 			if (!m_PacedCruise.Request(m_Pilot, m_Lead, cap, "paced_fixture_lead"))
