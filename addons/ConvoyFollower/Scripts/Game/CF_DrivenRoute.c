@@ -34,6 +34,14 @@ class CF_DrivenRouteGuidance
 	float DiagnosticBudgetEnd;
 	float DiagnosticBudget;
 	float DiagnosticCorridorError;
+	// Optional private-query proof. Never physical movement credit.
+	bool HasProjectionCorrection;
+	float ProjectionPhysicalBound;
+	float ProjectionSignedCorrection;
+	float ProjectionCandidateAdvance;
+	bool HasPreviousPhysicalQuery;
+	vector PreviousPhysicalPose;
+	vector PreviousIncomingStart;
 }
 
 class CF_DrivenRoute
@@ -129,6 +137,15 @@ class CF_DrivenRoute
 		tangent = Vector((b[0] - a[0]) / length, 0, (b[2] - a[2]) / length);
 	}
 
+	// Ordinary Query callers keep the strict station budget. Only an explicitly
+	// armed derived physical query may prove one adjacent projection transfer.
+	protected bool AdmitAdjacentProjection(int targetKey, vector pose, int segment,
+		float candidate, vector projected, bool nextSegment, float maxCrossTrack,
+		CF_DrivenRouteGuidance result)
+	{
+		return false;
+	}
+
 	// maxAdvance is a caller-supplied physical progress budget for this update,
 	// not a catch-up radius. Query never searches later nonadjacent segments.
 	// Before joining, APPROACH_START is a position to join, not an arrived state:
@@ -147,6 +164,11 @@ class CF_DrivenRoute
 		result.CrossTrack = 0;
 		result.HasArcGap = false;
 		result.HasAdvanceDiagnostic = false;
+		result.HasProjectionCorrection = false;
+		result.ProjectionPhysicalBound = 0;
+		result.ProjectionSignedCorrection = 0;
+		result.ProjectionCandidateAdvance = 0;
+		result.HasPreviousPhysicalQuery = false;
 		if (!m_Initialized)
 			return;
 		result.Goal = m_Points[0];
@@ -229,7 +251,9 @@ class CF_DrivenRoute
 				candidate = m_Stations[segment + 1];
 				nextSegment = true;
 			}
-			if (candidate > budgetEnd + 0.001)
+			if (candidate > budgetEnd + 0.001 &&
+				!AdmitAdjacentProjection(targetKey, followerPosition, segment, candidate,
+					projected, nextSegment, maxCrossTrack, result))
 			{
 				// Snapshot only the already-rejected decision, before retirement.
 				// Keep Query's cursor, candidate, budget and return behavior intact.

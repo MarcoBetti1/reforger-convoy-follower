@@ -34,6 +34,207 @@ class CF_DrivenRouteGeometryProbeComponent : ScriptComponent
 		return vector.Distance(result.Goal, expected) < 0.01;
 	}
 
+	protected bool Physical(CF_TrailGuideRoute route, int key, vector pose, float measured, CF_DrivenRouteGuidance g)
+	{
+		float allowed, turnCos, factor;
+		string reason;
+		return route.QueryPhysical(key, pose, measured, 0.3, 0, 5, allowed, turnCos, factor, reason, g);
+	}
+
+	// These previous poses and incoming leg are inferred witnesses, NOT the
+	// missing original per-frame pose or an exact replay of historical state.
+	protected vector PrepareProjectionWitness(CF_TrailGuideRoute route, int key, int witness,
+		CF_DrivenRouteGuidance g, bool onlyIncoming = false)
+	{
+		vector incoming = Vector(0.947309345, 0, 0.320320161);
+		vector outgoing = Vector(1.6053474, 0, 0.751709);
+		route.Reset(key, incoming * -1.5);
+		route.Record(key, vector.Zero);
+		if (!onlyIncoming)
+		{
+			route.Record(key, outgoing);
+			route.Record(key, outgoing * 2);
+		}
+		vector prior = Vector(-0.121115532, 0, 0.0500993715);
+		if (witness == 2)
+			prior = Vector(-0.128715532, 0, 0.0725754797);
+		Physical(route, key, prior, 2, g);
+		return prior;
+	}
+
+	protected void RunProjectionCases()
+	{
+		ref CF_TrailGuideRoute route = new CF_TrailGuideRoute();
+		ref CF_DrivenRouteGuidance g = new CF_DrivenRouteGuidance();
+		vector query = Vector(0.0128174, 0, 0.10791);
+		vector incoming = Vector(0.947309345, 0, 0.320320161);
+		vector outgoing = Vector(1.6053474, 0, 0.751709);
+		vector prior = PrepareProjectionWitness(route, 101, 1, g);
+		float before = route.GetProgress();
+		Check("projection_real_seed_query_commits_without_correction", g.State == CF_DrivenRoute.TRACKING && !g.HasProjectionCorrection && Near(before, 1.401314));
+		route.Query(101, query, 0.3, 0, 0.146106, 5, g);
+		Check("projection_default_query_still_rejects_logged_excess", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection && Near(route.GetProgress(), before) && Math.AbsFloat(g.DiagnosticCandidate - g.DiagnosticBudgetEnd - 0.00994873) < 0.001);
+
+		for (int witness = 1; witness <= 2; witness++)
+		{
+			prior = PrepareProjectionWitness(route, 102, witness, g);
+			bool accepted = Physical(route, 102, query, 0.145877, g);
+			Check("projection_inferred_witness_" + witness, accepted && g.State == CF_DrivenRoute.TRACKING && g.HasProjectionCorrection && Near(g.ProjectionCandidateAdvance, 0.156055) && g.ProjectionSignedCorrection > 0.009 && g.ProjectionSignedCorrection < 0.012 && Near(route.GetProgress(), 1.557369));
+		}
+
+		prior = PrepareProjectionWitness(route, 103, 1, g);
+		before = route.GetProgress();
+		Physical(route, 103, prior, 0, g);
+		Check("projection_stationary_query_adds_no_credit", g.State == CF_DrivenRoute.TRACKING && !g.HasProjectionCorrection && Near(route.GetProgress(), before));
+		bool negative = Physical(route, 103, query, -0.145877, g);
+		Check("projection_negative_measurement_rejected", !negative && Near(route.GetProgress(), before));
+		Physical(route, 103, query, 0.145877, g);
+		Check("projection_negative_failure_invalidates_context", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection);
+
+		prior = PrepareProjectionWitness(route, 104, 1, g);
+		Physical(route, 104, query, 0.01, g);
+		Check("projection_insufficient_measurement_rejected", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection);
+		Physical(route, 104, query, 0.145877, g);
+		Check("projection_failed_query_cannot_seed_retry", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection);
+
+		prior = PrepareProjectionWitness(route, 105, 1, g);
+		route.Query(105, prior, 0.3, 0, 0.001, 5, g);
+		Physical(route, 105, query, 0.145877, g);
+		Check("projection_ordinary_query_disarms_prior_context", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection);
+
+		prior = PrepareProjectionWitness(route, 106, 1, g, true);
+		route.Record(106, outgoing);
+		route.Record(106, outgoing * 2);
+		Physical(route, 106, query, 0.145877, g);
+		Check("projection_new_corner_cannot_retrofit_prior_context", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection);
+
+		prior = PrepareProjectionWitness(route, 107, 1, g);
+		Physical(route, 108, query, 0.145877, g);
+		Check("projection_wrong_epoch_preserves_target_guard", g.State == CF_DrivenRoute.TARGET_MISMATCH && !g.HasProjectionCorrection);
+		Physical(route, 107, query, 0.145877, g);
+		Check("projection_epoch_failure_invalidates_context", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection);
+
+		prior = PrepareProjectionWitness(route, 109, 1, g);
+		Physical(route, 109, prior - incoming * 0.003, 0.003, g);
+		Physical(route, 109, query, 0.149, g);
+		Check("projection_reverse_high_water_not_rebased", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection);
+
+		prior = PrepareProjectionWitness(route, 110, 1, g);
+		route.Record(110, outgoing * 3);
+		Physical(route, 110, query, 0.145877, g);
+		Check("projection_unrelated_future_append_keeps_exact_local_context", g.State == CF_DrivenRoute.TRACKING && g.HasProjectionCorrection);
+
+		route.Reset(111, vector.Zero);
+		route.Record(111, Vector(20, 0, 0));
+		route.Record(111, Vector(20, 0, 20));
+		Physical(route, 111, Vector(18, 0, 2), 20, g);
+		Physical(route, 111, Vector(18, 0, 8), 1, g);
+		Check("projection_first_vertex_budget_remains_strict", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection && Near(route.GetProgress(), 18));
+
+		vector tangent = outgoing.Normalized();
+		route.Reset(112, incoming * -20);
+		route.Record(112, vector.Zero);
+		route.Record(112, tangent);
+		route.Record(112, tangent - incoming * 10);
+		prior = Vector(-0.121115532, 0, 0.0500993715) * 20;
+		Physical(route, 112, prior, 20, g);
+		Physical(route, 112, query * 20, 0.145877 * 20, g);
+		Check("projection_correction_cannot_pay_second_vertex", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection);
+
+		for (int sign = -1; sign <= 1; sign += 2)
+		{
+			route.Reset(113, Vector(-20, 0, 0));
+			route.Record(113, vector.Zero);
+			route.Record(113, Vector(0, 0, 20 * sign));
+			route.Record(113, Vector(20, 0, 20 * sign));
+			prior = Vector(-5, 0, 4.99 * sign);
+			vector cornerPose = Vector(-4.99, 0, 8.6 * sign);
+			Physical(route, 113, prior, 20, g);
+			Physical(route, 113, prior, 0, g);
+			float measured = vector.DistanceXZ(prior, cornerPose);
+			Physical(route, 113, cornerPose, measured, g);
+			Check("projection_actual_90_degree_edge_" + sign, g.State == CF_DrivenRoute.TRACKING && g.HasProjectionCorrection && Near(g.ProjectionSignedCorrection, 9.98) && Near(g.ProjectionCandidateAdvance, 13.6) && measured < 5);
+			before = route.GetProgress();
+			Physical(route, 113, prior, measured, g);
+			Physical(route, 113, cornerPose, measured, g);
+			Check("projection_90_degree_return_adds_no_credit_" + sign, g.State == CF_DrivenRoute.TRACKING && !g.HasProjectionCorrection && Near(route.GetProgress(), before));
+		}
+
+		route.Reset(114, vector.Zero);
+		route.Record(114, Vector(20, 0, 0));
+		route.Record(114, Vector(20, 0, 3));
+		route.Record(114, Vector(0, 0, 3));
+		Physical(route, 114, Vector(5, 0, 0), 10, g);
+		Physical(route, 114, Vector(6, 0, 3), Math.Sqrt(10), g);
+		Check("projection_nearer_hairpin_return_is_not_searched", g.State == CF_DrivenRoute.TRACKING && !g.HasProjectionCorrection && Near(route.GetProgress(), 6));
+		route.Query(114, Vector(6, 0, 3), 10, 5, -1, 4, g);
+		Check("projection_original_invalid_budget_guard_unchanged", g.State == CF_DrivenRoute.INVALID_ARGUMENT && !g.HasProjectionCorrection);
+
+		route.Reset(115, vector.Zero);
+		route.Record(115, Vector(20, 0, 0));
+		route.Record(115, Vector(10, 0, 1));
+		Physical(route, 115, Vector(18, 0, 0), 20, g);
+		Check("projection_over_90_degree_turn_still_rejected", !Physical(route, 115, Vector(19, 0, 0), 1, g));
+
+		// Current geometry only: a grid-aligned float32 witness inside the
+		// logged world-coordinate rounding intervals, not original exact bits.
+		vector worldA = Vector(1546.32421875, 30.5643, 3339.12890625);
+		vector worldQ = worldA + Vector(0.0128174, -0.00338554, 0.10791);
+		vector worldB = worldQ - Vector(-1.59253, 0.269512, -0.643799);
+		vector edge = worldB - worldA;
+		edge[1] = 0;
+		vector relative = worldQ - worldA;
+		relative[1] = 0;
+		float length = edge.Length();
+		float raw = vector.Dot(relative, edge) / (length * length);
+		vector projected = worldA + (worldB - worldA) * raw;
+		Check("projection_recorded_relative_float32_geometry", Math.AbsFloat(raw - 0.0323636) < 0.000001 && Math.AbsFloat(vector.DistanceXZ(worldQ, projected) - 0.0922335) < 0.0002);
+
+		// Runtime IEEE overflow supplies malformed inputs without a division by
+		// zero. If this native runtime handles overflow differently, the fixture
+		// validity check fails rather than silently claiming nonfinite coverage.
+		float nonfinite = 1e30;
+		nonfinite = nonfinite * nonfinite;
+		float notANumber = nonfinite - nonfinite;
+		Check("projection_nonfinite_fixture_is_nonfinite", nonfinite - nonfinite != 0 && notANumber != notANumber);
+		prior = PrepareProjectionWitness(route, 116, 1, g);
+		before = route.GetProgress();
+		Check("projection_infinite_measurement_rejected", !Physical(route, 116, query, nonfinite, g) && Near(route.GetProgress(), before));
+		Physical(route, 116, query, 0.145877, g);
+		Check("projection_nonfinite_failure_invalidates_context", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection);
+		prior = PrepareProjectionWitness(route, 117, 1, g);
+		Check("projection_nan_measurement_rejected", !Physical(route, 117, query, notANumber, g));
+		Check("projection_infinite_pose_rejected", !Physical(route, 117, Vector(nonfinite, 0, 0), 1, g));
+		float allowed, turnCos, factor;
+		string reason;
+		Check("projection_nonfinite_corridor_rejected", !route.QueryPhysical(117, query, 1, 0.3, 0, nonfinite, allowed, turnCos, factor, reason, g));
+
+		prior = PrepareProjectionWitness(route, 118, 1, g);
+		Physical(route, 118, query, 0, g);
+		Check("projection_zero_measurement_cannot_transfer", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection);
+		prior = PrepareProjectionWitness(route, 119, 1, g);
+		route.Reset(119, incoming * -1.5);
+		route.Record(119, vector.Zero);
+		route.Record(119, outgoing);
+		route.Record(119, outgoing * 2);
+		Physical(route, 119, query, 0.145877, g);
+		Check("projection_same_key_reset_cannot_reuse_context", g.State == CF_DrivenRoute.APPROACH_START && !g.HasArcGap && !g.HasProjectionCorrection && Near(route.GetProgress(), 0));
+		prior = PrepareProjectionWitness(route, 120, 1, g);
+		route.Record(120, Vector(100, 0, 100));
+		Physical(route, 120, query, 0.145877, g);
+		Check("projection_discontinuity_keeps_original_failure", g.State == CF_DrivenRoute.DISCONTINUITY && !g.HasProjectionCorrection);
+		prior = PrepareProjectionWitness(route, 121, 1, g);
+		for (int sample = 1; sample <= 270; sample++)
+			route.Record(121, outgoing * 2 + Vector(sample, 0, 0));
+		Physical(route, 121, query, 0.145877, g);
+		Check("projection_history_loss_keeps_original_failure", g.State == CF_DrivenRoute.HISTORY_LOST && !g.HasProjectionCorrection);
+		route.Reset(122, Vector(-20, 0, 0));
+		route.Record(122, vector.Zero);
+		route.Record(122, Vector(0, 0, 20));
+		Physical(route, 122, Vector(-4.99, 0, 8.6), 20, g);
+		Check("projection_adjacent_leg_cannot_fake_first_join", g.State == CF_DrivenRoute.APPROACH_START && !g.HasArcGap && !g.HasProjectionCorrection && Near(route.GetProgress(), 0));
+	}
+
 	protected void RunCases()
 	{
 		ref CF_DrivenRoute route = new CF_DrivenRoute();
@@ -131,6 +332,7 @@ class CF_DrivenRouteGeometryProbeComponent : ScriptComponent
 		route.Query(8, vector.Zero, 10, 5, 20, 2, g);
 		Check("unconsumed_pruning_reports_history_lost", g.State == CF_DrivenRoute.HISTORY_LOST && !g.HasArcGap && route.GetPointCount() <= CF_DrivenRoute.MAX_POINTS);
 
+		RunProjectionCases();
 		if (m_Passed == m_Total)
 			Print("[ConvoyFollower] DRIVEN_ROUTE_RESULT: PASS cases=" + m_Passed);
 		else

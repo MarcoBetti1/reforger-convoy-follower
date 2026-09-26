@@ -89,10 +89,177 @@ class CF_TrailGuideWaypointState : SCR_AIWaypointState
 	}
 }
 
-// Read-only access to retained actual samples. Query remains the unchanged
-// production geometry implementation and alone decides whether entry joined.
+// Read-only access to retained actual samples. Ordinary Query keeps its original
+// budget. QueryPhysical explicitly opts into one adjacent station transfer.
 class CF_TrailGuideRoute : CF_DrivenRoute
 {
+	// Value-only, one-query context. Ordinary Query never arms the hook.
+	protected bool m_PhysicalQueryActive;
+	protected float m_PhysicalMeasured;
+	protected bool m_PreviousPhysicalQuery;
+	protected int m_PreviousTargetKey;
+	protected int m_PreviousSegment;
+	protected float m_PreviousProgress;
+	protected vector m_PreviousPose;
+	protected vector m_PreviousA;
+	protected vector m_PreviousB;
+	protected vector m_PreviousNext;
+	protected float m_PreviousStationA;
+	protected float m_PreviousStationB;
+	protected float m_PreviousStationNext;
+
+	protected bool FiniteValue(float value)
+	{
+		// NaN and either infinity fail; no new distance threshold is introduced.
+		return value - value == 0;
+	}
+
+	protected bool FinitePose(vector pose)
+	{
+		return FiniteValue(pose[0]) && FiniteValue(pose[1]) && FiniteValue(pose[2]);
+	}
+
+	override void Reset(int targetKey, vector actualPredecessorPosition)
+	{
+		m_PhysicalQueryActive = false;
+		m_PreviousPhysicalQuery = false;
+		super.Reset(targetKey, actualPredecessorPosition);
+	}
+
+	// Direct callers cannot leave a stale accepted physical snapshot behind.
+	override void Query(int targetKey, vector followerPosition, float lookAhead, float spacing,
+		float maxAdvance, float maxCrossTrack, CF_DrivenRouteGuidance result)
+	{
+		m_PhysicalQueryActive = false;
+		m_PreviousPhysicalQuery = false;
+		super.Query(targetKey, followerPosition, lookAhead, spacing, maxAdvance, maxCrossTrack, result);
+	}
+
+	bool QueryPhysical(int targetKey, vector pose, float measured, float lookAhead, float spacing,
+		float maxCrossTrack, out float allowed, out float turnCos, out float factor,
+		out string reason, CF_DrivenRouteGuidance result)
+	{
+		m_PhysicalQueryActive = false;
+		allowed = 0;
+		turnCos = 1;
+		factor = 1;
+		reason = "";
+		if (!result || !FiniteValue(measured) || measured < 0 || !FinitePose(pose) ||
+			!FiniteValue(lookAhead) || !FiniteValue(spacing) || !FiniteValue(maxCrossTrack))
+		{
+			m_PreviousPhysicalQuery = false;
+			reason = "invalid_physical_query_measurement";
+			return false;
+		}
+		if (!PhysicalBudget(measured, allowed, turnCos, factor, reason))
+		{
+			m_PreviousPhysicalQuery = false;
+			return false;
+		}
+		if (!FiniteValue(allowed) || !FiniteValue(turnCos) || !FiniteValue(factor))
+		{
+			m_PreviousPhysicalQuery = false;
+			reason = "invalid_physical_query_budget";
+			return false;
+		}
+		m_PhysicalMeasured = measured;
+		m_PhysicalQueryActive = true;
+		bool hadPrevious = m_PreviousPhysicalQuery;
+		vector priorPose = m_PreviousPose;
+		vector priorStart = m_PreviousA;
+		// Deliberately bypass the ordinary-Query override, which disarms context.
+		super.Query(targetKey, pose, lookAhead, spacing, allowed, maxCrossTrack, result);
+		result.HasPreviousPhysicalQuery = hadPrevious;
+		result.PreviousPhysicalPose = priorPose;
+		result.PreviousIncomingStart = priorStart;
+		m_PhysicalQueryActive = false;
+		m_PhysicalMeasured = 0;
+		m_PreviousPhysicalQuery = false;
+		if ((result.State == TRACKING || result.State == SPACING_HOLD) &&
+			m_Joined && targetKey == m_TargetKey && m_Segment < m_Points.Count() - 2)
+		{
+			m_PreviousTargetKey = targetKey;
+			m_PreviousSegment = m_Segment;
+			m_PreviousProgress = m_Progress;
+			m_PreviousPose = pose;
+			m_PreviousA = m_Points[m_Segment];
+			m_PreviousB = m_Points[m_Segment + 1];
+			m_PreviousNext = m_Points[m_Segment + 2];
+			m_PreviousStationA = m_Stations[m_Segment];
+			m_PreviousStationB = m_Stations[m_Segment + 1];
+			m_PreviousStationNext = m_Stations[m_Segment + 2];
+			m_PreviousPhysicalQuery = true;
+		}
+		return true;
+	}
+
+	override protected bool AdmitAdjacentProjection(int targetKey, vector pose, int segment,
+		float candidate, vector projected, bool nextSegment, float maxCrossTrack,
+		CF_DrivenRouteGuidance result)
+	{
+		if (!m_PhysicalQueryActive || !m_PreviousPhysicalQuery || !m_Joined ||
+			m_PreviousTargetKey != targetKey || targetKey != m_TargetKey ||
+			m_PreviousSegment != m_Segment || m_PreviousProgress != m_Progress ||
+			segment != m_Segment + 1 || nextSegment || m_Segment >= m_Points.Count() - 2)
+			return false;
+		if (m_PreviousA != m_Points[m_Segment] || m_PreviousB != m_Points[m_Segment + 1] ||
+			m_PreviousNext != m_Points[m_Segment + 2] ||
+			m_PreviousStationA != m_Stations[m_Segment] || m_PreviousStationB != m_Stations[m_Segment + 1] ||
+			m_PreviousStationNext != m_Stations[m_Segment + 2])
+			return false;
+		if (!FinitePose(m_PreviousA) || !FinitePose(m_PreviousB) || !FinitePose(m_PreviousNext) ||
+			!FiniteValue(m_PreviousStationA) || !FiniteValue(m_PreviousStationB) || !FiniteValue(m_PreviousStationNext))
+			return false;
+		vector delta = pose - m_PreviousPose;
+		delta[1] = 0;
+		float chord = delta.Length();
+		if (!FiniteValue(chord) || m_PhysicalMeasured <= 0 || chord <= 0 || chord > m_PhysicalMeasured + 0.001)
+			return false;
+		vector vertex = m_Points[m_Segment + 1];
+		vector incoming = vertex - m_Points[m_Segment];
+		vector outgoing = m_Points[m_Segment + 2] - vertex;
+		incoming[1] = 0;
+		outgoing[1] = 0;
+		if (incoming.LengthSq() <= 0 || outgoing.LengthSq() <= 0)
+			return false;
+		incoming.Normalize();
+		outgoing.Normalize();
+		float turn = Math.Clamp(vector.Dot(incoming, outgoing), -1.0, 1.0);
+		if (turn < 0)
+			return false;
+		float before = m_Progress - m_Stations[m_Segment + 1];
+		float after = candidate - m_Stations[m_Segment + 1];
+		if (before > 0.001 || after < 0 || candidate >= m_Stations[m_Segment + 2] - 0.001)
+			return false;
+		vector oldCursor = vertex + incoming * before;
+		vector newCursor = vertex + outgoing * after;
+		if (vector.DistanceXZ(newCursor, projected) > 0.001)
+			return false;
+		vector oldResidual = m_PreviousPose - oldCursor;
+		vector newResidual = pose - newCursor;
+		oldResidual[1] = 0;
+		newResidual[1] = 0;
+		if (Math.AbsFloat(vector.Dot(oldResidual, incoming)) > 0.001 || oldResidual.Length() > maxCrossTrack)
+			return false;
+		float cosineHalf = Math.Sqrt((1.0 + turn) * 0.5);
+		vector bisector = (incoming + outgoing) / (2.0 * cosineHalf);
+		if (vector.Dot(bisector, delta) <= 0)
+			return false;
+		float physicalBound = m_PhysicalMeasured / cosineHalf;
+		float correction = -vector.Dot(bisector, newResidual - oldResidual) / cosineHalf;
+		float advance = candidate - m_Progress;
+		if (!FiniteValue(physicalBound) || !FiniteValue(correction) || !FiniteValue(advance) ||
+			!FiniteValue(physicalBound + correction) || advance > physicalBound + correction + 0.001)
+			return false;
+		result.HasProjectionCorrection = true;
+		result.ProjectionPhysicalBound = physicalBound;
+		result.ProjectionSignedCorrection = correction;
+		result.ProjectionCandidateAdvance = advance;
+		// A second candidate/query cannot reuse this proof before a committed query.
+		m_PreviousPhysicalQuery = false;
+		return true;
+	}
+
 	// On two adjacent legs with nonnegative on-route distances a,b,
 	// (a+b)/chord <= sec(turn/2). This does not exempt inside-corner
 	// projection jumps from Query's ADVANCE_LIMIT check.

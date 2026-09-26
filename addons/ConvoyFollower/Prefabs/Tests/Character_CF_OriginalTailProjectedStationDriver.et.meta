@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{FF08581018EB58F1}Prefabs/Tests/Character_CF_OriginalTailProjectedStationDriver.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

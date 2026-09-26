@@ -8,6 +8,9 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 {
 	[Attribute(defvalue: "0", desc: "Private one-follower recorded trail-guide experiment")]
 	protected bool m_bTrailGuidePrototype;
+	[Attribute(defvalue: "0", desc: "Private projected-station comparison: one adjacent corner; station is not physical travel")]
+	protected bool m_bTrailProjectionCorrection;
+	protected int m_iTrailProjectionLogs;
 	[Attribute(defvalue: "0", desc: "Private recorded prejoin lookahead comparison; real Query still owns first join")]
 	protected bool m_bTrailPrejoinLookahead;
 	protected int m_iPrejoinWindowLogs;
@@ -67,6 +70,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		if (Replication.IsServer())
 			Print("[ConvoyFollower] TRAIL_GUIDE_INIT: driver_id=" + owner.GetID() + " enabled=" + m_bTrailGuidePrototype +
 				" prejoin_lookahead=" + m_bTrailPrejoinLookahead +
+				" projection_correction_opt_in=" + m_bTrailProjectionCorrection +
 				" record_s=0.2 query=each_frame lookahead_m=30 advance_remaining_m=15 native_capture_m=1" +
 				" entry_window_m=5 entry_near_m=3 entry_corridor_m=2 route_corridor_m=5" +
 				" actual_displacement_budget=true controls_writer=existing_controller test_only=true");
@@ -77,6 +81,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		m_TrailPredecessor = target;
 		m_TrailWorld = GetGame().GetWorld();
 		m_iTrailEpoch++;
+		m_iTrailProjectionLogs = 0;
 		if (m_bTrailPrejoinLookahead)
 			m_TrailRoute = new CF_TrailEntryWindowRoute();
 		else
@@ -180,13 +185,35 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		string reason;
 		m_fTrailLastMeasured = m_fTrailMeasuredBudget;
 		m_fTrailMeasuredBudget = 0;
-		if (!m_TrailRoute.PhysicalBudget(m_fTrailLastMeasured, budget, m_fTrailTurnCos, m_fTrailArcFactor, reason))
+		bool queried;
+		if (m_bTrailProjectionCorrection)
+		{
+			queried = m_TrailRoute.QueryPhysical(m_iTrailEpoch, m_Truck.GetOrigin(), m_fTrailLastMeasured,
+				30.0, CF_ConvoySettings.Get().m_fMovingGap, 5.0,
+				budget, m_fTrailTurnCos, m_fTrailArcFactor, reason, m_TrailGuidance);
+		}
+		else
+		{
+			queried = m_TrailRoute.PhysicalBudget(m_fTrailLastMeasured, budget, m_fTrailTurnCos, m_fTrailArcFactor, reason);
+			if (queried)
+				m_TrailRoute.Query(m_iTrailEpoch, m_Truck.GetOrigin(), 30.0,
+					CF_ConvoySettings.Get().m_fMovingGap, budget, 5.0, m_TrailGuidance);
+		}
+		if (!queried)
 		{
 			CF_BlockTrail(reason);
 			return 0;
 		}
-		m_TrailRoute.Query(m_iTrailEpoch, m_Truck.GetOrigin(), 30.0,
-			CF_ConvoySettings.Get().m_fMovingGap, budget, 5.0, m_TrailGuidance);
+		if (m_TrailGuidance.HasProjectionCorrection && m_iTrailProjectionLogs < 12)
+		{
+			m_iTrailProjectionLogs++;
+			Print("[ConvoyFollower] TRAIL_PROJECTION_CORRECTION: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
+				" previous_pose=" + m_TrailGuidance.PreviousPhysicalPose + " incoming_start=" + m_TrailGuidance.PreviousIncomingStart +
+				" current_pose=" + m_Truck.GetOrigin() + " measured_m=" + m_fTrailLastMeasured +
+				" nominal_centerline_budget_m=" + m_TrailGuidance.ProjectionPhysicalBound +
+				" signed_correction_m=" + m_TrailGuidance.ProjectionSignedCorrection +
+				" candidate_advance_m=" + m_TrailGuidance.ProjectionCandidateAdvance + " station_coordinate=true physical_credit=false");
+		}
 		CF_LogTrailQueryFailure();
 		return budget;
 	}
@@ -205,6 +232,8 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 			guideForward = m_TrailGuide.GetWorldTransformAxis(2);
 		}
 		string context = "[ConvoyFollower] TRAIL_GUIDE_QUERY_FAILURE: unit=" + m_iUnitNumber;
+		context += " previous_pose_available=" + diagnostic.HasPreviousPhysicalQuery;
+		context += " previous_pose=" + diagnostic.PreviousPhysicalPose + " incoming_start=" + diagnostic.PreviousIncomingStart;
 		context += " epoch=" + m_iTrailEpoch + " diagnostic=" + m_iTrailQueryFailureLogs + " world_ms=" + m_TrailWorld.GetWorldTime();
 		context += " state=" + diagnostic.State + " queried_pose=" + diagnostic.DiagnosticPose;
 		context += " prior_segment=" + diagnostic.DiagnosticPriorSegment + " prior_progress=" + diagnostic.DiagnosticPriorProgress;
