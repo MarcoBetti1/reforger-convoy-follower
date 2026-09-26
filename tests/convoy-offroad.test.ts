@@ -28,6 +28,32 @@ function physicalLog(): string {
   return lines.join("\n");
 }
 
+function holdRestartLog(): string {
+  const events = ["SCRIPT : [ConvoyFollower] OFFROAD_HOLD_BEGIN: seconds=20 origin=<100, 0, 0> cycle=1"];
+  for (let second = 20; second <= 50; second += 1) {
+    events.push(`SCRIPT : [ConvoyFollower] OFFROAD_LEAD_HOLD: seconds=${second} origin=<100.1, 0, 0> cycle=1 speed_kmh=0.1 settled_pose=true drift_m=0.1 max_drift_m=0.1 brake=1 throttle=0 gear=2 engine=true`);
+  }
+  events.push("SCRIPT : [ConvoyFollower] OFFROAD_HOLD_COMPLETE: seconds=50 held_s=30 max_drift_m=0.1 cycle=1");
+  events.push("SCRIPT : [ConvoyFollower] OFFROAD_RESTART_ORDER: seconds=50 accepted=true start=<100, 0, 0> follower_start=<80, 0, 0> goal=<140, 0, 0> axis=<1, 0, 0>");
+  for (let second = 51; second <= 56; second += 1) {
+    for (const vehicle of [0, 1]) {
+      const progress = (second - 50) * (vehicle === 0 ? 4 : 3);
+      events.push(`SCRIPT : [ConvoyFollower] OFFROAD_RESTART_POSITION: vehicle=${vehicle} seconds=${second} origin=<${(vehicle === 0 ? 100 : 80) + progress}, 0, 0> progress_m=${progress} speed_kmh=12 throttle=0.4 brake=0 gear=2 engine=true seated_chain=true pilot_seated=true`);
+    }
+  }
+  events.push("SCRIPT : [ConvoyFollower] OFFROAD_LEAD_RESTART_COMPLETE: seconds=56 lead_progress_m=24");
+  events.push("SCRIPT : [ConvoyFollower] OFFROAD_RESTART_COMPLETE: seconds=56 lead_progress_m=24 follower_progress_m=18");
+  events.push("SCRIPT : [ConvoyFollower] OFFROAD_HOLD_BEGIN: seconds=60 origin=<124, 0, 0> cycle=2");
+  const later: string[] = [];
+  for (let second = 60; second <= 120; second += 1) {
+    (second <= 90 ? events : later).push(`SCRIPT : [ConvoyFollower] OFFROAD_LEAD_HOLD: seconds=${second} origin=<124.1, 0, 0> cycle=2 speed_kmh=0.1 settled_pose=true drift_m=0.1 max_drift_m=0.1 brake=1 throttle=0 gear=2 engine=true`);
+  }
+  events.push("SCRIPT : [ConvoyFollower] OFFROAD_HOLD_COMPLETE: seconds=90 held_s=30 max_drift_m=0.1 cycle=2");
+  later.push("SCRIPT : [ConvoyFollower] OFFROAD_OBSERVATION_COMPLETE: seconds=120 observed_s=30 failed=false");
+  return physicalLog().replace("OFFROAD_INIT: expected=1", "OFFROAD_INIT: expected=1 hold_restart=true")
+    .replace("SCRIPT : [ConvoyFollower] OFFROAD_FINAL:", events.join("\n") + "\nSCRIPT : [ConvoyFollower] OFFROAD_FINAL:") + "\n" + later.join("\n");
+}
+
 describe("strict offroad physical report", () => {
   it("accepts corroborated physical path, consecutive offroad movement, and settled chain", () => {
     const report = summarizeOffroadLog(physicalLog());
@@ -89,6 +115,50 @@ describe("strict offroad physical report", () => {
 
   it("rejects catching up only after the lead has pulled far away", () => {
     expect(summarizeOffroadLog(physicalLog().replace("max_link_gap=41", "max_link_gap=91")).passed).toBe(false);
+  });
+
+  it("uses a larger bound vehicle gap observation without overwriting the probe's aggregate", () => {
+    const log = physicalLog().replace("SCRIPT : [ConvoyFollower] OFFROAD_FINAL:",
+      "01:02:10.022 SCRIPT : [ConvoyFollower] FOLLOW_LINK_STATUS: Unit 1 target=CF_SmokeLead state=3 gap=65.0769\nSCRIPT : [ConvoyFollower] OFFROAD_FINAL:");
+    const report = summarizeOffroadLog(log);
+    expect(report.finalMetrics.max_link_gap).toBe(41);
+    expect(report.peakLinkGap).toMatchObject({ reportedMetres: 41, observedMetres: 65.0769, gateMetres: 65.0769,
+      evidence: { source: "FOLLOW_LINK_STATUS", timestamp: "01:02:10.022" } });
+    expect(report.passed).toBe(false);
+  });
+
+  it("independently measures synchronized fixture positions and ignores unrelated link telemetry", () => {
+    const log = physicalLog().replace("vehicle=0 seconds=8 step=6", "vehicle=0 seconds=8 origin=<100, 0, 0> step=6")
+      .replace("vehicle=1 seconds=8 step=6", "vehicle=1 seconds=8 origin=<35, 0, 0> step=6");
+    expect(summarizeOffroadLog(log).peakLinkGap).toMatchObject({ gateMetres: 65, evidence: { source: "OFFROAD_POSITION", seconds: 8 } });
+    expect(summarizeOffroadLog(log).passed).toBe(false);
+    for (const detail of ["Unit 2 target=CF_SmokeLead state=3", "Unit 1 target=OtherLead state=3", "Unit 1 target=CF_SmokeLead state=8"]) {
+      const unrelated = physicalLog().replace("OFFROAD_FINAL:", `FOLLOW_LINK_STATUS: ${detail} gap=200\nSCRIPT : [ConvoyFollower] OFFROAD_FINAL:`);
+      expect(summarizeOffroadLog(unrelated).peakLinkGap.gateMetres).toBe(41);
+      expect(summarizeOffroadLog(unrelated).passed).toBe(true);
+    }
+    expect(summarizeOffroadLog(physicalLog() + "\nSCRIPT : [ConvoyFollower] FOLLOW_LINK_STATUS: Unit 1 target=CF_SmokeLead state=3 gap=200").passed).toBe(true);
+  });
+
+  it("retains GUI load errors in the strict runtime gate", () => {
+    const report = summarizeOffroadLog("GUI (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)\n" + physicalLog());
+    expect(report.runtime.errors).toHaveLength(1);
+    expect(report.runtime.errors[0].phase).toBe("load");
+    expect(report.runtime.clean).toBe(false);
+    expect(report.passed).toBe(false);
+  });
+
+  it("retains NETWORK replication errors and their immediate resource context", () => {
+    const report = summarizeOffroadLog([
+      'RESOURCES : GetResourceObject @"{0123456789ABCDEF}Prefabs/Characters/Character_CF_Driver.et"',
+      "NETWORK (E): RplNodeError: Attempting to put into hierarchy items where one is already registered into replication and the other is not!",
+      physicalLog(),
+    ].join("\n"));
+    expect(report.runtime.errors).toHaveLength(1);
+    expect(report.runtime.errors[0]).toMatchObject({ phase: "load", resource: "Prefabs/Characters/Character_CF_Driver.et" });
+    expect(report.runtime.errors[0].reproducedBaseline).toBeUndefined();
+    expect(report.runtime.clean).toBe(false);
+    expect(report.passed).toBe(false);
   });
 
   it.each(["LOST", "STUCK_TERMINAL", "CONVOY_UNIT_REMOVED", "REBOARD_STARTED"])("rejects %s even after a later physical PASS", (event) => {
@@ -183,6 +253,39 @@ describe("strict offroad physical report", () => {
     }
   });
 
+  it("annotates the other exact vanilla signatures, including a four-error resource block, without waiving them", () => {
+    const diagnostics = [
+      "RESOURCES : GetResourceObject @\"{A}UI/layouts/Menus/MainMenu/IntroSplashScreen.layout\"",
+      "GUI (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+      "WORLD : Entity prefab load @\"{A}Prefabs/Vehicles/Wheeled/M151A2/M151A2.et\"",
+      "WORLD (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+      "WORLD : Entity prefab load @\"{A}Prefabs/Vehicles/Wheeled/BRDM2/BRDM2_base.et\"",
+      "WORLD (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+      "WORLD (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+      "WORLD : Entity prefab load @\"{A}Prefabs/Vehicles/Wheeled/BTR70/BTR70_Base.et\"",
+      "WORLD (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+      "WORLD (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+      "WORLD (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+      "WORLD (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+    ].join("\n");
+    const report = summarizeOffroadLog(diagnostics + "\n" + physicalLog());
+    expect(report.runtime.errors).toHaveLength(8);
+    expect(report.runtime.reproducedBaselineCount).toBe(8);
+    expect(report.runtime.errors.map(error => error.reproducedBaseline?.line)).toEqual([98, 150, 155, 156, 161, 162, 163, 164]);
+    expect(report.fullRun.errorCount).toBe(8);
+    expect(report.passed).toBe(false);
+    for (const changed of [
+      diagnostics.replaceAll("BTR70_Base.et", "Other.et"),
+      diagnostics.replace("offset 45590(0xb216)", "offset 45591(0xb217)"),
+      diagnostics.replace("WORLD (E): Unknown keyword/data 'Parent' at offset 45590", "unrelated event\nWORLD (E): Unknown keyword/data 'Parent' at offset 45590"),
+      diagnostics.replace("GUI (E):", "SCRIPT (E):"),
+    ]) {
+      const unmatched = summarizeOffroadLog(changed + "\n" + physicalLog());
+      expect(unmatched.runtime.reproducedBaselineCount).toBeLessThan(8);
+      expect(unmatched.passed).toBe(false);
+    }
+  });
+
   it("bounds physical evidence at the terminal while retaining later shutdown failures", () => {
     const snapshot = physicalLog();
     const log = snapshot + "\nSCRIPT : [ConvoyFollower] WORLD_CLEANUP: detached 1 sessions" +
@@ -240,6 +343,166 @@ describe("strict offroad physical report", () => {
     const report = summarizeOffroadLog(log);
     expect(report.observedWorld).toBe(false);
     expect(report.result).toBeUndefined();
+    expect(report.passed).toBe(false);
+  });
+});
+
+describe("native lead sustained hold and physical restart", () => {
+  it("does not infer sustained hold from a legacy arrival PASS", () => {
+    const historical = summarizeOffroadLog(physicalLog());
+    expect(historical.holdRestart).toMatchObject({ required: false, passed: null });
+    const required = summarizeOffroadLog(physicalLog(), "everon", "unpaved", true);
+    expect(required.holdRestart).toMatchObject({ required: true, passed: false, fixture: { passed: false }, follower: { passed: null } });
+    expect(required.passed).toBe(false);
+  });
+
+  it("corroborates 30 seconds of hold and forward powered restart from actual positions", () => {
+    const report = summarizeOffroadLog(holdRestartLog());
+    expect(report.holdRestart).toMatchObject({
+      required: true, passed: true, observedHoldSeconds: 30,
+      restartProgressMetres: [24, 18], maxRestartLinkGapMetres: 26, poweredLeadRestartSamples: 6,
+      fixture: { passed: true, failures: [] }, follower: { passed: true, failures: [] },
+      observation: { passed: true, failures: [] }, postResultObservedSeconds: 30,
+    });
+    expect(report.holdRestart.maxLeadDriftMetres).toBeCloseTo(0.1);
+    expect(report.passed).toBe(true);
+  });
+
+  it("rejects a missing second or abbreviated physical hold despite a completion claim", () => {
+    for (const log of [
+      holdRestartLog().split("\n").filter(line => !line.includes("OFFROAD_LEAD_HOLD: seconds=35 ")).join("\n"),
+      holdRestartLog().replace("OFFROAD_HOLD_BEGIN: seconds=20", "OFFROAD_HOLD_BEGIN: seconds=21"),
+    ]) {
+      const report = summarizeOffroadLog(log);
+      expect(report.holdRestart.fixture.passed).toBe(false);
+      expect(report.holdRestart.follower.passed).toBeNull();
+      expect(report.passed).toBe(false);
+    }
+  });
+
+  it("rejects an excursion beyond 2 m even when final pose and logged drift claim a hold", () => {
+    const log = holdRestartLog().replace("seconds=35 origin=<100.1, 0, 0>", "seconds=35 origin=<103, 0, 0>");
+    const report = summarizeOffroadLog(log);
+    expect(report.holdRestart.maxLeadDriftMetres).toBe(3);
+    expect(report.holdRestart.fixture.passed).toBe(false);
+    expect(report.holdRestart.follower.passed).toBeNull();
+    expect(report.passed).toBe(false);
+  });
+
+  it("rejects speed evidence that contradicts a stationary hold", () => {
+    const report = summarizeOffroadLog(holdRestartLog().replace("speed_kmh=0.1", "speed_kmh=-4"));
+    expect(report.holdRestart.fixture.passed).toBe(false);
+    expect(report.passed).toBe(false);
+  });
+
+  it("cannot substitute reported progress for physical restart or accept backward coasting", () => {
+    for (const direction of [0, -1]) {
+      const log = holdRestartLog().replace(/(OFFROAD_RESTART_POSITION: vehicle=0 seconds=(\d+) origin=<)\d+,/g,
+        (_, prefix: string, second: string) => `${prefix}${100 + direction * (Number(second) - 50) * 4},`);
+      const report = summarizeOffroadLog(log);
+      expect(report.holdRestart.fixture.passed).toBe(false);
+      expect(report.holdRestart.poweredLeadRestartSamples).toBe(0);
+      expect(report.passed).toBe(false);
+    }
+  });
+
+  it("requires observed powered lead controls rather than displacement alone", () => {
+    for (const log of [
+      holdRestartLog().replaceAll("throttle=0.4", "throttle=0"),
+      holdRestartLog().replaceAll("gear=2", "gear=1"),
+      holdRestartLog().replaceAll("engine=true", "engine=false"),
+    ]) {
+      const report = summarizeOffroadLog(log);
+      expect(report.holdRestart.restartProgressMetres).toEqual([24, 18]);
+      expect(report.holdRestart.fixture.passed).toBe(false);
+      expect(report.passed).toBe(false);
+    }
+  });
+
+  it("attributes a follower restart failure only after native lead fixture acceptance", () => {
+    const log = holdRestartLog().replace(/(OFFROAD_RESTART_POSITION: vehicle=1 seconds=\d+ origin=<)\d+,/g, "$180,");
+    const report = summarizeOffroadLog(log);
+    expect(report.holdRestart.fixture.passed).toBe(true);
+    expect(report.holdRestart.follower.passed).toBe(false);
+    expect(report.holdRestart.restartProgressMetres).toEqual([24, 0]);
+    expect(report.passed).toBe(false);
+  });
+
+  it("rejects restart gaps above 60 m even when the aggregate claims a lower peak", () => {
+    const log = holdRestartLog().replace("follower_start=<80, 0, 0>", "follower_start=<0, 0, 0>")
+      .replace(/(OFFROAD_RESTART_POSITION: vehicle=1 seconds=(\d+) origin=<)\d+,/g,
+        (_, prefix: string, second: string) => `${prefix}${(Number(second) - 50) * 3},`);
+    const report = summarizeOffroadLog(log);
+    expect(report.holdRestart.fixture.passed).toBe(true);
+    expect(report.holdRestart.maxRestartLinkGapMetres).toBe(106);
+    expect(report.holdRestart.follower.passed).toBe(false);
+    expect(report.passed).toBe(false);
+  });
+
+  it("retains the original 60 m approach peak-gap gate", () => {
+    const report = summarizeOffroadLog(holdRestartLog().replace("max_link_gap=41", "max_link_gap=70.08"));
+    expect(report.holdRestart.passed).toBe(true);
+    expect(report.scenario.passed).toBe(false);
+    expect(report.passed).toBe(false);
+  });
+
+  it("reads later fixture failures and cannot accept a terminal before restart", () => {
+    const later = summarizeOffroadLog(holdRestartLog() + "\nSCRIPT : [ConvoyFollower] OFFROAD_FIXTURE_FAILURE: seconds=75 reason=post_result_lead_drift");
+    expect(later.holdRestart.fixture.passed).toBe(false);
+    expect(later.holdRestart.follower.passed).toBeNull();
+    expect(later.fullRun.clean).toBe(false);
+    expect(later.lifecycle.failureEvents).toHaveLength(1);
+    expect(later.passed).toBe(false);
+    const early = summarizeOffroadLog(holdRestartLog().replace("SCRIPT : [ConvoyFollower] OFFROAD_HOLD_BEGIN:",
+      "SCRIPT : [ConvoyFollower] OFFROAD_RESULT: PASS provisional\nSCRIPT : [ConvoyFollower] OFFROAD_HOLD_BEGIN:"));
+    expect(early.holdRestart.observation.failures.some(failure => failure.includes("provisional"))).toBe(true);
+    expect(early.passed).toBe(false);
+  });
+
+  it("keeps a proved lead fixture independent of missing follower completion and later observation", () => {
+    const log = holdRestartLog().split("\n").filter(line => !line.includes("OFFROAD_RESTART_COMPLETE:") &&
+      !line.includes("cycle=2") && !line.includes("OFFROAD_OBSERVATION_COMPLETE:")).join("\n")
+      .replace(/(OFFROAD_RESTART_POSITION: vehicle=0[^\n]*)seated_chain=true/g, "$1seated_chain=false");
+    const report = summarizeOffroadLog(log);
+    expect(report.holdRestart.fixture.passed).toBe(true);
+    expect(report.holdRestart.follower.passed).toBe(false);
+    expect(report.holdRestart.observation.passed).toBe(false);
+    expect(report.passed).toBe(false);
+  });
+
+  it("requires physical observation after the provisional result", () => {
+    const log = holdRestartLog().split("\n").filter(line => !/OFFROAD_LEAD_HOLD: seconds=(?:9[1-9]|1\d\d)\b|OFFROAD_OBSERVATION_COMPLETE:/.test(line)).join("\n");
+    const report = summarizeOffroadLog(log);
+    expect(report.holdRestart.fixture.passed).toBe(true);
+    expect(report.holdRestart.follower.passed).toBe(true);
+    expect(report.holdRestart.observation.passed).toBe(false);
+    expect(report.passed).toBe(false);
+  });
+
+  it("rejects later lead drift from position samples even without a failure marker", () => {
+    const log = holdRestartLog().replace("seconds=110 origin=<124.1, 0, 0>", "seconds=110 origin=<128, 0, 0>");
+    const report = summarizeOffroadLog(log);
+    expect(report.holdRestart.maxLeadDriftMetres).toBe(4);
+    expect(report.holdRestart.fixture.passed).toBe(false);
+    expect(report.holdRestart.follower.passed).toBeNull();
+    expect(report.passed).toBe(false);
+  });
+
+  it("retains a failed post-result observation even if its detailed failure marker is missing", () => {
+    const report = summarizeOffroadLog(holdRestartLog().replace("observed_s=30 failed=false", "observed_s=30 failed=true"));
+    expect(report.holdRestart.fixture.passed).toBe(false);
+    expect(report.holdRestart.observation.passed).toBe(false);
+    expect(report.passed).toBe(false);
+  });
+
+  it("retains runtime and full lifecycle gates after physical hold/restart success", () => {
+    const report = summarizeOffroadLog("RPL (E): startup error\n" + holdRestartLog() +
+      "\nSCRIPT : [ConvoyFollower] WORLD_CLEANUP: detached 1 sessions\nRESOURCES (E): shutdown error");
+    expect(report.holdRestart.passed).toBe(true);
+    expect(report.scenario.passed).toBe(true);
+    expect(report.runtime.clean).toBe(false);
+    expect(report.lifecycle.clean).toBe(false);
+    expect(report.fullRun.errorCount).toBe(2);
     expect(report.passed).toBe(false);
   });
 });

@@ -1,8 +1,14 @@
 # Pause checkpoint — 2026-09-26 UTC
 
-The user requested finishing the active test, saving a stopping point, and pausing until tomorrow. Do not resume automatically. This remains an unfinished release-readiness goal.
+**Execution status:** the documentation-only setup is complete. The subsequent explicit active-goal continuation authorizes implementation and live validation under the full revised brief. Preserve the recorded setup boundary as history; it is not a standing pause. The complete product goal remains active.
 
-**Later documentation-only reconciliation, September 26:** [the revised brief](convoy-development-brief.md) supersedes the earlier bounded overnight product direction, with [an updated roadmap](convoy-development-reset.md). This checkpoint remains the historical restart evidence; its hashes, results, and unrun experiments are preserved. The basic supply loop is an intermediate milestone, followed by complete arrival, regrouping, return, and release polish. Saving the brief did not resume the goal or run any implementation or tests; await the user's explicit update and resumption.
+**Historical checkpoint; the setup-only boundary below records the previous documentation turn.** Later local hold/restart work and source changes are summarized in [the current validation record](convoy-validation-current.md). Preserve this snapshot, its hashes, and its original results; do not use the unrun-experiment wording below to erase newer evidence or restart from an older build. Older continuation notes do not override the latest setup boundary. Wait for the user to update and explicitly resume the saved goal before further implementation or live testing.
+
+Newer work includes completed radius, production-cruise, boarding-handover, and explicit Hold reports, plus the compiled moving-restart/control-handover/Resume-status candidate and a provisional driving comparison. Later follower creep, repeatability, human input, and other release gates remain unresolved. Use the current validation record for their exact status; the original restart list below is historical and must not cause completed experiments to be repeated or newer source to be discarded.
+
+At the original pause, the user requested finishing the active test, saving a stopping point, and pausing until tomorrow without automatic resumption. Later work exists and is preserved. The latest request again limits this turn to documentation setup; it does not activate or resume the saved goal. This remains an unfinished release-readiness goal.
+
+**Documentation reconciliation, September 26:** [the revised brief](convoy-development-brief.md) supersedes the earlier bounded overnight product direction, with [an updated roadmap](convoy-development-reset.md). This checkpoint remains historical evidence; its hashes, results, and then-unrun experiments are preserved. The basic supply loop is an intermediate milestone, followed by complete arrival, regrouping, return, and release polish. Saving and reconciling the brief does not resume the goal or authorize implementation or tests. The separate saved explicit Hold/Resume run and newer source are covered in the current validation record; do not infer their status from this older checkpoint.
 
 ## What was learned
 

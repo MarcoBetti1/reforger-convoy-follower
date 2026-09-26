@@ -44,6 +44,9 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected static const float CF_PASSENGER_EXIT_TIMEOUT_SECONDS = 45.0;
 	protected static const float CF_WAYPOINT_REFRESH_SECONDS = 3.0;
 	protected static const float CF_WAYPOINT_REFRESH_DISTANCE = 8.0;
+	// The 2 m startup experiment did not improve the measured gap. Preserve
+	// the original refresh distance while diagnosing boarding/goal ownership.
+	protected static const float CF_MOVING_WAYPOINT_REFRESH_DISTANCE = 8.0;
 	protected static const float CF_STOP_DETECT_DISTANCE = 1.0;
 	protected static const float CF_STOP_DETECT_SECONDS = 6.0;
 	protected static const float CF_ARRIVAL_RESUME_DISTANCE = 6.0;
@@ -148,6 +151,13 @@ class CF_DriverControllerComponent : ScriptComponent
 	[RplProp()]
 	protected int m_iUnitNumber;
 	protected bool m_bPauseWasLost;
+	// Player intent outlives a transient target change or seat recovery. Only
+	// explicit Resume or membership cleanup may release an accepted Hold.
+	[RplProp()]
+	protected bool m_bPanelHoldRequested;
+	protected bool m_bPanelHoldReboardBlocked;
+	protected string m_sPanelHoldReboardFailure;
+	protected string m_sBoardingHandoverDiagnostic;
 	protected float m_fPollAccumulator;
 	protected float m_fStateSeconds;
 	protected float m_fLostSeconds;
@@ -181,6 +191,17 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected bool m_bArrivalRoadRecoveryAttempted;
 	protected bool m_bArrivalRoadRecoveryBlocked;
 	protected bool m_bOwnVehicleBrake;
+	protected ChimeraCharacter m_BrakeDriver;
+	protected Vehicle m_BrakeTruck;
+	[RplProp()]
+	protected bool m_bPlayerControlSuspended;
+	protected bool m_bControlHadAssignedTruck;
+	protected bool m_bDeferredWaypointClear;
+	protected bool m_bDeferredControlDismiss;
+	protected float m_fControlBoardWaitStartMs = -1;
+	[RplProp()]
+	protected bool m_bControlBoardingTimedOut;
+	protected ref CF_ControlHandoverWatch m_ControlHandoverWatch;
 	protected bool m_bUnloadSlotBrakeCaptured;
 	protected bool m_bForwardWaitDeparture;
 	protected bool m_bUnloadBayGoalValid;
@@ -248,12 +269,349 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected AIWaypoint m_Waypoint;
 	protected CF_ConvoySession m_Session;
 	protected CF_DriverControllerComponent m_Predecessor;
+	protected ref CF_NativeCruiseControl m_NativeCruise;
+	protected float m_fCruiseAccumulator;
+	protected float m_fNextCruiseDiagnosticMs;
+
+	protected bool CF_PlayerControlsDriverOrTruck()
+	{
+		if (!GetGame())
+			return false;
+		PlayerManager players = GetGame().GetPlayerManager();
+		if (!players)
+			return false;
+		IEntity driver = m_Driver;
+		if (!driver)
+			driver = GetOwner();
+		if (driver && players.GetPlayerIdFromControlledEntity(driver) > 0)
+			return true;
+		if (!m_Truck)
+			return false;
+		if (players.GetPlayerIdFromControlledEntity(m_Truck) > 0)
+			return true;
+		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+		BaseCompartmentSlot pilot;
+		if (car)
+			pilot = car.GetPilotCompartmentSlot();
+		IEntity occupant;
+		if (pilot)
+			occupant = pilot.GetOccupant();
+		return occupant && players.GetPlayerIdFromControlledEntity(occupant) > 0;
+	}
+
+	// Also checked at native write boundaries: a direct SetControlledEntity
+	// can bypass SCR_PlayerController's pre-possession event.
+	protected bool CF_IsControlBlocked()
+	{
+		return m_bPlayerControlSuspended || CF_PlayerControlsDriverOrTruck();
+	}
+
+	bool CF_IsPlayerControlSuspended()
+	{
+		return CF_IsControlBlocked();
+	}
+
+	string CF_GetResumeFailureReason()
+	{
+		if (m_iState == CF_LOST)
+			return "lost contact with predecessor";
+		if (m_bArrivalRoadRecoveryBlocked)
+			return "arrival route is blocked";
+		if (m_iState == CF_RETURN_BLOCKED)
+			return "return route is blocked";
+		return string.Empty;
+	}
+
+	protected bool CF_IsLiveAIPilot(ChimeraCharacter driver, Vehicle truck)
+	{
+		if (!Replication.IsServer() || !GetGame() || !GetGame().GetWorld() ||
+			CF_ConvoySession.CF_IsWorldCleanup() || !driver || !truck)
+			return false;
+		PlayerManager players = GetGame().GetPlayerManager();
+		if (!players || players.GetPlayerIdFromControlledEntity(driver) > 0 ||
+			players.GetPlayerIdFromControlledEntity(truck) > 0)
+			return false;
+		CompartmentAccessComponent access = driver.GetCompartmentAccessComponent();
+		BaseCompartmentSlot slot;
+		if (access)
+			slot = access.GetCompartment();
+		if (!slot || !slot.IsPiloting() || slot.GetOccupant() != driver ||
+			access.GetVehicleIn(driver) != truck)
+			return false;
+		CarControllerComponent car = CarControllerComponent.Cast(truck.FindComponent(CarControllerComponent));
+		AIControlComponent control = driver.GetAIControlComponent();
+		AIAgent agent;
+		if (control)
+			agent = control.GetAIAgent();
+		// Activation can change with vanilla vehicle/LOD management without
+		// changing ownership. It is not a brake-lease ownership token.
+		return car && car.GetPilotCompartmentSlot() == slot && agent &&
+			agent.GetControlledEntity() == driver;
+	}
+
+	protected void CF_StartControlWatch()
+	{
+		if (!m_ControlHandoverWatch)
+			m_ControlHandoverWatch = new CF_ControlHandoverWatch();
+		m_ControlHandoverWatch.Start(this);
+	}
+
+	protected void CF_StopControlWatch()
+	{
+		if (m_ControlHandoverWatch)
+			m_ControlHandoverWatch.Stop();
+		m_ControlHandoverWatch = null;
+	}
+
+	protected void CF_SuspendForPlayerControl(string reason, bool beforeTransfer)
+	{
+		if (!Replication.IsServer() || CF_ConvoySession.CF_IsWorldCleanup() ||
+			m_iState == CF_IDLE || m_bPlayerControlSuspended)
+			return;
+		bool hadBrake = m_bOwnVehicleBrake;
+		bool hadCruise = m_NativeCruise && m_NativeCruise.OwnsOverride();
+		if (beforeTransfer)
+		{
+			// Native invokes this before deactivating AI or switching player
+			// control. Both release methods still recheck exact live ownership.
+			CF_ReleaseNativeCruise("before_player_possession");
+			CF_ReleaseVehicleBrake();
+		}
+		else
+		{
+			// A late observation cannot safely clear a new pilot's inputs.
+			// Sticky limits may remain on this unsupported direct-control path.
+			if (m_NativeCruise)
+				m_NativeCruise.DetachForWorldCleanup();
+			m_bOwnVehicleBrake = false;
+			m_BrakeDriver = null;
+			m_BrakeTruck = null;
+		}
+		m_bPlayerControlSuspended = true;
+		m_bControlHadAssignedTruck = m_Truck != null;
+		m_fControlBoardWaitStartMs = -1;
+		m_bControlBoardingTimedOut = false;
+		m_fPollAccumulator = 0;
+		m_fCruiseAccumulator = 0;
+		Replication.BumpMe();
+		// Do not remove a GetIn waypoint here: its native failure callback
+		// can queue a GetOut after player possession has already completed.
+		Print("[ConvoyFollower] CONTROL_HANDOVER_SUSPENDED: Unit " + m_iUnitNumber +
+			" reason=" + reason + " before_transfer=" + beforeTransfer +
+			" had_brake=" + hadBrake + " had_cruise=" + hadCruise +
+			" hold_requested=" + m_bPanelHoldRequested + " state=" + m_iState +
+			" membership_retained=true native_waypoint_untouched=true");
+		if (!beforeTransfer && (hadBrake || hadCruise))
+			Print("[ConvoyFollower] CONTROL_HANDOVER_LATE: Unit " + m_iUnitNumber +
+				" native_reset=false prior_override_may_remain=true");
+	}
+
+	void CF_OnBeforePlayerPossess(IEntity entity)
+	{
+		if (entity && (entity == m_Driver || entity == m_Truck))
+			CF_SuspendForPlayerControl("native_before_possess", true);
+	}
+
+	void CF_OnPlayerControlChanged(IEntity from, IEntity to)
+	{
+		if (to && (to == m_Driver || to == m_Truck))
+			CF_SuspendForPlayerControl("controlled_entity_changed", false);
+	}
+
+	protected void CF_EndControlHandoverWithoutNative(string reason)
+	{
+		// Removing/failing a live GetIn can queue a GetOut. Relinquish only
+		// our bookkeeping on terminal handback failure, never that activity.
+		if (m_NativeCruise)
+			m_NativeCruise.DetachForWorldCleanup();
+		m_bOwnVehicleBrake = false;
+		m_BrakeDriver = null;
+		m_BrakeTruck = null;
+		m_Waypoint = null;
+		Print("[ConvoyFollower] CONTROL_HANDOVER_TERMINAL: Unit " + m_iUnitNumber +
+			" reason=" + reason + " native_reset=false native_waypoint_untouched=true");
+		ResetToIdle();
+	}
+
+	protected bool CF_UpdateControlHandover()
+	{
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		if (m_bPlayerControlSuspended && (!driver || IsDriverDestroyed(driver) ||
+			(m_bControlHadAssignedTruck && !m_Truck) || (m_Truck && IsAssignedTruckDestroyed())))
+		{
+			// Death/destruction is terminal even when an AI activation/seat
+			// handback will never occur. Detach without touching a human pilot.
+			CF_EndControlHandoverWithoutNative("driver_or_truck_destroyed");
+			return false;
+		}
+		if (CF_PlayerControlsDriverOrTruck())
+		{
+			CF_SuspendForPlayerControl("live_player_control", false);
+			m_fControlBoardWaitStartMs = -1;
+			if (m_bControlBoardingTimedOut)
+			{
+				m_bControlBoardingTimedOut = false;
+				Replication.BumpMe();
+			}
+			return false;
+		}
+		if (!m_bPlayerControlSuspended)
+			return true;
+		AIControlComponent control;
+		if (driver)
+			control = driver.GetAIControlComponent();
+		AIAgent agent;
+		if (control)
+			agent = control.GetAIAgent();
+		if (!agent || agent.GetControlledEntity() != driver || !agent.IsAIActivated())
+			return false;
+		if ((m_bDeferredWaypointClear || m_bDeferredControlDismiss) &&
+			SCR_BoardingEntityWaypoint.Cast(m_Waypoint) && !CF_IsBoardingHandoverReady(driver))
+		{
+			// Exact-seat occupancy alone is not completion. The native GetIn
+			// order must leave the group naturally before a deferred removal.
+			float now = GetGame().GetWorld().GetWorldTime();
+			if (m_fControlBoardWaitStartMs < 0)
+			{
+				m_fControlBoardWaitStartMs = now;
+				Print("[ConvoyFollower] CONTROL_HANDOVER_BOARD_WAIT: Unit " + m_iUnitNumber +
+					" timeout_s=60 deferred_dismiss=" + m_bDeferredControlDismiss);
+			}
+			if (now - m_fControlBoardWaitStartMs >= 60000.0)
+			{
+				if (m_bPanelHoldRequested && !m_bDeferredControlDismiss)
+				{
+					if (!m_bControlBoardingTimedOut)
+					{
+						m_bControlBoardingTimedOut = true;
+						Replication.BumpMe();
+						Print("[ConvoyFollower] CONTROL_HANDOVER_BOARD_BLOCKED: Unit " + m_iUnitNumber +
+							" reason=boarding_timeout hold_requested=true membership_retained=true dismiss_available=true");
+					}
+				}
+				else
+					CF_EndControlHandoverWithoutNative("boarding_timeout");
+			}
+			return false;
+		}
+		CompartmentAccessComponent access = driver.GetCompartmentAccessComponent();
+		if (!access || access.IsGettingIn() || access.IsGettingOut())
+			return false;
+		if (m_Truck)
+		{
+			CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+			BaseCompartmentSlot pilot;
+			if (car)
+				pilot = car.GetPilotCompartmentSlot();
+			if (!pilot || (pilot.GetOccupant() && pilot.GetOccupant() != driver) ||
+				(driver.IsInVehicle() && !CF_IsBoarded()))
+				return false;
+		}
+		m_bPlayerControlSuspended = false;
+		m_bControlHadAssignedTruck = false;
+		m_fControlBoardWaitStartMs = -1;
+		m_bControlBoardingTimedOut = false;
+		Replication.BumpMe();
+		Print("[ConvoyFollower] CONTROL_HANDOVER_AI_RETURNED: Unit " + m_iUnitNumber +
+			" hold_requested=" + m_bPanelHoldRequested + " seated=" + CF_IsBoarded() +
+			" state=" + m_iState + " deferred_dismiss=" + m_bDeferredControlDismiss);
+		if (m_bDeferredControlDismiss)
+		{
+			// Membership was explicitly removed while the player owned the
+			// character. Finish cleanup once it is AI again, without a GetOut.
+			ClearWaypoints();
+			ResetToIdle();
+			return false;
+		}
+		if (m_bDeferredWaypointClear)
+			ClearWaypoints();
+		m_fPollAccumulator = 0;
+		m_fStuckSeconds = 0;
+		if (m_Truck)
+			m_vLastTruckPosition = m_Truck.GetOrigin();
+		return true;
+	}
+
+	protected void CF_ReleaseNativeCruise(string reason)
+	{
+		if (m_NativeCruise)
+			m_NativeCruise.Release(reason);
+		m_fCruiseAccumulator = 0;
+	}
+
+	// One speed-cap owner for the assigned AI truck. The existing navigation
+	// poll owns route/waypoints; this faster loop never writes driving inputs.
+	protected void CF_UpdateNativeCruise(float elapsed)
+	{
+		if (CF_IsControlBlocked())
+			return;
+		m_fCruiseAccumulator += elapsed;
+		if (m_fCruiseAccumulator < 0.2)
+			return;
+		m_fCruiseAccumulator = 0;
+		if (!CF_ConvoySettings.Get().m_bNativeCruiseEnabled || !CF_IsBoarded())
+		{
+			CF_ReleaseNativeCruise("disabled_or_not_seated");
+			return;
+		}
+		bool explicitHold = m_bPanelHoldRequested || m_iState == CF_PANEL_HOLD;
+		if (!explicitHold && (!CF_IsMovementActive() || m_bUnloadSequenceHold ||
+			m_bArrivalRoadRecoveryActive || m_bArrivalRoadRecoveryBlocked))
+		{
+			CF_ReleaseNativeCruise("outside_ordinary_following");
+			return;
+		}
+		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+		if (!car || !car.GetSimulation())
+		{
+			CF_ReleaseNativeCruise("truck_simulation_unavailable");
+			return;
+		}
+		float limit;
+		float gap = -1;
+		float predecessorSpeed;
+		string reason = "explicit_hold";
+		IEntity target = GetTargetVehicle();
+		if (!explicitHold)
+		{
+			CarControllerComponent targetCar;
+			if (target)
+				targetCar = CarControllerComponent.Cast(target.FindComponent(CarControllerComponent));
+			if (!targetCar || !targetCar.GetSimulation())
+			{
+				CF_ReleaseNativeCruise("predecessor_unavailable");
+				return;
+			}
+			gap = vector.DistanceXZ(m_Truck.GetOrigin(), target.GetOrigin());
+			predecessorSpeed = targetCar.GetSimulation().GetSpeedKmh();
+			limit = CF_FollowSpeedPolicy.MaxSpeedKmh(gap, CF_ConvoySettings.Get().m_fStoppedGap, predecessorSpeed);
+			reason = "predecessor_pacing";
+		}
+		if (!m_NativeCruise)
+			m_NativeCruise = new CF_NativeCruiseControl();
+		if (!m_NativeCruise.Request(ChimeraCharacter.Cast(m_Driver), m_Truck, limit, reason))
+			return;
+		float now = GetGame().GetWorld().GetWorldTime();
+		if (now < m_fNextCruiseDiagnosticMs)
+			return;
+		m_fNextCruiseDiagnosticMs = now + 1000.0;
+		string targetName = "none";
+		if (target)
+			targetName = target.GetName();
+		VehicleWheeledSimulation sim = car.GetSimulation();
+		Print("[ConvoyFollower] NATIVE_CRUISE_STATUS: Unit " + m_iUnitNumber +
+			" target=" + targetName + " reason=" + reason + " gap=" + gap +
+			" lead_kmh=" + predecessorSpeed + " actual_kmh=" + sim.GetSpeedKmh() +
+			" requested_kmh=" + m_NativeCruise.GetRequestedSpeedKmh() + " brake=" + sim.GetBrake() +
+			" throttle=" + sim.GetThrottle() + " engine=" + sim.EngineIsOn() + " state=" + m_iState);
+	}
 
 	protected void SetState(int state)
 	{
 		if (m_iState == state)
 			return;
 
+		CF_ReleaseNativeCruise("state_change");
 		if (state != CF_ARRIVING)
 			SetUnloadReleaseReady(false);
 		m_iState = state;
@@ -427,15 +785,30 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected void CF_UpdateVehicleBrake()
 	{
-		if (!Replication.IsServer() || !m_Truck)
+		if (!Replication.IsServer() || !m_Truck || CF_ConvoySession.CF_IsWorldCleanup())
 			return;
+		if (CF_IsControlBlocked())
+		{
+			CF_SuspendForPlayerControl("brake_write_guard", false);
+			return;
+		}
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		if (!CF_IsLiveAIPilot(driver, m_Truck))
+		{
+			CF_ReleaseVehicleBrake();
+			return;
+		}
 		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
 		if (!car)
 			return;
 		VehicleWheeledSimulation sim = car.GetSimulation();
 		if (CF_ShouldHoldVehicleBrake())
 		{
+			if (m_bOwnVehicleBrake && (m_BrakeDriver != driver || m_BrakeTruck != m_Truck))
+				CF_ReleaseVehicleBrake();
 			m_bOwnVehicleBrake = true;
+			m_BrakeDriver = driver;
+			m_BrakeTruck = m_Truck;
 			car.SetPersistentHandBrake(true);
 			if (sim)
 			{
@@ -452,15 +825,25 @@ class CF_DriverControllerComponent : ScriptComponent
 		if (!m_bOwnVehicleBrake)
 			return;
 		m_bOwnVehicleBrake = false;
-		if (!m_Truck)
+		ChimeraCharacter driver = m_BrakeDriver;
+		Vehicle truck = m_BrakeTruck;
+		m_BrakeDriver = null;
+		m_BrakeTruck = null;
+		if (!CF_IsLiveAIPilot(driver, truck))
+		{
+			Print("[ConvoyFollower] VEHICLE_BRAKE_ABANDONED: Unit " + m_iUnitNumber +
+				" ownership_lost=true native_reset=false");
 			return;
-		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+		}
+		CarControllerComponent car = CarControllerComponent.Cast(truck.FindComponent(CarControllerComponent));
 		if (!car)
 			return;
 		VehicleWheeledSimulation sim = car.GetSimulation();
 		car.SetPersistentHandBrake(false);
 		if (sim)
 			sim.SetBreak(0, true);
+		Print("[ConvoyFollower] VEHICLE_BRAKE_RELEASED: Unit " + m_iUnitNumber +
+			" truck=" + truck.GetName() + " assigned_ai_pilot=true");
 	}
 
 	protected void SetUnloadReleaseReady(bool ready)
@@ -517,6 +900,8 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	bool CanAssign(IEntity user)
 	{
+		if (CF_IsControlBlocked())
+			return false;
 		if (!user || (m_iState != CF_IDLE && m_iState != CF_ON_FOOT_FOLLOW && m_iState != CF_ON_FOOT_HOLD))
 			return false;
 		if (IsOnFootFollower() && !CF_IsOwnedBy(user))
@@ -548,7 +933,7 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	bool CanStartOnFoot(IEntity user)
 	{
-		if (m_iState != CF_IDLE || !user)
+		if (CF_IsControlBlocked() || m_iState != CF_IDLE || !user)
 			return false;
 
 		ChimeraCharacter driver = ChimeraCharacter.Cast(GetOwner());
@@ -602,12 +987,13 @@ class CF_DriverControllerComponent : ScriptComponent
 
 		SetEventMask(m_Driver, EntityEvent.FRAME);
 		SetEventMask(m_Driver, EntityEvent.POSTFRAME);
+		CF_StartControlWatch();
 		Print("[ConvoyFollower] FOOT_FOLLOWING: driver staging behind player");
 	}
 
 	bool CanStopOnFoot(IEntity user)
 	{
-		return IsOnFootFollower() && CF_IsOwnedBy(user);
+		return !CF_IsControlBlocked() && IsOnFootFollower() && CF_IsOwnedBy(user);
 	}
 
 	void StopOnFoot(IEntity user)
@@ -669,6 +1055,58 @@ class CF_DriverControllerComponent : ScriptComponent
 		return slot && slot.IsPiloting() && compartment.GetVehicleIn(driver) == m_Truck;
 	}
 
+	protected string CF_BoardingActionDescription(AIActionBase action)
+	{
+		if (!action)
+			return "none";
+		return action.Type().ToString() + ":" + action.GetActionState();
+	}
+
+	// Seat occupancy can precede the end of entry and the native GetIn
+	// activity. Removing its waypoint at that point fails GetIn, whose native
+	// failure handler can queue GetOut or eject the newly seated driver.
+	// Let the owned boarding order finish itself before session rewiring or
+	// a MOVE can remove it. This only observes native state; it never completes
+	// or cancels an action. The caller retains its boarding timeout/retry path.
+	protected bool CF_IsBoardingHandoverReady(ChimeraCharacter driver)
+	{
+		CompartmentAccessComponent access = driver.GetCompartmentAccessComponent();
+		bool gettingIn = access && access.IsGettingIn();
+		bool gettingOut = access && access.IsGettingOut();
+		SCR_BoardingEntityWaypoint boardingWaypoint = SCR_BoardingEntityWaypoint.Cast(m_Waypoint);
+		bool waypointPending = boardingWaypoint && HasOwnWaypointInGroup();
+		bool ready = access && !gettingIn && !gettingOut && !waypointPending;
+
+		AIControlComponent control = driver.GetAIControlComponent();
+		AIAgent agent;
+		if (control)
+			agent = control.GetAIAgent();
+		SCR_AIUtilityComponent utility;
+		if (agent)
+			utility = SCR_AIUtilityComponent.Cast(agent.FindComponent(SCR_AIUtilityComponent));
+		SCR_AIGroupUtilityComponent groupUtility;
+		if (m_Group)
+			groupUtility = SCR_AIGroupUtilityComponent.Cast(m_Group.FindComponent(SCR_AIGroupUtilityComponent));
+		string behavior = "none";
+		string activity = "none";
+		if (utility)
+			behavior = CF_BoardingActionDescription(utility.GetCurrentBehavior());
+		if (groupUtility)
+			activity = CF_BoardingActionDescription(groupUtility.GetCurrentAction());
+		string diagnostic = "state=" + m_iState + "|" + gettingIn + "|" + gettingOut + "|" +
+			waypointPending + "|" + ready + "|" + behavior + "|" + activity;
+		if (diagnostic != m_sBoardingHandoverDiagnostic)
+		{
+			m_sBoardingHandoverDiagnostic = diagnostic;
+			Print("[ConvoyFollower] BOARD_HANDOVER: Unit " + m_iUnitNumber +
+				" state=" + m_iState + " ready=" + ready + " getting_in=" + gettingIn +
+				" getting_out=" + gettingOut + " owned_waypoint_pending=" + waypointPending +
+				" behavior=" + behavior + " group_action=" + activity +
+				" age_s=" + m_fStateSeconds);
+		}
+		return ready;
+	}
+
 	// Prepare once at the confirmed initial driver-seat transition. A short
 	// first MOVE can complete inside its radius before native AI starts the
 	// engine; waiting for a later MOVE then adds a second startup delay.
@@ -676,7 +1114,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	// simulation start. Native AI keeps all throttle, gear and steering control.
 	protected void CF_PrepareEngineAfterBoarding()
 	{
-		if (!Replication.IsServer() || m_iState != CF_BOARDING || !m_Session || !CF_IsBoarded())
+		if (!Replication.IsServer() || CF_IsControlBlocked() || m_iState != CF_BOARDING || !m_Session || !CF_IsBoarded())
 			return;
 		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
 		if (!driver || IsDriverDestroyed(driver) || IsAssignedTruckDestroyed())
@@ -698,7 +1136,7 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	bool CF_IsMovementActive()
 	{
-		return m_iState == CF_FOLLOWING || m_iState == CF_ARRIVING;
+		return !CF_IsControlBlocked() && (m_iState == CF_FOLLOWING || m_iState == CF_ARRIVING);
 	}
 
 	int CF_GetUnitNumber()
@@ -708,8 +1146,18 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	string CF_GetPanelStateLabel()
 	{
+		if (m_bControlBoardingTimedOut)
+			return "hold blocked: boarding handover timed out";
+		if (CF_IsControlBlocked())
+			return "player control; convoy paused";
+		if (m_bPanelHoldReboardBlocked)
+			return "hold blocked: " + m_sPanelHoldReboardFailure;
+		if (m_bPanelHoldRequested && m_iState == CF_REBOARDING)
+			return "reboarding assigned truck to hold";
 		if (m_iState == CF_PANEL_HOLD)
 			return "holding in vehicle";
+		if (m_bPanelHoldRequested)
+			return "stopping for explicit hold";
 		if (m_iState == CF_FOLLOWING)
 			return "following";
 		if (m_iState == CF_ARRIVING)
@@ -743,7 +1191,11 @@ class CF_DriverControllerComponent : ScriptComponent
 		if (m_iState == CF_BOARDING)
 			return "boarding";
 		if (m_iState == CF_WAITING_FOR_PREDECESSOR || m_iState == CF_WAITING_FOR_LEAD)
+		{
+			if (m_Predecessor && m_Predecessor.CF_HasPanelHoldRequest())
+				return "waiting behind held predecessor";
 			return "waiting for lead";
+		}
 		if (m_iState == CF_GETTING_OUT)
 			return "getting out";
 		if (m_iState == CF_PAUSED_ON_FOOT)
@@ -753,7 +1205,38 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	bool CF_IsPanelHeld()
 	{
-		return m_iState == CF_PANEL_HOLD && CF_IsBoarded();
+		return !CF_IsControlBlocked() && m_iState == CF_PANEL_HOLD && CF_IsBoarded();
+	}
+
+	bool CF_HasPanelHoldRequest()
+	{
+		return m_bPanelHoldRequested;
+	}
+
+	bool CF_IsPanelHoldReboardBlocked()
+	{
+		return m_bPanelHoldReboardBlocked;
+	}
+
+	protected void CF_SetPanelHoldRequested(bool requested)
+	{
+		if (!requested)
+		{
+			m_bPanelHoldReboardBlocked = false;
+			m_sPanelHoldReboardFailure = string.Empty;
+		}
+		if (m_bPanelHoldRequested == requested)
+			return;
+		m_bPanelHoldRequested = requested;
+		Replication.BumpMe();
+	}
+
+	bool CF_RequestPanelHold()
+	{
+		if (!Replication.IsServer() || !CF_CanApproachPanelHold())
+			return false;
+		CF_SetPanelHoldRequested(true);
+		return true;
 	}
 
 	bool CF_IsPanelVehicleSlow(float maxKmh)
@@ -763,7 +1246,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
 		if (!car || !car.GetSimulation())
 			return false;
-		return car.GetSimulation().GetSpeedKmh() <= maxKmh;
+		return Math.AbsFloat(car.GetSimulation().GetSpeedKmh()) <= maxKmh;
 	}
 
 	bool CF_CanPanelHold()
@@ -776,7 +1259,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	// a fast truck's MOVE order can send it into an uncontrolled stop.
 	bool CF_CanApproachPanelHold()
 	{
-		return CF_IsBoarded() &&
+		return !CF_IsControlBlocked() && CF_IsBoarded() &&
 			(m_iState == CF_FOLLOWING || m_iState == CF_ARRIVING ||
 			m_iState == CF_WAITING_FOR_PREDECESSOR || m_iState == CF_WAITING_FOR_LEAD ||
 			m_iState == CF_PAUSED_ON_FOOT || m_iState == CF_PANEL_HOLD);
@@ -786,6 +1269,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	{
 		if (!Replication.IsServer() || !CF_CanPanelHold())
 			return false;
+		CF_SetPanelHoldRequested(true);
 		if (m_iState == CF_PANEL_HOLD)
 			return true;
 		ClearWaypoints();
@@ -796,10 +1280,13 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	bool CF_CanPanelResume()
 	{
+		if (CF_IsControlBlocked())
+			return false;
 		Resource movePrefab = Resource.Load(CF_MOVE_WAYPOINT);
 		bool resumableState = m_iState == CF_PANEL_HOLD || m_iState == CF_FOLLOWING ||
 			m_iState == CF_ARRIVING || m_iState == CF_WAITING_FOR_PREDECESSOR ||
-			m_iState == CF_WAITING_FOR_LEAD || m_iState == CF_LOST;
+			m_iState == CF_WAITING_FOR_LEAD || m_iState == CF_LOST ||
+			(m_bPanelHoldRequested && m_iState == CF_PAUSED_ON_FOOT);
 		return resumableState && CF_IsBoarded() && m_Group && movePrefab.IsValid() &&
 			GetTargetVehicle() && (!m_Predecessor || m_Predecessor.CF_IsBoarded());
 	}
@@ -809,10 +1296,15 @@ class CF_DriverControllerComponent : ScriptComponent
 		if (!Replication.IsServer() || !CF_CanPanelResume())
 			return false;
 		IEntity target = GetTargetVehicle();
-		StartFollowing(target, false, false);
+		bool wasApproachingHold = CF_IsMovementActive();
+		CF_SetPanelHoldRequested(false);
+		// Cancelling an approaching Hold does not need to replace a still
+		// active MOVE. A fully held truck starts a fresh predecessor order.
+		if (!wasApproachingHold)
+			StartFollowing(target, false, false);
 		Print("[ConvoyFollower] PANEL_RESUME: Unit " + m_iUnitNumber +
 			" follows its assigned predecessor");
-		return m_iState == CF_FOLLOWING;
+		return CF_IsMovementActive();
 	}
 
 	bool CF_CanPanelDismount()
@@ -822,7 +1314,7 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	bool CF_IsOrderInverted()
 	{
-		return m_bOrderInversionLogged && CF_IsMovementActive();
+		return !m_bPanelHoldRequested && m_bOrderInversionLogged && CF_IsMovementActive();
 	}
 
 	bool CF_IsActiveConvoyMember()
@@ -832,12 +1324,12 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	bool CF_IsOwnedSeatedConvoyMember()
 	{
-		return m_Session && m_Session.IsOwnedRadioMember(this) && CF_IsBoarded();
+		return !CF_IsControlBlocked() && m_Session && m_Session.IsOwnedRadioMember(this) && CF_IsBoarded();
 	}
 
 	bool CF_CanReleaseAtUnload()
 	{
-		if (m_iState != CF_ARRIVING || !m_bUnloadReleaseReady || !m_bSessionReleaseAllowed)
+		if (CF_IsControlBlocked() || m_bPanelHoldRequested || m_iState != CF_ARRIVING || !m_bUnloadReleaseReady || !m_bSessionReleaseAllowed)
 			return false;
 		// m_Truck is server-owned; action visibility uses the replicated flag,
 		// while the server also verifies that this driver remains seated.
@@ -846,6 +1338,10 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	string CF_GetReleaseEligibilityReason()
 	{
+		if (CF_IsControlBlocked())
+			return "convoy control is paused while a player controls this unit";
+		if (m_bPanelHoldRequested)
+			return "Resume the explicit Hold before ordering an unload maneuver";
 		if (!CF_IsBoarded())
 			return "driver is not seated in the assigned truck";
 		if (m_iState != CF_ARRIVING)
@@ -919,7 +1415,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	// point or pull into the player's lead vehicle.
 	bool CF_SetUnloadBayGoal(vector bay, vector leadAnchor)
 	{
-		if (!Replication.IsServer() || !m_Truck || !CF_IsBoarded())
+		if (!Replication.IsServer() || CF_IsControlBlocked() || !m_Truck || !CF_IsBoarded())
 			return false;
 		m_bUnloadBayGoalValid = false;
 		// This is the position occupied by the first truck at unload, so a
@@ -967,18 +1463,18 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	bool CF_IsUnloadDeparted()
 	{
-		return m_iState == CF_UNLOAD_DEPARTED && CF_IsBoarded();
+		return !CF_IsControlBlocked() && m_iState == CF_UNLOAD_DEPARTED && CF_IsBoarded();
 	}
 
 	bool CF_IsForwardWaitParked()
 	{
-		return m_iState == CF_FORWARD_WAIT_DEPARTED && CF_IsBoarded() &&
+		return !CF_IsControlBlocked() && m_iState == CF_FORWARD_WAIT_DEPARTED && CF_IsBoarded() &&
 			CF_IsAtUnloadWaitingPoint();
 	}
 
 	bool CF_CanResumeForwardWait()
 	{
-		return m_iState == CF_FORWARD_WAIT_DEPARTED && CF_IsBoarded() && m_Session;
+		return !CF_IsControlBlocked() && m_iState == CF_FORWARD_WAIT_DEPARTED && CF_IsBoarded() && m_Session;
 	}
 
 	bool CF_ResumeForwardWait()
@@ -1000,16 +1496,18 @@ class CF_DriverControllerComponent : ScriptComponent
 	// server-owned. The session verifies the actual parked roster on use.
 	bool CF_IsReturnParkedForActions()
 	{
-		return m_iState == CF_UNLOAD_DEPARTED;
+		return !CF_IsControlBlocked() && m_iState == CF_UNLOAD_DEPARTED;
 	}
 
 	bool CF_IsReturnBlockedForActions()
 	{
-		return m_iState == CF_RETURN_BLOCKED;
+		return !CF_IsControlBlocked() && m_iState == CF_RETURN_BLOCKED;
 	}
 
 	bool CF_IsAtUnloadWaitingPoint()
 	{
+		if (CF_IsControlBlocked())
+			return false;
 		float requiredStillSeconds = CF_UNLOAD_SLOT_STILL_SECONDS;
 		if (m_bForwardWaitDeparture)
 			requiredStillSeconds = CF_FORWARD_SLOT_STILL_SECONDS;
@@ -1757,7 +2255,7 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	void CF_HoldForUnloadQueue()
 	{
-		if (!Replication.IsServer() || !m_Session || !CF_IsBoarded() ||
+		if (!Replication.IsServer() || CF_IsControlBlocked() || !m_Session || !CF_IsBoarded() ||
 			m_iState == CF_UNLOAD_DEPARTING || m_iState == CF_UNLOAD_DEPARTED)
 			return;
 		if (m_iState == CF_UNLOAD_QUEUE)
@@ -1773,7 +2271,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	// because the owner is driving past the parked-ahead trucks.
 	void CF_RequestForwardOutboundHold()
 	{
-		if (!Replication.IsServer() || !m_Session || !CF_IsBoarded())
+		if (!Replication.IsServer() || CF_IsControlBlocked() || !m_Session || !CF_IsBoarded())
 			return;
 		m_bForwardOutboundHoldRequested = true;
 		m_fLostSeconds = 0;
@@ -1803,12 +2301,12 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	bool CF_IsForwardOutboundHeld()
 	{
-		return m_iState == CF_FORWARD_OUTBOUND_HOLD && CF_IsBoarded();
+		return !CF_IsControlBlocked() && m_iState == CF_FORWARD_OUTBOUND_HOLD && CF_IsBoarded();
 	}
 
 	void CF_ResumeFromUnloadQueue()
 	{
-		if (!Replication.IsServer() || !CF_IsBoarded())
+		if (!Replication.IsServer() || CF_IsControlBlocked() || !CF_IsBoarded())
 			return;
 		if (m_iState == CF_UNLOAD_DEPARTING)
 		{
@@ -1929,7 +2427,7 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	bool CF_CanAbortUnloadForReturn()
 	{
-		if (!m_Session || !m_Group || !CF_IsBoarded() ||
+		if (CF_IsControlBlocked() || !m_Session || !m_Group || !CF_IsBoarded() ||
 			m_iState == CF_UNLOAD_DEPARTING || m_iState == CF_UNLOAD_DEPARTED ||
 			m_iState == CF_GETTING_OUT || m_iState == CF_IDLE)
 			return false;
@@ -2021,7 +2519,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	// heading; it never reinstates the old unload queue.
 	bool CF_RetryBlockedReturn()
 	{
-		if (!Replication.IsServer() || !m_Session || m_iState != CF_RETURN_BLOCKED || !CF_IsBoarded())
+		if (!Replication.IsServer() || CF_IsControlBlocked() || !m_Session || m_iState != CF_RETURN_BLOCKED || !CF_IsBoarded())
 			return false;
 		ClearWaypoints();
 		m_bReturnTurnFailed = false;
@@ -2591,6 +3089,8 @@ class CF_DriverControllerComponent : ScriptComponent
 			return;
 
 		bool changed = m_Predecessor != predecessor || m_iUnitNumber != unitNumber;
+		if (changed)
+			CF_ReleaseNativeCruise("convoy_target_change");
 		// A newly promoted front unit may have joined after the player left
 		// the lead vehicle. Inherit the former front unit's parked target.
 		if (!predecessor && m_Predecessor && !m_LastPlayerVehicle)
@@ -2614,6 +3114,16 @@ class CF_DriverControllerComponent : ScriptComponent
 		CF_ResetArrivalRoadRecovery();
 		m_iStuckRetries = 0;
 		m_bOrderInversionLogged = false;
+		if (m_bPanelHoldRequested)
+		{
+			// A stopped held truck keeps its brake state while only its link
+			// changes. An approaching truck waits to settle, never restarting
+			// automatically against the new predecessor.
+			if (m_iState != CF_PANEL_HOLD)
+				SetState(CF_WAITING_FOR_PREDECESSOR);
+			Print("[ConvoyFollower] PANEL_HOLD_RETARGET: Unit " + m_iUnitNumber + " keeps explicit Hold after chain change");
+			return;
+		}
 		if (m_iState == CF_RETURN_WAIT || m_iState == CF_RETURN_TURNING || m_iState == CF_RETURN_BLOCKED)
 		{
 			m_iReturnTurnPhase = 0;
@@ -2645,7 +3155,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		CF_ResetArrivalRoadRecovery();
 		m_iStuckRetries = 0;
 		m_bOrderInversionLogged = false;
-		if (m_iState != CF_PAUSED_ON_FOOT && m_iState != CF_BOARDING &&
+		if (m_iState != CF_PANEL_HOLD && m_iState != CF_PAUSED_ON_FOOT && m_iState != CF_BOARDING &&
 			m_iState != CF_UNLOAD_QUEUE && m_iState != CF_FORWARD_OUTBOUND_HOLD)
 			SetState(CF_WAITING_FOR_PREDECESSOR);
 		Print("[ConvoyFollower] LINK_HOLD: Unit " + m_iUnitNumber + " waiting for predecessor");
@@ -2656,6 +3166,15 @@ class CF_DriverControllerComponent : ScriptComponent
 		// The session already removed this unit from its roster. Suppress the
 		// normal callback so replacement does not remove another member.
 		m_Session = null;
+		if (CF_IsControlBlocked())
+		{
+			CF_SuspendForPlayerControl("session_removed_during_player_control", false);
+			CF_SetPanelHoldRequested(false);
+			m_bDeferredControlDismiss = true;
+			Print("[ConvoyFollower] CONTROL_HANDOVER_DISMISS_DEFERRED: Unit " + m_iUnitNumber +
+				" native_orders=false get_out=false");
+			return;
+		}
 		StandDown();
 	}
 
@@ -2696,6 +3215,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			return false;
 		}
 
+		CF_ReleaseNativeCruise("new_assignment");
 		m_Truck = FindNearestEmptyTruck(driver);
 		if (!m_Truck)
 		{
@@ -2715,6 +3235,7 @@ class CF_DriverControllerComponent : ScriptComponent
 
 		m_Driver = driver;
 		m_Leader = leader;
+		CF_SetPanelHoldRequested(false);
 		m_PassengerVehicle = null;
 		m_bStopAfterPassengerExit = false;
 		m_Session = session;
@@ -2776,6 +3297,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		SetState(CF_BOARDING);
 		SetEventMask(m_Driver, EntityEvent.FRAME);
 		SetEventMask(m_Driver, EntityEvent.POSTFRAME);
+		CF_StartControlWatch();
 		Print("[ConvoyFollower] BOARDING: nearest empty ground vehicle assigned, driver seat requested");
 		return true;
 	}
@@ -2799,7 +3321,18 @@ class CF_DriverControllerComponent : ScriptComponent
 	{
 		if (!Replication.IsServer() || !CanStandDown())
 			return;
+		if (CF_IsControlBlocked())
+		{
+			CF_SuspendForPlayerControl("dismissed_during_player_control", false);
+			CF_SetPanelHoldRequested(false);
+			NotifySessionUnavailable();
+			m_bDeferredControlDismiss = true;
+			Print("[ConvoyFollower] CONTROL_HANDOVER_DISMISS_DEFERRED: Unit " + m_iUnitNumber +
+				" native_orders=false get_out=false");
+			return;
+		}
 
+		CF_SetPanelHoldRequested(false);
 		NotifySessionUnavailable();
 		Print("[ConvoyFollower] STAND_DOWN: stopping follow order");
 		ClearWaypoints();
@@ -2877,7 +3410,7 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected bool IssueBoardWaypoint()
 	{
-		if (!m_Truck || !m_Group)
+		if (CF_IsControlBlocked() || !m_Truck || !m_Group)
 			return false;
 
 		Resource prefab = Resource.Load(CF_BOARD_WAYPOINT);
@@ -2896,6 +3429,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		waypoint.SetPriorityLevel(SCR_AIActionBase.PRIORITY_LEVEL_PLAYER);
 		waypoint.SetCompletionRadius(8.0);
 		m_Waypoint = waypoint;
+		m_sBoardingHandoverDiagnostic = string.Empty;
 		m_Group.AddWaypoint(waypoint);
 		m_fWaypointSeconds = 0;
 		return true;
@@ -2932,6 +3466,11 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_fSinceUnexpectedExitSeconds = 0;
 		if (m_iStationaryUnexpectedExits >= CF_REBOARD_EPISODE_MAX_EXITS)
 		{
+			if (m_bPanelHoldRequested)
+			{
+				CF_BlockPanelHoldReboard("repeated unexpected exits");
+				return;
+			}
 			Print("[ConvoyFollower] REBOARD_TERMINAL: Unit " + m_iUnitNumber +
 				" exited " + m_iStationaryUnexpectedExits +
 				" times without moving five metres; removing blocked truck from convoy");
@@ -2951,7 +3490,23 @@ class CF_DriverControllerComponent : ScriptComponent
 			return;
 
 		Print("[ConvoyFollower] REBOARD_FAILED: Unit " + m_iUnitNumber + " could not issue boarding order");
-		StandDown();
+		if (m_bPanelHoldRequested)
+			CF_BlockPanelHoldReboard("boarding order unavailable");
+		else
+			StandDown();
+	}
+
+	protected void CF_BlockPanelHoldReboard(string reason)
+	{
+		// End only our boarding waypoint. Do not issue a new movement or
+		// eviction order, discard the reservation, or retry indefinitely.
+		ClearWaypoints();
+		m_bPanelHoldReboardBlocked = true;
+		m_sPanelHoldReboardFailure = reason;
+		m_iUnloadReboardState = 0;
+		SetState(CF_REBOARDING);
+		Print("[ConvoyFollower] PANEL_HOLD_REBOARD_BLOCKED: Unit " + m_iUnitNumber +
+			" retains assigned truck and membership; " + reason);
 	}
 
 	protected bool IsDriverDestroyed(ChimeraCharacter driver)
@@ -2976,6 +3531,8 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected bool IssueOnFootFollowWaypoint()
 	{
+		if (CF_IsControlBlocked())
+			return false;
 		if (!m_Group || !m_Leader)
 			return false;
 
@@ -3040,7 +3597,7 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected bool IssuePassengerBoardWaypoint(IEntity vehicle)
 	{
-		if (!m_Group || !vehicle || !HasFreeCargoSeat(vehicle))
+		if (CF_IsControlBlocked() || !m_Group || !vehicle || !HasFreeCargoSeat(vehicle))
 			return false;
 
 		Resource prefab = Resource.Load(CF_BOARD_WAYPOINT);
@@ -3066,7 +3623,7 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected bool IssueMoveWaypoint(vector destination)
 	{
-		if (!m_Group)
+		if (CF_IsControlBlocked() || !m_Group)
 			return false;
 
 		Resource prefab = Resource.Load(CF_MOVE_WAYPOINT);
@@ -3105,15 +3662,23 @@ class CF_DriverControllerComponent : ScriptComponent
 	// Keep one active MOVE waypoint so the vehicle path does not restart every few seconds.
 	protected bool MoveWaypoint(vector destination)
 	{
+		if (CF_IsControlBlocked())
+			return false;
 		// Completed waypoints can leave the group while the leader is stopped nearby.
 		// In that case create a fresh order; otherwise only move the active one.
 		if (!HasOwnWaypointInGroup())
 			return IssueMoveWaypoint(destination);
 
+		vector previousGoal = m_vLastWaypointPosition;
+		float previousAge = m_fWaypointSeconds;
 		m_Waypoint.SetOrigin(destination);
 		m_vLastWaypointPosition = destination;
 		m_fWaypointSeconds = 0;
-		CF_LogFollowWait("MOVE_UPDATED");
+		// Updates are already cadence/distance limited. Log the event directly
+		// so the shared periodic status throttle cannot hide an issued update.
+		Print("[ConvoyFollower] FOLLOW_MOVE_UPDATED: Unit " + m_iUnitNumber +
+			" old_goal=" + previousGoal + " new_goal=" + destination +
+			" previous_age_s=" + previousAge + " radius=" + m_Waypoint.GetCompletionRadius());
 		return true;
 	}
 
@@ -3315,7 +3880,7 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected bool IssueGetOutWaypointFor(IEntity vehicle)
 	{
-		if (!m_Group || !vehicle)
+		if (CF_IsControlBlocked() || !m_Group || !vehicle)
 			return false;
 
 		Resource prefab = Resource.Load(CF_GET_OUT_WAYPOINT);
@@ -3400,6 +3965,10 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected void StartFollowing(IEntity targetVehicle, bool rejoined, bool emitRadio)
 	{
+		if (CF_IsControlBlocked() || m_bPanelHoldRequested)
+			return;
+		if (m_LeadVehicle != targetVehicle)
+			CF_ReleaseNativeCruise("following_target_change");
 		m_LeadVehicle = targetVehicle;
 		m_vLastTargetPosition = targetVehicle.GetOrigin();
 		m_vArrivalAnchorPosition = m_vLastTargetPosition;
@@ -3442,6 +4011,12 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected void StartArriving(IEntity targetVehicle)
 	{
+		if (CF_IsControlBlocked())
+			return;
+		if (m_bPanelHoldRequested)
+			return;
+		if (m_LeadVehicle != targetVehicle)
+			CF_ReleaseNativeCruise("arrival_target_change");
 		bool targetAlreadyStopped = m_fTargetStillSeconds >= CF_STOP_DETECT_SECONDS;
 		m_LeadVehicle = targetVehicle;
 		m_vLastTargetPosition = targetVehicle.GetOrigin();
@@ -3503,6 +4078,12 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected void ClearWaypoints()
 	{
+		if (CF_IsControlBlocked())
+		{
+			m_bDeferredWaypointClear = true;
+			return;
+		}
+		m_bDeferredWaypointClear = false;
 		if (!m_Group || !m_Waypoint)
 			return;
 		if (m_iState == CF_FOLLOWING || m_iState == CF_ARRIVING)
@@ -3526,6 +4107,8 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected void ClearGroupWaypointsForNewOrder()
 	{
+		if (CF_IsControlBlocked())
+			return;
 		// Commanding a one-member driver group replaces its prior GM order.
 		// Later updates remove only this controller's waypoint, never orders
 		// issued to another group's AI.
@@ -3541,13 +4124,22 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected void ResetToIdle()
 	{
+		CF_StopControlWatch();
+		CF_ReleaseNativeCruise("reset_idle");
 		if (m_Driver)
 		{
 			ClearEventMask(m_Driver, EntityEvent.FRAME);
 			ClearEventMask(m_Driver, EntityEvent.POSTFRAME);
 		}
 		CF_ReleaseVehicleBrake();
+		m_bPlayerControlSuspended = false;
+		m_bControlHadAssignedTruck = false;
+		m_bDeferredWaypointClear = false;
+		m_bDeferredControlDismiss = false;
+		m_fControlBoardWaitStartMs = -1;
+		m_bControlBoardingTimedOut = false;
 
+		CF_SetPanelHoldRequested(false);
 		NotifySessionUnavailable();
 		SetState(CF_IDLE);
 		m_bOrderInversionLogged = false;
@@ -3791,7 +4383,17 @@ class CF_DriverControllerComponent : ScriptComponent
 	{
 		if (!Replication.IsServer() || m_iState == CF_IDLE)
 			return;
+		if (CF_ConvoySession.CF_IsWorldCleanup())
+		{
+			CF_DetachForWorldCleanup();
+			return;
+		}
+		if (m_ControlHandoverWatch)
+			m_ControlHandoverWatch.Update(timeSlice);
+		if (!CF_UpdateControlHandover())
+			return;
 
+		CF_UpdateNativeCruise(timeSlice);
 		m_fPollAccumulator += timeSlice;
 		if (m_fPollAccumulator < 1.0)
 			return;
@@ -3834,7 +4436,9 @@ class CF_DriverControllerComponent : ScriptComponent
 
 		if (m_iState == CF_BOARDING)
 		{
-			if (driver.IsInVehicle())
+			bool waitingForBoardingHandover = driver.IsInVehicle() && CF_IsBoarded() &&
+				!CF_IsBoardingHandoverReady(driver);
+			if (driver.IsInVehicle() && !waitingForBoardingHandover)
 			{
 				if (!CF_IsBoarded())
 				{
@@ -3870,7 +4474,7 @@ class CF_DriverControllerComponent : ScriptComponent
 
 			if (m_fStateSeconds >= 60.0)
 			{
-				Print("[ConvoyFollower] BOARD_TIMEOUT: no driver seat after 60 s");
+				Print("[ConvoyFollower] BOARD_TIMEOUT: assigned-seat boarding did not finish within 60 s");
 				ClearWaypoints();
 				ResetToIdle();
 			}
@@ -3885,13 +4489,20 @@ class CF_DriverControllerComponent : ScriptComponent
 				StandDown();
 				return;
 			}
+			if (m_bPanelHoldReboardBlocked && !CF_IsBoarded())
+				return;
 
-			if (driver.IsInVehicle())
+			bool waitingForReboardHandover = driver.IsInVehicle() && CF_IsBoarded() &&
+				!CF_IsBoardingHandoverReady(driver);
+			if (driver.IsInVehicle() && !waitingForReboardHandover)
 			{
 				if (!CF_IsBoarded())
 				{
 					Print("[ConvoyFollower] REBOARD_FAILED: Unit " + m_iUnitNumber + " entered the wrong seat or vehicle");
-					StandDown();
+					if (m_bPanelHoldRequested)
+						CF_BlockPanelHoldReboard("driver in another seat");
+					else
+						StandDown();
 					return;
 				}
 
@@ -3899,6 +4510,15 @@ class CF_DriverControllerComponent : ScriptComponent
 				Print("[ConvoyFollower] REBOARDED: Unit " + m_iUnitNumber + " returned to assigned driver seat");
 				m_iReboardAttempts = 0;
 				m_fStateSeconds = 0;
+				if (m_bPanelHoldRequested)
+				{
+					m_bPanelHoldReboardBlocked = false;
+					m_sPanelHoldReboardFailure = string.Empty;
+					m_iUnloadReboardState = 0;
+					SetState(CF_PANEL_HOLD);
+					Print("[ConvoyFollower] PANEL_HOLD_RESTORED: Unit " + m_iUnitNumber + " seated in original truck; explicit Resume required");
+					return;
+				}
 			if (m_iUnloadReboardState == CF_UNLOAD_QUEUE ||
 				m_iUnloadReboardState == CF_FORWARD_OUTBOUND_HOLD)
 			{
@@ -3966,8 +4586,13 @@ class CF_DriverControllerComponent : ScriptComponent
 			{
 				if (!TryReboardAssignedTruck())
 				{
-					Print("[ConvoyFollower] REBOARD_TERMINAL: Unit " + m_iUnitNumber + " could not regain driver seat; convoy rewiring");
-					StandDown();
+					if (m_bPanelHoldRequested)
+						CF_BlockPanelHoldReboard("reboard retries exhausted");
+					else
+					{
+						Print("[ConvoyFollower] REBOARD_TERMINAL: Unit " + m_iUnitNumber + " could not regain driver seat; convoy rewiring");
+						StandDown();
+					}
 				}
 			}
 			return;
@@ -3975,12 +4600,28 @@ class CF_DriverControllerComponent : ScriptComponent
 
 		if (m_iState == CF_WAITING_FOR_LEAD || m_iState == CF_WAITING_FOR_PREDECESSOR)
 		{
+			if (IsDriverDestroyed(driver) || IsAssignedTruckDestroyed())
+			{
+				StandDown();
+				return;
+			}
 			if (!CF_IsBoarded())
 			{
-				if (driver.IsInVehicle() || IsDriverDestroyed(driver) || IsAssignedTruckDestroyed())
-					StandDown();
+				if (driver.IsInVehicle())
+				{
+					if (m_bPanelHoldRequested)
+						CF_BlockPanelHoldReboard("driver in another seat");
+					else
+						StandDown();
+				}
 				else
 					BeginUnexpectedReboard();
+				return;
+			}
+			if (m_bPanelHoldRequested)
+			{
+				if (CF_CanPanelHold())
+					CF_PanelHold();
 				return;
 			}
 
@@ -4047,13 +4688,24 @@ class CF_DriverControllerComponent : ScriptComponent
 			if (driver.IsInVehicle() || IsDriverDestroyed(driver))
 			{
 				Print("[ConvoyFollower] ABORTED: Unit " + m_iUnitNumber + " cannot drive assigned truck");
-				StandDown();
+				if (m_bPanelHoldRequested && !IsDriverDestroyed(driver))
+					CF_BlockPanelHoldReboard("driver in another seat");
+				else
+					StandDown();
 			}
 			else
 			{
 				Print("[ConvoyFollower] REBOARD_STARTED: Unit " + m_iUnitNumber + " unexpectedly left driver seat");
 				BeginUnexpectedReboard();
 			}
+			return;
+		}
+		if (m_bPanelHoldRequested)
+		{
+			// Preserve the existing approach until it is safe to capture Hold,
+			// but suppress follow refresh, recovery and range/stall escalation.
+			if (!CF_IsPanelHeld() && CF_CanPanelHold())
+				CF_PanelHold();
 			return;
 		}
 		if (m_iState == CF_PANEL_HOLD)
@@ -4713,12 +5365,42 @@ class CF_DriverControllerComponent : ScriptComponent
 				"; new goal " + leadTrailGoal);
 		}
 		float targetAdvance = vector.Distance(m_vLastWaypointPosition, leadTrailGoal);
+		float refreshDistance = CF_WAYPOINT_REFRESH_DISTANCE;
+		if (m_iState == CF_FOLLOWING && m_fTargetStillSeconds < CF_STOP_DETECT_SECONDS)
+			refreshDistance = CF_MOVING_WAYPOINT_REFRESH_DISTANCE;
+		// Bounded startup diagnostics distinguish an unissued target update
+		// from native completion or a live waypoint that ignores an update.
+		if (m_fStateSeconds <= 20.0)
+			Print("[ConvoyFollower] FOLLOW_REFRESH_GATE: Unit " + m_iUnitNumber +
+				" state=" + m_iState + " state_age_s=" + m_fStateSeconds +
+				" waypoint_present=" + !missingMoveWaypoint + " waypoint_age_s=" + m_fWaypointSeconds +
+				" still_s=" + m_fTargetStillSeconds + " cursor=" + m_iLeadTrailCursor +
+				" samples=" + m_aLeadTrailPositions.Count() + " goal=" + leadTrailGoal +
+				" last_goal=" + m_vLastWaypointPosition + " target=" + m_LeadVehicle.GetOrigin() +
+				" advance=" + targetAdvance + " required_advance=" + refreshDistance +
+				" update_eligible=" + (!missingMoveWaypoint && m_fWaypointSeconds >= CF_WAYPOINT_REFRESH_SECONDS && targetAdvance >= refreshDistance));
 		if (missingMoveWaypoint)
 		{
-			// The previous MOVE order often completes at the configured gap.
-			// Reissue promptly when its target then moves away. For a stationary
-			// target that remains obstructed, back off instead of creating a new
-			// path every poll. Keep the stopped approach radius after recovery.
+			// A consumed MOVE has no active path to refresh. During departure,
+			// waiting for movingGap + 10 lets the predecessor accelerate away
+			// while this driver brakes at its old goal. Re-arm only after real
+			// forward predecessor movement and a useful goal outside the native
+			// completion radius. Native cruise still controls the closing speed.
+			// Stationary/arrival recovery retains its separate bounded backoff.
+			float restartTargetSpeedKmh = 0;
+			CarControllerComponent restartTargetCar = CarControllerComponent.Cast(m_LeadVehicle.FindComponent(CarControllerComponent));
+			if (restartTargetCar && restartTargetCar.GetSimulation())
+				restartTargetSpeedKmh = restartTargetCar.GetSimulation().GetSpeedKmh();
+			float restartGoalDistance = vector.Distance(m_Truck.GetOrigin(), leadTrailGoal);
+			float restartRadius = CF_ConvoySettings.Get().GetMoveCompletionRadius();
+			bool movingRestart = m_iState == CF_FOLLOWING &&
+				m_NativeCruise && m_NativeCruise.OwnsOverride() &&
+				m_fTargetStillSeconds < CF_STOP_DETECT_SECONDS && restartTargetSpeedKmh > 1.5 &&
+				targetAdvance >= CF_MISSING_WAYPOINT_TARGET_ADVANCE &&
+				m_fWaypointSeconds >= CF_MISSING_WAYPOINT_RECOVERY_SECONDS &&
+				separation > CF_ConvoySettings.Get().m_fStoppedGap + 2.0 &&
+				restartGoalDistance > restartRadius + 2.0 &&
+				!(m_Predecessor && m_Predecessor.CF_HasStallAhead());
 			float desiredGap = CF_ConvoySettings.Get().m_fMovingGap;
 			if (m_iState == CF_ARRIVING && m_bStopSettleIssued)
 				desiredGap = CF_ConvoySettings.Get().m_fStoppedGap;
@@ -4729,13 +5411,15 @@ class CF_DriverControllerComponent : ScriptComponent
 				retryDelay = CF_MISSING_WAYPOINT_RECOVERY_SECONDS;
 				gapBuffer = CF_MISSING_WAYPOINT_GAP_BUFFER;
 			}
-			if (m_fWaypointSeconds >= retryDelay &&
-				separation > desiredGap + gapBuffer)
+			if (movingRestart || (m_fWaypointSeconds >= retryDelay &&
+				separation > desiredGap + gapBuffer))
 			{
 				Print("[ConvoyFollower] FOLLOW_WAYPOINT_REBUILD: Unit " + m_iUnitNumber +
 					" cursor=" + m_iLeadTrailCursor + "/" + m_aLeadTrailPositions.Count() +
 					" truck=" + m_Truck.GetOrigin() + " goal=" + leadTrailGoal +
-					" target=" + m_LeadVehicle.GetOrigin() + " advance=" + targetAdvance);
+					" target=" + m_LeadVehicle.GetOrigin() + " advance=" + targetAdvance +
+					" moving_restart=" + movingRestart + " target_kmh=" + restartTargetSpeedKmh +
+					" goal_distance=" + restartGoalDistance + " completion_radius=" + restartRadius);
 				if (!IssueMoveWaypoint(leadTrailGoal))
 				{
 					Print("[ConvoyFollower] FOLLOW_FAILED: cannot restore completed move waypoint");
@@ -4755,7 +5439,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			}
 		}
 		else if (m_fWaypointSeconds >= CF_WAYPOINT_REFRESH_SECONDS &&
-			targetAdvance >= CF_WAYPOINT_REFRESH_DISTANCE &&
+			targetAdvance >= refreshDistance &&
 			!MoveWaypoint(leadTrailGoal))
 		{
 			Print("[ConvoyFollower] FOLLOW_FAILED: cannot refresh move waypoint");
@@ -4767,13 +5451,28 @@ class CF_DriverControllerComponent : ScriptComponent
 	// session or create fresh AI orders. All referenced entities are unloading.
 	void CF_DetachForWorldCleanup()
 	{
+		CF_StopControlWatch();
+		if (m_NativeCruise)
+			m_NativeCruise.DetachForWorldCleanup();
+		m_fCruiseAccumulator = 0;
 		if (m_Driver)
 		{
 			ClearEventMask(m_Driver, EntityEvent.FRAME);
 			ClearEventMask(m_Driver, EntityEvent.POSTFRAME);
 		}
 		m_iState = CF_IDLE;
+		m_bPanelHoldRequested = false;
+		m_bPanelHoldReboardBlocked = false;
+		m_sPanelHoldReboardFailure = string.Empty;
 		m_bOwnVehicleBrake = false;
+		m_BrakeDriver = null;
+		m_BrakeTruck = null;
+		m_bPlayerControlSuspended = false;
+		m_bControlHadAssignedTruck = false;
+		m_bDeferredWaypointClear = false;
+		m_bDeferredControlDismiss = false;
+		m_fControlBoardWaitStartMs = -1;
+		m_bControlBoardingTimedOut = false;
 		m_Session = null;
 		m_Predecessor = null;
 		m_Waypoint = null;
@@ -4794,11 +5493,13 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	override void OnDelete(IEntity owner)
 	{
+		CF_StopControlWatch();
 		if (CF_ConvoySession.CF_IsWorldCleanup())
 		{
 			CF_DetachForWorldCleanup();
 			return;
 		}
+		CF_ReleaseNativeCruise("controller_deleted");
 		if (m_Driver)
 		{
 			ClearEventMask(m_Driver, EntityEvent.FRAME);
@@ -4808,7 +5509,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		NotifySessionUnavailable();
 
 		// Only release this component's active order during entity deletion.
-		if (Replication.IsServer() && m_Group && m_Waypoint)
+		if (Replication.IsServer() && !CF_IsControlBlocked() && m_Group && m_Waypoint)
 			m_Group.RemoveWaypoint(m_Waypoint);
 	}
 }

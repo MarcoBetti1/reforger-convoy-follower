@@ -13,7 +13,7 @@ class CF_ArlandClearFieldOffroadProbeComponent : CF_EveronOffroadProbeComponent
 		m_Lead = Vehicle.Cast(owner);
 		SetEventMask(owner, EntityEvent.POSTFRAME);
 		CF_ConvoySettings.Get();
-		Print("[ConvoyFollower] OFFROAD_INIT: expected=1 world=ConvoyFollower_Arland_ClearField_Offroad_1Truck");
+		Print("[ConvoyFollower] OFFROAD_INIT: expected=1 world=ConvoyFollower_Arland_ClearField_Offroad_1Truck hold_restart=true");
 		GetGame().GetCallqueue().CallLater(Poll, 1000, true);
 	}
 

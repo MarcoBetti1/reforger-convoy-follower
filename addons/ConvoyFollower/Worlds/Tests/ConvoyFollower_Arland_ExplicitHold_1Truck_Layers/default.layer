@@ -1,5 +1,5 @@
-// Live-survey candidate 120. Authored measured surface positions; no runtime
-// vehicle repositioning. The probe rechecks the full 80 m eastbound route.
+// Separate explicit Hold fixture on surveyed Arland candidate 120.
+// The native lead and real convoy follower retain their authored trucks.
 SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
  coords 1617.0 38.8 2944.0
 }
@@ -15,21 +15,15 @@ SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.e
 Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
  coords 1600.0 38.0312 2940.0
  angles 0 90 0
- components {
-  CF_SurfaceContactProbeComponent "{27C1F5096A824BE3}" {
-  }
- }
 }
 
 Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
  coords 1620.0 38.5938 2940.0
  angles 0 90 0
  components {
-  CF_SurfaceContactProbeComponent "{C2A857F140B936ED}" {
+  CF_ExplicitHoldResumeProbeComponent "{FC87319AE0D26B45}" {
   }
-  CF_ArlandClearFieldOffroadProbeComponent "{FC01823DB57A964E}" {
-  }
-  CF_ConvoyFilmCameraComponent "{A159D3F06CB8724E}" {
+  CF_ConvoyFilmCameraComponent "{E6BF42A81759C03D}" {
    m_iExpectedTrucks 1
   }
  }

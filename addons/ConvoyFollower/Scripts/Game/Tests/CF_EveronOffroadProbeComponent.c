@@ -34,6 +34,30 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 	protected bool m_bLeadHoldPoseValid;
 	protected vector m_vLeadHeldPosition;
 	protected int m_iLeadHoldStillSeconds;
+	protected SCR_AIUtilityComponent m_PilotUtility;
+	protected SCR_AIGroupUtilityComponent m_PilotGroupUtility;
+	protected ref SCR_AIWaitBehavior m_LeadWaitBehavior;
+	protected bool m_bPilotEventsBound;
+	protected int m_iHoldCycle;
+	protected int m_iHoldBeginSeconds;
+	protected float m_fLeadHoldMaxDrift;
+	protected bool m_bFirstHoldComplete;
+	protected bool m_bSecondHoldComplete;
+	protected vector m_vRestartGoal;
+	protected vector m_vRestartLeadStart;
+	protected vector m_vRestartFollowerStart;
+	protected vector m_vRestartPreviousLead;
+	protected vector m_vRestartPreviousFollower;
+	protected bool m_bRestartOrdered;
+	protected bool m_bRestartComplete;
+	protected bool m_bLeadRestartComplete;
+	protected int m_iRestartSeconds;
+	protected int m_iRestartPoweredSamples;
+	protected int m_iRestartLeadMovingSamples;
+	protected int m_iRestartFollowerMovingSamples;
+	protected int m_iPostTerminalSeconds;
+	protected bool m_bTerminalWasPass;
+	protected bool m_bPostTerminalFailed;
 	protected bool m_bOrderSent;
 	protected IEntity m_eOccupant;
 	protected int m_iStage;
@@ -48,6 +72,8 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 	protected static const float MIN_OFFROAD_PATH = 40.0;
 	protected static const int MIN_OFFROAD_MOVING_SECONDS = 8;
 	protected static const int MIN_SETTLED_SECONDS = 10;
+	protected static const int MIN_LEAD_HOLD_SECONDS = 30;
+	protected static const float RESTART_EXTENSION_M = 40.0;
 
 	override void OnPostInit(IEntity owner)
 	{
@@ -56,7 +82,7 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 		m_Lead = Vehicle.Cast(owner);
 		SetEventMask(owner, EntityEvent.POSTFRAME);
 		CF_ConvoySettings.Get();
-		Print("[ConvoyFollower] OFFROAD_INIT: expected=1 world=ConvoyFollower_Everon_Offroad_Survey_1Truck");
+		Print("[ConvoyFollower] OFFROAD_INIT: expected=1 world=ConvoyFollower_Everon_Offroad_Survey_1Truck hold_restart=true");
 		GetGame().GetCallqueue().CallLater(Poll, 1000, true);
 	}
 
@@ -64,7 +90,9 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 	{
 		if (CF_ConvoySession.CF_IsWorldCleanup())
 			return;
-		if (m_bHoldLead && m_Lead)
+		// Initial staging still uses the old fixture brake. Once driving starts,
+		// a single native wait owns each hold; do not fight it with frame writes.
+		if (m_bHoldLead && m_Lead && m_iStage < 2)
 			ApplyLeadBrake();
 	}
 
@@ -72,6 +100,13 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 	{
 		if (GetGame())
 			GetGame().GetCallqueue().Remove(Poll);
+		if (m_bPilotEventsBound && m_PilotGroup)
+		{
+			m_PilotGroup.GetOnWaypointCompleted().Remove(OnPilotWaypointCompleted);
+			m_PilotGroup.GetOnWaypointToRemove().Remove(OnPilotWaypointToRemove);
+			m_PilotGroup.GetOnCurrentWaypointChanged().Remove(OnPilotWaypointChanged);
+		}
+		ReleaseLeadWait();
 		ResetLeadCruiseOverride();
 		m_Lead = null;
 		m_Follower = null;
@@ -81,12 +116,19 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 	{
 		if (m_bOwnLeadCruise && m_LeadCruiseMovement && GetGame() && GetGame().GetWorld() &&
 			!CF_ConvoySession.CF_IsWorldCleanup())
-			m_LeadCruiseMovement.ResetCruiseSpeed();
+		{
+			AIAgent agent = m_LeadCruiseMovement.GetAIAgent();
+			if (agent && m_Lead && agent.GetControlledEntity() == m_Lead)
+				m_LeadCruiseMovement.ResetCruiseSpeed();
+			else
+				Print("[ConvoyFollower] OFFROAD_LEAD_CRUISE_RESET_REFUSED: seconds=" + m_iTicks +
+					" reason=controlled_vehicle_changed");
+		}
 		m_bOwnLeadCruise = false;
 		m_LeadCruiseMovement = null;
 	}
 
-	protected void RequestLeadCruiseStop()
+	protected bool RequestLeadCruiseStop()
 	{
 		AICarMovementComponent movement = AICarMovementComponent.Cast(m_Lead.FindComponent(AICarMovementComponent));
 		AIAgent agent;
@@ -95,24 +137,151 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 		if (!agent || agent.GetControlledEntity() != m_Lead)
 		{
 			Print("[ConvoyFollower] OFFROAD_LEAD_CRUISE_MISSING: no native car movement proven to own lead");
-			return;
+			return false;
 		}
 		m_LeadCruiseMovement = movement;
 		m_LeadCruiseMovement.SetCruiseSpeed(0);
 		m_bOwnLeadCruise = true;
 		Print("[ConvoyFollower] OFFROAD_LEAD_CRUISE_STOP: controlled=" + m_Lead.GetName() +
 			" requested_kmh=0 physical_hold_pending=true");
+		return true;
+	}
+
+	protected string ActionDescription(AIActionBase action)
+	{
+		if (!action)
+			return "none";
+		return action.Type().ToString() + ":" + action.GetActionState();
+	}
+
+	protected bool ResolveLeadOwnership()
+	{
+		if (!PilotSeated() || !m_PilotGroup || !m_Lead || m_Lead == m_Follower)
+			return false;
+		AIControlComponent control = AIControlComponent.Cast(m_Pilot.FindComponent(AIControlComponent));
+		AIAgent pilotAgent;
+		if (control)
+			pilotAgent = control.GetAIAgent();
+		if (!pilotAgent || pilotAgent.GetControlledEntity() != m_Pilot || pilotAgent.GetParentGroup() != m_PilotGroup)
+			return false;
+		m_PilotUtility = SCR_AIUtilityComponent.Cast(pilotAgent.FindComponent(SCR_AIUtilityComponent));
+		m_PilotGroupUtility = SCR_AIGroupUtilityComponent.Cast(m_PilotGroup.FindComponent(SCR_AIGroupUtilityComponent));
+		AICarMovementComponent movement = AICarMovementComponent.Cast(m_Lead.FindComponent(AICarMovementComponent));
+		return m_PilotUtility && m_PilotGroupUtility && movement && movement.GetAIAgent() &&
+			movement.GetAIAgent().GetControlledEntity() == m_Lead;
+	}
+
+	protected void LogLeadBehavior(string phase, bool listActions = false)
+	{
+		if (!m_PilotUtility || !m_PilotGroupUtility)
+			return;
+		SCR_AIBehaviorBase behavior = m_PilotUtility.GetCurrentBehavior();
+		Print("[ConvoyFollower] OFFROAD_LEAD_BEHAVIOR: seconds=" + m_iTicks + " phase=" + phase +
+			" cycle=" + m_iHoldCycle + " behavior=" + ActionDescription(behavior) +
+			" group_action=" + ActionDescription(m_PilotGroupUtility.GetCurrentAction()) +
+			" wait_selected=" + (behavior == m_LeadWaitBehavior && m_LeadWaitBehavior != null) +
+			" waypoint=" + m_PilotGroup.GetCurrentWaypoint() + " pilot_seated=" + PilotSeated());
+		if (!listActions)
+			return;
+		array<ref AIActionBase> actions = {};
+		m_PilotUtility.GetActions(actions);
+		foreach (AIActionBase action : actions)
+		{
+			if (action)
+				Print("[ConvoyFollower] OFFROAD_LEAD_ACTION: seconds=" + m_iTicks + " phase=" + phase +
+					" action=" + ActionDescription(action) + " related=" + ActionDescription(action.GetRelatedGroupActivity()));
+		}
+	}
+
+	protected void OnPilotWaypointCompleted(AIWaypoint waypoint)
+	{
+		Print("[ConvoyFollower] OFFROAD_PILOT_WAYPOINT_EVENT: seconds=" + m_iTicks +
+			" event=completed holding=" + m_bHoldLead + " waypoint=" + waypoint);
+	}
+
+	protected void OnPilotWaypointToRemove(AIWaypoint waypoint, bool isCurrentWaypoint)
+	{
+		Print("[ConvoyFollower] OFFROAD_PILOT_WAYPOINT_EVENT: seconds=" + m_iTicks +
+			" event=remove current=" + isCurrentWaypoint + " holding=" + m_bHoldLead + " waypoint=" + waypoint);
+	}
+
+	protected void OnPilotWaypointChanged(AIWaypoint currentWaypoint, AIWaypoint previousWaypoint)
+	{
+		Print("[ConvoyFollower] OFFROAD_PILOT_WAYPOINT_EVENT: seconds=" + m_iTicks +
+			" event=changed holding=" + m_bHoldLead + " current=" + currentWaypoint + " previous=" + previousWaypoint);
+	}
+
+	protected void ReleaseLeadWait()
+	{
+		if (m_LeadWaitBehavior && GetGame() && GetGame().GetWorld() && !CF_ConvoySession.CF_IsWorldCleanup())
+		{
+			m_LeadWaitBehavior.SetFailReason(EAIActionFailReason.CANCELLED);
+			m_LeadWaitBehavior.Fail();
+		}
+		m_LeadWaitBehavior = null;
+	}
+
+	protected bool BeginLeadHold()
+	{
+		if (!ResolveLeadOwnership())
+			return false;
+		m_bHoldLead = true;
+		m_iHoldCycle++;
+		m_bLeadHoldPoseValid = false;
+		m_iLeadHoldStillSeconds = 0;
+		m_fLeadHoldMaxDrift = 0;
+		LogLeadBehavior("before_cancel", true);
+		if (m_PilotWaypoint)
+		{
+			// Break the waypoint association before native failure callbacks run.
+			m_PilotGroupUtility.CancelActivitiesRelatedToWaypoint(m_PilotWaypoint, doNotCompleteWaypoint: true);
+			m_PilotGroup.RemoveWaypoint(m_PilotWaypoint);
+			m_PilotWaypoint = null;
+		}
+		// The group sends queued cancellation messages. Cancel current child
+		// behaviors directly too, after pruning completed boarding actions.
+		m_PilotUtility.RemoveObsoleteActions();
+		m_PilotUtility.CancelAllGroupActivityBehaviors(m_PilotGroupUtility);
+		LogLeadBehavior("after_cancel", true);
+		m_LeadWaitBehavior = new SCR_AIWaitBehavior(m_PilotUtility, null);
+		m_LeadWaitBehavior.SetPriorityLevel(SCR_AIActionBase.PRIORITY_LEVEL_GAMEMASTER + 100);
+		m_PilotUtility.AddAction(m_LeadWaitBehavior);
+		if (!RequestLeadCruiseStop())
+			return false;
+		ApplyLeadBrake();
+		Print("[ConvoyFollower] OFFROAD_LEAD_HOLD_REQUEST: seconds=" + m_iTicks + " cycle=" + m_iHoldCycle +
+			" cancellation=waypoint_then_group_children wait=owned_native requested_cruise_kmh=0 frame_brake_writes=false");
+		return true;
+	}
+
+	protected void FailFixture(string reason)
+	{
+		Print("[ConvoyFollower] OFFROAD_FIXTURE_FAILURE: seconds=" + m_iTicks + " reason=" + reason);
+		if (m_bFinished)
+			m_bPostTerminalFailed = true;
+		else
+			Finish("FAIL " + reason);
 	}
 
 	protected bool CheckLeadHold()
 	{
+		if (!ResolveLeadOwnership())
+		{
+			FailFixture("lead_hold_vehicle_ownership_lost");
+			return false;
+		}
 		CarControllerComponent car = CarControllerComponent.Cast(m_Lead.FindComponent(CarControllerComponent));
 		if (!car || !car.GetSimulation())
+		{
+			FailFixture("lead_hold_simulation_unavailable");
 			return false;
+		}
 		VehicleWheeledSimulation sim = car.GetSimulation();
+		LogLeadBehavior("hold");
 		if (!m_bLeadHoldPoseValid)
 		{
-			if (Speed(m_Lead) <= 2.0 && m_LastSteps[0] <= 0.3)
+			if (Speed(m_Lead) <= 2.0 && m_LastSteps[0] <= 0.3 &&
+				m_PilotUtility.GetCurrentBehavior() == m_LeadWaitBehavior)
 				m_iLeadHoldStillSeconds++;
 			else
 				m_iLeadHoldStillSeconds = 0;
@@ -120,12 +289,21 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 			{
 				m_bLeadHoldPoseValid = true;
 				m_vLeadHeldPosition = m_Lead.GetOrigin();
+				m_iHoldBeginSeconds = m_iTicks;
+				Print("[ConvoyFollower] OFFROAD_HOLD_BEGIN: seconds=" + m_iTicks + " cycle=" + m_iHoldCycle +
+					" origin=" + m_vLeadHeldPosition);
 			}
 		}
 		float drift;
 		if (m_bLeadHoldPoseValid)
 			drift = vector.DistanceXZ(m_Lead.GetOrigin(), m_vLeadHeldPosition);
-		Print("[ConvoyFollower] OFFROAD_LEAD_HOLD: origin=" + m_Lead.GetOrigin() +
+		if (drift > m_fLeadHoldMaxDrift)
+			m_fLeadHoldMaxDrift = drift;
+		int heldSeconds;
+		if (m_bLeadHoldPoseValid)
+			heldSeconds = m_iTicks - m_iHoldBeginSeconds;
+		Print("[ConvoyFollower] OFFROAD_LEAD_HOLD: seconds=" + m_iTicks + " cycle=" + m_iHoldCycle +
+			" held_s=" + heldSeconds + " max_drift_m=" + m_fLeadHoldMaxDrift + " origin=" + m_Lead.GetOrigin() +
 			" forward=" + m_Lead.GetWorldTransformAxis(2) + " speed_kmh=" + sim.GetSpeedKmh() +
 			" brake=" + sim.GetBrake() + " throttle=" + sim.GetThrottle() + " gear=" + sim.GetGear() +
 			" engine=" + sim.EngineIsOn() + " handbrake=" + sim.IsHandbrakeOn() +
@@ -133,8 +311,25 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 			" settled_pose=" + m_bLeadHoldPoseValid + " drift_m=" + drift);
 		if (m_bLeadHoldPoseValid && drift > 2.0)
 		{
-			Finish("FAIL test lead drift exceeded 2m after settled hold");
+			FailFixture("lead_hold_drift_exceeded_2m");
 			return false;
+		}
+		if (m_bLeadHoldPoseValid && m_PilotUtility.GetCurrentBehavior() != m_LeadWaitBehavior)
+		{
+			FailFixture("native_wait_lost_hold_ownership");
+			return false;
+		}
+		bool complete = m_bFirstHoldComplete;
+		if (m_iHoldCycle == 2)
+			complete = m_bSecondHoldComplete;
+		if (m_bLeadHoldPoseValid && heldSeconds >= MIN_LEAD_HOLD_SECONDS && !complete)
+		{
+			Print("[ConvoyFollower] OFFROAD_HOLD_COMPLETE: seconds=" + m_iTicks + " cycle=" + m_iHoldCycle +
+				" held_s=" + heldSeconds + " max_drift_m=" + m_fLeadHoldMaxDrift);
+			if (m_iHoldCycle == 1)
+				m_bFirstHoldComplete = true;
+			else
+				m_bSecondHoldComplete = true;
 		}
 		return true;
 	}
@@ -160,6 +355,13 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 		if (!m_Pilot || !driverCharacter)
 			return false;
 		m_Driver = CF_DriverControllerComponent.Cast(driverCharacter.FindComponent(CF_DriverControllerComponent));
+		if (!m_bPilotEventsBound)
+		{
+			m_PilotGroup.GetOnWaypointCompleted().Insert(OnPilotWaypointCompleted);
+			m_PilotGroup.GetOnWaypointToRemove().Insert(OnPilotWaypointToRemove);
+			m_PilotGroup.GetOnCurrentWaypointChanged().Insert(OnPilotWaypointChanged);
+			m_bPilotEventsBound = true;
+		}
 		return m_Driver != null;
 	}
 
@@ -295,7 +497,7 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 		return result;
 	}
 
-	protected bool SurveyCandidate(vector direction, float length, int candidateId, out float offroadRun)
+	protected bool SurveyCandidate(vector direction, float length, int candidateId, out float offroadRun, float minimumOffroadRun = 50.0)
 	{
 		BaseWorld world = GetGame().GetWorld();
 		vector side = Vector(-direction[2], 0, direction[0]);
@@ -373,7 +575,7 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 		float goalGap;
 		float goalWidth;
 		int goalRoadId;
-		if (offroadRun < 50.0 || !IsOffroad(previous, goalGap, goalWidth, goalRoadId))
+		if (offroadRun < minimumOffroadRun || !IsOffroad(previous, goalGap, goalWidth, goalRoadId))
 		{
 			Print("[ConvoyFollower] OFFROAD_SURVEY_REJECT: candidate=" + candidateId +
 				" reason=insufficient_offroad_corridor continuous_m=" + offroadRun);
@@ -381,6 +583,22 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 		}
 		Print("[ConvoyFollower] OFFROAD_SURVEY_CANDIDATE: candidate=" + candidateId +
 			" length=" + length + " continuous_offroad_m=" + offroadRun + " goal=" + previous);
+		return true;
+	}
+
+	protected bool SurveyRestartExtension()
+	{
+		vector originalStart = m_vRouteStart;
+		m_vRouteStart = m_vRouteGoal;
+		float offroadRun;
+		bool clear = SurveyCandidate(m_vRouteAxis, RESTART_EXTENSION_M, 900, offroadRun, RESTART_EXTENSION_M);
+		m_vRouteStart = originalStart;
+		if (!clear)
+			return false;
+		m_vRestartGoal = m_vRouteGoal + m_vRouteAxis * RESTART_EXTENSION_M;
+		m_vRestartGoal[1] = GetGame().GetWorld().GetSurfaceY(m_vRestartGoal[0], m_vRestartGoal[2]);
+		Print("[ConvoyFollower] OFFROAD_RESTART_SURVEY: start=" + m_vRouteGoal + " goal=" + m_vRestartGoal +
+			" length=" + RESTART_EXTENSION_M + " geometry_only=true");
 		return true;
 	}
 
@@ -445,6 +663,9 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 
 	protected bool StartDrive()
 	{
+		if (!ResolveLeadOwnership())
+			return false;
+		ReleaseLeadWait();
 		ResetLeadCruiseOverride();
 		m_bLeadHoldPoseValid = false;
 		m_iLeadHoldStillSeconds = 0;
@@ -487,6 +708,105 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 		SCR_EditorManagerEntity.CloseInstance();
 		Print("[ConvoyFollower] OFFROAD_DRIVE_STARTED: production one-truck chain; direct AI goal=" + m_vRouteGoal);
 		return true;
+	}
+
+	protected bool StartRestart()
+	{
+		if (!ResolveLeadOwnership() || !m_bFirstHoldComplete)
+			return false;
+		Resource prefab = Resource.Load("{750A8D1695BD6998}Prefabs/AI/Waypoints/AIWaypoint_Move.et");
+		if (!prefab.IsValid())
+			return false;
+		EntitySpawnParams params = EntitySpawnParams();
+		params.TransformMode = ETransformMode.WORLD;
+		params.Transform[3] = m_vRestartGoal;
+		SCR_AIWaypoint waypoint = SCR_AIWaypoint.Cast(GetGame().SpawnEntityPrefabLocal(prefab, null, params));
+		if (!waypoint)
+			return false;
+		waypoint.SetPriorityLevel(SCR_AIActionBase.PRIORITY_LEVEL_GAMEMASTER);
+		waypoint.SetCompletionRadius(5.0);
+		m_vRestartLeadStart = m_Lead.GetOrigin();
+		m_vRestartFollowerStart = m_Follower.GetOrigin();
+		m_vRestartPreviousLead = m_vRestartLeadStart;
+		m_vRestartPreviousFollower = m_vRestartFollowerStart;
+		LogLeadBehavior("before_restart", true);
+		ReleaseLeadWait();
+		ResetLeadCruiseOverride();
+		m_bHoldLead = false;
+		m_bGoalReached = false;
+		m_bLeadHoldPoseValid = false;
+		m_iLeadHoldStillSeconds = 0;
+		m_iSettledSeconds = 0;
+		CarControllerComponent car = CarControllerComponent.Cast(m_Lead.FindComponent(CarControllerComponent));
+		car.SetPersistentHandBrake(false);
+		car.GetSimulation().SetBreak(0, false);
+		m_PilotWaypoint = waypoint;
+		m_PilotGroup.AddWaypoint(waypoint);
+		m_bRestartOrdered = true;
+		m_iRestartSeconds = m_iTicks;
+		m_iStage = 3;
+		Print("[ConvoyFollower] OFFROAD_RESTART_ORDER: seconds=" + m_iTicks + " accepted=true start=" + m_vRestartLeadStart +
+			" follower_start=" + m_vRestartFollowerStart + " goal=" + m_vRestartGoal + " axis=" + m_vRouteAxis);
+		return true;
+	}
+
+	protected float SignedProgress(vector current, vector start)
+	{
+		vector delta = current - start;
+		return delta[0] * m_vRouteAxis[0] + delta[2] * m_vRouteAxis[2];
+	}
+
+	protected void MeasureRestart()
+	{
+		for (int index = 0; index < 2; index++)
+		{
+			Vehicle truck = m_Lead;
+			vector start = m_vRestartLeadStart;
+			vector previous = m_vRestartPreviousLead;
+			if (index == 1)
+			{
+				truck = m_Follower;
+				start = m_vRestartFollowerStart;
+				previous = m_vRestartPreviousFollower;
+			}
+			CarControllerComponent car = CarControllerComponent.Cast(truck.FindComponent(CarControllerComponent));
+			VehicleWheeledSimulation sim = car.GetSimulation();
+			float progress = SignedProgress(truck.GetOrigin(), start);
+			float step = SignedProgress(truck.GetOrigin(), previous);
+			Print("[ConvoyFollower] OFFROAD_RESTART_POSITION: vehicle=" + index + " seconds=" + m_iTicks +
+				" origin=" + truck.GetOrigin() + " progress_m=" + progress + " signed_step_m=" + step +
+				" speed_kmh=" + sim.GetSpeedKmh() + " throttle=" + sim.GetThrottle() + " brake=" + sim.GetBrake() +
+				" gear=" + sim.GetGear() + " engine=" + sim.EngineIsOn() + " seated_chain=" + ChainSeated() +
+				" pilot_seated=" + PilotSeated());
+			if (index == 0)
+			{
+				m_vRestartPreviousLead = truck.GetOrigin();
+				if (step >= 0.25)
+					m_iRestartLeadMovingSamples++;
+				if (step >= 0.25 && Speed(truck) >= 1.0 && sim.EngineIsOn() && sim.GetThrottle() > 0.05 && sim.GetGear() >= 2)
+					m_iRestartPoweredSamples++;
+			}
+			else
+			{
+				m_vRestartPreviousFollower = truck.GetOrigin();
+				if (step >= 0.25)
+					m_iRestartFollowerMovingSamples++;
+			}
+		}
+		float leadProgress = SignedProgress(m_Lead.GetOrigin(), m_vRestartLeadStart);
+		float followerProgress = SignedProgress(m_Follower.GetOrigin(), m_vRestartFollowerStart);
+		if (!m_bLeadRestartComplete && leadProgress >= 20.0 && m_iRestartPoweredSamples >= 2 && m_iRestartLeadMovingSamples >= 3)
+		{
+			m_bLeadRestartComplete = true;
+			Print("[ConvoyFollower] OFFROAD_LEAD_RESTART_COMPLETE: seconds=" + m_iTicks +
+				" lead_progress_m=" + leadProgress + " powered_samples=" + m_iRestartPoweredSamples);
+		}
+		if (!m_bRestartComplete && m_bLeadRestartComplete && followerProgress >= 15.0 && m_iRestartFollowerMovingSamples >= 3)
+		{
+			m_bRestartComplete = true;
+			Print("[ConvoyFollower] OFFROAD_RESTART_COMPLETE: seconds=" + m_iTicks +
+				" lead_progress_m=" + leadProgress + " follower_progress_m=" + followerProgress);
+		}
 	}
 
 	protected bool ChainSeated()
@@ -572,14 +892,16 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 		if (m_bFinished)
 			return;
 		m_bFinished = true;
-		m_bHoldLead = true;
-		if (m_PilotGroup && m_PilotWaypoint)
-			m_PilotGroup.RemoveWaypoint(m_PilotWaypoint);
-		m_PilotWaypoint = null;
-		if (m_Lead)
-			ApplyLeadBrake();
+		m_bTerminalWasPass = result.IndexOf("PASS") == 0;
+		// Keep the already verified native wait through post-result observation.
+		// A failure during a moving leg gets a single best-effort native hold.
+		if (!m_bHoldLead && ResolveLeadOwnership())
+			BeginLeadHold();
 		if (m_Paths.Count() == 2)
 		{
+			vector finalGoal = m_vRouteGoal;
+			if (m_bRestartOrdered)
+				finalGoal = m_vRestartGoal;
 			Print("[ConvoyFollower] OFFROAD_FINAL: lead_path=" + m_Paths[0] +
 				" follower_path=" + m_Paths[1] + " lead_offroad_path=" + m_OffroadPaths[0] +
 				" follower_offroad_path=" + m_OffroadPaths[1] +
@@ -587,7 +909,7 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 				" follower_offroad_moving_s=" + m_MaxOffroadMovingSeconds[1] +
 				" lead_displacement=" + vector.DistanceXZ(m_Lead.GetOrigin(), m_Starts[0]) +
 				" follower_displacement=" + vector.DistanceXZ(m_Follower.GetOrigin(), m_Starts[1]) +
-				" goal_gap=" + vector.DistanceXZ(m_Lead.GetOrigin(), m_vRouteGoal) +
+				" goal_gap=" + vector.DistanceXZ(m_Lead.GetOrigin(), finalGoal) +
 				" link_gap=" + vector.DistanceXZ(m_Follower.GetOrigin(), m_Lead.GetOrigin()) +
 				" max_link_gap=" + m_fMaxGap + " settled_s=" + m_iSettledSeconds +
 				" seated_chain=" + ChainSeated() + " max_nonprogress_s=" + m_iMaxNoProgressSeconds);
@@ -595,17 +917,36 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 		if (m_Player)
 			Print("[ConvoyFollower] OFFROAD_ROSTER: " + CF_ConvoySession.CF_GetOwnerPanelSnapshot(m_Player));
 		Print("[ConvoyFollower] OFFROAD_RESULT: " + result);
-		GetGame().GetCallqueue().Remove(Poll);
+		if (!m_bTerminalWasPass)
+			GetGame().GetCallqueue().Remove(Poll);
 	}
 
 	protected void Poll()
 	{
 		if (CF_ConvoySession.CF_IsWorldCleanup())
 			return;
-		if (m_bFinished)
-			return;
 		m_iTicks++;
-		if (m_iTicks > 300)
+		if (m_bFinished)
+		{
+			if (!m_bTerminalWasPass)
+				return;
+			m_iPostTerminalSeconds++;
+			if (!m_bPostTerminalFailed)
+			{
+				vector previousLead = m_LastPositions[0];
+				m_LastSteps[0] = vector.DistanceXZ(m_Lead.GetOrigin(), previousLead);
+				m_LastPositions[0] = m_Lead.GetOrigin();
+				CheckLeadHold();
+			}
+			if (m_iPostTerminalSeconds >= 30)
+			{
+				Print("[ConvoyFollower] OFFROAD_OBSERVATION_COMPLETE: seconds=" + m_iTicks +
+					" observed_s=" + m_iPostTerminalSeconds + " failed=" + m_bPostTerminalFailed);
+				GetGame().GetCallqueue().Remove(Poll);
+			}
+			return;
+		}
+		if (m_iTicks > 230)
 		{
 			Finish("FAIL total test timeout");
 			return;
@@ -616,7 +957,12 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 				return;
 			if (!SelectRoute())
 			{
-				Finish("FAIL no surveyed 60-100m open-field candidate");
+				FailFixture("no_surveyed_60_100m_candidate");
+				return;
+			}
+			if (!SurveyRestartExtension())
+			{
+				FailFixture("restart_extension_survey_rejected");
 				return;
 			}
 			m_iStage = 1;
@@ -645,7 +991,7 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 			}
 			m_iStage = 2;
 		}
-		if (m_iStage != 2)
+		if (m_iStage < 2)
 			return;
 		m_iDrivingSeconds++;
 		if (!ChainSeated() || m_Driver.CF_GetPanelStateLabel() == "lost")
@@ -655,6 +1001,8 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 		}
 		if (!MeasureDrive())
 			return;
+		if (m_bRestartOrdered)
+			MeasureRestart();
 		float gap = vector.DistanceXZ(m_Follower.GetOrigin(), m_Lead.GetOrigin());
 		if (gap > m_fMaxGap)
 			m_fMaxGap = gap;
@@ -669,16 +1017,20 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 			Finish("FAIL sustained follower separation or nonprogress");
 			return;
 		}
-		float goalGap = vector.DistanceXZ(m_Lead.GetOrigin(), m_vRouteGoal);
+		vector activeGoal = m_vRouteGoal;
+		if (m_bRestartOrdered)
+			activeGoal = m_vRestartGoal;
+		float goalGap = vector.DistanceXZ(m_Lead.GetOrigin(), activeGoal);
 		if (!m_bGoalReached && goalGap <= 8.0)
 		{
 			m_bGoalReached = true;
-			m_bHoldLead = true;
-			if (m_PilotWaypoint)
-				m_PilotGroup.RemoveWaypoint(m_PilotWaypoint);
-			m_PilotWaypoint = null;
-			RequestLeadCruiseStop();
-			Print("[ConvoyFollower] OFFROAD_GOAL_REACHED: goal_gap=" + goalGap + " lead brake applied");
+			if (!BeginLeadHold())
+			{
+				FailFixture("native_lead_hold_request_rejected");
+				return;
+			}
+			Print("[ConvoyFollower] OFFROAD_GOAL_REACHED: goal_gap=" + goalGap + " cycle=" + m_iHoldCycle +
+				" native_hold_requested=true");
 		}
 		if (m_bGoalReached && !CheckLeadHold())
 			return;
@@ -697,17 +1049,25 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 			m_iSettledSeconds++;
 		else
 			m_iSettledSeconds = 0;
-		if (m_iSettledSeconds >= MIN_SETTLED_SECONDS &&
+		if (m_iSettledSeconds >= MIN_SETTLED_SECONDS && m_bFirstHoldComplete && !m_bRestartOrdered)
+		{
+			if (!StartRestart())
+				FailFixture("native_lead_restart_order_rejected");
+			return;
+		}
+		if (m_iSettledSeconds >= MIN_SETTLED_SECONDS && m_bSecondHoldComplete && m_bRestartComplete &&
 			m_OffroadPaths[0] >= MIN_OFFROAD_PATH && m_OffroadPaths[1] >= MIN_OFFROAD_PATH &&
 			m_MaxOffroadMovingSeconds[0] >= MIN_OFFROAD_MOVING_SECONDS &&
 			m_MaxOffroadMovingSeconds[1] >= MIN_OFFROAD_MOVING_SECONDS &&
 			vector.DistanceXZ(m_Lead.GetOrigin(), m_Starts[0]) >= 40.0 &&
 			vector.DistanceXZ(m_Follower.GetOrigin(), m_Starts[1]) >= 40.0)
 		{
-			Finish("PASS physical offroad one-truck chain and settled goal");
+			Finish("PASS physical one-truck chain with native lead hold restart and second hold");
 			return;
 		}
-		if (m_iDrivingSeconds >= 180)
-			Finish("FAIL physical offroad movement or settled-goal deadline");
+		if (m_bRestartOrdered && m_iTicks - m_iRestartSeconds >= 90 && !m_bLeadRestartComplete)
+			FailFixture("native_lead_restart_progress_deadline");
+		else if (m_iDrivingSeconds >= 200)
+			Finish("FAIL physical movement hold restart or settled-goal deadline");
 	}
 }

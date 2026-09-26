@@ -1,3 +1,21 @@
+// Evidence for one accepted Resume. Entity references and roster position bind
+// later observations to the assignments that actually received the command.
+class CF_PanelResumeMember
+{
+	CF_DriverControllerComponent Driver;
+	IEntity DriverEntity;
+	Vehicle Truck;
+	IEntity PredecessorVehicle;
+	vector StartPosition;
+	vector LastPosition;
+	vector LastPredecessorPosition;
+	float ProgressMeters;
+	int ForwardSamples;
+	int PoweredSamples;
+	bool Verified;
+	float LastLogMs;
+}
+
 // One server-owned convoy per ordering player. The ordered roster is also the
 // physical driving chain: Unit One follows the player; each later unit follows
 // the vehicle driven by the unit immediately ahead of it.
@@ -85,6 +103,9 @@ class CF_ConvoySession
 	protected int m_iPanelOrder;
 	protected string m_sPanelOrderState;
 	protected float m_fPanelOrderDeadlineMs;
+	protected ref array<ref CF_PanelResumeMember> m_aPanelResumeMembers = {};
+	protected IEntity m_PanelResumeLead;
+	protected float m_fPanelResumeSampleMs;
 
 	static bool CF_IsWorldCleanup()
 	{
@@ -127,6 +148,7 @@ class CF_ConvoySession
 	{
 		m_bSessionClosed = true;
 		CancelScheduledPolls();
+		CF_ClearPanelResumeTracking();
 		// Repeated references are harmless: driver detachment is idempotent.
 		foreach (CF_DriverControllerComponent active : m_aUnits)
 		{
@@ -392,6 +414,11 @@ class CF_ConvoySession
 				return false;
 			}
 		}
+		// All members passed validation above. Save intent now, before any
+		// truck finishes approaching, so later rechain/recovery cannot lose it.
+		session.CF_EndPanelResume("cancelled: superseded by Hold");
+		foreach (CF_DriverControllerComponent requested : session.m_aUnits)
+			requested.CF_RequestPanelHold();
 		session.m_iPanelOrder = CF_PANEL_ORDER_HOLD;
 		session.m_fPanelOrderDeadlineMs = GetGame().GetWorld().GetWorldTime() + CF_PANEL_HOLD_TIMEOUT_MS;
 		session.m_sPanelOrderState = "accepted: trucks approaching before holding in vehicles";
@@ -408,6 +435,9 @@ class CF_ConvoySession
 		CF_ConvoySession session = GetForPlayer(user);
 		if (!session)
 			return false;
+		// A repeated request must not reset evidence or overwrite its status.
+		if (session.m_iPanelOrder == CF_PANEL_ORDER_RESUME)
+			return false;
 		if (!session.CF_CanUsePanelOrders() || !session.GetOwnerPilotedVehicle())
 		{
 			session.m_sPanelOrderState = "blocked: enter the lead vehicle and finish any active maneuver";
@@ -422,7 +452,7 @@ class CF_ConvoySession
 				session.m_sPanelOrderState = "blocked: all assigned drivers must be seated and able to resume";
 				return false;
 			}
-			if (unit.CF_IsPanelHeld())
+			if (unit.CF_HasPanelHoldRequest() || unit.CF_IsPanelHeld())
 				anyHeld = true;
 		}
 		if (!anyHeld && session.m_iPanelOrder != CF_PANEL_ORDER_HOLD)
@@ -430,15 +460,24 @@ class CF_ConvoySession
 			session.m_sPanelOrderState = "blocked: convoy is already following";
 			return false;
 		}
+		if (!session.CF_CanTrackPanelResume())
+		{
+			session.m_sPanelOrderState = "blocked: original assignments could not be observed";
+			return false;
+		}
 		foreach (CF_DriverControllerComponent resumed : session.m_aUnits)
 		{
-			if (!resumed.CF_IsMovementActive())
-				resumed.CF_PanelResume();
+			if (resumed.CF_HasPanelHoldRequest() || !resumed.CF_IsMovementActive())
+			{
+				if (!resumed.CF_PanelResume())
+				{
+					session.m_iPanelOrder = CF_PANEL_ORDER_NONE;
+					session.m_sPanelOrderState = "blocked: a driver could not accept Resume";
+					return false;
+				}
+			}
 		}
-		session.m_iPanelOrder = CF_PANEL_ORDER_RESUME;
-		session.m_fPanelOrderDeadlineMs = GetGame().GetWorld().GetWorldTime() + CF_PANEL_HOLD_TIMEOUT_MS;
-		session.m_sPanelOrderState = "accepted: resuming convoy chain";
-		Print("[ConvoyFollower] PANEL_RESUME_ACCEPTED: owner resumed the assigned daisy chain");
+		session.CF_BeginPanelResumeTracking("accepted: Resume accepted");
 		return true;
 	}
 
@@ -463,7 +502,6 @@ class CF_ConvoySession
 		CF_ConvoySession session = GetForPlayer(user);
 		if (!session)
 			return "idle";
-		session.CF_UpdatePanelOrderState();
 		if (session.m_sPanelOrderState.IsEmpty())
 			return "idle";
 		return session.m_sPanelOrderState;
@@ -516,30 +554,240 @@ class CF_ConvoySession
 			m_iPanelOrder = CF_PANEL_ORDER_NONE;
 		}
 		else if (m_iPanelOrder == CF_PANEL_ORDER_RESUME)
+			CF_UpdatePanelResume();
+	}
+
+	protected void CF_ClearPanelResumeTracking()
+	{
+		m_aPanelResumeMembers.Clear();
+		m_PanelResumeLead = null;
+		m_fPanelResumeSampleMs = 0;
+	}
+
+	protected void CF_SetPanelResumeState(string state)
+	{
+		if (m_sPanelOrderState == state)
+			return;
+		m_sPanelOrderState = state;
+		Print("[ConvoyFollower] PANEL_RESUME_STATE: " + state);
+	}
+
+	protected void CF_EndPanelResume(string state)
+	{
+		if (m_iPanelOrder != CF_PANEL_ORDER_RESUME)
+			return;
+		CF_SetPanelResumeState(state);
+		m_iPanelOrder = CF_PANEL_ORDER_NONE;
+		CF_ClearPanelResumeTracking();
+	}
+
+	protected bool CF_CanTrackPanelResume()
+	{
+		if (m_aUnits.IsEmpty())
+			return false;
+		foreach (CF_DriverControllerComponent unit : m_aUnits)
 		{
-			if (GetGame().GetWorld().GetWorldTime() >= m_fPanelOrderDeadlineMs)
+			if (!unit || !unit.CF_IsBoarded() || !unit.CF_GetAssignedVehicle() ||
+				unit.CF_GetOrderingPlayerId() != m_iOrderingPlayerId)
+				return false;
+		}
+		return m_aUnits[0].CF_GetCachedPlayerVehicle() != null;
+	}
+
+	protected void CF_BeginPanelResumeTracking(string acceptedState)
+	{
+		CF_ClearPanelResumeTracking();
+		m_PanelResumeLead = m_aUnits[0].CF_GetCachedPlayerVehicle();
+		IEntity predecessor = m_PanelResumeLead;
+		foreach (CF_DriverControllerComponent unit : m_aUnits)
+		{
+			CF_PanelResumeMember sample = new CF_PanelResumeMember();
+			sample.Driver = unit;
+			sample.DriverEntity = unit.CF_GetDriverEntity();
+			sample.Truck = unit.CF_GetAssignedVehicle();
+			sample.PredecessorVehicle = predecessor;
+			sample.StartPosition = sample.Truck.GetOrigin();
+			sample.LastPosition = sample.StartPosition;
+			sample.LastPredecessorPosition = predecessor.GetOrigin();
+			m_aPanelResumeMembers.Insert(sample);
+			predecessor = sample.Truck;
+		}
+		m_fPanelResumeSampleMs = GetGame().GetWorld().GetWorldTime();
+		m_iPanelOrder = CF_PANEL_ORDER_RESUME;
+		// No wall-clock deadline: stationary/spacing waits are legitimate.
+		CF_SetPanelResumeState(acceptedState);
+		Print("[ConvoyFollower] PANEL_RESUME_ACCEPTED: tracking original assignments; members=" + m_aPanelResumeMembers.Count());
+		ScheduleUnloadPoll();
+	}
+
+	protected bool CF_PanelResumeRosterMatches()
+	{
+		if (m_aUnits.Count() != m_aPanelResumeMembers.Count() || m_aUnits.IsEmpty())
+			return false;
+		for (int i = 0; i < m_aUnits.Count(); i++)
+		{
+			CF_PanelResumeMember sample = m_aPanelResumeMembers[i];
+			CF_DriverControllerComponent unit = m_aUnits[i];
+			if (!unit || unit != sample.Driver || unit.CF_GetDriverEntity() != sample.DriverEntity ||
+				!sample.Truck || unit.CF_GetAssignedVehicle() != sample.Truck ||
+				unit.CF_GetOrderingPlayerId() != m_iOrderingPlayerId)
+				return false;
+		}
+		return true;
+	}
+
+	protected void CF_UpdatePanelResume()
+	{
+		if (!CF_PanelResumeRosterMatches())
+		{
+			CF_EndPanelResume("cancelled: convoy assignments or order changed");
+			return;
+		}
+		if (!m_PanelResumeLead || m_aUnits[0].CF_GetCachedPlayerVehicle() != m_PanelResumeLead)
+		{
+			CF_EndPanelResume("cancelled: lead vehicle changed or became unavailable");
+			return;
+		}
+		foreach (CF_PanelResumeMember checkedSample : m_aPanelResumeMembers)
+		{
+			if (checkedSample.Driver.CF_IsPlayerControlSuspended())
+				continue;
+			string failure = checkedSample.Driver.CF_GetResumeFailureReason();
+			if (!failure.IsEmpty())
 			{
-				m_sPanelOrderState = "blocked: convoy did not resume within 90 seconds";
-				m_iPanelOrder = CF_PANEL_ORDER_NONE;
+				CF_EndPanelResume("blocked: Unit " + GetIdentityNumber(checkedSample.Driver) + " " + failure);
 				return;
 			}
-			foreach (CF_DriverControllerComponent unit : m_aUnits)
+			if (!checkedSample.Driver.CF_IsBoarded())
 			{
-				if (!unit || !unit.CF_IsBoarded())
+				CF_EndPanelResume("blocked: an assigned driver is no longer in the pilot seat");
+				return;
+			}
+			if (checkedSample.Driver.CF_HasPanelHoldRequest())
+			{
+				CF_EndPanelResume("cancelled: explicit Hold superseded Resume");
+				return;
+			}
+		}
+		float now = GetGame().GetWorld().GetWorldTime();
+		float elapsed = (now - m_fPanelResumeSampleMs) * 0.001;
+		m_fPanelResumeSampleMs = now;
+		ChimeraCharacter owner = ChimeraCharacter.Cast(m_OrderingPlayer);
+		CompartmentAccessComponent ownerAccess;
+		if (owner)
+			ownerAccess = owner.GetCompartmentAccessComponent();
+		IEntity occupiedLead;
+		if (owner && owner.IsInVehicle() && ownerAccess)
+			occupiedLead = ownerAccess.GetVehicleIn(owner);
+		if (occupiedLead && occupiedLead != m_PanelResumeLead)
+		{
+			CF_EndPanelResume("cancelled: owner changed lead vehicle");
+			return;
+		}
+		if (!occupiedLead)
+		{
+			foreach (CF_PanelResumeMember waitingSample : m_aPanelResumeMembers)
+			{
+				waitingSample.LastPosition = waitingSample.Truck.GetOrigin();
+				if (waitingSample.PredecessorVehicle)
+					waitingSample.LastPredecessorPosition = waitingSample.PredecessorVehicle.GetOrigin();
+			}
+			CF_SetPanelResumeState("waiting: owner must return to the original lead vehicle");
+			return;
+		}
+		bool allVerified = true;
+		bool anyDemand = false;
+		string waitReason = "waiting: predecessor is stopped within following spacing";
+		for (int i = 0; i < m_aPanelResumeMembers.Count(); i++)
+		{
+			CF_PanelResumeMember sample = m_aPanelResumeMembers[i];
+			CF_DriverControllerComponent unit = sample.Driver;
+			vector position = sample.Truck.GetOrigin();
+			if (unit.CF_IsPlayerControlSuspended())
+			{
+				// Player-driven movement must never complete an AI Resume.
+				sample.StartPosition = position;
+				sample.LastPosition = position;
+				if (sample.PredecessorVehicle)
+					sample.LastPredecessorPosition = sample.PredecessorVehicle.GetOrigin();
+				sample.ProgressMeters = 0;
+				sample.ForwardSamples = 0;
+				sample.PoweredSamples = 0;
+				sample.Verified = false;
+				allVerified = false;
+				waitReason = "waiting: assigned vehicle is under player control";
+				continue;
+			}
+			IEntity predecessor = sample.PredecessorVehicle;
+			if (!predecessor)
+			{
+				CF_EndPanelResume("blocked: original predecessor vehicle became unavailable");
+				return;
+			}
+			CarControllerComponent car = CarControllerComponent.Cast(sample.Truck.FindComponent(CarControllerComponent));
+			CarControllerComponent predecessorCar = CarControllerComponent.Cast(predecessor.FindComponent(CarControllerComponent));
+			if (!car || !car.GetSimulation() || !predecessorCar || !predecessorCar.GetSimulation())
+			{
+				CF_EndPanelResume("blocked: assigned vehicle movement could not be observed");
+				return;
+			}
+			VehicleWheeledSimulation sim = car.GetSimulation();
+			vector predecessorPosition = predecessor.GetOrigin();
+			vector step = position - sample.LastPosition;
+			step[1] = 0;
+			vector direction = sample.LastPredecessorPosition - sample.LastPosition;
+			direction[1] = 0;
+			float toward = 0;
+			if (direction.Length() > 0.1)
+			{
+				direction.Normalize();
+				toward = vector.Dot(step, direction);
+			}
+			vector transform[4];
+			sample.Truck.GetTransform(transform);
+			float forward = vector.Dot(step, transform[2]);
+			// Reject jitter, reverse motion and implausible jumps. Direction is
+			// resampled toward the same predecessor, not a fixed world axis.
+			bool meaningful = unit.CF_IsMovementActive() && toward >= 0.25 && forward >= 0.25 &&
+				elapsed > 0 && elapsed <= 3.0 && step.Length() <= Math.AbsFloat(sim.GetSpeedKmh()) * elapsed / 3.6 + 2.0;
+			if (!sample.Verified && meaningful)
+			{
+				sample.ProgressMeters += toward;
+				sample.ForwardSamples++;
+				if (sim.EngineIsOn() && sim.GetGear() >= 2 && sim.GetThrottle() > 0.05 &&
+					Math.AbsFloat(sim.GetSpeedKmh()) >= 1.0)
+					sample.PoweredSamples++;
+				sample.Verified = sample.ProgressMeters >= 3.0 && sample.ForwardSamples >= 3 &&
+					sample.PoweredSamples >= 2 && vector.DistanceXZ(position, sample.StartPosition) >= 3.0;
+				if (sample.Verified || sample.ForwardSamples == 1 || now - sample.LastLogMs >= 5000.0)
 				{
-					m_sPanelOrderState = "blocked: a driver is no longer seated";
-					m_iPanelOrder = CF_PANEL_ORDER_NONE;
-					return;
-				}
-				if (!unit.CF_IsMovementActive())
-				{
-					m_sPanelOrderState = "executing: drivers are taking follow positions";
-					return;
+					sample.LastLogMs = now;
+					Print("[ConvoyFollower] PANEL_RESUME_PROGRESS: unit=" + GetIdentityNumber(unit) +
+						" progress_m=" + sample.ProgressMeters + " forward_samples=" + sample.ForwardSamples +
+						" powered_samples=" + sample.PoweredSamples + " verified=" + sample.Verified);
 				}
 			}
-			m_sPanelOrderState = "completed: convoy following";
-			m_iPanelOrder = CF_PANEL_ORDER_NONE;
+			sample.LastPosition = position;
+			sample.LastPredecessorPosition = predecessorPosition;
+			if (sample.Verified && unit.CF_IsMovementActive())
+				continue;
+			allVerified = false;
+			bool predecessorPaused = unit.IsWaitingForLead();
+			if (i > 0 && (m_aUnits[i - 1].CF_HasPanelHoldRequest() || m_aUnits[i - 1].CF_IsPlayerControlSuspended()))
+				predecessorPaused = true;
+			bool withinStoppedSpacing = vector.DistanceXZ(position, predecessorPosition) <= CF_ConvoySettings.Get().m_fStoppedGap + 4.0 &&
+				Math.AbsFloat(predecessorCar.GetSimulation().GetSpeedKmh()) <= 1.0 && Math.AbsFloat(sim.GetSpeedKmh()) <= 1.0;
+			if (predecessorPaused)
+				waitReason = "waiting: assigned predecessor is not ready to move";
+			else if (!withinStoppedSpacing)
+				anyDemand = true;
 		}
+		if (allVerified)
+			CF_EndPanelResume("completed: all trucks are following");
+		else if (anyDemand)
+			CF_SetPanelResumeState("executing: convoy is getting moving");
+		else
+			CF_SetPanelResumeState(waitReason);
 	}
 
 	static bool Start(IEntity user, CF_DriverControllerComponent candidate)
@@ -678,6 +926,7 @@ class CF_ConvoySession
 			Print("[ConvoyFollower] UNLOAD_BAY_RECORDED: " + session.m_vUnloadBayPosition);
 		}
 
+		session.CF_EndPanelResume("cancelled: superseded by an unload maneuver");
 		session.m_UnloadHead = driver;
 		session.m_bUnloadHeadForward = false;
 		session.m_bUnloadAnchorLock = true;
@@ -849,6 +1098,7 @@ class CF_ConvoySession
 			session.m_bUnloadBayPositionValid = true;
 			Print("[ConvoyFollower] UNLOAD_BAY_RECORDED: " + session.m_vUnloadBayPosition);
 		}
+		session.CF_EndPanelResume("cancelled: superseded by a forward waiting maneuver");
 		session.m_UnloadHead = driver;
 		session.m_bUnloadHeadForward = true;
 		session.m_iUnloadPhase = CF_UNLOAD_DEPARTING;
@@ -940,6 +1190,7 @@ class CF_ConvoySession
 				}
 			}
 		}
+		session.CF_EndPanelResume("cancelled: superseded by Resume ahead");
 		ref array<CF_DriverControllerComponent> oldActive = {};
 		foreach (CF_DriverControllerComponent active : session.m_aUnits)
 			oldActive.Insert(active);
@@ -1264,14 +1515,18 @@ class CF_ConvoySession
 			session.m_sPanelOrderState = "blocked: no outbound unload hold is ready to cancel";
 			return false;
 		}
+		if (!session.CF_CanTrackPanelResume())
+		{
+			session.m_sPanelOrderState = "blocked: all outbound assignments must be seated before cancelling unload";
+			return false;
+		}
 		if (!ResumeFollowing(user, session.m_aUnits[0]))
 		{
 			session.m_sPanelOrderState = "blocked: outbound unload hold could not be canceled";
 			return false;
 		}
-		session.m_iPanelOrder = CF_PANEL_ORDER_RESUME;
-		session.m_fPanelOrderDeadlineMs = GetGame().GetWorld().GetWorldTime() + CF_PANEL_HOLD_TIMEOUT_MS;
-		session.m_sPanelOrderState = "executing: outbound line resuming; parked trucks remain waiting";
+		session.CF_EndPanelResume("cancelled: superseded by cancel-unload Resume");
+		session.CF_BeginPanelResumeTracking("accepted: outbound Resume accepted; parked trucks remain waiting");
 		return true;
 	}
 
@@ -1677,7 +1932,7 @@ class CF_ConvoySession
 		m_iOwnerMissingPolls = 0;
 
 		Vehicle ownerVehicle = GetOwnerPilotedVehicle();
-		if (m_iPanelOrder == CF_PANEL_ORDER_HOLD)
+		if (m_iPanelOrder == CF_PANEL_ORDER_HOLD || m_iPanelOrder == CF_PANEL_ORDER_RESUME)
 			CF_UpdatePanelOrderState();
 		PollOrdinaryOrderRecovery(ownerVehicle);
 		if (m_aReturnQueue.IsEmpty() && !m_bUnloadAnchorLock && !m_UnloadHead && ownerVehicle &&
@@ -1850,6 +2105,7 @@ class CF_ConvoySession
 			remainingParked.RemoveOrdered(farthestIndex);
 		}
 
+		CF_EndPanelResume("cancelled: return maneuver changed the convoy order");
 		ref array<CF_DriverControllerComponent> activated = {};
 		ref array<CF_DriverControllerComponent> failedParked = {};
 		ref array<CF_DriverControllerComponent> failedOutbound = {};
@@ -1925,7 +2181,10 @@ class CF_ConvoySession
 		if (operation == CF_PENDING_REPLACE && !m_aUnits.IsEmpty())
 			m_LeaderBeingReplaced = m_aUnits[0];
 		if (candidate.CF_BeginConvoyAssignment(this, m_OrderingPlayer))
+		{
+			CF_EndPanelResume("cancelled: a new assignment superseded Resume");
 			return true;
+		}
 
 		m_PendingDriver = null;
 		m_LeaderBeingReplaced = null;
@@ -2003,6 +2262,8 @@ class CF_ConvoySession
 	{
 		if (m_bSessionClosed || !Replication.IsServer() || !driver)
 			return;
+		if (FindUnit(driver) >= 0)
+			CF_EndPanelResume("blocked: an original driver became unavailable");
 		if (driver == m_UnloadHead)
 			OnUnloadDepartureFailed(driver);
 		else if (driver == m_ShiftingReturn)
@@ -2068,6 +2329,9 @@ class CF_ConvoySession
 			return;
 
 		int index = FindUnit(driver);
+		// Record controller failures independently of radio settings/listeners.
+		if (index >= 0 && (eventId == CF_RadioEvent.LOST || eventId == CF_RadioEvent.STUCK))
+			CF_EndPanelResume("blocked: a driver reported lost or stalled movement");
 		SCR_PlayerController controller = GetOrderingController();
 		if (!controller)
 			return;
@@ -2154,6 +2418,8 @@ class CF_ConvoySession
 			return false;
 
 		CF_ConvoySession session = GetForPlayer(user);
+		if (session.FindUnit(driver) >= 0)
+			session.CF_EndPanelResume("cancelled: an original driver was dismissed");
 		if (session.m_UnloadHead == driver)
 			session.OnUnloadDepartureFailed(driver);
 		if (session.m_PendingDriver == driver)
@@ -2294,6 +2560,8 @@ class CF_ConvoySession
 
 	protected void RewireTargets()
 	{
+		if (m_iPanelOrder == CF_PANEL_ORDER_RESUME && !CF_PanelResumeRosterMatches())
+			CF_EndPanelResume("cancelled: convoy assignments or order changed");
 		CF_DriverControllerComponent predecessor;
 		for (int i = 0; i < m_aUnits.Count(); i++)
 		{
@@ -2371,6 +2639,7 @@ class CF_ConvoySession
 
 	protected void CloseSession()
 	{
+		CF_EndPanelResume("cancelled: convoy session ended");
 		m_bSessionClosed = true;
 		CancelScheduledPolls();
 		m_UnloadHead = null;

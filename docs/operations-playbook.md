@@ -157,6 +157,14 @@ A live `npm run workbench -- pack --project "$env:USERPROFILE\Documents\My Games
 
 ## Isolated client profile
 
+### Immutable packed-addon copies
+
+For a local packed run, copy `addon.gproj`, `data.pak`, and `resourceDatabase.rdb` together from the same completed build into a fresh addon subfolder, such as `.cache/test-addons/MyAddon/`. Pass its parent with `--addons-dir .cache/test-addons` and select the addon with `--addon <GUID>`. Keep duplicate copies of that GUID out of the same parent. Record SHA-256 hashes of all three files and keep the entire copy unchanged until the client exits; use a new isolated copy after repacking.
+
+The launcher rejects a selected addon containing `data.pak` when its sibling `resourceDatabase.rdb` is missing, empty, or not a regular file. Source projects without `data.pak` remain supported. This preflight checks database presence, not whether all files came from the same build or whether every dependency exists. The verified server-fetched Workshop layout also contains these three core files plus manifests and metadata; preserve those additional files when copying a Workshop installation. A complete pack and `--expect-game` establish startup prerequisites, not a gameplay pass.
+
+### Profile and launch behavior
+
 The game also supports `-profile`. It treats the supplied directory as a root: settings go under its `profile` subdirectory and Workshop addons under its `addons` subdirectory. An initial launch from the REFORGER workspace failed with `Game addon '58D0FB3206B6F859' not found` because the game's relative `./addons` lookup used the wrong working directory. Starting from the game executable directory loaded the base game and reached the menu. The `client:run` helper uses that working directory and a windowed test layout by default.
 
 ```powershell
@@ -268,3 +276,9 @@ Keep the original logistics idea on hold until these comparisons have real gamep
 Primary comparison pages: [AI Conflict Arland](https://reforger.armaplatform.com/workshop/B52C5F6AEDBF423E), [Raven AI Commander](https://reforger.armaplatform.com/workshop/6A3A112604EF7286-RavenAICommander), [L63 HeliAI](https://reforger.armaplatform.com/workshop/D6B177DBEE89E8C4), [REAPER AiHelicopters](https://reforger.armaplatform.com/workshop/69A4D664A6284E06). Their descriptions are claims until tested here. L63 requires BFS F.R.I.E.S Reforged and Physics Rope; keep competing AI pilot mods disabled during individual tests.
 
 For each run, record the game version, enabled mod IDs/versions, scenario ID, exact player actions, elapsed setup time, expected outcome, observed outcome, and log folder. A failure is useful if its reproduction steps are precise.
+
+## Recorder shutdown verified September 26
+
+When launching the recording helper through Codex's command tool, use `tty: true` if the run may need to end before its configured duration. A plain-pipe session had closed stdin and rejected an attempted `q`; the recorder was still running and completed normally at its existing time limit. Do not restart or declare a recorder stopped from that stdin error. Poll the same handle or inspect its exact process.
+
+A later PTY recording accepted `q`, finalized its MP4, and exited 0. Stop recording after the required post-action observation and before closing the game when possible, then use the game's normal close path and inspect the final console separately. Keep a bounded duration as fallback. Whole-monitor `ddagrab` files can contain other applications; keep originals in private ignored storage and crop/review footage before publishing it. This workflow does not establish that a gameplay scenario passed.
