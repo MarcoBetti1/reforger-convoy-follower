@@ -1,0 +1,258 @@
+CONVOY FOLLOWER — PROJECT HISTORY AND DEVELOPMENT SUMMARY
+=======================================================
+
+Prepared from our conversation, the addon source, and the saved test records.
+Checkpoint: the evening of September 25, 2026 locally, recorded as September 26 UTC.
+Development is paused. This document summarizes the work; it does not resume testing.
+
+
+1. What we set out to make
+-------------------------
+
+The central idea was to make moving supplies with AI useful and easy for an ordinary Arma Reforger player. A player should be able to recruit a few drivers, put them in vehicles, load supplies, and lead them to a destination. The drivers should follow sensibly, communicate when something important goes wrong, and remain manageable when the player stops or changes plans.
+
+At the beginning, we considered a much broader logistics system, including AI deliveries and potentially helicopters. We narrowed that down during discussion. The player would choose the destination and initiate the work. For the first mod, the player would also do the loading and unloading. The AI's main responsibility would be driving the following vehicles and maintaining the convoy.
+
+That distinction has stayed important. We have not built a system that autonomously selects bases, decides when supplies are needed, or transfers cargo. Our intended use case is a player-led convoy: the player provides a sensible, drivable route, while the mod makes it practical to bring additional vehicles along.
+
+The longer-term ambition is to release both a useful mod and the tools and reusable pieces developed while making it. More sophisticated convoy roles, fighting vehicles, and helicopter logistics remain possible later extensions. They have not become requirements for this first release.
+
+
+2. Researching existing mods and deciding to build this one
+---------------------------------------------------------
+
+Before starting, we looked into existing Reforger logistics and AI-driving options because you wanted to avoid making something that was already solved well. Raven AI Commander became the main practical comparison. Its descriptions suggested logistics behavior worth investigating, including supply activity and recovery attempts.
+
+We installed Raven, prepared isolated sessions, and eventually got it loaded into a Conflict environment. We also learned that obtaining a mod's files through a dedicated server was different from registering that mod in the game's client-side Workshop and hosting menus. A real in-game download made Raven appear in the host's mod list where a copied package had not.
+
+The investigation never demonstrated a complete Raven supply delivery. You tried it yourself and could not easily determine how to use it. We closed that investigation rather than treating its description as proof that it fulfilled your needs.
+
+The practical lesson was about usability. Even if a mod contains powerful logistics features, it is not a satisfying solution if the player cannot discover the basic workflow. That led us toward a visibly identifiable driver NPC with simple interactions and immediate feedback.
+
+
+3. Building the Reforger development and testing harness
+------------------------------------------------------
+
+A substantial part of the early work was making this machine a repeatable development environment. The game and Enfusion Workbench were already installed, but manually navigating launchers, Workshop menus, world selection, and refresh dialogs was consuming too much time.
+
+We built command-line helpers to locate installations, inspect addon caches, fetch Workshop mods, prepare local server configurations, launch isolated game clients, open Workbench directly in a chosen editor, validate scripts, package addons, summarize logs, and record test footage. The helpers generally show what they intend to do before an explicit execution option starts the process.
+
+We established a temporary dedicated-server workflow for downloading Workshop content into a reusable cache. We also created private local Conflict server configurations with checked loopback network binding. That was useful for setup and downloading, but joining the dedicated server from the game remained unreliable: authentication timed out in control tests even without the convoy mod. We did not treat a server reaching its game state as proof that a player had joined it.
+
+For most development, direct world launches and Workbench previews became the more productive route. Opening the desired project and world from the command line bypassed much of the launcher UI. Direct world startup also avoided the interactive opening screen that had been difficult to advance reliably through automated keyboard input.
+
+We documented the awkward UI behavior we encountered: window focus, stale window handles after transitions, the Workshop search field needing Enter, clicks that did not apply a search, and Workbench windows opening in inconvenient positions. We learned to inspect the current window, perform one action, and check the result instead of repeating blind clicks.
+
+The trusted local Workbench launch path now supports the game's script-authorization switch. This avoids repeatedly asking you to approve the refresh dialog for our prepared local test projects. We also learned to close source Workbench sessions before changing scripts, because live reload could disrupt a test and produce misleading resource errors.
+
+The reusable harness is now maintained in its own public GitHub repository. Mod scripts, worlds, audio, and convoy-specific test reports stay in the mod repository. This separation is already real; it is not merely a proposed reorganization.
+
+
+4. The first playable driver prototype
+-------------------------------------
+
+The first implementation was intentionally small. We created a custom driver character and a one-member AI group, made it placeable in prepared scenes, and added an interaction that told it to enter a nearby empty vehicle and follow the ordering player.
+
+We reused the game's character, vehicle, boarding, and waypoint systems. We did not create new truck models or replace vehicle physics. The addon supplied the coordination and user actions around those existing systems. Its gameplay code is written in Enfusion's scripting language, with prefab and configuration assets connecting the scripts to the characters and vehicles.
+
+Using a one-member AI group was a practical requirement: the movement and boarding orders were issued through that driver's group. This is why the intended placed entity is a Convoy Driver group rather than an arbitrary standalone soldier.
+
+The early test world contained a player spawn, a driver, and separate vehicles for the player and AI. You tested it in Workbench and found the interaction yourself. You then confirmed that an AI vehicle physically followed you. In another test, a driver selected your Jeep instead of the intended truck, and the Jeep also followed.
+
+That incident exposed a mismatch between the interaction's wording and its actual behavior. It said "truck," but the search selected the closest suitable empty wheeled vehicle. We changed the wording to make that scope clearer. Nearest-vehicle selection remains convenient, but explicit player selection of a particular truck is still an improvement to finish.
+
+The session also tracks assigned vehicles so another convoy driver cannot simply claim a truck that is already allocated, including during boarding. This addresses the gap between issuing a boarding order and the AI actually occupying or reserving the driver's seat.
+
+
+5. Evolving from separate followers into a convoy
+-----------------------------------------------
+
+The original prototype treated each driver as a separate follower. Your testing quickly showed why that was not the right final design. Several independent drivers could produce too much radio chatter, and a proper convoy should have a stable order rather than every vehicle independently chasing the player.
+
+We changed the design to a convoy session owned by the player. The first driver becomes Unit One and follows the player's vehicle. Unit Two follows Unit One, Unit Three follows Unit Two, and so on. This daisy chain is deliberate and remains a core design requirement.
+
+The session manages membership, ordering, vehicle assignments, and the leader's role as spokesperson. Recruitment was simplified toward a single "Join my convoy" action: the first recruit starts the convoy and subsequent recruits join its tail. Replacing the leader remains a distinct operation. Under the earlier rule you chose, a replacement boards successfully before the old leader stands down and leaves; that is not yet the later proposed fully nondestructive leader-reordering workflow.
+
+We added a hard maximum of five convoy vehicles, with the main automated test matrix focused on one, two, and three. We also implemented logic for reconnecting the chain when a member becomes unavailable and for detecting vehicles that have moved out of order. Some recovery paths have been exercised, but sustained multi-vehicle recovery through every loss and ordering case is not yet verified.
+
+An early problem that appeared to prevent two followers was actually caused by the player's actions between recruitment steps. Getting out of the lead vehicle made the first driver stand down. We changed that behavior so leaving the player's vehicle would not automatically dismiss the convoy. Drivers should retain their assignments, wait or close up as appropriate, and continue when the player resumes.
+
+You subsequently confirmed that multiple trucks followed successfully and that the intended chain could be seen in play. Those observations established that the central idea works. They did not establish that it would behave reliably on every road or during every stop.
+
+
+6. Walking, passenger transport, equipment, and incoming fire
+-----------------------------------------------------------
+
+We added "Follow me on foot" so a driver spawned far from a truck could be brought to it. This grew into staging support for multiple walkers and passenger boarding: when the player enters a vehicle, staged drivers try to use available passenger seats. The intention is to let the player transport drivers to another location before assigning their convoy trucks.
+
+These behaviors use the game's AI boarding and movement machinery. They are implemented, and passenger activity appears in later live test records, but all vehicle types and multiple-passenger edge cases have not received complete validation. A helicopter ride is an intended use of passenger staging, not a demonstrated helicopter logistics system.
+
+We gave the drivers crew-style equipment using existing game assets. The US driver uses US crew clothing with an M9 pistol; the Soviet driver uses Soviet crew clothing with a PM pistol. The groups share convoy behavior while differing in appearance and faction equipment. We retained the game's basic combat behavior rather than writing a separate combat AI.
+
+Combat initially exposed an important problem: drivers could get out when shots were fired, and our convoy code then treated the seat exit as the end of their participation. We increased the priority of active driving orders and added bounded attempts to reboard an otherwise viable assigned truck. A dead driver, destroyed vehicle, or exhausted recovery still needs a clear failure outcome.
+
+We also added damage monitoring to the driver and assigned vehicle. The leader can report a qualifying hit on behalf of the affected unit. This is confirmed-damage reporting, not complete detection of nearby gunfire or every bullet that misses. Repeated hits within an attack episode are grouped to avoid a separate announcement for every damage event. You later reported that the hit calls and combat reactions were working during your playtest.
+
+
+7. Building the radio personality and reducing chatter
+----------------------------------------------------
+
+The radio system began with your own recordings. You supplied two driver recordings and later a new recording for the convoy-leader design. We split the recordings into usable phrases, assembled numbered unit reports, applied voice processing, and created game audio resources with reproducible preparation scripts and asset records.
+
+The sound treatment evolved through your feedback. You wanted a stronger radio character and less of the raw microphone sound. We narrowed the voice frequency range, added compression and distortion, and put radio noise around the message. You rejected effects that sounded like a click or pop, then chose the fuller, smoother squelch preview. That treatment was applied to the leader calls.
+
+The leader is the only speaker the ordering player hears. General calls speak for the convoy, while member problems identify the affected unit. Playback is private to that player and does not depend on carrying a particular radio, tuning a frequency, or remaining within simulated radio range. These are prerecorded lines triggered by game state; there is no speech recognition or conversational AI.
+
+The recorded leader set contains 58 rendered clips, including numbered material through Unit Ten from an earlier version of the plan. The current five-vehicle limit means Units Six through Ten are not active convoy members. That is an asset-history detail, not support for ten trucks.
+
+You then asked for fewer repetitive routine lines and more variety without recording more speech. We added configurable routine-call probability, minimum spacing between routine calls, and repetition cooldowns. Range warnings use a delay and a separate reset threshold so hovering around one distance does not immediately retrigger the same report. Important problem reports are handled separately from casual chatter, and the playback queue suppresses duplicates and gives problems precedence over stale routine lines.
+
+We also produced an optional generated voice pack locally. It contains 66 clips: two phrasings for each of the active whole-convoy and numbered report positions. It uses a separate synthetic voice, not a clone of your voice. Your approved recording remains the default, so a convoy does not randomly switch between your voice and the generated one.
+
+The audio work was checked at several levels: resource generation and packaging, clip lengths and levels, local transcription screening, and actual game-output recording. In a Workbench run, loopback audio captured two generated calls, and waveform comparison and readback confirmed that the intended clips reached the player's output. This proves those examples played; it does not prove every line, mute setting, or repetition rule has passed a complete in-game audio test.
+
+Voice enablement and voice-pack choice are now author/server settings rather than a toggle on the driver's interaction menu. We also wrote scripts for possible future arrival, release, and return announcements. We have deliberately not connected a phrase to an unrelated event just to increase the number of messages.
+
+
+8. Player controls and configuration
+-----------------------------------
+
+As the convoy grew, walking up to individual drivers for every command became cumbersome. We investigated Reforger's built-in UI facilities and implemented a compact convoy panel over the normal map. This uses the map's existing cursor and menu handling rather than requiring a separate phone item.
+
+The panel displays the recruited units, their positions in the convoy, assigned vehicles, following targets, and reported states. It receives server state instead of presenting a button click as a completed physical action. The command path checks the requesting player's ownership and whether the order is currently allowed.
+
+The implemented panel controls include whole-convoy Hold and Resume, selected front-truck release options, and controls for the experimental waiting-line workflows. A live filmed preview demonstrated mouse clicks on Hold and Resume reaching server-reported completion. Closing the map returned the view to gameplay. We also fixed a display-scaling problem that initially made the panel difficult to read and click correctly.
+
+There are important remaining limits. Opening with the normal map key and proving that steering and throttle work correctly after closing still need a controlled player-input test. Selected-member Hold and Resume are not implemented merely because a row can be selected. A temporary dismount that preserves membership and truck assignment is also not finished. We have kept that distinct from Stand down, which removes a driver, rather than pretending those are equivalent commands.
+
+For server owners and scenario authors, we added settings for convoy size, vehicle search distance, spacing, warning and lost distances, recovery timing, radio enablement, voice pack, and chatter frequency. Authors can change packaged configuration; a server can override supported values in its profile configuration without rebuilding the addon. There is no broad player-facing tuning menu.
+
+
+9. Arrival, unloading, and clearing the unloading position
+-------------------------------------------------------
+
+Following was only the beginning of the useful supply workflow. You pointed out that stopping at a destination should bring the trucks close enough to unload. A convoy that simply waits far behind the player has not completed its purpose.
+
+We added arrival behavior intended to close the line behind a stopped lead vehicle while keeping drivers seated and assignments intact. The player can unload cargo using the game's normal supply actions. Stopping or getting out alone should not dismiss drivers or automatically send them somewhere else.
+
+We then worked on the sequential unloading problem: after the first truck is unloaded, it needs to clear the spot so the next truck can reach it. The design evolved from interacting with the driver through a door to placing a separate action in the truck's existing rear cargo interaction menu. We implemented additive overrides for the M923A1 and standard Ural4320 cargo parts, so the release action can sit beside the normal supply controls without a new physical handle.
+
+The release remains explicit and ownership-checked. The intended behavior is to move that truck to a waiting position, keep it in the broader convoy system, and advance the next truck only after the first physically clears and settles. We developed route-history and road checks to choose candidate positions and reject obviously unsuitable space.
+
+The rear regrouping version grew into staged turns and a parked return line. We also developed a return trigger based on the player's lead vehicle passing the line toward home, with the intention of rejoining both unloaded and still-waiting trucks. Later, your observations led to a forward-wait alternative: if there is room ahead, a truck should be able to move forward and wait without making a U-turn.
+
+Parts of these maneuvers have worked in tests. One isolated forward-parking run drove a truck about 87 metres and held it stationary for 20 seconds. Another earlier sequence parked two trucks and brought a third toward the unloading position. Other runs looped, stalled, moved backward, or could not provide enough room for the owner to pass and resume the line. Therefore, the complete unloading, parking, passing, and return workflow remains experimental.
+
+This became a major lesson in scope. We were trying to prove a long sequence while simpler movement and stopping problems were still unresolved. The current plan gives ordinary following, holding, unloading, and resuming priority over elaborate automatic turnarounds.
+
+
+10. US and Soviet assets and the demonstration worlds
+----------------------------------------------------
+
+We created corresponding US and Soviet driver groups using the same behavior scripts. We also added the rear cargo actions to the US M923A1 transport and standard Soviet Ural4320 transport families. These are inherited game assets and addon overrides; we have not created entirely new vehicle models or altered the installed vanilla files.
+
+The original Arland test scene expanded into three driver groups and four trucks, giving the player a separate lead vehicle. A Soviet counterpart uses Soviet drivers, Urals, and a UAZ. The Soviet resources compile and package, but their faction-specific gameplay and rear-menu behavior still need a complete live check.
+
+Most of these test worlds are authored subscenes on existing Arland or Everon terrain. We control the starting entities, route, camera, and test behavior, but still inherit the game's terrain and navigation systems. A completely new empty proving-ground map with its own terrain and navigation setup has been considered, not completed. Small focused scenes on existing maps have been the practical intermediate step.
+
+For a more appealing demonstration, we prepared an Everon scene starting near Regina and heading toward an unloading location near Levie. It includes a lead LAV, three AI trucks and drivers, nearby supplies to load, and a destination storage area. We moved the initial staging away from brush, trees, and rocks after inspecting it in the editor.
+
+The scenario requests a night start, but a bare Workbench preview can inherit the parent world's time instead of the scenario header. The attempted direct spawn into the LAV also has an on-foot fallback. Those details, the complete supply transfer, and the full route still need final gameplay verification. The staged world is a useful asset; it is not yet a completed filmed demonstration.
+
+
+11. How testing became autonomous and repeatable
+----------------------------------------------
+
+The first tests relied heavily on you playing and describing what happened. That feedback was valuable: the Jeep assignment, accidental stand-down, multiple followers, useful radio calls, and awkward arrival behavior all came from actual use.
+
+You later made autonomous live testing a release requirement. We built prepared worlds with fixed starting vehicles, drivers, routes, and script components that can start a scenario without navigating menus for every run. These components issue real game orders and measure physical results. They are test fixtures around the addon, not replacements for the player's final gameplay experience.
+
+The most useful immediate driving fixture has a native AI pilot driving the lead truck while a real player-controlled character occupies a passenger seat. The production convoy controller follows that player's vehicle. This allows repeatable driving without pretending that unreliable injected keyboard input has been solved. It also has a clear limitation: a passenger-based test cannot prove that a UI restores a human driver's controls.
+
+We use frozen packaged builds in separate addon directories, fresh test profiles, distinct log directories, and recorded package hashes. This prevents a running client from silently picking up changing source or a different copy of the addon. It also lets source work proceed while a standalone client tests a known build.
+
+The tests collect position, distance traveled, direction of progress, vehicle speed, seat occupancy, assigned truck, following target, waypoint state, and reasons for waiting. Diagnostic cameras and video let us compare those numbers with what the trucks visibly do. We keep both the complete console log and a snapshot around the scenario's result.
+
+Validation is deliberately layered. A script compile checks code compatibility. Packaging checks resources. A game-state transition checks startup. A geometry test checks calculations. A server acknowledgement checks command handling. Physical movement and sustained state checks establish gameplay behavior. Actual menu input and multiplayer ownership need their own tests. Passing one layer does not automatically pass the others.
+
+
+12. What the driving investigation has established
+-------------------------------------------------
+
+Earlier packed versions passed automated one-, two-, and three-truck road-following tests under their specified conditions. A two-truck stop, exit, reboard, and resume test also passed with the AI-lead fixture. These are useful checkpoints, but they do not establish every terrain type or guarantee that later changes preserve all those results.
+
+We introduced smaller scenes to investigate individual failures. Some early failures came from the fixtures themselves. A scripted lead vehicle did not move despite displayed throttle and gear values. An earlier distance-only check had even counted downhill movement in the wrong direction as success. Later measurements showed the requested controls were overwritten before physics used them. Explicitly waking physics did not fix that ownership problem, so we stopped that line of testing and returned to the working native AI lead.
+
+Terrain selection also taught us to verify assumptions. An Everon field survey rejected its candidate lanes because of vegetation and a wall before any convoy driving occurred. Another lane was far from the mapped road network and looked promising in geometric checks, but the live route was actually an airfield concrete taxiway. We now require wheel-contact material evidence before describing a run as dirt or grass driving.
+
+The taxiway was still useful as a visible, short comparison course. It exposed an arrival rule that wrongly required a nearby mapped road even when both vehicles were following a valid route outside that road network. We corrected ordinary arrival to use the predecessor's actual driven trail, while retaining stricter road checks for the optional road-parking maneuvers.
+
+It also exposed a startup problem. The same roughly 20-metre value was being used for desired spacing and for deciding that a movement waypoint was complete. At a starting separation of about 20 metres, the game could consume the order immediately. The follower then waited for another waypoint and another native driving startup while the lead pulled away.
+
+Requesting normal engine start once boarding was confirmed reduced observed startup lag from approximately nine seconds to five. Peak separation improved from about 92 metres to about 71 metres. That was measurable progress, but it still failed the short course's 60-metre separation limit.
+
+Next, we tested native cruise-speed requests based on the available gap and the lead's speed. This changed actual driving behavior: throttle decreased, brakes applied, and the follower stopped about 16 metres behind the lead. The experiment preserved native steering and vehicle physics. It remains attached to the test follower rather than integrated into all production driving.
+
+The latest test revealed another fixture problem. After the follower had stopped, the AI lead independently began reversing. A cruise-zero request produced a ten-second settled result, but the lead moved again eight or nine seconds after the nominal pass marker. We retained that contradictory footage and did not call persistent holding solved. This is why future parking checks need a longer dwell and continued observation after the first success-looking event.
+
+
+13. Extracting a reusable driving building block
+----------------------------------------------
+
+The production controller had accumulated recruitment, boarding, route sampling, arrival, recovery, unloading, parking, and radio-related coordination. Your request to reflect on the process led us to separate the pieces rather than keep adding conditions to one large controller.
+
+We built an independent driven-route helper. It records where the predecessor actually traveled, tracks the follower's progress along that route, and provides a point ahead to aim toward. It is designed to advance along the route in order, rather than jump to a nearby later section of a hairpin simply because that section is physically close.
+
+The helper has explicit outcomes for missing history, a changed target, a discontinuity, or a follower too far from the recorded route. Its history is bounded so it does not grow forever. Twenty-five native geometry cases passed in the game, including turns, progress, spacing, target changes, and history handling.
+
+That is a completed and testable source-level building block, but it is not yet the production driving system. We still need to connect it to dependable movement execution and compare physical behavior on the same short courses. Native navigation remains responsible for actual steering and obstacle handling in the current experiments.
+
+We also added an experimental setting to separate waypoint completion radius from following distance. Its default preserves the previous behavior. The proposed smaller-radius comparison was prepared and compiled, but it had not run when we paused.
+
+For now, the decision is to keep one user-facing Workshop addon while making these internals reusable. A separate driving dependency would make sense after another caller can use it and its physical behavior is proved. Splitting packages before that would add installation complexity without solving the driving problem.
+
+
+14. Test reporting, cleanup, and release preparation
+---------------------------------------------------
+
+We strengthened the reporting tools as the evidence improved. They reject excessive separation, missing movement, incorrect terrain claims, and absent settled states even when a probe prints a pass marker. The latest reporter separates physical scenario results, surface evidence, runtime errors, and shutdown behavior while retaining an overall strict verdict.
+
+We also investigated errors outside the convoy's own logic. A clean vanilla control reproduced one exact helipad resource-loading error. That establishes a baseline for that particular error, not a blanket explanation for every warning or failure. Other load and shutdown diagnostics remain visible rather than being deleted to make a run look clean.
+
+The convoy's world-cleanup handling was tightened so destroying a session does not issue fresh AI orders during teardown. Several runs showed the session detaching without subsequent convoy movement orders. More lifecycle cases, including restarting a world within the same process, still need verification.
+
+The addon has repeatedly passed Workbench validation across the installed configurations and produced verified packages. An earlier full tooling suite passed 95 tests; the later reporting changes passed 27 focused tests and type checking. These software checks are useful evidence, but none substitutes for driving and using the final build.
+
+We prepared map-maker instructions, server-setting examples, audio provenance, publishing notes, and a draft Workshop description. The addon has not been uploaded to the Workshop. Final metadata, licensing decisions, multiplayer checks, faction coverage, and truthful feature claims remain part of release preparation.
+
+
+15. Where the project stands at the pause
+----------------------------------------
+
+We have a functioning prototype with meaningful live evidence. Drivers can be recruited and assigned vehicles; the intended chain has followed the player; leader radio calls have been heard; confirmed-hit reporting has been observed; a prototype control panel has handled Hold and Resume; and individual arrival and parking behaviors have worked in specific tests. Both US and Soviet assets, configurable settings, audio tools, test scenes, and automated launch/reporting tools exist in the repository.
+
+The largest unfinished area is consistent driving and stopping across realistic routes. Startup lag, excessive separation, waypoint completion, persistent holding, and optional parking maneuvers are not yet reliable enough for a release claim. The latest pacing improvement is promising, but its test-only implementation and the still-faulty lead fixture need further work before wider integration.
+
+The next planned sequence is to prove a durable stationary test lead, compare the smaller waypoint radius with unchanged spacing, integrate the reusable guidance only after movement execution is dependable, and rebuild coverage from one truck to two and three. Straight driving, turns, verified dirt or grass, stopping, getting out, getting back in, and resuming all need clear physical evidence.
+
+The final acceptance test remains the practical use case: a player recruits the drivers, loads supplies, leads a manageable convoy, stops and unloads, and resumes without rebuilding the convoy. That must work with understandable controls and useful, restrained communication. A recorded demonstration on a real map is required before describing the mod as ready.
+
+At the pause, all game, Workbench, and recording processes were closed. The final source checkpoint compiled and packaged successfully. Logs, full recordings, the later-reversal evidence, and specific restart instructions were saved. No further development or live testing is being performed as part of this summary.
+
+
+16. Where the work is saved
+--------------------------
+
+The mod, its source assets, test worlds, scenario-specific tooling, and documentation are in:
+https://github.com/MarcoBetti1/reforger-convoy-follower
+
+The development branch at this checkpoint is codex/release-hardening. The paused implementation checkpoint is commit 527ce0d. This summary is a later documentation addition and does not change that tested implementation.
+
+The independent reusable harness and operating lessons are in:
+https://github.com/MarcoBetti1/reforger-agent-harness
+
+The harness checkpoint is commit 66eb29d on main. Large local recordings, clean profiles, model weights, and temporary test packages stay outside public Git. The project retains selected shareable clips, source assets, and written evidence in the appropriate repository.
+
+For exact current results, consult docs/convoy-validation-current.md. For the next starting point, consult docs/convoy-pause-2026-09-26.md. The source documents also include the focused test courses, audio history, map-maker guide, Everon staging guide, and Workshop preparation notes. Older handoff notes describe earlier milestones and should not be read as a claim that the newest build has already passed every test.
+
+In summary, we have built the convoy concept, much of its player-facing behavior, and a reusable environment for developing and testing Reforger mods. We have also replaced several optimistic assumptions with measured evidence. The remaining work is to turn the promising prototype into a consistently usable supply convoy, with simpler control and dependable following as the priorities.
