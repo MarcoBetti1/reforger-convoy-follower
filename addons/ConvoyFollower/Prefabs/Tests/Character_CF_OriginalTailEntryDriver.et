@@ -1,0 +1,8 @@
+SCR_ChimeraCharacter : "{66B7879B5C694135}Prefabs/Tests/Character_CF_OriginalTailGuideDriver.et" {
+ ID "A3E5D0E8FE064D43"
+ components {
+  CF_OriginalTailGuideDriverComponent "{E7F041D76B47D760}" {
+   m_bTrailPrejoinLookahead 1
+  }
+ }
+}

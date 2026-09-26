@@ -8,6 +8,9 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 {
 	[Attribute(defvalue: "0", desc: "Private one-follower recorded trail-guide experiment")]
 	protected bool m_bTrailGuidePrototype;
+	[Attribute(defvalue: "0", desc: "Private recorded prejoin lookahead comparison; real Query still owns first join")]
+	protected bool m_bTrailPrejoinLookahead;
+	protected int m_iPrejoinWindowLogs;
 	protected ref CF_TrailGuideRoute m_TrailRoute;
 	protected ref CF_DrivenRouteGuidance m_TrailGuidance;
 	protected IEntity m_TrailPredecessor;
@@ -63,6 +66,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		super.OnPostInit(owner);
 		if (Replication.IsServer())
 			Print("[ConvoyFollower] TRAIL_GUIDE_INIT: driver_id=" + owner.GetID() + " enabled=" + m_bTrailGuidePrototype +
+				" prejoin_lookahead=" + m_bTrailPrejoinLookahead +
 				" record_s=0.2 query=each_frame lookahead_m=30 advance_remaining_m=15 native_capture_m=1" +
 				" entry_window_m=5 entry_near_m=3 entry_corridor_m=2 route_corridor_m=5" +
 				" actual_displacement_budget=true controls_writer=existing_controller test_only=true");
@@ -73,7 +77,10 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		m_TrailPredecessor = target;
 		m_TrailWorld = GetGame().GetWorld();
 		m_iTrailEpoch++;
-		m_TrailRoute = new CF_TrailGuideRoute();
+		if (m_bTrailPrejoinLookahead)
+			m_TrailRoute = new CF_TrailEntryWindowRoute();
+		else
+			m_TrailRoute = new CF_TrailGuideRoute();
 		m_TrailGuidance = new CF_DrivenRouteGuidance();
 		m_TrailRoute.Reset(m_iTrailEpoch, target.GetOrigin());
 		m_bTrailFollowerPose = false;
@@ -294,6 +301,64 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		return true;
 	}
 
+	// A forward offered target does not mean the truck has joined the route.
+	// This path executes only after the unchanged Query returns APPROACH_START.
+	protected void CF_OfferPrejoinWindow(vector pose, vector start, vector tangent, float endStation)
+	{
+		vector entryOffset = pose - start;
+		entryOffset[1] = 0;
+		vector entryLateral = entryOffset - tangent * vector.Dot(entryOffset, tangent);
+		vector facing = m_Truck.GetWorldTransformAxis(2);
+		facing[1] = 0;
+		if (!(facing.LengthSq() >= 0.5))
+		{
+			CF_BlockTrail("prejoin_window_facing_invalid");
+			return;
+		}
+		facing.Normalize();
+		if (!(entryLateral.Length() <= 2.0 && vector.Dot(facing, tangent) >= 0.9))
+		{
+			CF_BlockTrail("prejoin_window_alignment_lost");
+			return;
+		}
+		float recordedBound = endStation - CF_ConvoySettings.Get().m_fMovingGap;
+		float requestedStation = Math.Min(30.0, recordedBound);
+		if (requestedStation <= m_fTrailGuideStation + 1.0)
+			return;
+		CF_TrailEntryWindowRoute entryRoute = CF_TrailEntryWindowRoute.Cast(m_TrailRoute);
+		float safeStation;
+		string reason;
+		if (!entryRoute || !entryRoute.ReadPrejoinWindow(m_iTrailEpoch, start, tangent, requestedStation, safeStation, reason))
+		{
+			CF_BlockTrail("prejoin_window_history_invalid");
+			return;
+		}
+		if (safeStation < m_fTrailGuideStation - 0.001)
+		{
+			CF_BlockTrail("prejoin_window_history_changed");
+			return;
+		}
+		if (safeStation <= m_fTrailGuideStation + 1.0)
+			return;
+		if (!CF_SetGuideStation(safeStation, "prejoin_recorded_lookahead"))
+		{
+			CF_BlockTrail("prejoin_window_not_forward");
+			return;
+		}
+		// At least1m increase and at most30m per unjoined episode bounds these
+		// records; the per-controller cap also covers repeated reassignments.
+		if (m_iPrejoinWindowLogs < 32)
+		{
+			m_iPrejoinWindowLogs++;
+			string line = "[ConvoyFollower] TRAIL_PREJOIN_WINDOW: unit=" + m_iUnitNumber;
+			line += " epoch=" + m_iTrailEpoch + " joined=false cursor=" + m_TrailGuidance.Progress;
+			line += " station=" + safeStation + " requested_station=" + requestedStation;
+			line += " recorded_bound=" + recordedBound + " corridor_limit_m=2 reason=" + reason;
+			line += " actual_pose=" + pose + " entry=" + start + " source=recorded_only";
+			Print(line);
+		}
+	}
+
 	protected bool CF_CreateTrailGuide()
 	{
 		if (m_bTrailBlocked)
@@ -508,7 +573,9 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 				CF_BlockTrail("entry_acquisition_timeout");
 				return;
 			}
-			if (vector.DistanceXZ(pose, start) <= 3.0 && endStation - spacing >= 5.0 && m_fTrailGuideStation < 5.0)
+			if (m_bTrailPrejoinLookahead)
+				CF_OfferPrejoinWindow(pose, start, tangent, endStation);
+			else if (vector.DistanceXZ(pose, start) <= 3.0 && endStation - spacing >= 5.0 && m_fTrailGuideStation < 5.0)
 			{
 				vector entryOffset = pose - start;
 				vector entryLateral = entryOffset - tangent * vector.Dot(entryOffset, tangent);

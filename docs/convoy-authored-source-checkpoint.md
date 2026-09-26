@@ -24,6 +24,6 @@ Report: `.cache/client/runs/authored-clean-resume-v1/original-resume-independent
 
 ## Next work and limits
 
-The common-package direct-two and recorded-tail comparisons failed spacing. Preserve those failures. The entry-only candidate aims to remove the tail's slow approach to a stationary guide, separately from the later corner-projection rejection. Neither is a proven fix yet. The missing-lease negative gameplay case also remains outstanding.
+The common-package direct-two and recorded-tail comparisons failed spacing. Preserve those failures. Since this source checkpoint, the separate entry-only build `2BCA4FC7...` was tested: genuine join occurred earlier, but spacing still failed before a later corner-projection rejection and no formal hold occurred. Its physical/strict FAIL, frozen source and uncommitted implementation remain preserved in [current validation](convoy-validation-current.md). This is no general driving fix. Corner projection, guide-aware pacing and truthful blocked recovery remain separate future investigations; the missing-lease negative gameplay case also remains outstanding.
 
 Production adoption requires physical comparisons and relevant regressions, then ordinary player controls and the full logistics workflow. Current validation owns the evolving evidence. This source checkpoint makes the experiments reproducible and versioned; it is not release readiness or Workshop publication.

@@ -1,6 +1,6 @@
 # Reforger workspace instructions
 
-**Current execution status — September 26, 2026: active development.** The user explicitly resumed the full revised goal (`updatedAt: 1790441946`). The preceding documentation-only setup is complete; its turn-specific restrictions below are historical. Preserve newer source and evidence and continue from the latest observed boundary.
+**Current execution status — September 26, 2026: resumed development.** The user's active-goal continuation supersedes the completed setup-only turn (`updatedAt: 1790443332`). The setup restrictions below describe that prior turn. Continue from the latest source and evidence; do not repeat completed experiments or reset newer work.
 
 This is the Convoy Follower addon repository. Reusable tools and operating lessons also live independently at `C:/Users/marco/Desktop/reforger-agent-harness` and https://github.com/MarcoBetti1/reforger-agent-harness. Keep mod worlds, scripts, assets, and scenario-specific reporters here. Sync generic harness improvements to that separate repository.
 

@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{A28F4C0C88434DFB}Prefabs/Tests/Character_CF_OriginalTailEntryDriver.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}
