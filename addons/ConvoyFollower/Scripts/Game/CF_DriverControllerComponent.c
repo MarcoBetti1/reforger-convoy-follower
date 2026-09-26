@@ -158,6 +158,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected float m_fTargetStillSeconds;
 	protected float m_fNextStoppedTrailDiagnosticMs;
 	protected float m_fNextForwardLaneDiagnosticMs;
+	protected float m_fNextFollowWaitDiagnosticMs;
 	protected bool m_bStopSettleIssued;
 	protected bool m_bArrivalCloseLogged;
 	protected bool m_bOrderInversionLogged;
@@ -173,6 +174,9 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected bool m_bTurnProbeOccupied;
 	protected bool m_bReleaseRouteHistoryFallback;
 	protected bool m_bArrivalRoadHold;
+	protected bool m_bArrivalTrailMode;
+	protected bool m_bArrivalTrailHold;
+	protected bool m_bArrivalTrailGoalValid;
 	protected bool m_bArrivalRoadRecoveryActive;
 	protected bool m_bArrivalRoadRecoveryAttempted;
 	protected bool m_bArrivalRoadRecoveryBlocked;
@@ -207,6 +211,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected vector m_vLastTargetPosition;
 	protected vector m_vLastStallTargetPosition;
 	protected vector m_vArrivalAnchorPosition;
+	protected vector m_vArrivalTrailGoal;
 	protected vector m_vLastFootPosition;
 	protected vector m_vUnloadAnchor;
 	protected vector m_vUnloadWaitingPoint;
@@ -281,6 +286,18 @@ class CF_DriverControllerComponent : ScriptComponent
 			return true;
 		if (m_iState == CF_ARRIVING)
 		{
+			if (m_bArrivalTrailMode)
+			{
+				if (!m_bArrivalTrailHold && m_fTargetStillSeconds >= CF_STOP_DETECT_SECONDS &&
+					CF_IsOrdinaryTrailArrivalClose() && CF_IsPanelVehicleSlow(2.0))
+				{
+					m_bArrivalTrailHold = true;
+					ClearWaypoints();
+					Print("[ConvoyFollower] ARRIVAL_TRAIL_HOLD: Unit " + m_iUnitNumber +
+						" seated and stopped near actual predecessor trail; road-only release unavailable");
+				}
+				return m_bArrivalTrailHold;
+			}
 			if (m_bArrivalRoadRecoveryBlocked)
 				return true;
 			if (m_bArrivalRoadRecoveryActive)
@@ -399,6 +416,9 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected void CF_ResetArrivalRoadRecovery()
 	{
 		m_bArrivalRoadHold = false;
+		m_bArrivalTrailMode = false;
+		m_bArrivalTrailHold = false;
+		m_bArrivalTrailGoalValid = false;
 		m_bArrivalRoadRecoveryActive = false;
 		m_bArrivalRoadRecoveryAttempted = false;
 		m_bArrivalRoadRecoveryBlocked = false;
@@ -666,7 +686,13 @@ class CF_DriverControllerComponent : ScriptComponent
 		if (m_iState == CF_FOLLOWING)
 			return "following";
 		if (m_iState == CF_ARRIVING)
+		{
+			if (m_bArrivalTrailHold)
+				return "holding on driven route";
+			if (m_bArrivalRoadRecoveryBlocked)
+				return "road arrival blocked";
 			return "closing at stop";
+		}
 		if (m_iState == CF_LOST)
 			return "lost";
 		if (m_iState == CF_UNLOAD_QUEUE)
@@ -2148,6 +2174,73 @@ class CF_DriverControllerComponent : ScriptComponent
 		return roadDistance <= allowedDistance;
 	}
 
+	protected bool CF_IsBeyondMappedRoad(IEntity vehicle)
+	{
+		if (!vehicle)
+			return false;
+		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
+			return false;
+		BaseRoad road;
+		float distance;
+		int roadId = aiWorld.GetRoadNetworkManager().GetClosestRoad(vehicle.GetOrigin(), road, distance);
+		return roadId >= 0 && road && road.GetWidth() > 0 && distance > road.GetWidth() * 0.5 + 8.0;
+	}
+
+	protected bool CF_UsesOrdinaryOffNetworkTrail()
+	{
+		return !m_bUnloadSequenceHold && CF_IsBeyondMappedRoad(m_Truck) &&
+			CF_IsBeyondMappedRoad(m_LeadVehicle);
+	}
+
+	protected bool CF_IsOrdinaryTrailArrivalClose()
+	{
+		if (!m_Truck || !m_LeadVehicle || !m_bArrivalTrailGoalValid)
+			return false;
+		float separation = vector.DistanceXZ(m_Truck.GetOrigin(), m_LeadVehicle.GetOrigin());
+		return separation >= 7.0 && separation <= CF_ConvoySettings.Get().m_fStoppedGap + 8.0 &&
+			vector.DistanceXZ(m_Truck.GetOrigin(), m_vArrivalTrailGoal) <= 8.0;
+	}
+
+	protected void CF_LogFollowWait(string cause)
+	{
+		if (!m_Truck || !GetGame() || !GetGame().GetWorld())
+			return;
+		float now = GetGame().GetWorld().GetWorldTime();
+		if (now < m_fNextFollowWaitDiagnosticMs)
+			return;
+		m_fNextFollowWaitDiagnosticMs = now + 5000.0;
+		string target = "none";
+		float gap = -1;
+		if (m_LeadVehicle)
+		{
+			target = m_LeadVehicle.GetName();
+			gap = vector.DistanceXZ(m_Truck.GetOrigin(), m_LeadVehicle.GetOrigin());
+		}
+		float speed = -1;
+		float brake = -1;
+		float throttle = -1;
+		bool engine;
+		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+		if (car && car.GetSimulation())
+		{
+			VehicleWheeledSimulation sim = car.GetSimulation();
+			speed = sim.GetSpeedKmh();
+			brake = sim.GetBrake();
+			throttle = sim.GetThrottle();
+			engine = sim.EngineIsOn();
+		}
+		float radius = -1;
+		if (m_Waypoint)
+			radius = m_Waypoint.GetCompletionRadius();
+		Print("[ConvoyFollower] FOLLOW_LINK_STATUS: Unit " + m_iUnitNumber + " target=" + target +
+			" state=" + m_iState + " cause=" + cause + " speed_kmh=" + speed +
+			" gap=" + gap + " waypoint=" + HasOwnWaypointInGroup() + " radius=" + radius +
+			" waypoint_age_s=" + m_fWaypointSeconds + " engine=" + engine + " brake=" + brake +
+			" throttle=" + throttle + " own_brake=" + m_bOwnVehicleBrake +
+			" goal=" + m_vLastWaypointPosition);
+	}
+
 	// Near a stopped predecessor, aiming at its exact center across a junction
 	// made trucks cut the corner and settle well off the mapped road. Keep the
 	// final road MOVE on a point the predecessor actually drove through.
@@ -2165,20 +2258,14 @@ class CF_DriverControllerComponent : ScriptComponent
 			" has_trail_target=" + (m_LeadTrailTarget != null) + " " + detail);
 	}
 
-	protected bool CF_TryGetStoppedTrailRoadGoal(IEntity target, out vector roadGoal)
+	protected bool CF_TryGetStoppedTrailPoint(IEntity target, out vector trailGoal)
 	{
-		roadGoal = vector.Zero;
+		trailGoal = vector.Zero;
 		if (!target || !m_Truck || target != m_LeadTrailTarget ||
 			m_aLeadTrailPositions.Count() < 2)
 		{
 			CF_LogStoppedTrailGoalReject("MISSING_TRAIL", "requested_target_present=" +
 				(target != null) + " target_matches_trail=" + (target == m_LeadTrailTarget));
-			return false;
-		}
-		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
-		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
-		{
-			CF_LogStoppedTrailGoalReject("NO_ROAD_NETWORK", "");
 			return false;
 		}
 		float desiredBack = CF_ConvoySettings.Get().m_fStoppedGap;
@@ -2214,24 +2301,63 @@ class CF_DriverControllerComponent : ScriptComponent
 					" desired_back=" + desiredBack);
 				return false;
 			}
-			if (!aiWorld.GetRoadNetworkManager().GetReachableWaypointInRoad(
-				m_Truck.GetOrigin(), candidate, 6.0, roadGoal))
-			{
-				CF_LogStoppedTrailGoalReject("ROAD_UNREACHABLE", "candidate=" + candidate +
-					" target_gap=" + targetDistance + " truck=" + m_Truck.GetOrigin());
-				return false;
-			}
-			float projectedGap = vector.Distance(roadGoal, candidate);
-			float projectedTargetGap = vector.Distance(roadGoal, target.GetOrigin());
-			if (projectedGap > 6.0 || projectedTargetGap < 8.0)
-				CF_LogStoppedTrailGoalReject("PROJECTED_GAP", "candidate=" + candidate +
-					" road_goal=" + roadGoal + " projection_gap=" + projectedGap +
-					" target_gap=" + projectedTargetGap);
-			return projectedGap <= 6.0 && projectedTargetGap >= 8.0;
+			trailGoal = candidate;
+			return true;
 		}
 		CF_LogStoppedTrailGoalReject("INSUFFICIENT_ROUTE", "route_back=" + routeBack +
 			" desired_back=" + desiredBack);
 		return false;
+	}
+
+	protected bool CF_TryGetStoppedTrailRoadGoal(IEntity target, out vector roadGoal)
+	{
+		roadGoal = vector.Zero;
+		vector candidate;
+		if (!CF_TryGetStoppedTrailPoint(target, candidate))
+			return false;
+		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
+		{
+			CF_LogStoppedTrailGoalReject("NO_ROAD_NETWORK", "");
+			return false;
+		}
+		if (!aiWorld.GetRoadNetworkManager().GetReachableWaypointInRoad(m_Truck.GetOrigin(), candidate, 6.0, roadGoal))
+		{
+			CF_LogStoppedTrailGoalReject("ROAD_UNREACHABLE", "candidate=" + candidate + " truck=" + m_Truck.GetOrigin());
+			return false;
+		}
+		float projectedGap = vector.Distance(roadGoal, candidate);
+		float projectedTargetGap = vector.Distance(roadGoal, target.GetOrigin());
+		if (projectedGap > 6.0 || projectedTargetGap < 8.0)
+			CF_LogStoppedTrailGoalReject("PROJECTED_GAP", "candidate=" + candidate + " road_goal=" + roadGoal +
+				" projection_gap=" + projectedGap + " target_gap=" + projectedTargetGap);
+		return projectedGap <= 6.0 && projectedTargetGap >= 8.0;
+	}
+
+	protected bool CF_TryGetOrdinaryStoppedTrailGoal(IEntity target, out vector goal)
+	{
+		if (!CF_UsesOrdinaryOffNetworkTrail())
+		{
+			if (m_bArrivalTrailMode)
+			{
+				m_bArrivalTrailMode = false;
+				m_bArrivalTrailHold = false;
+				m_bArrivalTrailGoalValid = false;
+				m_bStopSettleIssued = false;
+				m_bArrivalCloseLogged = false;
+			}
+			return CF_TryGetStoppedTrailRoadGoal(target, goal);
+		}
+		m_bArrivalTrailMode = true;
+		m_bArrivalTrailGoalValid = false;
+		if (!CF_TryGetStoppedTrailPoint(target, goal))
+		{
+			m_bArrivalTrailHold = false;
+			return false;
+		}
+		m_vArrivalTrailGoal = goal;
+		m_bArrivalTrailGoalValid = true;
+		return true;
 	}
 
 	protected vector GetLeadTrailGoal(IEntity target)
@@ -2302,7 +2428,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			m_fTargetStillSeconds >= CF_STOP_DETECT_SECONDS)
 		{
 			vector stoppedRoadGoal;
-			if (CF_TryGetStoppedTrailRoadGoal(target, stoppedRoadGoal))
+			if (CF_TryGetOrdinaryStoppedTrailGoal(target, stoppedRoadGoal))
 				goal = stoppedRoadGoal;
 		}
 
@@ -2942,6 +3068,8 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_Group.AddWaypoint(waypoint);
 		m_vLastWaypointPosition = destination;
 		m_fWaypointSeconds = 0;
+		Print("[ConvoyFollower] FOLLOW_MOVE_CREATED: Unit " + m_iUnitNumber +
+			" state=" + m_iState + " goal=" + destination + " radius=" + waypoint.GetCompletionRadius());
 		return true;
 	}
 
@@ -2956,6 +3084,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_Waypoint.SetOrigin(destination);
 		m_vLastWaypointPosition = destination;
 		m_fWaypointSeconds = 0;
+		CF_LogFollowWait("MOVE_UPDATED");
 		return true;
 	}
 
@@ -2971,6 +3100,13 @@ class CF_DriverControllerComponent : ScriptComponent
 		{
 			m_vLastTargetPosition = targetPosition;
 			m_fTargetStillSeconds = 0;
+			if (m_bArrivalTrailMode)
+			{
+				m_bArrivalTrailMode = false;
+				m_bArrivalTrailHold = false;
+				m_bArrivalTrailGoalValid = false;
+				m_bArrivalCloseLogged = false;
+			}
 			if (m_bStopSettleIssued)
 			{
 				SCR_AIWaypoint activeWaypoint = SCR_AIWaypoint.Cast(m_Waypoint);
@@ -3002,9 +3138,22 @@ class CF_DriverControllerComponent : ScriptComponent
 		// A distant truck must finish the predecessor's traversed route before
 		// making its final approach on the same road segment.
 		vector stoppedRoadGoal;
-		if (!CF_TryGetStoppedTrailRoadGoal(m_LeadVehicle, stoppedRoadGoal) ||
+		if (!CF_TryGetOrdinaryStoppedTrailGoal(m_LeadVehicle, stoppedRoadGoal) ||
 			vector.Distance(m_Truck.GetOrigin(), stoppedRoadGoal) > separation + 8.0)
 			return;
+		if (m_bArrivalTrailMode)
+		{
+			vector delta = stoppedRoadGoal - m_Truck.GetOrigin();
+			vector forward = m_Truck.GetWorldTransformAxis(2);
+			if (delta[0] * forward[0] + delta[2] * forward[2] < -2.0)
+			{
+				if (HasOwnWaypointInGroup())
+					CF_LogFollowWait("BEHIND_POINT_NATIVE_MOVE_PENDING");
+				else
+					CF_LogFollowWait("BEHIND_POINT_NO_NEW_ORDER");
+				return;
+			}
+		}
 
 		// Mark this stationary episode even if a new waypoint cannot be made;
 		// a persistent obstruction must not create an order every frame.
@@ -3018,8 +3167,11 @@ class CF_DriverControllerComponent : ScriptComponent
 		SCR_AIWaypoint waypoint = SCR_AIWaypoint.Cast(m_Waypoint);
 		if (waypoint)
 			waypoint.SetCompletionRadius(CF_STOPPED_ROAD_GOAL_RADIUS);
-		Print("[ConvoyFollower] STOP_SETTLE_ROAD: Unit " + m_iUnitNumber +
-			" closing on predecessor route point " + stoppedRoadGoal);
+		if (m_bArrivalTrailMode)
+			Print("[ConvoyFollower] STOP_SETTLE_TRAIL: Unit " + m_iUnitNumber + " actual predecessor point " + stoppedRoadGoal);
+		else
+			Print("[ConvoyFollower] STOP_SETTLE_ROAD: Unit " + m_iUnitNumber +
+				" closing on predecessor route point " + stoppedRoadGoal);
 	}
 
 	// A MOVE can finish while a fast arriving truck is still sliding. If it
@@ -3028,6 +3180,8 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected bool CF_UpdateArrivalRoadRecovery(float elapsed, float separation)
 	{
 		if (m_iState != CF_ARRIVING || !m_Truck || !m_LeadVehicle)
+			return false;
+		if (m_bArrivalTrailMode)
 			return false;
 		if (m_bArrivalRoadRecoveryBlocked)
 			return true;
@@ -3109,6 +3263,9 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected bool CF_ShouldHoldCompletedArrival(float separation)
 	{
+		if (m_bArrivalTrailMode)
+			return m_iState == CF_ARRIVING && m_bArrivalTrailHold &&
+				separation <= CF_ConvoySettings.Get().m_fStoppedGap + CF_ARRIVAL_CLOSE_REAPPROACH_BUFFER;
 		if (!CF_IsTruckNearMappedRoad())
 			return false;
 		if (m_iState == CF_ARRIVING && m_bArrivalCloseLogged &&
@@ -3266,6 +3423,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_vArrivalLastTruckPosition = m_Truck.GetOrigin();
 		m_fArrivalTruckStillSeconds = 0;
 		SetState(CF_ARRIVING);
+		m_bArrivalTrailMode = CF_UsesOrdinaryOffNetworkTrail();
 		ObserveConvoyOrder(targetVehicle, vector.Distance(m_Truck.GetOrigin(), targetVehicle.GetOrigin()));
 		if (m_bOrderInversionLogged)
 		{
@@ -3281,7 +3439,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		if (!tightRoadGoal && targetAlreadyStopped)
 		{
 			vector stoppedRoadGoal;
-			if (CF_TryGetStoppedTrailRoadGoal(targetVehicle, stoppedRoadGoal))
+			if (CF_TryGetOrdinaryStoppedTrailGoal(targetVehicle, stoppedRoadGoal))
 			{
 				arrivalGoal = stoppedRoadGoal;
 				tightRoadGoal = true;
@@ -3310,6 +3468,10 @@ class CF_DriverControllerComponent : ScriptComponent
 	{
 		if (!m_Group || !m_Waypoint)
 			return;
+		if (m_iState == CF_FOLLOWING || m_iState == CF_ARRIVING)
+			Print("[ConvoyFollower] FOLLOW_MOVE_CLEARED: Unit " + m_iUnitNumber +
+				" state=" + m_iState + " present=" + HasOwnWaypointInGroup() +
+				" goal=" + m_vLastWaypointPosition + " age_s=" + m_fWaypointSeconds);
 
 		ref array<AIWaypoint> waypoints = {};
 		m_Group.GetWaypoints(waypoints);
@@ -4277,6 +4439,16 @@ class CF_DriverControllerComponent : ScriptComponent
 			return;
 		}
 		float separation = vector.Distance(m_Truck.GetOrigin(), targetVehicle.GetOrigin());
+		if (m_bArrivalTrailHold)
+			CF_LogFollowWait("HELD_ON_DRIVEN_TRAIL");
+		else if (m_bArrivalRoadRecoveryBlocked)
+			CF_LogFollowWait("ROAD_CORRECTION_BLOCKED");
+		else if (m_aLeadTrailPositions.Count() < 2 && CF_UsesOrdinaryOffNetworkTrail())
+			CF_LogFollowWait("WAITING_FOR_PREDECESSOR_TRAIL");
+		else if (!HasOwnWaypointInGroup())
+			CF_LogFollowWait("NATIVE_MOVE_COMPLETED");
+		else
+			CF_LogFollowWait("NATIVE_MOVE_ACTIVE");
 
 		// Let the preceding vehicle pull clear before restarting a completed
 		// MOVE. Issuing a goal only a truck-length away makes the vehicle AI
@@ -4412,7 +4584,12 @@ class CF_DriverControllerComponent : ScriptComponent
 		}
 
 		SettleBehindStoppedTarget(elapsed, separation);
-		if (m_iState == CF_FOLLOWING && m_fTargetStillSeconds >= CF_STOP_DETECT_SECONDS)
+		// A new off-network convoy has no driven segment yet. Absence of a
+		// mapped road is not an obstruction: keep the ordinary following order
+		// while the predecessor starts, without a brake/restart episode.
+		bool waitingForOffNetworkTrail = CF_UsesOrdinaryOffNetworkTrail() && !m_bArrivalTrailGoalValid;
+		if (m_iState == CF_FOLLOWING && m_fTargetStillSeconds >= CF_STOP_DETECT_SECONDS &&
+			!waitingForOffNetworkTrail)
 		{
 			// This also applies while the player remains in the stopped lead
 			// vehicle. Keep the existing road waypoint and its settled radius.
@@ -4421,6 +4598,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			m_bArrivalCloseLogged = false;
 			m_vArrivalAnchorPosition = targetVehicle.GetOrigin();
 			SetState(CF_ARRIVING);
+			m_bArrivalTrailMode = CF_UsesOrdinaryOffNetworkTrail();
 			Print("[ConvoyFollower] ARRIVAL_APPROACH: Unit " + m_iUnitNumber + " closing behind stopped convoy target");
 		}
 		if (CF_UpdateArrivalRoadRecovery(elapsed, separation))
@@ -4444,10 +4622,15 @@ class CF_DriverControllerComponent : ScriptComponent
 			else if (m_bArrivalCloseLogged &&
 				separation <= CF_ConvoySettings.Get().m_fStoppedGap + CF_ARRIVAL_RELEASE_EXIT_BUFFER)
 				withinArrivalGate = true;
-			withinArrivalGate = withinArrivalGate && CF_IsTruckNearMappedRoad();
+			if (m_bArrivalTrailMode)
+				withinArrivalGate = CF_IsOrdinaryTrailArrivalClose();
+			else
+				withinArrivalGate = withinArrivalGate && CF_IsTruckNearMappedRoad();
 			bool nearStoppedTarget = m_fTargetStillSeconds >= CF_STOP_DETECT_SECONDS &&
 				m_fArrivalTruckStillSeconds >= CF_UNLOAD_SLOT_STILL_SECONDS && withinArrivalGate;
-			SetUnloadReleaseReady(!m_Predecessor && nearStoppedTarget);
+			// An ordinary off-network stop is usable for Hold/Resume, but does
+			// not grant permission for a road-only unload/return maneuver.
+			SetUnloadReleaseReady(!m_Predecessor && nearStoppedTarget && !m_bArrivalTrailMode);
 			if (nearStoppedTarget && !m_bArrivalCloseLogged)
 			{
 				m_bArrivalCloseLogged = true;
@@ -4456,6 +4639,19 @@ class CF_DriverControllerComponent : ScriptComponent
 		}
 		if (CF_ShouldHoldCompletedArrival(separation))
 			return;
+		if (m_bArrivalTrailMode && m_fTargetStillSeconds >= CF_STOP_DETECT_SECONDS)
+		{
+			vector remaining = leadTrailGoal - m_Truck.GetOrigin();
+			vector truckForward = m_Truck.GetWorldTransformAxis(2);
+			if (remaining[0] * truckForward[0] + remaining[2] * truckForward[2] < -2.0)
+			{
+				if (HasOwnWaypointInGroup())
+					CF_LogFollowWait("BEHIND_POINT_NATIVE_MOVE_PENDING");
+				else
+					CF_LogFollowWait("BEHIND_POINT_NO_NEW_ORDER");
+				return;
+			}
+		}
 
 		bool missingMoveWaypoint = !HasOwnWaypointInGroup();
 		if (missingMoveWaypoint &&

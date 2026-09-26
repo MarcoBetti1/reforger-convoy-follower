@@ -27,6 +27,7 @@ The [development reflection](convoy-development-reset.md) now prioritizes route 
 | Everon field following | Fixture survey failed: fifteen 60–100 m candidates were rejected by shrubs/wall before any convoy order. No offroad movement was tested; a clearer field is being selected. |
 | Arland clear-field survey | Two 80 m corridors passed terrain/obstacle/road-distance geometry checks. The later live run revealed candidate 120 crosses an airfield taxiway. Distance from mapped roads did not establish unpaved terrain. |
 | Arland taxiway following v1 | Physical completion, **strict FAIL**. Lead path 76.04 m, follower path 86.93 m, final gap 7.46 m; peak gap reached 91.17 m while the follower waited, then caught up. Video and lead wheel contacts show concrete, with some grass contacts. The original probe printed PASS, but it is not a product pass or off-road proof. The strict report rejects the base Helipad load error (`m_bShowDebugShape`); the strengthened reporter also rejects peak gap >60 m and lacks natural-surface evidence for both trucks. |
+| Ordinary off-network arrival correction | Compiled in all five Workbench configurations and packed. It keeps missing road membership from forcing road recovery during ordinary following; a stopped predecessor's actual trail supplies the final goal. Cached stop state clears when the target moves or the policy returns to mapped roads. Explicit road parking/release gates remain unchanged. Same-course physical comparison is pending. |
 | Independent driven-route helper | All 25 native geometry cases passed in GAME on guidance-v1, after five-configuration compile and pack. Physical adapter comparison remains pending. It is not wired into production driving. |
 | UI | Prior filmed map panel accepted Hold/Resume and displayed server completion. Direct map-key opening and restored throttle/steering after close are not yet proved. |
 
@@ -62,6 +63,7 @@ The older owner-drive calibration accepted distance alone. Its lead moved downhi
 | `.cache/packed/convoy-feature-courses-v4` (parking v2, calibration v2, field survey) | `28ECA5B662F1D8E9020821606A7ACA1816B9E855162749D60DF58220C89CE991` |
 | `.cache/packed/convoy-guidance-v1` (independent route cases and wake diagnostic) | `27D2AF85070871A0013F91FD5514C51DC949E881B91E1723B888A05303398669` |
 | `.cache/packed/convoy-clear-field-v1` (taxiway physical diagnostic) | `2507A0232756A0A8F52D3701FA9CD9F9A0A0636C195DE64380DA2F660FECA756` |
+| `.cache/packed/convoy-offnetwork-arrival-v1` (ordinary arrival correction) | `783B9A89D036E711E3A0E952F3CF4B808FB5C43318C22AE1924719857591A18E` |
 
 These packs passed installed Workbench script validation in five configurations and resource packaging. The latest surface and peak-gap reporter changes passed all 95 TypeScript tests across 15 files and typecheck. These checks do not establish vehicle behavior.
 
