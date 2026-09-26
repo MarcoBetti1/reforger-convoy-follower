@@ -95,8 +95,7 @@ class CF_OrdinaryMixedRoadProbeComponentClass : CF_OriginalTailGuideProbeCompone
 
 class CF_OrdinaryMixedRoadProbeComponent : CF_OriginalTailGuideProbeComponent
 {
-	protected bool m_bOrdinaryHeadCommitted;
-	protected bool m_bOrdinaryTailCommitted;
+	protected ref array<int> m_OrdinaryCommittedUnits = {};
 
 	override void OnPostInit(IEntity owner)
 	{
@@ -104,13 +103,13 @@ class CF_OrdinaryMixedRoadProbeComponent : CF_OriginalTailGuideProbeComponent
 		if (!Replication.IsServer()) return;
 		if (m_fPacedLeadSpeedKmh != 20) MixedFailure("ordinary_fixture_lead_not_20", 0);
 		Print("[ConvoyFollower] ORDINARY_FIXTURE_INIT: run_id=" + m_sPacedRun + " world=" + m_sPacedWorld +
-			" expected=2 head=direct_original tail=recorded_guide_original ordinary_controller=CF_ConvoyFollowDriverControllerComponent" +
+			" expected=" + m_iExpectedTrucks + " head=direct_original tail=recorded_guide_original ordinary_controller=CF_ConvoyFollowDriverControllerComponent" +
 			" lead_cap_kmh=20 moving_gap_m=20 stopped_gap_m=10 readback_only=true commands=none spacing_diagnostic=false");
 	}
 
 	override protected CF_TrailGuideDriverControllerComponent MixedTail(CF_DriverControllerComponent driver, int unit)
 	{
-		if (unit != 2) return null;
+		if (unit <= 1 || unit > m_iExpectedTrucks) return null;
 		return CF_ConvoyFollowDriverControllerComponent.Cast(driver);
 	}
 
@@ -118,10 +117,9 @@ class CF_OrdinaryMixedRoadProbeComponent : CF_OriginalTailGuideProbeComponent
 	{
 		CF_ConvoyFollowDriverControllerComponent ordinary = CF_ConvoyFollowDriverControllerComponent.Cast(driver);
 		if (!ordinary || ordinary.Type().ToString() != "CF_ConvoyFollowDriverControllerComponent") return false;
-		bool tailRole = unit == 2;
+		bool tailRole = unit > 1;
 		bool ready = ordinary.CF_TestOrdinaryRoleReady(tailRole);
-		bool committed = m_bOrdinaryHeadCommitted;
-		if (tailRole) committed = m_bOrdinaryTailCommitted;
+		bool committed = m_OrdinaryCommittedUnits.Find(unit) >= 0;
 		if (tailRole && !tail) return false;
 		if (!tailRole)
 		{
@@ -132,8 +130,7 @@ class CF_OrdinaryMixedRoadProbeComponent : CF_OriginalTailGuideProbeComponent
 		if (!ready && (committed || m_bPacedStarted || ordinary.CF_IsTrailGuidePrototypeEnabled())) return false;
 		if (ready && !committed && IdentityRetained(unit, true))
 		{
-			if (tailRole) m_bOrdinaryTailCommitted = true;
-			else m_bOrdinaryHeadCommitted = true;
+			m_OrdinaryCommittedUnits.Insert(unit);
 			CF_PacedRoadTruckSample sample = m_PacedTrucks[unit];
 			Print("[ConvoyFollower] ORDINARY_FIXTURE_ROLE: run_id=" + m_sPacedRun + " tick=" + m_iPacedTick +
 				" seconds=" + PacedSeconds() + " unit=" + unit + " truck_id=" + EntityKey(sample.Truck) + " pilot_id=" + EntityKey(sample.Pilot) +
@@ -148,13 +145,13 @@ class CF_OrdinaryMixedRoadProbeComponent : CF_OriginalTailGuideProbeComponent
 		CF_ConvoyFollowDriverControllerComponent.Cast(tail).CF_TestOrdinaryReadRoute(route);
 	}
 
-	override protected bool MixedTailReady(CF_TrailGuideDriverControllerComponent tail, CF_OriginalTailGuideReadback route)
+	override protected bool MixedTailReady(int unit, CF_TrailGuideDriverControllerComponent tail, CF_OriginalTailGuideReadback route)
 	{
 		if (tail.CF_IsTrailGuideBlocked()) return false;
 		if (tail.CF_IsTrailGuidePrototypeEnabled()) return true;
 		// Ordinary recruits start disabled. Only the initial uncommitted,
 		// pre-drive empty state is allowed; no post-bind loss is hidden.
-		return !m_bPacedStarted && !m_bOrdinaryTailCommitted && !route.HasHistory && !route.Joined &&
+		return !m_bPacedStarted && m_OrdinaryCommittedUnits.Find(unit) < 0 && !route.HasHistory && !route.Joined &&
 			route.Epoch == 0 && !tail.CF_GetTrailGuideEntity() && !tail.CF_GetTrailRealPredecessor();
 	}
 }

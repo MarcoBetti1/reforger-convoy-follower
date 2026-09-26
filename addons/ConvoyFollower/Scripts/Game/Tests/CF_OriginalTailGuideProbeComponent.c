@@ -74,8 +74,8 @@ class CF_OriginalTailGuideProbeComponentClass : CF_PacedRoadProbeComponentClass
 {
 }
 
-// Unit1 uses the unchanged direct Original Follow controller. Only Unit2's
-// native target is a recorded guide; its actual predecessor remains Unit1.
+// Unit1 uses the unchanged direct Original Follow controller. Each later unit
+// targets a recorded guide bound to its own immediate original predecessor.
 class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 {
 	protected ref array<ref CF_OriginalTailGuideEvidence> m_MixedUnits = {};
@@ -86,15 +86,15 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 	{
 		super.OnPostInit(owner);
 		if (!Replication.IsServer()) return;
-		m_MixedUnits.Insert(new CF_OriginalTailGuideEvidence());
-		m_MixedUnits.Insert(new CF_OriginalTailGuideEvidence());
-		if (m_iExpectedTrucks != 2)
-			MixedFailure("requires_exactly_two_original_followers", 0);
+		for (int unit = 1; unit <= m_iExpectedTrucks; unit++)
+			m_MixedUnits.Insert(new CF_OriginalTailGuideEvidence());
+		if (m_iExpectedTrucks != 2 && m_iExpectedTrucks != 3)
+			MixedFailure("requires_two_or_three_original_followers", 0);
 		CF_ConvoySettings settings = CF_ConvoySettings.Get();
 		if (settings.m_fMovingGap != 20.0 || settings.m_fStoppedGap != 10.0)
 			MixedFailure("comparison_requires_unchanged_20_10_gaps", 0);
 		Print("[ConvoyFollower] MIXED_FOLLOW_INIT: run_id=" + m_sPacedRun + " world=" + m_sPacedWorld +
-			" expected=2 unit1=direct_original unit2=recorded_guide_original" +
+			" expected=" + m_iExpectedTrucks + " unit1=direct_original unit2=recorded_guide_original" +
 			" moving_distance_m=20 guide_capture_m=1 recorded_standoff_m=20 stopped_distance_m=10" +
 			" required_each_progress_m=100 required_each_powered=3 max_link_m=60 hold_s=180 max_drift_m=2" +
 			" first_interval_credit=false selection_gap_credit=false follower_writes=false test_only=true");
@@ -137,7 +137,7 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 
 	protected bool MixedModesMatch(int unit, CF_EntityFollowDriverControllerComponent driver, CF_TrailGuideDriverControllerComponent tail)
 	{
-		return !((unit == 1 && CF_TrailGuideDriverControllerComponent.Cast(driver)) || (unit == 2 && !tail));
+		return !((unit == 1 && CF_TrailGuideDriverControllerComponent.Cast(driver)) || (unit > 1 && !tail));
 	}
 
 	protected void ReadMixedTail(CF_TrailGuideDriverControllerComponent tail, CF_OriginalTailGuideReadback route)
@@ -145,7 +145,7 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 		CF_OriginalTailGuideDriverComponent.Cast(tail).CF_ReadOriginalTailGuide(route);
 	}
 
-	protected bool MixedTailReady(CF_TrailGuideDriverControllerComponent tail, CF_OriginalTailGuideReadback route)
+	protected bool MixedTailReady(int unit, CF_TrailGuideDriverControllerComponent tail, CF_OriginalTailGuideReadback route)
 	{
 		return tail.CF_IsTrailGuidePrototypeEnabled() && !tail.CF_IsTrailGuideBlocked();
 	}
@@ -160,8 +160,8 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 			MixedFailure("original_identity_or_predecessor_missing", unit);
 			return;
 		}
-		// BindOriginals snapshots both trucks before the sequential order loop
-		// has assigned Unit2. Permit that staging interval only until this
+		// BindOriginals snapshots all trucks before the sequential order loop
+		// has assigned every follower. Permit that staging interval only until this
 		// unit's first exact assignment; never erase a later identity loss.
 		bool assignmentRetained = IdentityRetained(unit, false);
 		if (assignmentRetained && !evidence.AssignmentEstablished)
@@ -200,12 +200,12 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 			guide = CF_TrailGuideEntity.Cast(tail.CF_GetTrailGuideEntity());
 			routePredecessor = tail.CF_GetTrailRealPredecessor();
 			routeBound = evidence.AssignmentEstablished && route.HasHistory && routePredecessor == predecessor.Truck;
-			if (!MixedTailReady(tail, route))
+			if (!MixedTailReady(unit, tail, route))
 				MixedFailure("tail_guide_disabled_or_blocked", unit);
 			if ((m_bPacedStarted || evidence.ObservedEpoch > 0) && !routeBound)
 				MixedFailure("missing_actual_predecessor_history", unit);
 			// Assignment initially seeds against the player lead while boarding.
-			// Observe that unbound history, but latch only the real Unit1 chain.
+			// Observe unbound history, but latch only the real immediate predecessor.
 			if (routeBound && evidence.ObservedEpoch == 0)
 			{
 				evidence.ObservedEpoch = route.Epoch;
@@ -247,7 +247,7 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 			distance = selected.m_fCompletionDistance.m_Value;
 			sequence = selected.CF_GetSequence();
 		}
-		bool guideTarget = unit == 2 && guide && target == guide;
+		bool guideTarget = unit > 1 && guide && target == guide;
 		bool directTarget = target == predecessor.Truck;
 		bool movingMode = (unit == 1 && directTarget && distance == CF_ConvoySettings.Get().m_fMovingGap);
 		if (guideTarget) movingMode = distance == 1.0;
@@ -278,7 +278,7 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 			else { evidence.WaitKey = waitKey; evidence.WaitSamples++; }
 		}
 		bool eligible = m_bPacedStarted && exact && exactFormation && movingMode;
-		if (unit == 2) eligible = eligible && routeBound && guideTarget && route.Joined && route.HasArcGap && route.RouteState == CF_DrivenRoute.TRACKING;
+		if (unit > 1) eligible = eligible && routeBound && guideTarget && route.Joined && route.HasArcGap && route.RouteState == CF_DrivenRoute.TRACKING;
 		float now = GetGame().GetWorld().GetWorldTime();
 		vector position = sample.Truck.GetOrigin();
 		vector forward = sample.Truck.GetWorldTransformAxis(2);
@@ -288,7 +288,7 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 		string targetKey = EntityKey(target);
 		bool consecutive = eligible && evidence.PreviousEligible && sequence == evidence.ActivitySequence;
 		if (consecutive) consecutive = actionKey == evidence.ActivityKey && waypointKey == evidence.WaypointKey && targetKey == evidence.NativeTargetKey;
-		if (consecutive && unit == 2) consecutive = route.Epoch == evidence.RouteEpoch;
+		if (consecutive && unit > 1) consecutive = route.Epoch == evidence.RouteEpoch;
 		float elapsed = (now - evidence.PreviousMs) * 0.001;
 		if (consecutive) consecutive = elapsed > 0 && elapsed <= 3.0;
 		float signedStep;
@@ -363,12 +363,11 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 	{
 		if (!m_PacedTrucks.IsEmpty())
 		{
-			if (m_PacedTrucks.Count() != 3 || m_MixedUnits.Count() != 2)
+			if (m_PacedTrucks.Count() != m_iExpectedTrucks + 1 || m_MixedUnits.Count() != m_iExpectedTrucks)
 				MixedFailure("original_roster_count_mismatch", 0);
 			else
 			{
-				ObserveMixedUnit(1);
-				ObserveMixedUnit(2);
+				for (int unit = 1; unit <= m_iExpectedTrucks; unit++) ObserveMixedUnit(unit);
 			}
 		}
 		super.LogPacedSamples();
@@ -378,13 +377,13 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 	{
 		if (result.IndexOf("PASS") == 0)
 		{
-			if (m_MixedUnits.Count() != 2 || m_PacedTrucks.Count() != 3) MixedFailure("route_terminal_roster", 0);
+			if (m_MixedUnits.Count() != m_iExpectedTrucks || m_PacedTrucks.Count() != m_iExpectedTrucks + 1) MixedFailure("route_terminal_roster", 0);
 			for (int unit = 1; unit <= m_MixedUnits.Count(); unit++)
 			{
 				CF_OriginalTailGuideEvidence evidence = m_MixedUnits[unit - 1];
 				if (evidence.BestProgress < CF_MIN_FOLLOWER_PATH || evidence.BestPoweredSamples < 3)
 					MixedFailure("continuous_exact_original_powered_progress_missing", unit);
-				if (unit == 2 && !evidence.SawJoined) MixedFailure("tail_never_genuinely_joined_route", unit);
+				if (unit > 1 && !evidence.SawJoined) MixedFailure("tail_never_genuinely_joined_route", unit);
 			}
 		}
 		super.Finish(result);

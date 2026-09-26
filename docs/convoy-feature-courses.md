@@ -2,6 +2,10 @@
 
 ## Current ordinary-driver courses
 
+The native supply-trip regression is `Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_1Truck.ent`. Its completed v1 physically loaded 100, transported it, held/unloaded to a distinct destination and resumed with the original assignment. See the [milestone and reproduction steps](convoy-supply-trip-milestone.md); normal keyboard/menu input remains separate.
+
+`Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_3Trucks.ent` extends the two-driver route at the same 20 km/h lead pace. The observer now checks each tail's original predecessor, joined history and movement activity independently. The first run traveled over 300 m per follower within the 60 m gap gate but failed Unit Two's native UNREACHABLE arrival request before formal hold observation. Preserve it as a regression for useful recovery; do not count it as a three-driver arrival pass.
+
 The September 26 integration uses normal driver prefabs and session recruitment. `Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_1Truck.ent` covers travel, a three-minute arrival stop, explicit server Hold and powered Resume. `Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_2Trucks.ent` covers the real predecessor chain, travel and three-minute arrival stop. Both passed their unchanged physical gates on pack `7ED4448F...`; runtime/shutdown errors remain. The native AI lead requests 20 km/h. Observers do not supply the follower movement fix.
 
 These are automated movement/command fixtures. They do not establish normal player input, two-driver explicit Hold/Resume, Soviet behavior or cargo delivery. Use the [current validation record](convoy-validation-current.md) for exact results and the [Supply Day scene](convoy-supply-showcase.md) for the intended complete player trip.

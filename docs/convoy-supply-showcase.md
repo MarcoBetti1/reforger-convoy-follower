@@ -16,10 +16,10 @@ The scene explicitly enables native supplies through `CF_SupplyScenarioSettingsC
 
 1. Spawn at **Convoy supply staging - daylight** and use the front driver/truck pair first.
 2. Use the truck's native rear cargo interaction to load a nonzero amount. Record source and truck quantities.
-3. Recruit and assign that driver, then drive the separate player truck east to the destination stack.
-4. Stop beyond the stack so the follower's rear can approach it. Use **Hold all seated** and check that the truck remains still.
-5. Unload through the native cargo menu. Verify that truck supplies decrease and destination supplies increase by the same amount.
-6. Resume, drive on and confirm that membership and truck assignment survive.
+3. Approach that driver on foot and choose **Join my convoy in closest empty vehicle**. This single action recruits the driver and assigns the nearby truck. Wait for the driver to occupy the intended truck, then enter the separate player truck's driver seat and drive east to the destination stack.
+4. Stop beyond the stack so the follower's rear can approach it. Open the map and choose **HOLD ALL SEATED**. Wait for the panel to report **completed: all trucks holding in vehicles**, check that the truck remains still, then use **CLOSE MAP** and get out.
+5. Unload through the assigned truck's native rear cargo menu. Verify that truck supplies decrease and destination supplies increase by the same amount.
+6. Return to the separate player truck's driver seat, open the map and choose **RESUME ALL**. Use **CLOSE MAP**, drive on, and confirm that membership and truck assignment survive. The rear-menu **Resume after pull-off** action handles recovery from a pull-off maneuver; explicit **HOLD ALL SEATED** uses the map's **RESUME ALL**.
 
 After that works, repeat with two and three followers. Demonstrate command use and retained assignments as well as visible driving. Advanced pull-off and turning are separate follow-up cases.
 

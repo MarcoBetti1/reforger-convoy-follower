@@ -4,7 +4,7 @@ class CF_ResumeConvoyAction : CF_ReleaseAtUnloadAction
 {
 	override bool GetActionNameScript(out string outName)
 	{
-		outName = "Resume convoy following";
+		outName = "Resume after pull-off";
 		return true;
 	}
 
@@ -21,7 +21,10 @@ class CF_ResumeConvoyAction : CF_ReleaseAtUnloadAction
 			return false;
 		if (Replication.IsServer() && !CF_ConvoySession.CanResumeFollowing(user, driver))
 		{
-			SetCannotPerformReason("No unload hold to cancel, or a truck is still moving out");
+			if (driver.CF_HasPanelHoldRequest() || driver.CF_IsPanelHeld())
+				SetCannotPerformReason("Return to your lead truck, open the map and choose RESUME ALL");
+			else
+				SetCannotPerformReason("No pull-off hold to cancel, or a truck is still moving out");
 			return false;
 		}
 		return true;
@@ -32,7 +35,7 @@ class CF_ResumeConvoyAction : CF_ReleaseAtUnloadAction
 		if (System.IsConsoleApp() || !GetGame() || !GetGame().GetPlayerController())
 			return;
 		SCR_HintManagerComponent.ShowCustomHint(
-			"Nothing to resume yet, or a truck is still clearing the unload spot. Wait for it to settle or use the current front truck.",
+			"After HOLD ALL SEATED, return to your lead truck and use the map's RESUME ALL. Pull-off recovery requires the front truck to stop.",
 			"Convoy", 7.0, true);
 	}
 

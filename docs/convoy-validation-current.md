@@ -9,7 +9,7 @@ Updated September 26, 2026. **The mod is not release ready.** This page separate
 Deliver a usable recruit/assign → load → follow → stop/Hold → unload → Resume trip and demonstration, then complete the broader release scope. Prioritize failures that interrupt that trip over additional diagnostic machinery.
 
 - Public ordinary-driver checkpoint: **`ed127af`**. The exact tested integration is canonical: twelve source files and the generated database. Preserve it and the frozen comparisons; older brief revisions are not reset targets.
-- Independent harness checkpoint: `c18fa8a`, including the verified native Game Master play-mode setup lesson. Generic tooling belongs there; addon scripts, worlds and convoy evidence belong here.
+- Independent harness checkpoint: `331d4ea`, including verified native Game Master play-mode, cargo setup and seated/idling delivery lessons. Generic tooling belongs there; addon scripts, worlds and convoy evidence belong here.
 - The [full development brief](convoy-development-brief.md) remains unchanged. The [adaptive roadmap](convoy-development-reset.md) and [roadmap](roadmap.md) retain the complete product scope.
 - Keep the actual predecessor chain, original assignments, one radio spokesperson and five-follower cap excluding the player's lead vehicle.
 - Authored-source promotion is already complete. The [source checkpoint](convoy-authored-source-checkpoint.md) records that historical boundary; do not repeat export work without a concrete regression.
@@ -21,6 +21,7 @@ Deliver a usable recruit/assign → load → follow → stop/Hold → unload →
 | Cooperative 20 km/h lead, two followers | **PASS**: links 46.19 / 56.887887 m; 180.313 s zero measured drift | **FAIL**: 9 runtime / 0 post-result / 64 shutdown errors |
 | Ordinary prefab, one follower, real server Hold/Resume | **PASS**: peak 55.4143 m; baseline 180.363 s; Hold 30.0659 s; continuous Resume 23.861953 m / 3 powered intervals | **FAIL**: 9 runtime / 0 post-result / 64 shutdown errors |
 | Ordinary prefabs, two followers, same package | **PASS**: links 46.3392 / 55.5588 m; all three vehicles held 180.413 s with zero measured drift | **FAIL**: 9 runtime / 0 post-result / 62 shutdown errors |
+| Ordinary one-follower native supply trip | **PASS**: load 100, carry to distinct destination, Hold/unload 100, Resume 22.9565 m; peak link 45.8258 m | **FAIL**: 9 runtime / 0 post-result / 59 shutdown errors |
 
 ### Cooperative two-follower milestone
 
@@ -82,7 +83,25 @@ Earlier cargo attempts remain preserved in `.cache/client/runs/native-cargo-acti
 
 The ordinary Supply Day scene now explicitly enables native SUPPLIES once and authors source/destination quantities on their real child containers. This pair passed five-configuration validation and packaging (`BAFCCAFB46F0FF8D5D805DD9CDCD206A95EC4761E0D0CA3E311C3CE679D21F7F`). The combined canonical source passed all five configurations and packaging in `.cache/workbench-runs/convoy-supply-regression-integrated-v1`, pack `7AC9BDCCD9CAADBE4DE90825E2A1B647B6748DA793B91265AF9D554DFCD6073C`. This combined package has not had an additional live run; its exact cargo source matches the measured v6 test. No automatic transfer, recruitment or driver assistance was added to the ordinary scene.
 
-Next combine native load, the proven ordinary one-follower route, Hold, unloading to a **distinct** destination and Resume. The private candidate is being authored under `.cache/loaded-supply-trip-candidate`; it is not compiled or run. Explicit scripted owner staging is test setup, not normal player-input proof. A separate panel distance-label candidate remains uncompiled/unrun.
+### Complete automated supply-trip milestone
+
+`loaded-supply-trip-v1` passed native load, ordinary follower travel, sustained arrival, real server Hold, unloading to a **distinct destination**, and powered Resume. Original source/truck/destination quantities were **1,800/0/0 → 1,700/100/0 → 1,700/0/100**, conserved through all 400 cargo records and the post-result period. The destination transfer occurred 326.469 m from the source. The same driver, truck and predecessor survived the entire sequence.
+
+- Arrival held for **180.413 s**, then explicit Hold for **40.0991 s**, both with zero measured drift. Resume retained its fresh sequence 3 for **22.956498 m / nine powered intervals**. Whole-run peak gap was **45.8258 m** against 60 m.
+- Pack `6361D179EA75890F0D4C2BFF1A11A53A98A4BD64622CBAFDE037257740353D50`; all five configurations passed. Independent review verified 577 frozen source hashes and all three deployment files.
+- [Independent review](../.cache/client/runs/loaded-supply-trip-v1/independent-loaded-trip-review.md), SHA `B648D67D20014FB1DFB19CB4695AEF6C68C6109C26117794B649BFDFA6A26785`; snapshot was an exact prefix captured +200 ms. Natural closure, watcher/recorder completion and fresh process/window checks are verified. Nine gameplay / zero post-result / 59 shutdown errors remain.
+- Raw recording: 453.6 s, SHA `0A443BD991461457154C9DB8AA4702A569371E6BC96FED0297563E341CF38221`. The 146-second [highlights](../.cache/test-videos/loaded-supply-trip-v1-highlights.mp4) and 390-second [gameplay crop](../.cache/test-videos/loaded-supply-trip-v1-gameplay.mp4) are silent. Three live views and sampled recorded frames were inspected; this is not full playback.
+- The four exact tested regression resources are now canonical. They use native actions, with explicit test-only owner positioning and an AI lead. They do not automate ordinary worlds or prove normal keyboard/menu input. See the [supply-trip milestone](convoy-supply-trip-milestone.md).
+
+The combined source, clearer **Resume after pull-off** wording and three-follower observer/world extension passed five-configuration validation and packaging in `.cache/workbench-runs/convoy-supply-integration-v1`, pack **`13B39DBF641FB57370962A05C2D13D9D5B52B11DE97FCD66372C627372D465A3`**. No follower controller or physical threshold changed in this integration. A separate panel distance-label candidate remains uncompiled/unrun.
+
+### Three followers: useful travel, failed arrival
+
+`ordinary-three-arrival-v1` ran the same ordinary controller with a third recruited driver and independent per-unit route observations. All three retained their actual predecessors and achieved over 300 m of continuous powered movement; both tails joined their own predecessor's recorded route. Whole-run peak gap was **57.3073 m**. However, Unit Two's native movement request returned **UNREACHABLE** during arrival, and its movement lease entered permanent failure. The observer correctly failed at 113.05 seconds; **zero formal arrival-observation samples** were completed. Later stopping by other trucks does not repair that verdict.
+
+The [independent review](../.cache/client/runs/ordinary-three-arrival-v1/independent-three-review.md) checked the frozen 580-file source, three deployment files, 212 packed text resources and an exact-prefix snapshot captured +61 ms. Full evidence remains in that run directory, including **9 runtime / 0 post-result / 64 shutdown errors**. Natural client closure, watcher and recorder exit and fresh process/window checks were confirmed. The raw silent recording is 215.733333 seconds, SHA `B8134A582C162516988484CEADEF02520C82215E650DD8A5F6A544D6E06DB116`. One live travel view and a recorded arrival frame were inspected. This is a product-relevant recovery/arrival fault to fix, not a three-follower pass.
+
+Source investigation confirmed installed `EMoveError.UNREACHABLE` on the exact admitted vehicle handler, rather than an identity/ownership rejection. Unit Two was genuinely joined near the end of its recorded guide; Unit One was still repositioning and selected its arrival Wait 14.634 seconds later. The proposed narrow recovery should retire only the failed owned request, wait visibly and seated, then issue one stopped approach once that same predecessor has actually settled. Preserve command cancellation, guard failures, bounded timeout and unchanged capture/hold evidence. **This recovery is a proposal; no implementation or live success is claimed.**
 
 ## Preserved failed controls
 
@@ -96,7 +115,7 @@ Earlier route, native-request, explicit-Hold, Resume and input failures remain i
 ## What is still unproved
 
 - **Ordinary input:** supported desktop activation/click/key delivery remains unresolved, including vanilla controls. Capture and scripted engine-action calibration are not keyboard/panel proof. Elevated OSK accessibility exposed no supported Close action; its causal role remains unproved.
-- **Cargo:** static native load/unload is verified; transport and delivery to a distinct destination remain unproved. Use the [native supply test plan](convoy-native-supply-test-plan.md): real action dispatch, eligible player/context, before/after container counts and conservation; no count setters or transfer fallback.
+- **Cargo:** native load, transport, distinct-destination unload and Resume are verified for one ordinary follower in the automated fixture. Multi-truck delivery and the ordinary cargo menu/input path remain unproved. Retain native eligibility, exact container counts and conservation; no count setters or transfer fallback.
 - **Complete player workflow:** the [Supply Day scene](convoy-supply-showcase.md) is prepared, not a completed recruit/load/travel/unload/Resume demonstration.
 - **Wider driving:** repeatable ordinary one-, two- and three-follower trips, turns, longer sessions, genuine moving dirt/grass contact and varied stops remain required. A mapped road or scene survey does not prove unpaved driving.
 - **Interruptions and roles:** selected-member Hold with downstream waiting, rechain, predecessor/driver loss, possession, blocked recovery, unload/return and regroup need relevant ordinary-driver evidence. The private deferred-timeout recovery still requires StandDown/reassignment.
@@ -106,7 +125,7 @@ Earlier route, native-request, explicit-Hold, Resume and input failures remain i
 ## Next usable-trip actions
 
 1. Preserve the demonstrated ordinary-driver baseline; address concrete supply-trip blockers before broadening driving experiments.
-2. Reuse the verified native cargo actions in the ordinary-driver trip: load, physical travel, Hold, unload to a distinct destination, then Resume with retained assignments.
+2. Fix the demonstrated three-follower arrival fault: a native UNREACHABLE response must produce a truthful, bounded recovery/hold path where safe, without losing assignments or overriding explicit Hold. Repeat the same case and preserve the failed control. Keep the successful one-follower delivery and footage intact.
 3. Resolve ordinary input through a supported, discriminating control; do not repeat unchanged key/click matrices or treat capture as input success.
 4. Complete and record the ordinary Supply Day workflow with retained assignments, useful status and one spokesperson. Extend to two/three followers and realistic interruptions.
 5. Continue the full roadmap: verified unpaved routes, regroup/return, role changes, Soviet and multiplayer coverage, performance/configuration and release polish.
