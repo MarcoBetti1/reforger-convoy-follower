@@ -193,14 +193,12 @@ class CF_TrailGuideRoute : CF_DrivenRoute
 		return true;
 	}
 
-	override protected bool AdmitAdjacentProjection(int targetKey, vector pose, int segment,
-		float candidate, vector projected, bool nextSegment, float maxCrossTrack,
-		CF_DrivenRouteGuidance result)
+	protected bool HasAdjacentProjectionContext(int targetKey)
 	{
 		if (!m_PhysicalQueryActive || !m_PreviousPhysicalQuery || !m_Joined ||
 			m_PreviousTargetKey != targetKey || targetKey != m_TargetKey ||
 			m_PreviousSegment != m_Segment || m_PreviousProgress != m_Progress ||
-			segment != m_Segment + 1 || nextSegment || m_Segment >= m_Points.Count() - 2)
+			m_Segment >= m_Points.Count() - 2)
 			return false;
 		if (m_PreviousA != m_Points[m_Segment] || m_PreviousB != m_Points[m_Segment + 1] ||
 			m_PreviousNext != m_Points[m_Segment + 2] ||
@@ -209,6 +207,20 @@ class CF_TrailGuideRoute : CF_DrivenRoute
 			return false;
 		if (!FinitePose(m_PreviousA) || !FinitePose(m_PreviousB) || !FinitePose(m_PreviousNext) ||
 			!FiniteValue(m_PreviousStationA) || !FiniteValue(m_PreviousStationB) || !FiniteValue(m_PreviousStationNext))
+			return false;
+		return true;
+	}
+
+	override protected bool CanInspectRoundedAdjacent(int targetKey, int segment)
+	{
+		return segment == m_Segment && HasAdjacentProjectionContext(targetKey);
+	}
+
+	override protected bool AdmitAdjacentProjection(int targetKey, vector pose, int segment,
+		float candidate, vector projected, bool nextSegment, float maxCrossTrack,
+		CF_DrivenRouteGuidance result)
+	{
+		if (!HasAdjacentProjectionContext(targetKey) || segment != m_Segment + 1 || nextSegment)
 			return false;
 		vector delta = pose - m_PreviousPose;
 		delta[1] = 0;

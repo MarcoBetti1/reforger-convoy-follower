@@ -1,0 +1,8 @@
+SCR_ChimeraCharacter : "{695DE742279041A2}Prefabs/Tests/Character_CF_OriginalFollowDriver.et" {
+ ID "5375B85361534B0E"
+ components {
+  CF_EntityFollowDriverControllerComponent "{E7F041D76B47D760}" {
+   m_bEntityRearPacing 1
+  }
+ }
+}

@@ -419,6 +419,13 @@ class CF_DriverControllerComponent : ScriptComponent
 		return CF_IsControlBlocked();
 	}
 
+	// Default-neutral seam for a backend that has retired a terminal order.
+	// This is a failure state, not evidence of physical stationary capture.
+	protected bool CF_HasPersistentFollowFailure()
+	{
+		return false;
+	}
+
 	string CF_GetResumeFailureReason()
 	{
 		if (m_iState == CF_LOST)
@@ -679,7 +686,8 @@ class CF_DriverControllerComponent : ScriptComponent
 		bool arrivalHold = m_iState == CF_ARRIVING &&
 			(m_bArrivalTrailHold || m_bArrivalRoadHold);
 		bool initialWait = CF_IsInitialDepartureWaiting();
-		if (!explicitHold && !initialWait && (!CF_IsMovementActive() || m_bUnloadSequenceHold ||
+		bool blockedFollow = CF_HasPersistentFollowFailure() && CF_IsMovementActive();
+		if (!explicitHold && !initialWait && !blockedFollow && (!CF_IsMovementActive() || m_bUnloadSequenceHold ||
 			m_bArrivalRoadRecoveryActive || m_bArrivalRoadRecoveryBlocked))
 		{
 			CF_ReleaseNativeCruise("outside_ordinary_following");
@@ -699,8 +707,10 @@ class CF_DriverControllerComponent : ScriptComponent
 			reason = "arrival_hold";
 		if (!explicitHold && initialWait)
 			reason = "initial_departure";
+		if (!explicitHold && !initialWait && blockedFollow)
+			reason = "follow_failure_blocked";
 		IEntity target = GetTargetVehicle();
-		if (!explicitHold && !initialWait)
+		if (!explicitHold && !initialWait && !blockedFollow)
 		{
 			CarControllerComponent targetCar;
 			if (target)
@@ -4179,6 +4189,8 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected void StartFollowing(IEntity targetVehicle, bool rejoined, bool emitRadio)
 	{
+		if (CF_HasPersistentFollowFailure())
+			return;
 		if (CF_IsControlBlocked() || m_bPanelHoldRequested)
 			return;
 		if (CF_WaitForInitialDeparture(targetVehicle))
@@ -4216,6 +4228,8 @@ class CF_DriverControllerComponent : ScriptComponent
 			return;
 		}
 
+		if (CF_HasPersistentFollowFailure())
+			return; // A handled failure did not create a movement order.
 		Print("[ConvoyFollower] FOLLOWING: Unit " + m_iUnitNumber + " moving toward predecessor vehicle");
 		if (!emitRadio)
 			return;
@@ -4227,6 +4241,8 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	protected void StartArriving(IEntity targetVehicle)
 	{
+		if (CF_HasPersistentFollowFailure())
+			return;
 		if (CF_IsControlBlocked())
 			return;
 		if (m_bPanelHoldRequested)
@@ -4282,6 +4298,8 @@ class CF_DriverControllerComponent : ScriptComponent
 			StandDown();
 			return;
 		}
+		if (CF_HasPersistentFollowFailure())
+			return;
 		SCR_AIWaypoint waypoint = SCR_AIWaypoint.Cast(m_Waypoint);
 		if (waypoint)
 		{
@@ -5303,6 +5321,15 @@ class CF_DriverControllerComponent : ScriptComponent
 			return;
 		}
 
+		// Keep lifecycle, seat/ownership and explicit-command handling above.
+		// A retired backend failure must not enter automatic resume, range/stall
+		// escalation or a handled-true rebuild that would announce recovery.
+		if (CF_HasPersistentFollowFailure())
+		{
+			CF_LogFollowWait("FOLLOW_FAILURE_BLOCKED");
+			return;
+		}
+
 		bool playerOnFoot = !leader.IsInVehicle() || m_bUnloadSequenceHold;
 		IEntity targetVehicle = GetTargetVehicle();
 		bool targetAvailable = targetVehicle && CanTargetMove();
@@ -5650,6 +5677,8 @@ class CF_DriverControllerComponent : ScriptComponent
 				}
 				else
 				{
+					if (CF_HasPersistentFollowFailure())
+						return; // The handled private failure is not recovery.
 					if (m_iState == CF_ARRIVING && m_bStopSettleIssued)
 					{
 						SCR_AIWaypoint settledWaypoint = SCR_AIWaypoint.Cast(m_Waypoint);

@@ -496,9 +496,27 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		}
 	}
 
-	// Fresh original-pilot/selected-order evidence, not a cached speed request.
-	bool CF_ReadRearPacingParticipant(CF_ConvoySession session, IEntity predecessor, out vector velocity, out float speed)
+	// Read-only native-target seam. Common ownership, related-waypoint and MIF
+	// checks stay in CF_ReadRearPacingParticipant for every backend.
+	protected bool CF_ReadRearPacingTarget(IEntity predecessor, CF_EntityFollowWaypoint waypoint,
+		CF_EntityFollowActivity activity, out string reason, out string binding)
 	{
+		reason = "direct_target_mismatch";
+		binding = "binding=real_predecessor";
+		if (activity.m_Entity.m_Value != predecessor || waypoint.GetEntity() != predecessor)
+			return false;
+		if (predecessor) binding += " native_target_id=" + predecessor.GetID();
+		binding += " waypoint_id=" + waypoint.GetID() + " activity_sequence=" + activity.CF_GetSequence();
+		reason = "direct_target";
+		return true;
+	}
+
+	// Fresh original-pilot/selected-order evidence, not a cached speed request.
+	bool CF_ReadRearPacingParticipant(CF_ConvoySession session, IEntity predecessor, out vector velocity, out float speed,
+		out string reason, out string binding)
+	{
+		reason = "common_guard";
+		binding = "binding=unavailable";
 		if (m_Session != session || !session || m_iState != CF_FOLLOWING || !CF_IsOrdinaryEntityContext())
 			return false;
 		if (m_LeadVehicle != predecessor || CF_IsInitialDepartureWaiting() || m_bArrivalRoadHold || m_bArrivalTrailHold || m_bEntityFallbackFailed)
@@ -528,10 +546,13 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			return false;
 		if (activity.GetActionState() == EAIActionState.COMPLETED || activity.GetActionState() == EAIActionState.FAILED)
 			return false;
-		if (activity.m_RelatedWaypoint != waypoint || activity.m_Entity.m_Value != predecessor || waypoint.GetEntity() != predecessor)
+		if (activity.m_RelatedWaypoint != waypoint)
 			return false;
 		if (behavior.GetRelatedGroupActivity() != activity)
 			return false;
+		if (!CF_ReadRearPacingTarget(predecessor, waypoint, activity, reason, binding))
+			return false;
+		reason = "physical_motion";
 		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
 		Physics physics = m_Truck.GetPhysics();
 		if (!car || !car.GetSimulation() || !physics || car.GetSimulation().GetGear() < 2)
@@ -550,7 +571,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		return vector.Dot(velocity, facing) > 1.5 / 3.6;
 	}
 
-	protected float CF_ResetRearPacing(float frontLimit, string reason)
+	protected float CF_ResetRearPacing(float frontLimit, string reason, string binding = "")
 	{
 		m_RearPacingSuccessor = null;
 		m_fRearPacingAllowance = -1;
@@ -559,7 +580,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		{
 			m_iRearPacingLogs++;
 			Print("[ConvoyFollower] ENTITY_REAR_PACING: unit=" + m_iUnitNumber +
-				" eligible=false reason=" + reason + " front_limit_kmh=" + frontLimit + " adjustment_applied=false constraint_released=true");
+				" eligible=false reason=" + reason + " " + binding + " front_limit_kmh=" + frontLimit + " adjustment_applied=false constraint_released=true");
 		}
 		m_sRearPacingReason = reason;
 		return frontLimit;
@@ -571,15 +592,18 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			return frontLimit;
 		vector velocity;
 		float speed;
-		if (!(predecessorSpeed > 1.5) || !CF_ReadRearPacingParticipant(m_Session, target, velocity, speed))
-			return CF_ResetRearPacing(frontLimit, "self_not_ordinary_moving");
+		string participantReason;
+		string selfBinding;
+		if (!(predecessorSpeed > 1.5) || !CF_ReadRearPacingParticipant(m_Session, target, velocity, speed, participantReason, selfBinding))
+			return CF_ResetRearPacing(frontLimit, "self_not_ordinary_moving_" + participantReason, selfBinding);
 		CF_EntityFollowDriverControllerComponent successor = CF_EntityFollowDriverControllerComponent.Cast(m_Session.CF_GetImmediateActiveSuccessor(this));
 		if (!successor)
 			return CF_ResetRearPacing(frontLimit, "no_exact_private_successor");
 		vector rearVelocity;
 		float rearSpeed;
-		if (!successor.CF_ReadRearPacingParticipant(m_Session, m_Truck, rearVelocity, rearSpeed))
-			return CF_ResetRearPacing(frontLimit, "successor_not_ordinary_moving");
+		string rearBinding;
+		if (!successor.CF_ReadRearPacingParticipant(m_Session, m_Truck, rearVelocity, rearSpeed, participantReason, rearBinding))
+			return CF_ResetRearPacing(frontLimit, "successor_not_ordinary_moving_" + participantReason, rearBinding);
 		Vehicle rearTruck = successor.CF_GetAssignedVehicle();
 		Physics targetPhysics = target.GetPhysics();
 		if (!rearTruck || !targetPhysics)
@@ -635,6 +659,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			record += " predecessor_kmh=" + predecessorSpeed + " actual_kmh=" + speed + " successor_kmh=" + rearSpeed;
 			record += " front_limit_kmh=" + frontLimit + " extra_allowance_kmh=" + m_fRearPacingAllowance;
 			record += " policy_request_kmh=" + adjusted + " control_writes=false target_changed=false";
+			record += " " + rearBinding;
 			Print(record);
 		}
 		m_sRearPacingReason = "active";

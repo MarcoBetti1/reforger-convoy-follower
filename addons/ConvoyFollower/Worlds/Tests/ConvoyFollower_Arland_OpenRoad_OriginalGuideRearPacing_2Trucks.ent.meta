@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{4A22B52E13F34BB5}Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalGuideRearPacing_2Trucks.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

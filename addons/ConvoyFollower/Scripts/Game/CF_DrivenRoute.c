@@ -146,6 +146,13 @@ class CF_DrivenRoute
 		return false;
 	}
 
+	// Permission to inspect is not admission: the adjacent interior must still
+	// pass AdmitAdjacentProjection before any cursor state can be committed.
+	protected bool CanInspectRoundedAdjacent(int targetKey, int segment)
+	{
+		return false;
+	}
+
 	// maxAdvance is a caller-supplied physical progress budget for this update,
 	// not a catch-up radius. Query never searches later nonadjacent segments.
 	// Before joining, APPROACH_START is a position to join, not an arrived state:
@@ -199,6 +206,7 @@ class CF_DrivenRoute
 		int segment = m_Segment;
 		float progress = m_Progress;
 		float budgetEnd = m_Progress + maxAdvance;
+		bool adjacentProofRequired = false;
 		while (segment < m_Points.Count() - 1)
 		{
 			vector a = m_Points[segment];
@@ -220,7 +228,7 @@ class CF_DrivenRoute
 			// while still inside the current segment's lateral corridor.
 			bool nextSegment = raw >= 1.0 && segment < m_Points.Count() - 2;
 			bool roundedCorner = false;
-			if (m_Joined && segment < m_Points.Count() - 2 && raw >= 0 && raw < 1 &&
+			if (!adjacentProofRequired && m_Joined && segment < m_Points.Count() - 2 && raw >= 0 && raw < 1 &&
 				(1.0 - raw) * length <= maxCrossTrack)
 			{
 				// A real truck can round inside the vertex without crossing the
@@ -251,9 +259,20 @@ class CF_DrivenRoute
 				candidate = m_Stations[segment + 1];
 				nextSegment = true;
 			}
-			if (candidate > budgetEnd + 0.001 &&
-				!AdmitAdjacentProjection(targetKey, followerPosition, segment, candidate,
-					projected, nextSegment, maxCrossTrack, result))
+			bool advanceRejected = false;
+			if (adjacentProofRequired || candidate > budgetEnd + 0.001)
+			{
+				if (!adjacentProofRequired && roundedCorner && CanInspectRoundedAdjacent(targetKey, segment))
+				{
+					// Local inspection only. The next iteration cannot inspect another
+					// rounded corner, and must prove this adjacent interior or fail.
+					adjacentProofRequired = true;
+				}
+				else
+					advanceRejected = !AdmitAdjacentProjection(targetKey, followerPosition, segment, candidate,
+						projected, nextSegment, maxCrossTrack, result);
+			}
+			if (advanceRejected)
 			{
 				// Snapshot only the already-rejected decision, before retirement.
 				// Keep Query's cursor, candidate, budget and return behavior intact.

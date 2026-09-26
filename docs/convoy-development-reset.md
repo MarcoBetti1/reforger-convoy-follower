@@ -20,6 +20,8 @@ The exact build history, failures, hashes and next boundary belong in [current v
 
 ## Product we are building
 
+**Latest concrete progress:** combined candidate `AE6CB359...` reached the destination with two followers and exercised guide-aware pacing, after all 67 native route checks passed. The peak tail gap remains above the unchanged limit (62.4581 m), and final approach still fails at the native request boundary. Fix that interruption before another broad diagnostic pass. A short ordinary-action supply scene is drafted; normal driver backend promotion and actual recruitment/loading/unloading/input are still separate live gates.
+
 **Latest user priority, September 26:** zoom out from perfecting small diagnostic details and deliver a working, demonstrable convoy mod. The next playable milestone is recruit/assign, load, travel, stop, unload, and resume with retained drivers and one spokesperson. Prioritize failures that interrupt that trip. Use focused tests to choose a practical fix, document tolerable rough edges honestly, and avoid expanding diagnostic machinery without a concrete product benefit. Keep existing test failures visible; a useful demonstration and a strict test pass are different claims.
 
 A player recruits drivers, loads supplies, leads a convoy along a sensible drivable route, stops to unload, and resumes with the same assignments. Unit One follows the player. Every other unit follows its predecessor. The leader alone communicates useful status. Hold in the vehicle, dismount, and dismiss remain distinct operations.

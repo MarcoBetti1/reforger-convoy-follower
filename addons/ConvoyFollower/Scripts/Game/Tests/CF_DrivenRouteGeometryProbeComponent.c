@@ -62,6 +62,20 @@ class CF_DrivenRouteGeometryProbeComponent : ScriptComponent
 		return prior;
 	}
 
+	// Relative witness constrained by the A275 rounded log, not recovered
+	// original float bits. In particular prior pose and outgoing length are inferred.
+	protected vector PrepareFirstVertexWitness(CF_TrailGuideRoute route, int key, CF_DrivenRouteGuidance g)
+	{
+		route.Reset(key, Vector(-0.665893555, 0, 0.00048828125));
+		route.Record(key, vector.Zero);
+		vector next = Vector(0.70364508, 0, -0.152840521);
+		route.Record(key, next);
+		route.Record(key, next * 2);
+		vector prior = Vector(-0.050436584, 0, -0.302984599);
+		Physical(route, key, prior, 1, g);
+		return prior;
+	}
+
 	protected void RunProjectionCases()
 	{
 		ref CF_TrailGuideRoute route = new CF_TrailGuideRoute();
@@ -129,7 +143,7 @@ class CF_DrivenRouteGeometryProbeComponent : ScriptComponent
 		route.Record(111, Vector(20, 0, 20));
 		Physical(route, 111, Vector(18, 0, 2), 20, g);
 		Physical(route, 111, Vector(18, 0, 8), 1, g);
-		Check("projection_first_vertex_budget_remains_strict", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection && Near(route.GetProgress(), 18));
+		Check("projection_first_vertex_underreported_motion_rejected", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection && Near(route.GetProgress(), 18));
 
 		vector tangent = outgoing.Normalized();
 		route.Reset(112, incoming * -20);
@@ -233,6 +247,29 @@ class CF_DrivenRouteGeometryProbeComponent : ScriptComponent
 		route.Record(122, Vector(0, 0, 20));
 		Physical(route, 122, Vector(-4.99, 0, 8.6), 20, g);
 		Check("projection_adjacent_leg_cannot_fake_first_join", g.State == CF_DrivenRoute.APPROACH_START && !g.HasArcGap && !g.HasProjectionCorrection && Near(route.GetProgress(), 0));
+
+		vector firstVertexPose = Vector(-0.017822266, 0, -0.305664063);
+		prior = PrepareFirstVertexWitness(route, 123, g);
+		before = route.GetProgress();
+		route.Query(123, firstVertexPose, 0.3, 0, 0.03291094, 5, g);
+		Check("first_vertex_ordinary_query_stays_strict", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection && Near(route.GetProgress(), before));
+		prior = PrepareFirstVertexWitness(route, 124, g);
+		before = route.GetProgress();
+		Physical(route, 124, firstVertexPose, 0.0327242, g);
+		Check("first_vertex_deferred_interior_requires_full_proof", g.State == CF_DrivenRoute.TRACKING && g.HasProjectionCorrection && Math.AbsFloat(g.ProjectionCandidateAdvance - 0.09767937) < 0.001 && route.GetProgress() > before);
+		before = route.GetProgress();
+		Physical(route, 124, firstVertexPose, 0, g);
+		Check("first_vertex_repeat_adds_no_station", !g.HasProjectionCorrection && Math.AbsFloat(route.GetProgress() - before) < 0.001);
+		prior = PrepareFirstVertexWitness(route, 125, g);
+		before = route.GetProgress();
+		Physical(route, 125, firstVertexPose, 0.01, g);
+		Check("first_vertex_failed_final_proof_does_not_commit_vertex", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection && Math.AbsFloat(route.GetProgress() - before) < 0.001);
+		Physical(route, 125, firstVertexPose, 0.0327242, g);
+		Check("first_vertex_failure_cannot_reuse_prior_context", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection && Math.AbsFloat(route.GetProgress() - before) < 0.001);
+		prior = PrepareFirstVertexWitness(route, 126, g);
+		before = route.GetProgress();
+		Physical(route, 126, firstVertexPose, 0, g);
+		Check("first_vertex_zero_measurement_never_commits", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection && Math.AbsFloat(route.GetProgress() - before) < 0.001);
 	}
 
 	protected void RunCases()

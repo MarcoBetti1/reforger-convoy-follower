@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{F340D2767FCA4B94}Prefabs/Tests/Character_CF_OriginalGuideRearPacingDriver.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

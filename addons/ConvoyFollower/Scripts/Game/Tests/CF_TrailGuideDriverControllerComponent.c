@@ -11,6 +11,13 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 	[Attribute(defvalue: "0", desc: "Private projected-station comparison: one adjacent corner; station is not physical travel")]
 	protected bool m_bTrailProjectionCorrection;
 	protected int m_iTrailProjectionLogs;
+	// Non-owning observation receipt: no ref fields, actions or control writes.
+	protected float m_fRearGuideQueryMs = -1;
+	protected int m_iRearGuideQueryEpoch;
+	protected CF_EntityFollowWaypoint m_RearGuideQueryWaypoint;
+	protected CF_OriginalFollowActivity m_RearGuideQueryActivity;
+	protected CF_OriginalFollowLease m_RearGuideQueryLease;
+	protected CF_TrailGuideEntity m_RearGuideQueryGuide;
 	[Attribute(defvalue: "0", desc: "Private recorded prejoin lookahead comparison; real Query still owns first join")]
 	protected bool m_bTrailPrejoinLookahead;
 	protected int m_iPrejoinWindowLogs;
@@ -40,9 +47,167 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 	protected bool m_bTrailBlocked;
 	protected int m_iTrailLogs;
 	protected int m_iTrailQueryFailureLogs;
+	protected int m_iTrailResumeRejectLogs;
 	protected string m_sTrailBlockReason;
 	protected static const ResourceName CF_TRAIL_GUIDE_PREFAB = "{983C8B13A242454E}Prefabs/Tests/CF_TrailGuide.et";
 	protected static const ResourceName CF_TRAIL_WAYPOINT_PREFAB = "{F1418F3E681BA55E}Prefabs/Tests/AIWaypoint_CF_TrailGuide.et";
+
+	protected void CF_InvalidateRearGuideQuery()
+	{
+		m_fRearGuideQueryMs = -1;
+		m_iRearGuideQueryEpoch = 0;
+		m_RearGuideQueryWaypoint = null;
+		m_RearGuideQueryActivity = null;
+		m_RearGuideQueryLease = null;
+		m_RearGuideQueryGuide = null;
+	}
+
+	override protected void SetState(int state)
+	{
+		if (state != m_iState)
+			CF_InvalidateRearGuideQuery();
+		super.SetState(state);
+	}
+
+	override void CF_OnPlayerControlChanged(IEntity from, IEntity to)
+	{
+		CF_InvalidateRearGuideQuery();
+		super.CF_OnPlayerControlChanged(from, to);
+	}
+
+	// Observes exact existing ownership. Failure never blocks, repairs, queries
+	// the route, advances the guide or emits a native request.
+	protected bool CF_ReadRearGuideBinding(IEntity predecessor, CF_EntityFollowWaypoint waypoint,
+		CF_EntityFollowActivity activity, out string reason)
+	{
+		reason = "guide_context";
+		if (!m_bTrailGuidePrototype || m_bTrailBlocked || m_bEntityFallbackFailed ||
+			!m_bTrailGuideActive || !m_TrailGuide || !m_TrailRoute || !m_bTrailEntryKnown ||
+			!m_bTrailFollowerPose || m_bTrailPoseInterrupted || !GetGame() || !m_TrailWorld ||
+			GetGame().GetWorld() != m_TrailWorld || CF_ConvoySession.CF_IsWorldCleanup())
+			return false;
+		if (!predecessor || predecessor != m_TrailPredecessor || predecessor != m_LeadVehicle ||
+			predecessor != GetTargetVehicle(false))
+			return false;
+		reason = "guide_not_tracking";
+		if (!m_bTrailJoined || !m_TrailGuidance || !m_TrailGuidance.HasArcGap ||
+			m_TrailGuidance.State != CF_DrivenRoute.TRACKING)
+			return false;
+		reason = "guide_target_binding";
+		if (!CF_TrailGuideWaypoint.Cast(waypoint) || !activity ||
+			waypoint.GetEntity() != m_TrailGuide || activity.m_Entity.m_Value != m_TrailGuide ||
+			!CF_HasTrailGuideLease(m_TrailGuide, waypoint, m_iTrailEpoch) || !m_TrailGuide.CF_HasLease(waypoint))
+			return false;
+		CF_OriginalFollowActivity original = CF_OriginalFollowActivity.Cast(activity);
+		CF_OriginalFollowLease lease = m_OriginalFollowLease;
+		reason = "guide_original_lease";
+		if (!original || !lease || original.Lease != lease || lease.Activity != original ||
+			lease.Waypoint != waypoint || lease.NativeTarget != m_TrailGuide || lease.Predecessor != predecessor)
+			return false;
+		string executionReason;
+		if (!lease.Executing(m_Group, executionReason))
+		{
+			reason = "guide_execution_" + executionReason;
+			return false;
+		}
+		reason = "guide_exact_tracking";
+		return true;
+	}
+
+	protected void CF_StampRearGuideQuery(CF_EntityFollowWaypoint waypoint, CF_EntityFollowActivity activity)
+	{
+		string reason;
+		if (!CF_ReadRearGuideBinding(m_TrailPredecessor, waypoint, activity, reason))
+			return;
+		float now = m_TrailWorld.GetWorldTime();
+		if (!(now >= 0) || now - now != 0)
+			return;
+		m_fRearGuideQueryMs = now;
+		m_iRearGuideQueryEpoch = m_iTrailEpoch;
+		m_RearGuideQueryWaypoint = waypoint;
+		m_RearGuideQueryActivity = CF_OriginalFollowActivity.Cast(activity);
+		m_RearGuideQueryLease = m_OriginalFollowLease;
+		m_RearGuideQueryGuide = m_TrailGuide;
+	}
+
+	override protected bool CF_ReadRearPacingTarget(IEntity predecessor, CF_EntityFollowWaypoint waypoint,
+		CF_EntityFollowActivity activity, out string reason, out string binding)
+	{
+		// An orphaned/mismatched guide must not fall back to direct-target admission.
+		if (!m_bTrailGuideActive && !m_TrailGuide && !m_bTrailBlocked &&
+			!CF_TrailGuideWaypoint.Cast(waypoint) && !CF_TrailGuideEntity.Cast(waypoint.GetEntity()) &&
+			!CF_TrailGuideEntity.Cast(activity.m_Entity.m_Value))
+			return super.CF_ReadRearPacingTarget(predecessor, waypoint, activity, reason, binding);
+		binding = "binding=owned_guide epoch=" + m_iTrailEpoch + " joined=" + m_bTrailJoined;
+		if (m_TrailGuidance) binding += " route_state=" + m_TrailGuidance.State;
+		if (m_TrailGuide) binding += " guide_id=" + m_TrailGuide.GetID();
+		if (predecessor) binding += " real_predecessor_id=" + predecessor.GetID();
+		binding += " waypoint_id=" + waypoint.GetID() + " activity_sequence=" + activity.CF_GetSequence();
+		if (m_OriginalFollowLease) binding += " lease_generation=" + m_OriginalFollowLease.Generation;
+		float age = -1;
+		if (m_TrailWorld && GetGame() && GetGame().GetWorld() == m_TrailWorld)
+			age = m_TrailWorld.GetWorldTime() - m_fRearGuideQueryMs;
+		binding += " query_age_ms=" + age;
+		if (!CF_ReadRearGuideBinding(predecessor, waypoint, activity, reason))
+			return false;
+		reason = "guide_query_receipt";
+		if (!(m_fRearGuideQueryMs >= 0) || !(age >= 0 && age <= 250) ||
+			m_iRearGuideQueryEpoch != m_iTrailEpoch || m_RearGuideQueryWaypoint != waypoint ||
+			m_RearGuideQueryActivity != activity || m_RearGuideQueryLease != m_OriginalFollowLease ||
+			m_RearGuideQueryGuide != m_TrailGuide)
+			return false;
+		reason = "guide_fresh_exact_tracking";
+		return true;
+	}
+
+	override protected bool CF_HasPersistentFollowFailure()
+	{
+		return m_bTrailGuidePrototype && m_bTrailBlocked;
+	}
+
+	override string CF_GetResumeFailureReason()
+	{
+		if (CF_HasPersistentFollowFailure())
+			return "recorded route is blocked";
+		return super.CF_GetResumeFailureReason();
+	}
+
+	override string CF_GetPanelStateLabel()
+	{
+		if (CF_HasPersistentFollowFailure() && !CF_IsControlBlocked() && !m_bPanelHoldRequested &&
+			(m_iState == CF_FOLLOWING || m_iState == CF_ARRIVING))
+			return "route blocked";
+		return super.CF_GetPanelStateLabel();
+	}
+
+	override bool CF_CanPanelResume()
+	{
+		return !CF_HasPersistentFollowFailure() && super.CF_CanPanelResume();
+	}
+
+	override bool CF_PanelResume()
+	{
+		if (CF_HasPersistentFollowFailure())
+		{
+			if (Replication.IsServer() && m_iTrailResumeRejectLogs < 32)
+			{
+				m_iTrailResumeRejectLogs++;
+				Print("[ConvoyFollower] TRAIL_GUIDE_RESUME_REJECTED: unit=" + m_iUnitNumber +
+					" epoch=" + m_iTrailEpoch + " reason=" + m_sTrailBlockReason +
+					" history_preserved=true new_order=false failure_cleared=false");
+			}
+			return false;
+		}
+		return super.CF_PanelResume();
+	}
+
+	override protected void StartFollowing(IEntity targetVehicle, bool rejoined, bool emitRadio)
+	{
+		// Guard before the parent releases a Wait or resets its stop episode.
+		if (CF_HasPersistentFollowFailure())
+			return;
+		super.StartFollowing(targetVehicle, rejoined, emitRadio);
+	}
 
 	bool CF_IsTrailGuidePrototypeEnabled() { return m_bTrailGuidePrototype; }
 	IEntity CF_GetTrailGuideEntity() { return m_TrailGuide; }
@@ -71,6 +236,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 			Print("[ConvoyFollower] TRAIL_GUIDE_INIT: driver_id=" + owner.GetID() + " enabled=" + m_bTrailGuidePrototype +
 				" prejoin_lookahead=" + m_bTrailPrejoinLookahead +
 				" projection_correction_opt_in=" + m_bTrailProjectionCorrection +
+				" rear_guide_receipt_max_ms=250 rear_guide_receipt_nonowning=true" +
 				" record_s=0.2 query=each_frame lookahead_m=30 advance_remaining_m=15 native_capture_m=1" +
 				" entry_window_m=5 entry_near_m=3 entry_corridor_m=2 route_corridor_m=5" +
 				" actual_displacement_budget=true controls_writer=existing_controller test_only=true");
@@ -78,6 +244,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	protected void CF_ResetTrailHistory(IEntity target)
 	{
+		CF_InvalidateRearGuideQuery();
 		m_TrailPredecessor = target;
 		m_TrailWorld = GetGame().GetWorld();
 		m_iTrailEpoch++;
@@ -103,6 +270,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	protected void CF_BlockTrail(string reason)
 	{
+		CF_InvalidateRearGuideQuery();
 		if (m_bTrailBlocked)
 			return;
 		m_bTrailBlocked = true;
@@ -181,6 +349,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	protected float CF_QueryTrailPose()
 	{
+		CF_InvalidateRearGuideQuery();
 		float budget;
 		string reason;
 		m_fTrailLastMeasured = m_fTrailMeasuredBudget;
@@ -265,6 +434,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	protected void CF_DetachTrailGuide(bool deleteOwned)
 	{
+		CF_InvalidateRearGuideQuery();
 		CF_TrailGuideEntity guide = m_TrailGuide;
 		if (!guide)
 			return;
@@ -279,6 +449,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	override protected void ClearWaypoints()
 	{
+		CF_InvalidateRearGuideQuery();
 		super.ClearWaypoints();
 		// Parent defers removal while controlled by another pilot. Preserve the
 		// frozen guide then; deleting a live target could trigger late callbacks.
@@ -298,6 +469,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	override void CF_SetConvoyTarget(CF_DriverControllerComponent predecessor, int unitNumber)
 	{
+		CF_InvalidateRearGuideQuery();
 		super.CF_SetConvoyTarget(predecessor, unitNumber);
 		CF_RecordTrail();
 	}
@@ -528,6 +700,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	protected void CF_UpdateTrailGuide()
 	{
+		CF_InvalidateRearGuideQuery();
 		if (!m_bTrailGuideActive || m_bTrailBlocked || !CF_CanIssueEntityFollow())
 			return;
 		if (!m_TrailGuide)
@@ -626,6 +799,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 			CF_BlockTrail("route_state_" + m_TrailGuidance.State);
 			return;
 		}
+		CF_StampRearGuideQuery(waypoint, activity);
 		if (m_iTrailLogs < 480 && now >= m_fTrailNextLogMs && m_TrailGuide)
 		{
 			m_iTrailLogs++;
@@ -652,6 +826,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	override void CF_OnBeforePlayerPossess(IEntity entity)
 	{
+		CF_InvalidateRearGuideQuery();
 		if (m_TrailGuide && entity && (entity == m_Driver || entity == m_Truck) && !CF_IsControlBlocked())
 			ClearWaypoints();
 		super.CF_OnBeforePlayerPossess(entity);
@@ -659,12 +834,14 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	override void CF_DetachForWorldCleanup()
 	{
+		CF_InvalidateRearGuideQuery();
 		CF_DetachTrailGuide(false);
 		super.CF_DetachForWorldCleanup();
 	}
 
 	override protected void ResetToIdle()
 	{
+		CF_InvalidateRearGuideQuery();
 		if (m_TrailGuide)
 			ClearWaypoints();
 		m_TrailRoute = null;
@@ -677,6 +854,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	override void OnDelete(IEntity owner)
 	{
+		CF_InvalidateRearGuideQuery();
 		if (CF_ConvoySession.CF_IsWorldCleanup())
 			CF_DetachTrailGuide(false);
 		else if (m_TrailGuide && !CF_IsControlBlocked())
