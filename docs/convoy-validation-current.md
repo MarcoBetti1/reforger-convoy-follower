@@ -4,6 +4,8 @@ Updated September 26, 2026. **The mod is not release ready.** This page separate
 
 **Execution: active development under the saved goal and latest user direction.** The earlier documentation-only setup turn is complete. Prioritize the usable supply trip and demonstration over perfecting isolated details. The latest user instruction controls scope; historical setup notes are not current stop instructions.
 
+**Latest boundary:** `straight-arrival-stop-resume-v1` is closed and failed. It kept spacing within 56.635 m but blocked the tail on small reverse movement before arrival/Hold/Resume. The working addon remains unchanged; [the complete experimental patch](experiments/straight-arrival-v1.md) preserves the candidate for continuation. Next repair the local route-tracking rejection on this same practical stopping course, then film the complete loaded trip. Do not restart completed geometry/fixture investigations or promote the earlier failed junction run.
+
 ## Product goal and source checkpoint
 
 Deliver a usable recruit/assign → load → follow → stop/Hold → unload → Resume trip and demonstration, then complete the broader release scope. Prioritize failures that interrupt that trip over additional diagnostic machinery.
@@ -186,6 +188,22 @@ The focused course reuses the existing two-truck trip coordinator and native lea
 The [v4 independent review](../.cache/client/runs/reverse-recovery-stop-resume-v4/independent-review.md) verifies all 588 frozen sources and three deployment files, movement of 323.795 m /36 powered intervals and 309.21 m /33 intervals, and natural closure. It retains **9 gameplay /0 post-result /64 shutdown errors**. Only the departure was captured live; the silent full recording is preserved, not fully reviewed.
 
 Keep these candidates private and the working canonical controller intact. A concrete clamped-corner example now demonstrates that the orthogonality-only refusal conflicts with accepted route coordinates, even without floating-point error. The next candidate removes that redundant refusal while retaining the corridor, signed motion, actual measured displacement and local-history constraints. The exact historical failure frame remains unproved. Repeat the physical stop/Resume comparison, then return to the existing complete loaded trip. Do not expand the course or add unrelated polish while this loop remains incomplete.
+
+### V5 correction checked; separate straight-stop course next
+
+V5 removed only the inconsistent orthogonality refusal and added one clamped-endpoint reverse regression. All five configurations and packaging passed; the native route fixture passed **98/98**. Pack: `44B9394EDA8B148766AB64B6A520B4BA11E8CC35D314027DCFAE386F0E4076CD`.
+
+The same physical junction course still **failed**. Both followers travelled over 314 m, but Unit Two first exceeded spacing at 55.19 s, peaking at **81.7859 m**, then its moving route query rejected `local_turn_over_90_degrees`. This was a different failure while still under its moving guide, not proof that the corrected reverse guard failed. No formal arrival observation, Hold or Resume completed. Twenty-seven accepted reverse station corrections totalled 0.0492439 m; they are not driving credit. The [independent review](../.cache/client/runs/reverse-recovery-stop-resume-v5/independent-review.md) verifies 588 sources, three deployment files, the exact terminal prefix captured +13 ms, natural closure, and **9 gameplay /0 post-result /64 shutdown errors**. Departure and the junction were inspected live; the full silent recording remains private.
+
+**Product decision:** stop refining route mathematics in isolation. Preserve this difficult junction control and test the basic stop/unload/resume workflow at a suitable stopping place. The next private course uses the natively resolved connected point `<1598.08,20.7374,3363.82>`, approximately 229.5 m from the established start and before the junction. It preserves V5 production code and the physical acceptance gates; its declared restart leg is 45 m to stay on that road segment. This is a changed fixture, not a pass or repair of the old junction case. If stopping and restart work, repeat actual native loading and unloading there and record the usable trip before further polish.
+
+### Straight stopping point: spacing holds, tracking still blocks arrival
+
+`straight-arrival-stop-resume-v1` ran the declared pre-junction goal with unchanged V5 production code. Five-configuration validation and packaging passed: **`497B6E8806966A7B573F80C2148A0F1D6CAA5A58CA413DB6236EEA28563F2039`**. All 588 frozen sources and three deployment files match; only the explicit-goal selector, restart-length parameter and scene layer differ from V5.
+
+The physical run **failed** at 18:37:39.845. Peak link was **56.635 m**, but Unit Two rejected `reverse_previous_segment_unavailable_or_step_spans_vertices` at 18:37:39.195. Unit One captured arrival three seconds after terminal failure; this cannot establish a completed two-truck arrival. No formal Hold or Resume ran. The full log and exact terminal-prefix snapshot captured +135 ms are preserved. Natural client closure, completed watcher/recorder and a fresh empty game-process check were verified. One live travel view was inspected; no full-playback or normal-input claim.
+
+This isolates another tracker rejection on a reasonable stopping course. Preserve the failed junction and straight controls. The immediate work remains practical handling of small local reverse/arrival motion, not new features or a lower acceptance bar. Complete stop/Hold/Resume here before another loaded delivery attempt. The exact candidate source is now preserved as a reviewable [experimental patch](experiments/straight-arrival-v1.md), separate from the working canonical addon, so continuation does not depend solely on a local cache.
 
 ## Preserved failed controls
 

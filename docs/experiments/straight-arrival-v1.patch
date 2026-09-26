@@ -1,0 +1,1340 @@
+diff --git a/addons/ConvoyFollower/Scripts/Game/CF_ConvoyFollowDriverControllerComponent.c b/addons/ConvoyFollower/Scripts/Game/CF_ConvoyFollowDriverControllerComponent.c
+--- a/addons/ConvoyFollower/Scripts/Game/CF_ConvoyFollowDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/CF_ConvoyFollowDriverControllerComponent.c
+@@ -177,6 +177,10 @@
+ 		int oldGeneration = m_ArrivalRecoveryLease.Generation;
+ 		CF_CancelArrivalRecovery("predecessor_selected_arrival_wait");
+ 		SetState(CF_ARRIVING);
++		// Start this stopped episode at the current predecessor sample. Movement
++		// during recovery must not reset the fresh approach on the next settle tick.
++		m_vLastTargetPosition = m_LeadVehicle.GetOrigin();
++		m_fTargetStillSeconds = 0;
+ 		// No still-time, stable-pose or capture credit. The normal new real
+ 		// predecessor approach must subsequently satisfy all arrival gates.
+ 		bool issued = CF_BeginStoppedEntityApproach();
+diff --git a/addons/ConvoyFollower/Scripts/Game/CF_DrivenRoute.c b/addons/ConvoyFollower/Scripts/Game/CF_DrivenRoute.c
+--- a/addons/ConvoyFollower/Scripts/Game/CF_DrivenRoute.c
++++ b/addons/ConvoyFollower/Scripts/Game/CF_DrivenRoute.c
+@@ -6,6 +6,11 @@
+ 	vector Goal;
+ 	vector Tangent;
+ 	float Progress;
++	// Progress remains monotonic evidence; LocalProgress is the actual station.
++	float LocalProgress;
++	int ReverseProofSerial;
++	float ReverseStationTotal;
++	bool Reversing;
+ 	float RecordedEnd;
+ 	float ArcGap;
+ 	float CrossTrack;
+@@ -66,6 +71,9 @@
+ 	protected int m_TargetKey;
+ 	protected int m_Segment;
+ 	protected float m_Progress;
++	protected float m_HighWaterProgress;
++	protected int m_ReverseProofSerial;
++	protected float m_ReverseStationTotal;
+ 	protected bool m_Initialized;
+ 	protected bool m_Joined;
+ 	protected bool m_HistoryLost;
+@@ -82,6 +90,9 @@
+ 		m_Stations.Insert(0.0);
+ 		m_Segment = 0;
+ 		m_Progress = 0;
++		m_HighWaterProgress = 0;
++		m_ReverseProofSerial = 0;
++		m_ReverseStationTotal = 0;
+ 		m_Initialized = true;
+ 		m_Joined = false;
+ 		m_HistoryLost = false;
+@@ -116,7 +127,8 @@
+ 	}
+ 
+ 	int GetPointCount() { return m_Points.Count(); }
+-	float GetProgress() { return m_Progress; }
++	float GetProgress() { return m_HighWaterProgress; }
++	float GetLocalProgress() { return m_Progress; }
+ 	float GetRetainedLength()
+ 	{
+ 		if (m_Stations.Count() < 2)
+@@ -153,19 +165,16 @@
+ 		return false;
+ 	}
+ 
+-	// maxAdvance is a caller-supplied physical progress budget for this update,
+-	// not a catch-up radius. Query never searches later nonadjacent segments.
+-	// Before joining, APPROACH_START is a position to join, not an arrived state:
+-	// HasArcGap stays false and ArcGap=-1 until a recorded segment is acquired.
+-	void Query(int targetKey, vector followerPosition, float lookAhead, float spacing,
+-		float maxAdvance, float maxCrossTrack, CF_DrivenRouteGuidance result)
+-	{
+-		if (!result)
+-			return;
++	protected void ClearGuidance(CF_DrivenRouteGuidance result)
++	{
+ 		result.State = UNSEEDED;
+ 		result.Goal = vector.Zero;
+ 		result.Tangent = vector.Zero;
+-		result.Progress = m_Progress;
++		result.Progress = m_HighWaterProgress;
++		result.LocalProgress = m_Progress;
++		result.ReverseProofSerial = m_ReverseProofSerial;
++		result.ReverseStationTotal = m_ReverseStationTotal;
++		result.Reversing = false;
+ 		result.RecordedEnd = 0;
+ 		result.ArcGap = -1;
+ 		result.CrossTrack = 0;
+@@ -176,6 +185,39 @@
+ 		result.ProjectionSignedCorrection = 0;
+ 		result.ProjectionCandidateAdvance = 0;
+ 		result.HasPreviousPhysicalQuery = false;
++	}
++
++	// Called only after a complete local query has committed its physical cursor.
++	protected void FillGuidance(float lookAhead, float spacing, CF_DrivenRouteGuidance result)
++	{
++		m_HighWaterProgress = Math.Max(m_HighWaterProgress, m_Progress);
++		result.Progress = m_HighWaterProgress;
++		result.LocalProgress = m_Progress;
++		result.ReverseProofSerial = m_ReverseProofSerial;
++		result.ReverseStationTotal = m_ReverseStationTotal;
++		result.RecordedEnd = m_Stations[m_Stations.Count() - 1];
++		result.ArcGap = result.RecordedEnd - m_Progress;
++		result.HasArcGap = true;
++		float goalStation = Math.Min(m_Progress + lookAhead, result.RecordedEnd - spacing);
++		result.State = TRACKING;
++		if (goalStation <= m_Progress)
++		{
++			goalStation = m_Progress;
++			result.State = SPACING_HOLD;
++		}
++		SampleAt(goalStation, result.Goal, result.Tangent);
++	}
++
++	// maxAdvance is a caller-supplied physical progress budget for this update,
++	// not a catch-up radius. Query never searches later nonadjacent segments.
++	// Before joining, APPROACH_START is a position to join, not an arrived state:
++	// HasArcGap stays false and ArcGap=-1 until a recorded segment is acquired.
++	void Query(int targetKey, vector followerPosition, float lookAhead, float spacing,
++		float maxAdvance, float maxCrossTrack, CF_DrivenRouteGuidance result)
++	{
++		if (!result)
++			return;
++		ClearGuidance(result);
+ 		if (!m_Initialized)
+ 			return;
+ 		result.Goal = m_Points[0];
+@@ -321,16 +363,6 @@
+ 		m_Joined = true;
+ 		m_Segment = segment;
+ 		m_Progress = progress;
+-		result.Progress = progress;
+-		result.ArcGap = result.RecordedEnd - progress;
+-		result.HasArcGap = true;
+-		float goalStation = Math.Min(progress + lookAhead, result.RecordedEnd - spacing);
+-		result.State = TRACKING;
+-		if (goalStation <= progress)
+-		{
+-			goalStation = progress;
+-			result.State = SPACING_HOLD;
+-		}
+-		SampleAt(goalStation, result.Goal, result.Tangent);
++		FillGuidance(lookAhead, spacing, result);
+ 	}
+ }
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c
+@@ -270,6 +270,179 @@
+ 		before = route.GetProgress();
+ 		Physical(route, 126, firstVertexPose, 0, g);
+ 		Check("first_vertex_zero_measurement_never_commits", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection && Math.AbsFloat(route.GetProgress() - before) < 0.001);
++	}
++
++	// Explicit opt-in calls the production physical query. All earlier cases
++	// continue calling default Query/QueryPhysical and retain their old contract.
++	protected bool ReversePhysical(CF_TrailGuideRoute route, int key, vector pose, float measured, CF_DrivenRouteGuidance g)
++	{
++		float allowed, turnCos, factor;
++		string reason;
++		return route.QueryPhysical(key, pose, measured, 0.3, 0, 5, allowed, turnCos, factor, reason, g, true);
++	}
++
++	protected void PrepareReverseStraight(CF_TrailGuideRoute route, int key, CF_DrivenRouteGuidance g)
++	{
++		route.Reset(key, vector.Zero);
++		route.Record(key, Vector(10, 0, 0));
++		route.Record(key, Vector(20, 0, 0));
++		route.Record(key, Vector(30, 0, 0));
++		ReversePhysical(route, key, Vector(8, 0, 0), 8, g);
++		ReversePhysical(route, key, Vector(12, 0, 0), 4, g);
++	}
++
++	protected bool ReverseSnapshot(CF_DrivenRouteGuidance g, float localStation, float highWater,
++		int proofSerial, float stationTotal, bool reversing)
++	{
++		if (g.State != CF_DrivenRoute.TRACKING || g.Reversing != reversing) return false;
++		if (!Near(g.LocalProgress, localStation) || !Near(g.Progress, highWater)) return false;
++		return g.ReverseProofSerial == proofSerial && Near(g.ReverseStationTotal, stationTotal);
++	}
++
++	protected void RunReverseCases()
++	{
++		ref CF_TrailGuideRoute route = new CF_TrailGuideRoute();
++		ref CF_DrivenRouteGuidance g = new CF_DrivenRouteGuidance();
++		PrepareReverseStraight(route, 201, g);
++		Check("reverse_real_forward_seed", g.State == CF_DrivenRoute.TRACKING && Near(g.LocalProgress, 12) && Near(g.Progress, 12) && g.ReverseProofSerial == 0);
++		bool accepted = ReversePhysical(route, 201, Vector(9, 0, 0), 3, g);
++		Check("reverse_immediate_previous_segment", accepted && ReverseSnapshot(g, 9, 12, 1, 3, true) && Near(route.GetLocalProgress(), 9));
++		ReversePhysical(route, 201, Vector(7, 0, 0), 2, g);
++		Check("reverse_current_segment_continues_without_high_water_loss", ReverseSnapshot(g, 7, 12, 2, 5, true));
++		ReversePhysical(route, 201, Vector(12, 0, 0), 5, g);
++		Check("reverse_forward_retrace_adds_no_high_water", ReverseSnapshot(g, 12, 12, 2, 5, false));
++		ReversePhysical(route, 201, Vector(16, 0, 0), 4, g);
++		Check("reverse_forward_beyond_high_water", ReverseSnapshot(g, 16, 16, 2, 5, false));
++		ReversePhysical(route, 201, Vector(16, 0, 0), 0, g);
++		Check("reverse_stationary_query_does_not_reuse_proof", ReverseSnapshot(g, 16, 16, 2, 5, false));
++
++		for (int sign = -1; sign <= 1; sign += 2)
++		{
++			route.Reset(202, vector.Zero);
++			route.Record(202, Vector(10, 0, 0));
++			route.Record(202, Vector(10, 0, 10 * sign));
++			route.Record(202, Vector(20, 0, 10 * sign));
++			ReversePhysical(route, 202, Vector(8, 0, 0), 8, g);
++			ReversePhysical(route, 202, Vector(10, 0, 2 * sign), Math.Sqrt(8), g);
++			accepted = ReversePhysical(route, 202, Vector(8, 0, 0), Math.Sqrt(8), g);
++			Check("reverse_adjacent_90_degree_corner_" + sign, accepted && ReverseSnapshot(g, 8, 12, 1, 4, true));
++			ReversePhysical(route, 202, Vector(10, 0, 2 * sign), Math.Sqrt(8), g);
++			Check("reverse_corner_forward_retrace_" + sign, ReverseSnapshot(g, 12, 12, 1, 4, false));
++		}
++
++		PrepareReverseStraight(route, 203, g);
++		ReversePhysical(route, 203, Vector(18, 0, 0), 6, g);
++		ReversePhysical(route, 203, Vector(22, 0, 0), 4, g);
++		ReversePhysical(route, 203, Vector(28, 0, 0), 6, g);
++		accepted = ReversePhysical(route, 203, Vector(25, 0, 0), 3, g);
++		Check("reverse_final_segment_has_real_context", accepted && ReverseSnapshot(g, 25, 28, 1, 3, true));
++		ReversePhysical(route, 203, Vector(19, 0, 0), 6, g);
++		Check("reverse_from_final_to_previous_segment", ReverseSnapshot(g, 19, 28, 2, 9, true));
++		ReversePhysical(route, 203, Vector(22, 0, 0), 3, g);
++		ReversePhysical(route, 203, Vector(8, 0, 0), 14, g);
++		bool skipRejected = Near(route.GetLocalProgress(), 22) && Near(route.GetProgress(), 28);
++		skipRejected = skipRejected && !g.Reversing && g.ReverseProofSerial == 2;
++		Check("reverse_second_previous_segment_not_skipped", skipRejected && Near(g.ReverseStationTotal, 9));
++
++		PrepareReverseStraight(route, 204, g);
++		ReversePhysical(route, 204, Vector(9, 0, 0), 0, g);
++		Check("reverse_zero_measurement_cannot_move_cursor", Near(route.GetLocalProgress(), 12) && g.ReverseProofSerial == 0 && !g.Reversing);
++		PrepareReverseStraight(route, 205, g);
++		accepted = ReversePhysical(route, 205, Vector(9, 0, 0), -3, g);
++		Check("reverse_negative_measurement_rejected", !accepted && Near(route.GetLocalProgress(), 12) && g.ReverseProofSerial == 0);
++		PrepareReverseStraight(route, 206, g);
++		ReversePhysical(route, 206, Vector(9, 0, 0), 0.5, g);
++		Check("reverse_underreported_motion_cannot_commit", Near(route.GetLocalProgress(), 12) && g.ReverseProofSerial == 0 && !g.Reversing);
++		ReversePhysical(route, 206, Vector(9, 0, 0), 3, g);
++		Check("reverse_failed_query_cannot_seed_retry", Near(route.GetLocalProgress(), 12) && g.ReverseProofSerial == 0 && !g.Reversing);
++		ReversePhysical(route, 206, Vector(12, 0, 0), 0, g);
++		ReversePhysical(route, 206, Vector(9, 0, 0), 3, g);
++		Check("reverse_only_real_current_pose_can_reestablish_context", g.Reversing && Near(g.LocalProgress, 9) && g.ReverseProofSerial == 1);
++
++		PrepareReverseStraight(route, 207, g);
++		route.Query(207, Vector(12, 0, 0), 0.3, 0, 0.001, 5, g);
++		ReversePhysical(route, 207, Vector(9, 0, 0), 3, g);
++		Check("reverse_ordinary_query_disarms_context", Near(route.GetLocalProgress(), 12) && g.ReverseProofSerial == 0 && !g.Reversing);
++		PrepareReverseStraight(route, 208, g);
++		ReversePhysical(route, 209, Vector(9, 0, 0), 3, g);
++		Check("reverse_wrong_epoch_cannot_commit", Near(route.GetLocalProgress(), 12) && g.ReverseProofSerial == 0 && !g.Reversing);
++		ReversePhysical(route, 208, Vector(9, 0, 0), 3, g);
++		Check("reverse_epoch_failure_invalidates_context", Near(route.GetLocalProgress(), 12) && g.ReverseProofSerial == 0 && !g.Reversing);
++		PrepareReverseStraight(route, 210, g);
++		Physical(route, 210, Vector(9, 0, 0), 3, g);
++		Check("reverse_default_physical_query_remains_monotonic", Near(route.GetLocalProgress(), 12) && Near(g.Progress, 12) && g.ReverseProofSerial == 0 && !g.Reversing);
++		route.Reset(210, Vector(100, 0, 0));
++		route.Record(210, Vector(110, 0, 0));
++		ReversePhysical(route, 210, Vector(9, 0, 0), 3, g);
++		bool resetClean = g.State == CF_DrivenRoute.APPROACH_START && !g.HasArcGap;
++		resetClean = resetClean && Near(route.GetLocalProgress(), 0) && Near(route.GetProgress(), 0);
++		Check("reverse_reset_clears_proof_and_cannot_fake_join", resetClean && g.ReverseProofSerial == 0 && Near(g.ReverseStationTotal, 0));
++
++		route.Reset(211, vector.Zero);
++		route.Record(211, Vector(20, 0, 0));
++		route.Record(211, Vector(20, 0, 3));
++		route.Record(211, Vector(0, 0, 3));
++		ReversePhysical(route, 211, Vector(18, 0, 0), 18, g);
++		ReversePhysical(route, 211, Vector(20, 0, 2), Math.Sqrt(8), g);
++		ReversePhysical(route, 211, Vector(18, 0, 3), Math.Sqrt(5), g);
++		ReversePhysical(route, 211, Vector(19, 0, 0), Math.Sqrt(10), g);
++		// The immediate previous connector may be selected at station20; the
++		// still-nearer nonadjacent first leg at station19 must not be searched.
++		Check("reverse_nearer_hairpin_branch_is_not_reacquired", ReverseSnapshot(g, 20, 25, 1, 5, true));
++
++		route.Reset(212, vector.Zero);
++		for (int sample = 1; sample <= 80; sample++)
++		{
++			route.Record(212, Vector(sample * 10, 0, 0));
++			float measured = 10;
++			if (sample == 1) measured = 8;
++			ReversePhysical(route, 212, Vector(sample * 10 - 2, 0, 0), measured, g);
++		}
++		route.Record(212, Vector(810, 0, 0)); // Prunes old points between physical queries.
++		accepted = ReversePhysical(route, 212, Vector(795, 0, 0), 3, g);
++		Check("reverse_harmless_pruning_keeps_exact_local_snapshot", accepted && ReverseSnapshot(g, 795, 798, 1, 3, true));
++		PrepareReverseStraight(route, 213, g);
++		for (int lost = 4; lost <= 65; lost++) route.Record(213, Vector(lost * 10, 0, 0));
++		ReversePhysical(route, 213, Vector(9, 0, 0), 3, g);
++		Check("reverse_lost_history_cannot_reacquire", g.State == CF_DrivenRoute.HISTORY_LOST && !g.HasArcGap && Near(route.GetLocalProgress(), 12) && g.ReverseProofSerial == 0);
++	}
++
++	// Source-derived outer-corner witness, not a replay of the v3 failure:
++	// that run did not log the actual route points. Crossing the incoming end
++	// can leave a valid local cursor at the next segment's clamped start.
++	protected void PrepareClampedStart(CF_TrailGuideRoute route, int key, CF_DrivenRouteGuidance g)
++	{
++		route.Reset(key, vector.Zero);
++		route.Record(key, Vector(10, 0, 0));
++		route.Record(key, Vector(10, 0, 10));
++		route.Record(key, Vector(10, 0, 20));
++		ReversePhysical(route, key, Vector(9, 0, 0), 9, g);
++		ReversePhysical(route, key, Vector(11, 0, 0), 2, g);
++	}
++
++	protected void RunClampedStartCases()
++	{
++		ref CF_TrailGuideRoute control = new CF_TrailGuideRoute();
++		ref CF_TrailGuideRoute route = new CF_TrailGuideRoute();
++		ref CF_DrivenRouteGuidance g = new CF_DrivenRouteGuidance();
++		PrepareClampedStart(control, 214, g);
++		bool accepted = Physical(control, 214, Vector(11, 0, -0.01), 0.01, g);
++		Check("clamped_start_default_query_accepts_no_station_retreat", accepted && ReverseSnapshot(g, 10, 10, 0, 0, false));
++		PrepareClampedStart(route, 214, g);
++		accepted = ReversePhysical(route, 214, Vector(11, 0, -0.01), 0.01, g);
++		Check("clamped_start_opt_in_preserves_supported_default", accepted && ReverseSnapshot(g, 10, 10, 0, 0, false));
++		accepted = ReversePhysical(route, 214, Vector(11, 0, -0.01), 0, g);
++		Check("clamped_start_stationary_repeat_has_no_reverse_credit", accepted && ReverseSnapshot(g, 10, 10, 0, 0, false));
++		ReversePhysical(route, 214, Vector(16, 0, -0.01), 5, g);
++		bool unchanged = Near(route.GetLocalProgress(), 10) && Near(route.GetProgress(), 10);
++		Check("clamped_start_original_corridor_still_rejects", g.State == CF_DrivenRoute.OFF_ROUTE && unchanged && g.ReverseProofSerial == 0);
++
++		PrepareClampedStart(route, 215, g);
++		ReversePhysical(route, 215, Vector(11, 0, -0.01), 0.01, g);
++		accepted = ReversePhysical(route, 215, Vector(9.99, 0, -0.01), 1.01, g);
++		bool realRetreat = accepted && ReverseSnapshot(g, 9.99, 10, 1, 0.01, true);
++		realRetreat = realRetreat && g.LocalProgress < g.Progress;
++		Check("clamped_start_real_reverse_accepts_longitudinal_residual", realRetreat && g.ReverseStationTotal > 0);
+ 	}
+ 
+ 	protected void RunCases()
+@@ -370,6 +543,8 @@
+ 		Check("unconsumed_pruning_reports_history_lost", g.State == CF_DrivenRoute.HISTORY_LOST && !g.HasArcGap && route.GetPointCount() <= CF_DrivenRoute.MAX_POINTS);
+ 
+ 		RunProjectionCases();
++		RunReverseCases();
++		RunClampedStartCases();
+ 		if (m_Passed == m_Total)
+ 			Print("[ConvoyFollower] DRIVEN_ROUTE_RESULT: PASS cases=" + m_Passed);
+ 		else
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+@@ -6,6 +6,10 @@
+ // Baseline mixed driving/Wait evidence stays separate from fresh Resume evidence.
+ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ {
++	[Attribute(defvalue: "0", params: "0 1 1", desc: "Test-only stop/Hold/Resume course; no cargo transfer or cargo proof")]
++	protected bool m_bPairCommandsOnly;
++	[Attribute(defvalue: "70", params: "45 70 1", desc: "Declared native lead restart road walk; physical Resume gates remain 20m and 3 powered intervals per follower")]
++	protected float m_fPairRestartWalkMeters;
+ 	protected ref array<CF_LoadedPairCargoProbeComponent> m_PairCargo = {};
+ 	protected ref array<SCR_ResourceContainer> m_PairContainers = {};
+ 	protected ref array<float> m_PairHeldValues = {1800, 0, 0, 0};
+@@ -63,12 +67,23 @@
+ 		if (!Replication.IsServer()) return;
+ 		m_PairResumeEvidence.Insert(new CF_OriginalTailGuideEvidence());
+ 		m_PairResumeEvidence.Insert(new CF_OriginalTailGuideEvidence());
+-		if (m_iExpectedTrucks != 2 || m_fPacedLeadSpeedKmh != 20 ||
+-			m_sPacedWorld != "Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks.ent")
++		string expectedWorld = "Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks.ent";
++		if (m_bPairCommandsOnly) expectedWorld = "Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent";
++		if (m_iExpectedTrucks != 2 || m_fPacedLeadSpeedKmh != 20 || m_sPacedWorld != expectedWorld)
+ 			NoteFailure("fixture", "loaded_pair_contract_mismatch");
++		if (m_bPairCommandsOnly)
++		{
++			Print("[ConvoyFollower] LOADED_PAIR_INIT: run_id=" + m_sPacedRun +
++				" expected=2 command_only=true cargo_tested=false load_each=0 destination_total=0" +
++				" baseline_hold_s=180 explicit_hold_s=30 resume_each_m=20 resume_each_powered=3 max_link_m=60" +
++				" total_timeout_s=720 command_timeout_s=240 lead_cap_kmh=20 restart_road_walk_m=" + m_fPairRestartWalkMeters +
++				" owner_staging=test_only ordinary_input=false source_count_writes=false follower_control_writes=false production_controller=true");
++			return;
++		}
+ 		Print("[ConvoyFollower] LOADED_PAIR_INIT: run_id=" + m_sPacedRun +
+ 			" expected=2 load_each=100 destination_total=200 conserved_total=1800 baseline_hold_s=180 explicit_hold_s=30" +
+ 			" resume_each_m=20 resume_each_powered=3 max_link_m=60 total_timeout_s=720 command_timeout_s=240" +
++			" restart_road_walk_m=" + m_fPairRestartWalkMeters +
+ 			" owner_staging=test_only ordinary_input=false source_count_writes=false follower_control_writes=false production_controller=true");
+ 	}
+ 
+@@ -106,6 +121,18 @@
+ 	}
+ 
+ 	protected void CommandFailure(string reason) { PairFailure(reason); }
++
++	// Command-only setup reuses the parent native pilot/passenger owner. Pin that
++	// exact owner at the same original-truck binding seam; never create a second.
++	override protected void BindOriginals()
++	{
++		super.BindOriginals();
++		if (!m_bPairCommandsOnly || m_bPairBound || !m_PacedOwner || m_PacedTrucks.Count() != 3) return;
++		m_PairOwner = m_PacedOwner;
++		m_bPairBound = true;
++		Print("[ConvoyFollower] LOADED_PAIR_COMMAND_ONLY_BIND: run_id=" + m_sPacedRun +
++			" owner_id=" + EntityKey(m_PairOwner) + " cargo_tested=false original_parent_owner=true");
++	}
+ 
+ 	protected bool BindPairCargo()
+ 	{
+@@ -208,6 +235,8 @@
+ 
+ 	protected bool CheckPairLedger(bool log = false)
+ 	{
++		// No cargo workers or containers exist in the separately named command course.
++		if (m_bPairCommandsOnly) return true;
+ 		float source, cargo1, cargo2, destination;
+ 		if (!ReadPairLedger(source, cargo1, cargo2, destination)) { PairFailure("original_container_action_or_owner_binding_lost"); return false; }
+ 		array<float> values = {source, cargo1, cargo2, destination};
+@@ -294,8 +323,8 @@
+ 		{
+ 			CF_ConvoyFollowDriverControllerComponent driver = PairDriver(unit);
+ 			if (!IdentityRetained(unit, true) || !driver || driver.Type().ToString() != "CF_ConvoyFollowDriverControllerComponent" ||
+-				!driver.CF_TestOrdinaryRoleReady(unit > 1) || driver.CF_HasEntityFallbackFailure() ||
+-				m_PacedTrucks[unit].Truck != m_PairCargo[unit - 1].PairTruck()) return false;
++				!driver.CF_TestOrdinaryRoleReady(unit > 1) || driver.CF_HasEntityFallbackFailure()) return false;
++			if (!m_bPairCommandsOnly && m_PacedTrucks[unit].Truck != m_PairCargo[unit - 1].PairTruck()) return false;
+ 			if (unit == 2 && m_MixedUnits[1].ObservedEpoch > 0)
+ 			{
+ 				CF_OriginalTailGuideReadback route = new CF_OriginalTailGuideReadback();
+@@ -391,7 +420,16 @@
+ 			(m_iPairPhase >= 2 && (now - m_fPairCommandMs > 240000 || now - m_fPairPhaseMs > 90000)))
+ 		{ PairFailure("pair_phase_or_total_timeout"); return; }
+ 		if (m_bPairNonSpacingFailure) { m_bPairEnding = true; EndPaced(); return; }
+-		if (!m_bPairBound && !BindPairCargo()) return;
++		if (m_bPairCommandsOnly)
++		{
++			if (m_iPairPhase == 0)
++			{
++				SetPairPhase(1);
++				Print("[ConvoyFollower] LOADED_PAIR_CARGO_SKIPPED: run_id=" + m_sPacedRun +
++					" phase=departure cargo_tested=false native_actions_dispatched=false");
++			}
++		}
++		else if (!m_bPairBound && !BindPairCargo()) return;
+ 		if (m_bPacedTerminal || !CheckPairLedger()) return;
+ 		if (m_iPairPhase == 0)
+ 		{
+@@ -441,6 +479,13 @@
+ 		else if (m_iPairPhase == 4)
+ 		{
+ 			if (now - m_fHoldBeginMs < 30000 || m_iHoldSamples < 30) return;
++			if (m_bPairCommandsOnly)
++			{
++				Print("[ConvoyFollower] LOADED_PAIR_CARGO_SKIPPED: run_id=" + m_sPacedRun +
++					" phase=arrival cargo_tested=false native_actions_dispatched=false");
++				SetPairPhase(6); // Owner remains in the exact lead pilot seat for the real Resume command.
++				return;
++			}
+ 			if (!CommandSeat(m_PacedOwner, true) || !ExitCommandSeat(m_PacedOwner)) { PairFailure("owner_exit_for_native_unload_failed"); return; }
+ 			m_iNextCargo = 1;
+ 			SetPairPhase(5);
+@@ -460,7 +505,10 @@
+ 			if (now - m_fPairPhaseMs > 30000) { PairFailure("owner_return_timeout"); return; }
+ 			if (!CommandSeat(m_PacedOwner, true)) return;
+ 			m_fHoldCompletedSeconds = (now - m_fHoldBeginMs) / 1000;
+-			Print("[ConvoyFollower] LOADED_PAIR_HOLD_COMPLETE: run_id=" + m_sPacedRun + " held_s=" + m_fHoldCompletedSeconds + " samples=" + m_iHoldSamples + " both_held=true delivery=200");
++			int delivered = 200;
++			if (m_bPairCommandsOnly) delivered = 0;
++			Print("[ConvoyFollower] LOADED_PAIR_HOLD_COMPLETE: run_id=" + m_sPacedRun + " held_s=" + m_fHoldCompletedSeconds +
++				" samples=" + m_iHoldSamples + " both_held=true delivery=" + delivered + " cargo_tested=" + !m_bPairCommandsOnly);
+ 			m_bPairResumeAccepted = CF_ConvoySession.CF_PanelResume(m_PacedOwner);
+ 			Print("[ConvoyFollower] LOADED_PAIR_COMMAND: command=Resume accepted=" + m_bPairResumeAccepted + " run_id=" + m_sPacedRun + " completion_claim=false");
+ 			if (!m_bPairResumeAccepted || PairDriver(1).CF_HasPanelHoldRequest() || PairDriver(2).CF_HasPanelHoldRequest())
+@@ -509,6 +557,9 @@
+ 			resumedTail.ObservedEpoch = baselineTail.ObservedEpoch;
+ 			resumedTail.SawJoined = baselineTail.SawJoined;
+ 			resumedTail.LastRouteProgress = baselineTail.LastRouteProgress;
++			resumedTail.LastRouteLocalProgress = baselineTail.LastRouteLocalProgress;
++			resumedTail.LastRouteReverseProofSerial = baselineTail.LastRouteReverseProofSerial;
++			resumedTail.LastRouteReverseStationTotal = baselineTail.LastRouteReverseStationTotal;
+ 			resumedTail.LastRecordedEnd = baselineTail.LastRecordedEnd;
+ 			m_fPairCommandMs = GetGame().GetWorld().GetWorldTime();
+ 			if (!SurveyCommandExtension()) { PairFailure("restart_road_extension_unavailable"); return; }
+@@ -518,7 +569,11 @@
+ 		}
+ 		m_bPairEnding = true;
+ 		foreach (CF_LoadedPairCargoProbeComponent worker : m_PairCargo) worker.StopPairAction("terminal");
+-		if (!m_bPairComplete) NoteFailure("loaded_pair", "incomplete_native_delivery_hold_or_restart");
++		if (!m_bPairComplete)
++		{
++			if (m_bPairCommandsOnly) NoteFailure("loaded_pair", "incomplete_native_hold_or_restart");
++			else NoteFailure("loaded_pair", "incomplete_native_delivery_hold_or_restart");
++		}
+ 		ReleaseCommandParking("terminal");
+ 		super.EndPaced();
+ 		if (!m_bPairResultLogged)
+@@ -527,7 +582,8 @@
+ 			Print("[ConvoyFollower] LOADED_PAIR_RESULT: run_id=" + m_sPacedRun + " pass=" + (m_bPairComplete && !m_bPacedFailed) +
+ 				" pair_complete=" + m_bPairComplete + " hold_accepted=" + m_bPairHoldAccepted + " resume_accepted=" + m_bPairResumeAccepted +
+ 				" hold_s=" + m_fHoldCompletedSeconds + " hold_samples=" + m_iHoldSamples + " peak_gap_m=" + m_fPacedPeakGap +
+-				" spacing_failed=" + m_bPacedSpacingFailed + " ordinary_input=false owner_staging=test_only");
++				" spacing_failed=" + m_bPacedSpacingFailed + " command_only=" + m_bPairCommandsOnly +
++				" cargo_tested=" + !m_bPairCommandsOnly + " ordinary_input=false owner_staging=test_only");
+ 		}
+ 	}
+ 
+@@ -618,8 +674,9 @@
+ 	}
+ 
+ 	// Proven lead-only parking and native seat operations are copied verbatim
+-	// below from CF_OriginalFollowResumeProbeComponent; the survey walks 70 m
+-	// to give the second follower room to establish its fresh 20 m segment.
++	// below from CF_OriginalFollowResumeProbeComponent; the survey walks the
++	// declared fixture distance (70 m by default, 45 m before the junction)
++	// while each follower must still establish its fresh physical 20 m segment.
+ 	protected float CommandSpeed(Vehicle truck)
+ 	{
+ 		CarControllerComponent car;
+@@ -657,17 +714,18 @@
+ 		road.GetPoints(points);
+ 		vector forward = m_Lead.GetWorldTransformAxis(2);
+ 		vector candidate;
+-		if (!CF_RoadPolyline.TryWalk(points, m_Lead.GetOrigin(), forward, 70, candidate)) return false;
++		if (!CF_RoadPolyline.TryWalk(points, m_Lead.GetOrigin(), forward, m_fPairRestartWalkMeters, candidate)) return false;
+ 		vector reached;
+ 		if (!roads.GetReachableWaypointInRoad(m_Lead.GetOrigin(), candidate, 5, reached) || vector.DistanceXZ(candidate, reached) > 3) return false;
+ 		vector delta = reached - m_Lead.GetOrigin();
+ 		float distance = vector.DistanceXZ(reached, m_Lead.GetOrigin());
+-		if (distance < 55 || distance > 85 || delta[0] * forward[0] + delta[2] * forward[2] < distance * 0.5) return false;
++		if (distance < m_fPairRestartWalkMeters - 15 || distance > m_fPairRestartWalkMeters + 15) return false;
++		if (delta[0] * forward[0] + delta[2] * forward[2] < distance * 0.5) return false;
+ 		m_vRestartGoal = reached;
+ 		m_vRestartAxis = Vector(delta[0] / distance, 0, delta[2] / distance);
+ 		Print("[ConvoyFollower] ORIGINAL_RESUME_SURVEY: run_id=" + m_sPacedRun + " road_id=" + roadId +
+ 			" width=" + road.GetWidth() + " road_distance=" + roadDistance + " start=" + m_Lead.GetOrigin() +
+-			" goal=" + reached + " axis=" + m_vRestartAxis + " recorded_road_walk_m=70 geometry_only=true");
++			" goal=" + reached + " axis=" + m_vRestartAxis + " recorded_road_walk_m=" + m_fPairRestartWalkMeters + " geometry_only=true");
+ 		return true;
+ 	}
+ 
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_OrdinaryMixedRoadProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_OrdinaryMixedRoadProbeComponent.c
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_OrdinaryMixedRoadProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_OrdinaryMixedRoadProbeComponent.c
+@@ -20,6 +20,10 @@
+ 		sample.HasArcGap = m_TrailGuidance.HasArcGap;
+ 		sample.RouteState = m_TrailGuidance.State;
+ 		sample.Progress = m_TrailGuidance.Progress;
++		sample.LocalProgress = m_TrailGuidance.LocalProgress;
++		sample.ReverseProofSerial = m_TrailGuidance.ReverseProofSerial;
++		sample.ReverseStationTotal = m_TrailGuidance.ReverseStationTotal;
++		sample.Reversing = m_TrailGuidance.Reversing;
+ 		sample.RecordedEnd = m_TrailGuidance.RecordedEnd;
+ 		sample.ArcGap = m_TrailGuidance.ArcGap;
+ 		sample.CrossTrack = m_TrailGuidance.CrossTrack;
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
+@@ -9,6 +9,10 @@
+ 	int RouteState;
+ 	int Points;
+ 	float Progress;
++	float LocalProgress;
++	int ReverseProofSerial;
++	float ReverseStationTotal;
++	bool Reversing;
+ 	float RecordedEnd;
+ 	float GuideStation;
+ 	float ArcGap;
+@@ -33,6 +37,10 @@
+ 		sample.HasArcGap = m_TrailGuidance.HasArcGap;
+ 		sample.RouteState = m_TrailGuidance.State;
+ 		sample.Progress = m_TrailGuidance.Progress;
++		sample.LocalProgress = m_TrailGuidance.LocalProgress;
++		sample.ReverseProofSerial = m_TrailGuidance.ReverseProofSerial;
++		sample.ReverseStationTotal = m_TrailGuidance.ReverseStationTotal;
++		sample.Reversing = m_TrailGuidance.Reversing;
+ 		sample.RecordedEnd = m_TrailGuidance.RecordedEnd;
+ 		sample.ArcGap = m_TrailGuidance.ArcGap;
+ 		sample.CrossTrack = m_TrailGuidance.CrossTrack;
+@@ -65,6 +73,9 @@
+ 	bool SawJoined;
+ 	int ObservedEpoch;
+ 	float LastRouteProgress;
++	float LastRouteLocalProgress;
++	int LastRouteReverseProofSerial;
++	float LastRouteReverseStationTotal;
+ 	float LastRecordedEnd;
+ 	int WaitSamples;
+ 	string WaitKey;
+@@ -225,12 +236,36 @@
+ 				MixedFailure("genuine_route_join_was_reset", unit);
+ 			if (routeBound && route.Joined && route.HasArcGap)
+ 			{
++				// Route station is geometric position, never physical movement credit.
++				// Query proofs accumulate across our slower sampling interval so a
++				// later stationary/forward frame cannot erase a real reverse query.
++				bool invalidStation;
++				if (route.Progress - route.Progress != 0 || route.LocalProgress - route.LocalProgress != 0) invalidStation = true;
++				if (route.ReverseStationTotal - route.ReverseStationTotal != 0 || route.RecordedEnd - route.RecordedEnd != 0) invalidStation = true;
++				if (route.LocalProgress < 0 || route.ReverseProofSerial < 0 || route.ReverseStationTotal < 0) invalidStation = true;
++				if (route.LocalProgress > route.Progress + 0.01 || route.Progress > route.RecordedEnd + 0.01) invalidStation = true;
++				if (invalidStation)
++					MixedFailure("invalid_route_station_readback", unit);
+ 				if (evidence.SawJoined && route.Progress + 0.01 < evidence.LastRouteProgress)
+ 					MixedFailure("route_cursor_moved_backward", unit);
++				if (evidence.SawJoined)
++				{
++					float reverseDelta = route.ReverseStationTotal - evidence.LastRouteReverseStationTotal;
++					int serialDelta = route.ReverseProofSerial - evidence.LastRouteReverseProofSerial;
++					float localReverse = evidence.LastRouteLocalProgress - route.LocalProgress;
++					if (serialDelta < 0 || reverseDelta < -0.001 ||
++						(serialDelta == 0 && Math.AbsFloat(reverseDelta) > 0.001) || (serialDelta > 0 && reverseDelta <= 0))
++						MixedFailure("route_reverse_proof_changed_without_admission", unit);
++					if (localReverse > 0.01 && (serialDelta <= 0 || localReverse > reverseDelta + 0.01))
++						MixedFailure("local_route_reverse_without_fresh_physical_proof", unit);
++				}
+ 				if (evidence.SawJoined && route.RecordedEnd + 0.01 < evidence.LastRecordedEnd)
+ 					MixedFailure("recorded_history_end_moved_backward", unit);
+ 				evidence.SawJoined = true;
+ 				evidence.LastRouteProgress = route.Progress;
++				evidence.LastRouteLocalProgress = route.LocalProgress;
++				evidence.LastRouteReverseProofSerial = route.ReverseProofSerial;
++				evidence.LastRouteReverseStationTotal = route.ReverseStationTotal;
+ 				evidence.LastRecordedEnd = route.RecordedEnd;
+ 			}
+ 		}
+@@ -360,6 +395,8 @@
+ 		line += " route_history=" + route.HasHistory + " route_points=" + route.Points + " route_joined=" + route.Joined + " route_epoch=" + route.Epoch;
+ 		line += " route_bound=" + routeBound + " observed_epoch=" + evidence.ObservedEpoch + " route_predecessor_id=" + EntityKey(routePredecessor);
+ 		line += " route_state=" + route.RouteState + " route_progress_m=" + route.Progress + " recorded_end_m=" + route.RecordedEnd;
++		line += " route_local_progress_m=" + route.LocalProgress + " route_reverse_proof_serial=" + route.ReverseProofSerial;
++		line += " route_reverse_station_total_m=" + route.ReverseStationTotal + " route_reversing=" + route.Reversing;
+ 		line += " guide_station_m=" + route.GuideStation + " arc_gap_valid=" + route.HasArcGap + " arc_gap_m=" + route.ArcGap + " cross_track_m=" + route.CrossTrack;
+ 		line += " observing=" + m_bPacedObserving + " wait_samples=" + evidence.WaitSamples + " wait=" + evidence.WaitKey + " unit_failed=" + evidence.Failed;
+ 		Print(line);
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+@@ -43,12 +43,23 @@
+ 	protected bool m_bTrailGuideActive;
+ 	protected bool m_bTrailPoseInterrupted;
+ 	protected bool m_bTrailFollowerPose;
++	protected bool m_bTrailPhysicalQueried;
+ 	protected bool m_bTrailJoined;
+ 	protected bool m_bTrailBlocked;
+ 	protected int m_iTrailLogs;
+ 	protected int m_iTrailQueryFailureLogs;
+ 	protected int m_iTrailResumeRejectLogs;
+ 	protected string m_sTrailBlockReason;
++	protected bool m_bTrailResumePending;
++	protected bool m_bTrailResumeTimedOut;
++	protected ref CF_InitialDepartureWait m_TrailResumeWait;
++	protected CF_ConvoySession m_TrailResumeSession;
++	protected IEntity m_TrailResumeOwner;
++	protected IEntity m_TrailResumePredecessor;
++	protected int m_iTrailResumeEpoch;
++	protected float m_fTrailResumeBeginMs;
++	protected vector m_vTrailResumeAnchor;
++	protected vector m_vTrailResumeForward;
+ 	protected static const ResourceName CF_TRAIL_GUIDE_PREFAB = "{983C8B13A242454E}Prefabs/Tests/CF_TrailGuide.et";
+ 	protected static const ResourceName CF_TRAIL_WAYPOINT_PREFAB = "{F1418F3E681BA55E}Prefabs/Tests/AIWaypoint_CF_TrailGuide.et";
+ 
+@@ -64,6 +75,7 @@
+ 
+ 	override protected void SetState(int state)
+ 	{
++		if (m_bTrailResumePending && state != CF_WAITING_FOR_PREDECESSOR) CF_CancelTrailResume("state_change");
+ 		if (state != m_iState)
+ 			CF_InvalidateRearGuideQuery();
+ 		super.SetState(state);
+@@ -72,6 +84,7 @@
+ 	override void CF_OnPlayerControlChanged(IEntity from, IEntity to)
+ 	{
+ 		CF_InvalidateRearGuideQuery();
++		if (m_bTrailResumePending && CF_IsControlBlocked()) CF_CancelTrailResume("player_control", false);
+ 		super.CF_OnPlayerControlChanged(from, to);
+ 	}
+ 
+@@ -174,6 +187,11 @@
+ 
+ 	override string CF_GetPanelStateLabel()
+ 	{
++		if (m_bTrailResumePending)
++		{
++			if (m_bTrailResumeTimedOut) return "resume timed out: Hold, then Resume";
++			return "waiting for predecessor departure";
++		}
+ 		if (CF_HasPersistentFollowFailure() && !CF_IsControlBlocked() && !m_bPanelHoldRequested &&
+ 			(m_iState == CF_FOLLOWING || m_iState == CF_ARRIVING))
+ 			return "route blocked";
+@@ -198,15 +216,123 @@
+ 			}
+ 			return false;
+ 		}
++		if (m_bTrailResumePending || (m_bTrailJoined && CF_IsPanelHeld())) return CF_BeginTrailResume();
+ 		return super.CF_PanelResume();
+ 	}
+ 
+ 	override protected void StartFollowing(IEntity targetVehicle, bool rejoined, bool emitRadio)
+ 	{
+ 		// Guard before the parent releases a Wait or resets its stop episode.
++		if (m_bTrailResumePending) return;
+ 		if (CF_HasPersistentFollowFailure())
+ 			return;
+ 		super.StartFollowing(targetVehicle, rejoined, emitRadio);
++	}
++
++	// Existing waiting-state and arrival paths consult this before issuing an order.
++	override protected bool CF_WaitForInitialDeparture(IEntity target)
++	{
++		if (m_bTrailResumePending) return true;
++		return super.CF_WaitForInitialDeparture(target);
++	}
++
++	protected void CF_CancelTrailResume(string reason, bool allowNativeCompletion = true)
++	{
++		if (!m_bTrailResumePending && !m_TrailResumeWait) return;
++		if (m_TrailResumeWait) m_TrailResumeWait.Retire(allowNativeCompletion && !CF_IsControlBlocked());
++		m_TrailResumeWait = null;
++		m_bTrailResumePending = false; m_bTrailResumeTimedOut = false;
++		m_TrailResumeSession = null; m_TrailResumeOwner = null; m_TrailResumePredecessor = null;
++		Print("[ConvoyFollower] TRAIL_RESUME_WAIT_RELEASE: unit=" + m_iUnitNumber + " reason=" + reason + " only_owned_wait=true");
++	}
++
++	protected bool CF_TrailResumeContext()
++	{
++		if (!m_bTrailResumePending || !m_TrailWorld || !GetGame()) return false;
++		if (GetGame().GetWorld() != m_TrailWorld || !m_TrailRoute || !m_TrailGuidance || !m_bTrailJoined) return false;
++		if (!m_Session || !m_TrailResumeSession || !m_Leader || !m_TrailResumeOwner) return false;
++		if (!m_TrailPredecessor || !m_TrailResumePredecessor || m_iState != CF_WAITING_FOR_PREDECESSOR || m_bPanelHoldRequested) return false;
++		if (m_iTrailEpoch != m_iTrailResumeEpoch || m_Session != m_TrailResumeSession || m_Leader != m_TrailResumeOwner) return false;
++		if (m_TrailPredecessor != m_TrailResumePredecessor || m_TrailPredecessor != m_LeadVehicle ||
++			m_TrailPredecessor != GetTargetVehicle(false) || !m_Predecessor) return false;
++		if (m_Predecessor.CF_GetAssignedVehicle() != m_TrailPredecessor ||
++			m_Session.CF_GetImmediateActiveSuccessor(m_Predecessor) != this) return false;
++		if (!m_TrailResumeWait || !m_TrailResumeWait.IsUsable() || m_bTrailBlocked) return false;
++		return CF_CapturedWaitOwnershipReady(ChimeraCharacter.Cast(m_Driver), m_Truck, m_Group);
++	}
++
++	protected bool CF_BeginTrailResume()
++	{
++		if (!Replication.IsServer() || !CF_CanPanelResume()) return false;
++		if (m_bTrailResumePending)
++		{
++			if (!CF_TrailResumeContext()) return false;
++			if (m_bTrailResumeTimedOut)
++			{ m_bTrailResumeTimedOut = false; m_fTrailResumeBeginMs = m_TrailWorld.GetWorldTime(); }
++			return true;
++		}
++		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
++		if (!CF_IsPanelHeld() || !m_bTrailJoined || !m_TrailRoute || !m_TrailGuidance) return false;
++		if (!m_TrailGuidance.HasArcGap ||
++			(m_TrailGuidance.State != CF_DrivenRoute.TRACKING && m_TrailGuidance.State != CF_DrivenRoute.SPACING_HOLD)) return false;
++		if (!m_Predecessor || m_Predecessor.CF_GetAssignedVehicle() != m_TrailPredecessor ||
++			m_TrailPredecessor != m_LeadVehicle || m_TrailPredecessor != GetTargetVehicle(false)) return false;
++		if (!CF_HasCapturedWaitLease(m_EntityCapturedWait, driver, m_Truck, m_Group) ||
++			!TryGetVehicleFacing(m_TrailPredecessor, m_vTrailResumeForward)) return false;
++		SCR_AIUtilityComponent utility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
++		if (!utility || utility.GetCurrentBehavior() != m_EntityCapturedWait) return false;
++		m_TrailResumeSession = m_Session; m_TrailResumeOwner = m_Leader;
++		m_TrailResumePredecessor = m_TrailPredecessor; m_iTrailResumeEpoch = m_iTrailEpoch;
++		m_vTrailResumeAnchor = m_TrailPredecessor.GetOrigin(); m_fTrailResumeBeginMs = m_TrailWorld.GetWorldTime();
++		CF_ReleaseCapturedWait("trail_resume_pending");
++		CF_SetPanelHoldRequested(false);
++		SetState(CF_WAITING_FOR_PREDECESSOR);
++		m_bTrailResumePending = true; m_bTrailResumeTimedOut = false;
++		m_TrailResumeWait = new CF_InitialDepartureWait(utility, null);
++		m_TrailResumeWait.Bind(driver, m_Truck);
++		utility.AddAction(m_TrailResumeWait);
++		Print("[ConvoyFollower] TRAIL_RESUME_PENDING: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
++			" predecessor_id=" + m_TrailPredecessor.GetID() + " timeout_s=60 owned_seated_wait=true movement_claim=false");
++		return true;
++	}
++
++	protected void CF_UpdateTrailResume()
++	{
++		if (!m_bTrailResumePending) return;
++		if (CF_ConvoySession.CF_IsWorldCleanup() || CF_IsControlBlocked())
++		{ CF_CancelTrailResume("ownership_or_cleanup", false); return; }
++		if (!CF_TrailResumeContext())
++		{ CF_CancelTrailResume("context_lost", false); CF_BlockTrail("resume_wait_context_lost"); return; }
++		if (m_bTrailResumeTimedOut) return;
++		if (m_TrailWorld.GetWorldTime() - m_fTrailResumeBeginMs > 60000)
++		{
++			m_bTrailResumeTimedOut = true;
++			Print("[ConvoyFollower] TRAIL_RESUME_WAIT_TIMEOUT: unit=" + m_iUnitNumber + " stays_seated=true stop_lead_hold_then_resume_required=true");
++			return;
++		}
++		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
++		SCR_AIUtilityComponent utility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
++		if (!utility || utility.GetCurrentBehavior() != m_TrailResumeWait || !m_TrailGuidance.HasArcGap ||
++			m_TrailGuidance.State != CF_DrivenRoute.TRACKING) return;
++		vector facing;
++		Physics physics = m_TrailPredecessor.GetPhysics();
++		if (!physics || !TryGetVehicleFacing(m_TrailPredecessor, facing)) return;
++		float advance = vector.Dot(m_TrailPredecessor.GetOrigin() - m_vTrailResumeAnchor, m_vTrailResumeForward);
++		if (advance < 3 || 3.6 * vector.Dot(physics.GetVelocity(), facing) <= 1.5) return;
++		float station = Math.Min(m_TrailGuidance.LocalProgress + 30, m_TrailGuidance.RecordedEnd - CF_ConvoySettings.Get().m_fMovingGap);
++		vector goal, tangent, truckForward;
++		if (!m_TrailRoute.ReadRecorded(station, goal, tangent) || !TryGetVehicleFacing(m_Truck, truckForward) ||
++			vector.Dot(goal - m_Truck.GetOrigin(), truckForward) <= 1) return;
++		IEntity predecessor = m_TrailResumePredecessor;
++		CF_CancelTrailResume("recorded_forward_goal_ready");
++		StartFollowing(predecessor, false, false);
++	}
++
++	override bool CF_RequestPanelHold()
++	{
++		bool accepted = super.CF_RequestPanelHold();
++		if (accepted) CF_CancelTrailResume("explicit_hold");
++		return accepted;
+ 	}
+ 
+ 	bool CF_IsTrailGuidePrototypeEnabled() { return m_bTrailGuidePrototype; }
+@@ -347,9 +473,51 @@
+ 		m_bTrailPoseInterrupted = false;
+ 	}
+ 
++	// A retained joined route still needs actual-pose queries while its guide
++	// is retired for the owned direct arrival or captured Wait. Otherwise the
++	// next Resume submits the whole arrival displacement as one physical step.
++	protected void CF_UpdateRetainedTrailPose()
++	{
++		if (!m_bTrailGuidePrototype || m_bTrailGuideActive || m_TrailGuide || m_bTrailBlocked) return;
++		if (!m_bTrailJoined || !m_TrailRoute || !m_TrailGuidance || !m_bTrailFollowerPose) return;
++		if (m_bTrailPoseInterrupted || !Replication.IsServer() || !GetGame() || !m_TrailWorld) return;
++		if (GetGame().GetWorld() != m_TrailWorld || CF_ConvoySession.CF_IsWorldCleanup() || CF_IsControlBlocked()) return;
++		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
++		if (!CF_IsLiveAIPilot(driver, m_Truck) || !m_Session || !m_Predecessor) return;
++		if (m_Predecessor.CF_GetAssignedVehicle() != m_TrailPredecessor ||
++			m_Session.CF_GetImmediateActiveSuccessor(m_Predecessor) != this ||
++			m_TrailPredecessor != m_LeadVehicle || m_TrailPredecessor != GetTargetVehicle(false)) return;
++		bool ownedContext;
++		CF_OriginalFollowLease lease = m_OriginalFollowLease;
++		string reason;
++		if (lease && CF_IsOrdinaryEntityContext() && lease.Predecessor == m_TrailPredecessor &&
++			lease.NativeTarget == m_TrailPredecessor && lease.Waypoint == CF_GetEntityFollowWaypoint())
++			ownedContext = lease.Executing(m_Group, reason);
++		if (!ownedContext && m_EntityCapturedWait &&
++			m_EntityCapturedWait.GetActionState() != EAIActionState.COMPLETED &&
++			m_EntityCapturedWait.GetActionState() != EAIActionState.FAILED &&
++			CF_HasCapturedWaitLease(m_EntityCapturedWait, driver, m_Truck, m_Group))
++		{
++			SCR_AIUtilityComponent utility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
++			ownedContext = utility && utility.GetCurrentBehavior() == m_EntityCapturedWait;
++		}
++		if (!ownedContext && CF_TrailResumeContext())
++		{
++			SCR_AIUtilityComponent waitingUtility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
++			ownedContext = waitingUtility && waitingUtility.GetCurrentBehavior() == m_TrailResumeWait;
++		}
++		if (!ownedContext) return; // Keep pending measured motion; never grant gap credit.
++		CF_QueryTrailPose();
++		if (!m_bTrailBlocked && (!m_TrailGuidance.HasArcGap ||
++			(m_TrailGuidance.State != CF_DrivenRoute.TRACKING && m_TrailGuidance.State != CF_DrivenRoute.SPACING_HOLD)))
++			CF_BlockTrail("retained_route_state_" + m_TrailGuidance.State);
++		// No guide transform, native request, join/epoch reset or pacing receipt.
++	}
++
+ 	protected float CF_QueryTrailPose()
+ 	{
+ 		CF_InvalidateRearGuideQuery();
++		m_bTrailPhysicalQueried = true;
+ 		float budget;
+ 		string reason;
+ 		m_fTrailLastMeasured = m_fTrailMeasuredBudget;
+@@ -359,7 +527,7 @@
+ 		{
+ 			queried = m_TrailRoute.QueryPhysical(m_iTrailEpoch, m_Truck.GetOrigin(), m_fTrailLastMeasured,
+ 				30.0, CF_ConvoySettings.Get().m_fMovingGap, 5.0,
+-				budget, m_fTrailTurnCos, m_fTrailArcFactor, reason, m_TrailGuidance);
++				budget, m_fTrailTurnCos, m_fTrailArcFactor, reason, m_TrailGuidance, true);
+ 		}
+ 		else
+ 		{
+@@ -469,6 +637,7 @@
+ 
+ 	override void CF_SetConvoyTarget(CF_DriverControllerComponent predecessor, int unitNumber)
+ 	{
++		if (m_bTrailResumePending && predecessor != m_Predecessor) CF_CancelTrailResume("predecessor_changed");
+ 		CF_InvalidateRearGuideQuery();
+ 		super.CF_SetConvoyTarget(predecessor, unitNumber);
+ 		CF_RecordTrail();
+@@ -608,7 +777,7 @@
+ 				CF_BlockTrail("resume_route_not_physically_acquired");
+ 				return true;
+ 			}
+-			initialStation = Math.Min(m_TrailGuidance.Progress + 30.0,
++			initialStation = Math.Min(m_TrailGuidance.LocalProgress + 30.0,
+ 				m_TrailGuidance.RecordedEnd - CF_ConvoySettings.Get().m_fMovingGap);
+ 			if (!m_TrailRoute.ReadRecorded(initialStation, start, tangent))
+ 			{
+@@ -791,8 +960,8 @@
+ 				Print("[ConvoyFollower] TRAIL_GUIDE_JOIN: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
+ 					" origin=" + pose + " progress=" + m_TrailGuidance.Progress + " actual_budget_m=" + budget + " forced=false");
+ 			m_bTrailJoined = true;
+-			float nextStation = Math.Min(m_TrailGuidance.Progress + 30.0, endStation - spacing);
+-			if (m_fTrailGuideStation - m_TrailGuidance.Progress <= 15.0 && nextStation > m_fTrailGuideStation + 1.0)
++			float nextStation = Math.Min(m_TrailGuidance.LocalProgress + 30.0, endStation - spacing);
++			if (m_fTrailGuideStation - m_TrailGuidance.LocalProgress <= 15.0 && nextStation > m_fTrailGuideStation + 1.0)
+ 			{
+ 				if (!CF_SetGuideStation(nextStation, "recorded_lookahead"))
+ 					CF_BlockTrail("recorded_goal_not_forward");
+@@ -845,6 +1014,8 @@
+ 			Print("[ConvoyFollower] TRAIL_GUIDE_SAMPLE: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
+ 				" world_ms=" + now + " route_state=" + m_TrailGuidance.State + " joined=" + m_bTrailJoined +
+ 				" progress=" + m_TrailGuidance.Progress + " recorded_end=" + endStation + " guide_station=" + m_fTrailGuideStation +
++				" local_progress=" + m_TrailGuidance.LocalProgress + " reverse_proof_serial=" + m_TrailGuidance.ReverseProofSerial +
++				" reverse_station_total=" + m_TrailGuidance.ReverseStationTotal + " reversing=" + m_TrailGuidance.Reversing +
+ 				" entry_raw=" + raw + " first_segment_m=" + firstLength + " actual_budget_m=" + budget +
+ 				" measured_displacement_m=" + m_fTrailLastMeasured + " local_turn_cos=" + m_fTrailTurnCos + " arc_factor=" + m_fTrailArcFactor +
+ 				" arc_gap=" + m_TrailGuidance.ArcGap + " arc_gap_valid=" + m_TrailGuidance.HasArcGap +
+@@ -856,15 +1027,22 @@
+ 
+ 	override void EOnFrame(IEntity owner, float timeSlice)
+ 	{
++		m_bTrailPhysicalQueried = false;
+ 		CF_RecordTrail();
+ 		CF_MeasureTrailPose();
++		CF_UpdateRetainedTrailPose();
++		CF_UpdateTrailResume();
+ 		CF_UpdateTrailGuide();
+ 		super.EOnFrame(owner, timeSlice);
++		// No reverse proof spans an unselected/unowned observation frame. Keep
++		// measured motion pending: invalidation is not permission to discard it.
++		if (m_TrailRoute && !m_bTrailPhysicalQueried) m_TrailRoute.InvalidatePhysicalQuery();
+ 	}
+ 
+ 	override void CF_OnBeforePlayerPossess(IEntity entity)
+ 	{
+ 		CF_InvalidateRearGuideQuery();
++		if (entity && (entity == m_Driver || entity == m_Truck)) CF_CancelTrailResume("before_player_possession");
+ 		if (m_TrailGuide && entity && (entity == m_Driver || entity == m_Truck) && !CF_IsControlBlocked())
+ 			ClearWaypoints();
+ 		super.CF_OnBeforePlayerPossess(entity);
+@@ -872,6 +1050,7 @@
+ 
+ 	override void CF_DetachForWorldCleanup()
+ 	{
++		CF_CancelTrailResume("world_cleanup", false);
+ 		CF_InvalidateRearGuideQuery();
+ 		CF_DetachTrailGuide(false);
+ 		super.CF_DetachForWorldCleanup();
+@@ -879,6 +1058,7 @@
+ 
+ 	override protected void ResetToIdle()
+ 	{
++		CF_CancelTrailResume("reset_to_idle");
+ 		CF_InvalidateRearGuideQuery();
+ 		if (m_TrailGuide)
+ 			ClearWaypoints();
+@@ -892,6 +1072,7 @@
+ 
+ 	override void OnDelete(IEntity owner)
+ 	{
++		CF_CancelTrailResume("delete", !CF_ConvoySession.CF_IsWorldCleanup());
+ 		CF_InvalidateRearGuideQuery();
+ 		if (CF_ConvoySession.CF_IsWorldCleanup())
+ 			CF_DetachTrailGuide(false);
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c
+@@ -95,6 +95,7 @@
+ {
+ 	// Value-only, one-query context. Ordinary Query never arms the hook.
+ 	protected bool m_PhysicalQueryActive;
++	protected bool m_PhysicalAllowReverse;
+ 	protected float m_PhysicalMeasured;
+ 	protected bool m_PreviousPhysicalQuery;
+ 	protected int m_PreviousTargetKey;
+@@ -107,6 +108,10 @@
+ 	protected float m_PreviousStationA;
+ 	protected float m_PreviousStationB;
+ 	protected float m_PreviousStationNext;
++	protected bool m_PreviousHasBehind;
++	protected vector m_PreviousBehind;
++	protected float m_PreviousStationBehind;
++	protected bool m_PreviousHasNext;
+ 
+ 	protected bool FiniteValue(float value)
+ 	{
+@@ -119,10 +124,169 @@
+ 		return FiniteValue(pose[0]) && FiniteValue(pose[1]) && FiniteValue(pose[2]);
+ 	}
+ 
++	void InvalidatePhysicalQuery()
++	{
++		m_PhysicalQueryActive = false;
++		m_PhysicalAllowReverse = false;
++		m_PreviousPhysicalQuery = false;
++	}
++
++	protected void RememberPhysicalQuery(int targetKey, vector pose)
++	{
++		m_PreviousTargetKey = targetKey;
++		m_PreviousSegment = m_Segment;
++		m_PreviousProgress = m_Progress;
++		m_PreviousPose = pose;
++		m_PreviousA = m_Points[m_Segment];
++		m_PreviousB = m_Points[m_Segment + 1];
++		m_PreviousStationA = m_Stations[m_Segment];
++		m_PreviousStationB = m_Stations[m_Segment + 1];
++		m_PreviousHasBehind = m_Segment > 0;
++		if (m_PreviousHasBehind)
++		{
++			m_PreviousBehind = m_Points[m_Segment - 1];
++			m_PreviousStationBehind = m_Stations[m_Segment - 1];
++		}
++		m_PreviousHasNext = m_Segment < m_Points.Count() - 2;
++		if (m_PreviousHasNext)
++		{
++			m_PreviousNext = m_Points[m_Segment + 2];
++			m_PreviousStationNext = m_Stations[m_Segment + 2];
++		}
++		m_PreviousPhysicalQuery = true;
++	}
++
++	protected bool HasLocalPhysicalContext(int targetKey)
++	{
++		if (!m_PreviousPhysicalQuery || !m_Joined || targetKey != m_TargetKey) return false;
++		if (m_PreviousTargetKey != targetKey || m_PreviousProgress != m_Progress) return false;
++		if (m_Segment < 0 || m_Segment >= m_Points.Count() - 1) return false;
++		// Absolute stations and points survive harmless pruning/index shifts.
++		if (m_PreviousA != m_Points[m_Segment] || m_PreviousB != m_Points[m_Segment + 1]) return false;
++		if (m_PreviousStationA != m_Stations[m_Segment] || m_PreviousStationB != m_Stations[m_Segment + 1]) return false;
++		return FinitePose(m_PreviousPose) && FinitePose(m_PreviousA) && FinitePose(m_PreviousB);
++	}
++
++	// 0: ordinary forward query; 1: proven local rewind; -1: rejected rewind.
++	// No nearest-history search: a reverse step may cross only the prior vertex.
++	protected int TryReversePhysical(int targetKey, vector pose, float measured,
++		float lookAhead, float spacing, float maxCrossTrack, out float allowed,
++		out float turnCos, out float factor, out string reason, CF_DrivenRouteGuidance result)
++	{
++		if (!m_Initialized || !m_Joined || targetKey != m_TargetKey) return 0;
++		if (m_HistoryLost || m_Discontinuous || m_Points.Count() < 2) return 0;
++		if (lookAhead <= 0 || spacing < 0 || maxCrossTrack <= 0) return 0;
++		vector a = m_Points[m_Segment];
++		vector b = m_Points[m_Segment + 1];
++		float length = m_Stations[m_Segment + 1] - m_Stations[m_Segment];
++		vector tangent = b - a;
++		tangent[1] = 0;
++		tangent = tangent / length;
++		float raw = vector.Dot(pose - a, tangent) / length;
++		float candidate = m_Stations[m_Segment] + Math.Clamp(raw, 0, 1) * length;
++		vector projected = a + (b - a) * Math.Clamp(raw, 0, 1);
++		float crossTrack = vector.DistanceXZ(pose, projected);
++		int segment = m_Segment;
++		vector previousTangent;
++		float previousRaw = -1;
++		if (m_Segment > 0 && raw * length <= maxCrossTrack)
++		{
++			vector behind = m_Points[m_Segment - 1];
++			float previousLength = m_Stations[m_Segment] - m_Stations[m_Segment - 1];
++			previousTangent = a - behind;
++			previousTangent[1] = 0;
++			previousTangent = previousTangent / previousLength;
++			previousRaw = vector.Dot(pose - behind, previousTangent) / previousLength;
++			if (previousRaw >= 0 && previousRaw <= 1)
++			{
++				vector previousProjection = behind + (a - behind) * previousRaw;
++				float previousError = vector.DistanceXZ(pose, previousProjection);
++				if (previousError + 0.001 < crossTrack)
++				{
++					segment--;
++					candidate = m_Stations[segment] + previousRaw * previousLength;
++					projected = previousProjection;
++					crossTrack = previousError;
++				}
++			}
++		}
++		// A clamped vertex pose can have raw < 0 without station retreat.
++		// Leave it to ordinary Query's unchanged corridor and advance guards.
++		if (candidate >= m_Progress - 0.001) return 0;
++		ClearGuidance(result);
++		result.State = ADVANCE_LIMIT;
++		result.RecordedEnd = m_Stations[m_Stations.Count() - 1];
++		result.CrossTrack = crossTrack;
++		reason = "reverse_physical_context_unavailable";
++		if (!HasLocalPhysicalContext(targetKey)) return -1;
++		if (raw < 0 && segment == m_Segment)
++		{
++			reason = "reverse_previous_segment_unavailable_or_step_spans_vertices";
++			return -1;
++		}
++		if (segment < m_Segment)
++		{
++			reason = "reverse_previous_history_changed";
++			if (!m_PreviousHasBehind || m_PreviousBehind != m_Points[segment]) return -1;
++			if (m_PreviousStationBehind != m_Stations[segment]) return -1;
++		}
++		vector delta = pose - m_PreviousPose;
++		delta[1] = 0;
++		float chord = delta.Length();
++		reason = "reverse_motion_unproved";
++		if (measured <= 0 || chord <= 0 || !FiniteValue(chord)) return -1;
++		if (chord > measured + 0.001) return -1;
++		vector oldCursor = a + (b - a) * ((m_Progress - m_Stations[m_Segment]) / length);
++		vector oldResidual = m_PreviousPose - oldCursor;
++		vector newResidual = pose - projected;
++		oldResidual[1] = 0;
++		newResidual[1] = 0;
++		reason = "reverse_corridor_lost";
++		if (crossTrack > maxCrossTrack || oldResidual.Length() > maxCrossTrack)
++		{ result.State = OFF_ROUTE; return -1; }
++		// A successfully retained clamped endpoint can have a longitudinal
++		// residual. The signed residual correction below accounts for it;
++		// orthogonality is not required for actual reverse motion proof.
++		vector reverseAxis = -tangent;
++		turnCos = 1;
++		factor = 1;
++		if (segment < m_Segment)
++		{
++			turnCos = Math.Clamp(vector.Dot(tangent, previousTangent), -1.0, 1.0);
++			reason = "reverse_local_turn_over_90_degrees";
++			if (turnCos < 0) return -1;
++			float cosineHalf = Math.Sqrt((1.0 + turnCos) * 0.5);
++			factor = 1.0 / cosineHalf;
++			reverseAxis = -(tangent + previousTangent) / (2.0 * cosineHalf);
++		}
++		float signedMotion = vector.Dot(reverseAxis, delta);
++		float correction = -vector.Dot(reverseAxis, newResidual - oldResidual) * factor;
++		float retreat = m_Progress - candidate;
++		allowed = measured * factor;
++		reason = "reverse_signed_motion_or_budget_rejected";
++		if (!FiniteValue(signedMotion) || !FiniteValue(correction) || !FiniteValue(retreat)) return -1;
++		if (!FiniteValue(allowed) || signedMotion <= 0 || retreat <= 0) return -1;
++		if (retreat > signedMotion * factor + correction + 0.001) return -1;
++		if (retreat > allowed + correction + 0.001) return -1;
++		// The entire proof has passed. Neither a rejected query nor a stale
++		// snapshot can consume history or add a reverse certificate.
++		m_Segment = segment;
++		m_Progress = candidate;
++		m_ReverseProofSerial++;
++		m_ReverseStationTotal += retreat;
++		FillGuidance(lookAhead, spacing, result);
++		result.Reversing = true;
++		result.HasPreviousPhysicalQuery = true;
++		result.PreviousPhysicalPose = m_PreviousPose;
++		result.PreviousIncomingStart = m_PreviousA;
++		RememberPhysicalQuery(targetKey, pose);
++		reason = "";
++		return 1;
++	}
++
+ 	override void Reset(int targetKey, vector actualPredecessorPosition)
+ 	{
+-		m_PhysicalQueryActive = false;
+-		m_PreviousPhysicalQuery = false;
++		InvalidatePhysicalQuery();
+ 		super.Reset(targetKey, actualPredecessorPosition);
+ 	}
+ 
+@@ -130,20 +294,25 @@
+ 	override void Query(int targetKey, vector followerPosition, float lookAhead, float spacing,
+ 		float maxAdvance, float maxCrossTrack, CF_DrivenRouteGuidance result)
+ 	{
+-		m_PhysicalQueryActive = false;
+-		m_PreviousPhysicalQuery = false;
++		InvalidatePhysicalQuery();
+ 		super.Query(targetKey, followerPosition, lookAhead, spacing, maxAdvance, maxCrossTrack, result);
+ 	}
+ 
+ 	bool QueryPhysical(int targetKey, vector pose, float measured, float lookAhead, float spacing,
+ 		float maxCrossTrack, out float allowed, out float turnCos, out float factor,
+-		out string reason, CF_DrivenRouteGuidance result)
++		out string reason, CF_DrivenRouteGuidance result, bool allowReverse = false)
+ 	{
+ 		m_PhysicalQueryActive = false;
++		m_PhysicalAllowReverse = false;
+ 		allowed = 0;
+ 		turnCos = 1;
+ 		factor = 1;
+ 		reason = "";
++		if (result)
++		{
++			ClearGuidance(result);
++			result.State = INVALID_ARGUMENT;
++		}
+ 		if (!result || !FiniteValue(measured) || measured < 0 || !FinitePose(pose) ||
+ 			!FiniteValue(lookAhead) || !FiniteValue(spacing) || !FiniteValue(maxCrossTrack))
+ 		{
+@@ -151,9 +320,21 @@
+ 			reason = "invalid_physical_query_measurement";
+ 			return false;
+ 		}
++		if (allowReverse)
++		{
++			int reverse = TryReversePhysical(targetKey, pose, measured, lookAhead, spacing, maxCrossTrack,
++				allowed, turnCos, factor, reason, result);
++			if (reverse > 0) return true;
++			if (reverse < 0)
++			{
++				InvalidatePhysicalQuery();
++				return false;
++			}
++		}
+ 		if (!PhysicalBudget(measured, allowed, turnCos, factor, reason))
+ 		{
+ 			m_PreviousPhysicalQuery = false;
++			result.State = ADVANCE_LIMIT;
+ 			return false;
+ 		}
+ 		if (!FiniteValue(allowed) || !FiniteValue(turnCos) || !FiniteValue(factor))
+@@ -164,6 +345,7 @@
+ 		}
+ 		m_PhysicalMeasured = measured;
+ 		m_PhysicalQueryActive = true;
++		m_PhysicalAllowReverse = allowReverse;
+ 		bool hadPrevious = m_PreviousPhysicalQuery;
+ 		vector priorPose = m_PreviousPose;
+ 		vector priorStart = m_PreviousA;
+@@ -173,22 +355,13 @@
+ 		result.PreviousPhysicalPose = priorPose;
+ 		result.PreviousIncomingStart = priorStart;
+ 		m_PhysicalQueryActive = false;
++		m_PhysicalAllowReverse = false;
+ 		m_PhysicalMeasured = 0;
+ 		m_PreviousPhysicalQuery = false;
+ 		if ((result.State == TRACKING || result.State == SPACING_HOLD) &&
+-			m_Joined && targetKey == m_TargetKey && m_Segment < m_Points.Count() - 2)
+-		{
+-			m_PreviousTargetKey = targetKey;
+-			m_PreviousSegment = m_Segment;
+-			m_PreviousProgress = m_Progress;
+-			m_PreviousPose = pose;
+-			m_PreviousA = m_Points[m_Segment];
+-			m_PreviousB = m_Points[m_Segment + 1];
+-			m_PreviousNext = m_Points[m_Segment + 2];
+-			m_PreviousStationA = m_Stations[m_Segment];
+-			m_PreviousStationB = m_Stations[m_Segment + 1];
+-			m_PreviousStationNext = m_Stations[m_Segment + 2];
+-			m_PreviousPhysicalQuery = true;
++			m_Joined && targetKey == m_TargetKey && m_Segment < m_Points.Count() - 1)
++		{
++			RememberPhysicalQuery(targetKey, pose);
+ 		}
+ 		return true;
+ 	}
+@@ -197,9 +370,10 @@
+ 	{
+ 		if (!m_PhysicalQueryActive || !m_PreviousPhysicalQuery || !m_Joined ||
+ 			m_PreviousTargetKey != targetKey || targetKey != m_TargetKey ||
+-			m_PreviousSegment != m_Segment || m_PreviousProgress != m_Progress ||
++			m_PreviousProgress != m_Progress || !m_PreviousHasNext ||
+ 			m_Segment >= m_Points.Count() - 2)
+ 			return false;
++		if (m_PreviousSegment != m_Segment && !m_PhysicalAllowReverse) return false;
+ 		if (m_PreviousA != m_Points[m_Segment] || m_PreviousB != m_Points[m_Segment + 1] ||
+ 			m_PreviousNext != m_Points[m_Segment + 2] ||
+ 			m_PreviousStationA != m_Stations[m_Segment] || m_PreviousStationB != m_Stations[m_Segment + 1] ||
+diff --git a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks_Layers/default.layer b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks_Layers/default.layer
+new file mode 100644
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks_Layers/default.layer
+@@ -0,0 +1,55 @@
++SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
++ coords 1375.06 20.1534 3336.05
++}
++
++SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1375.06 20.1534 3334.05
++}
++
++SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1350.99 17.515 3335.1
++}
++
++SCR_AIGroup CF_SmokeGroup2 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1331.34 15.4287 3335.98
++}
++
++Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1346.99 17.515 3331.1
++ angles 0 92 0
++ components {
++  CF_SurfaceContactProbeComponent "{61FBF720781C6A24}" {
++  }
++ }
++}
++
++Vehicle CF_SmokeFollower2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1327.34 15.4287 3331.98
++ angles 0 92 0
++ components {
++  CF_SurfaceContactProbeComponent "{72391DE49CA8844C}" {
++  }
++ }
++}
++
++Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1371.06 20.1534 3330.05
++ angles 0 92 0
++ components {
++  CF_SurfaceContactProbeComponent "{D05E1FAC5ED20110}" {
++  }
++  CF_LoadedPairTripProbeComponent "{3FF2780C2C4476B4}" {
++   m_iExpectedTrucks 2
++   m_bPairCommandsOnly 1
++   m_bStraightReleaseRoadGoal 1
++   m_vStraightReleaseRoadGoal 1598.08 20.7374 3363.82
++   m_fPairRestartWalkMeters 45
++   m_bPacedAutoExit 1
++   m_fPacedLeadSpeedKmh 20
++   m_sPacedWorld "Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent"
++  }
++  CF_ConvoyFilmCameraComponent "{226B4490E8CA0F74}" {
++   m_iExpectedTrucks 2
++  }
++ }
++}
+diff --git a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent
+new file mode 100644
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent
+@@ -0,0 +1,3 @@
++SubScene {
++ Parent "{77C41EA429B6AC35}worlds/GameMaster/GM_Arland.ent"
++}
+diff --git a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent.meta b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent.meta
+new file mode 100644
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent.meta
+@@ -0,0 +1,9 @@
++MetaFileClass {
++ Name "{17F38F21B8EF4C80}Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent"
++ Configurations {
++  ENTResourceClass PC {
++  }
++  ENTResourceClass HEADLESS : PC {
++  }
++ }
++}
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_SmokeProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_SmokeProbeComponent.c
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_SmokeProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_SmokeProbeComponent.c
+@@ -11,6 +11,8 @@
+ 	protected int m_iExpectedTrucks;
+ 	[Attribute(defvalue: "0", params: "0 1 1", desc: "Use the surveyed straight-road goal for the separate two-truck release fixture")]
+ 	protected bool m_bStraightReleaseRoadGoal;
++	[Attribute(defvalue: "1541.59 31.2082 3337.58", desc: "Explicit desired road goal when the straight-road fixture selector is enabled")]
++	protected vector m_vStraightReleaseRoadGoal;
+ 	[Attribute(defvalue: "0", params: "0 1 1", desc: "Use the surveyed eight-metre Arland road goal for the separate wide-road forward-line fixture")]
+ 	protected bool m_bWideRoadGoal;
+ 	[Attribute(defvalue: "0", params: "0 1 1", desc: "Use the separate road-23 atlas corridor goal for a physical three-truck pass test")]
+@@ -345,7 +347,7 @@
+ 		{
+ 			// The generic farthest-forward scan ends beside a tight bend. The
+ 			// release fixture instead stops on the surveyed connected hill road.
+-			vector desiredStraightGoal = Vector(1541.59, 31.2082, 3337.58);
++			vector desiredStraightGoal = m_vStraightReleaseRoadGoal;
+ 			vector resolvedStraightGoal;
+ 			bool connectedStraightGoal = roads.GetReachableWaypointInRoad(m_vInitialLeadPosition, desiredStraightGoal, 35.0, resolvedStraightGoal);
+ 			if (!connectedStraightGoal || vector.Distance(desiredStraightGoal, resolvedStraightGoal) > 15.0 ||
