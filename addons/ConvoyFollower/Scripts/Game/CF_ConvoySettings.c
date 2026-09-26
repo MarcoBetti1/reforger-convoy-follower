@@ -8,8 +8,10 @@ class CF_ConvoySettings : ScriptAndConfig
 	protected static const string CF_PROFILE_OVERRIDE = "$profile:ConvoyFollowerSettings.json";
 	protected static ref CF_ConvoySettings s_Settings;
 
-	[Attribute(defvalue: "20", params: "6 40 0.5", category: "Spacing", desc: "Moving waypoint completion radius in metres. Road routing and vehicle collision may make the visible gap larger.")]
+	[Attribute(defvalue: "20", params: "6 40 0.5", category: "Spacing", desc: "Following gap in metres; also the legacy moving waypoint radius when MoveCompletionRadius is zero. Routing and vehicle collision may make the visible gap larger.")]
 	float m_fMovingGap;
+	[Attribute(defvalue: "0", params: "0 20 0.5", category: "Navigation", desc: "Experimental ordinary-following MOVE geometry radius in metres. Zero preserves the moving-gap radius. Positive values clamp to 2-20; smaller values require validated speed pacing and do not change following spacing.")]
+	float m_fMoveCompletionRadius;
 	[Attribute(defvalue: "10", params: "4 30 0.5", category: "Spacing", desc: "Completion radius used for the final approach to a stopped predecessor, in metres. Must not exceed moving gap.")]
 	float m_fStoppedGap;
 	[Attribute(defvalue: "35", params: "5 100 1", category: "Formation", desc: "Search radius in metres for the closest empty wheeled vehicle when assigning a driver.")]
@@ -74,6 +76,13 @@ class CF_ConvoySettings : ScriptAndConfig
 		return s_Settings;
 	}
 
+	float GetMoveCompletionRadius()
+	{
+		if (m_fMoveCompletionRadius <= 0)
+			return m_fMovingGap;
+		return ClampFloat(m_fMoveCompletionRadius, 2.0, 20.0);
+	}
+
 	protected static float ProfileFloat(JsonLoadContext context, string key, float previous)
 	{
 		float value;
@@ -112,6 +121,7 @@ class CF_ConvoySettings : ScriptAndConfig
 		}
 
 		m_fMovingGap = ProfileFloat(context, "m_fMovingGap", m_fMovingGap);
+		m_fMoveCompletionRadius = ProfileFloat(context, "m_fMoveCompletionRadius", m_fMoveCompletionRadius);
 		m_fStoppedGap = ProfileFloat(context, "m_fStoppedGap", m_fStoppedGap);
 		m_fTruckSearchRadius = ProfileFloat(context, "m_fTruckSearchRadius", m_fTruckSearchRadius);
 		m_iMaxConvoyUnits = ProfileInt(context, "m_iMaxConvoyUnits", m_iMaxConvoyUnits);
@@ -138,6 +148,7 @@ class CF_ConvoySettings : ScriptAndConfig
 	protected void SetDefaults()
 	{
 		m_fMovingGap = 20.0;
+		m_fMoveCompletionRadius = 0;
 		m_fStoppedGap = 10.0;
 		m_fTruckSearchRadius = 35.0;
 		m_iMaxConvoyUnits = 5;
@@ -181,6 +192,10 @@ class CF_ConvoySettings : ScriptAndConfig
 	protected void Validate()
 	{
 		m_fMovingGap = ClampFloat(m_fMovingGap, 6.0, 40.0);
+		if (m_fMoveCompletionRadius <= 0)
+			m_fMoveCompletionRadius = 0;
+		else
+			m_fMoveCompletionRadius = ClampFloat(m_fMoveCompletionRadius, 2.0, 20.0);
 		m_fStoppedGap = ClampFloat(m_fStoppedGap, 4.0, m_fMovingGap);
 		m_fTruckSearchRadius = ClampFloat(m_fTruckSearchRadius, 5.0, 100.0);
 		m_iMaxConvoyUnits = ClampInt(m_iMaxConvoyUnits, 1, 5);

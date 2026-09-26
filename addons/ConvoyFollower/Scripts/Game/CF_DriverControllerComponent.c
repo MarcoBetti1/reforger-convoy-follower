@@ -669,6 +669,33 @@ class CF_DriverControllerComponent : ScriptComponent
 		return slot && slot.IsPiloting() && compartment.GetVehicleIn(driver) == m_Truck;
 	}
 
+	// Prepare once at the confirmed initial driver-seat transition. A short
+	// first MOVE can complete inside its radius before native AI starts the
+	// engine; waiting for a later MOVE then adds a second startup delay.
+	// StartEngine is the ordinary controller input request, not a forced
+	// simulation start. Native AI keeps all throttle, gear and steering control.
+	protected void CF_PrepareEngineAfterBoarding()
+	{
+		if (!Replication.IsServer() || m_iState != CF_BOARDING || !m_Session || !CF_IsBoarded())
+			return;
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		if (!driver || IsDriverDestroyed(driver) || IsAssignedTruckDestroyed())
+			return;
+		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+		if (!car || !car.GetSimulation())
+			return;
+		VehicleWheeledSimulation sim = car.GetSimulation();
+		if (sim.EngineIsOn())
+		{
+			Print("[ConvoyFollower] ENGINE_PREPARE: truck=" + m_Truck.GetName() + " already_on=true");
+			return;
+		}
+		bool requestResult = car.StartEngine();
+		Print("[ConvoyFollower] ENGINE_PREPARE: truck=" + m_Truck.GetName() +
+			" request_result=" + requestResult + " engine_on=" + sim.EngineIsOn() +
+			" seated=" + CF_IsBoarded() + " one_shot=true");
+	}
+
 	bool CF_IsMovementActive()
 	{
 		return m_iState == CF_FOLLOWING || m_iState == CF_ARRIVING;
@@ -3062,6 +3089,8 @@ class CF_DriverControllerComponent : ScriptComponent
 			waypoint.SetPriorityLevel(SCR_AIActionBase.PRIORITY_LEVEL_GAMEMASTER);
 		if (m_iState == CF_ON_FOOT_FOLLOW)
 			waypoint.SetCompletionRadius(CF_ON_FOOT_GAP);
+		else if (m_iState == CF_FOLLOWING)
+			waypoint.SetCompletionRadius(CF_ConvoySettings.Get().GetMoveCompletionRadius());
 		else
 			waypoint.SetCompletionRadius(CF_ConvoySettings.Get().m_fMovingGap);
 		m_Waypoint = waypoint;
@@ -3100,7 +3129,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		{
 			m_vLastTargetPosition = targetPosition;
 			m_fTargetStillSeconds = 0;
-			if (m_bArrivalTrailMode)
+			if (m_bArrivalTrailMode && !m_bArrivalTrailHold)
 			{
 				m_bArrivalTrailMode = false;
 				m_bArrivalTrailHold = false;
@@ -3111,7 +3140,12 @@ class CF_DriverControllerComponent : ScriptComponent
 			{
 				SCR_AIWaypoint activeWaypoint = SCR_AIWaypoint.Cast(m_Waypoint);
 				if (activeWaypoint && HasOwnWaypointInGroup())
-					activeWaypoint.SetCompletionRadius(CF_ConvoySettings.Get().m_fMovingGap);
+				{
+					if (m_iState == CF_FOLLOWING)
+						activeWaypoint.SetCompletionRadius(CF_ConvoySettings.Get().GetMoveCompletionRadius());
+					else
+						activeWaypoint.SetCompletionRadius(CF_ConvoySettings.Get().m_fMovingGap);
+				}
 				m_bStopSettleIssued = false;
 			}
 			return;
@@ -3181,7 +3215,10 @@ class CF_DriverControllerComponent : ScriptComponent
 	{
 		if (m_iState != CF_ARRIVING || !m_Truck || !m_LeadVehicle)
 			return false;
-		if (m_bArrivalTrailMode)
+		// Policy is a fact about this link, not whether a stop-point cache was
+		// refreshed before the still timer crossed its threshold this poll.
+		// Small lead creep must never send an off-network link to a distant road.
+		if (m_bArrivalTrailMode || CF_UsesOrdinaryOffNetworkTrail())
 			return false;
 		if (m_bArrivalRoadRecoveryBlocked)
 			return true;
@@ -3807,6 +3844,7 @@ class CF_DriverControllerComponent : ScriptComponent
 				}
 
 				Print("[ConvoyFollower] BOARDED: driver seat occupied");
+				CF_PrepareEngineAfterBoarding();
 				SetState(CF_WAITING_FOR_LEAD);
 				m_fStateSeconds = 0;
 				if (m_Session)

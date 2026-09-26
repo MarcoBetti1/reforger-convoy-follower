@@ -9,6 +9,22 @@ const WORLDS: Record<OffroadFixture, string> = {
   arland: "Worlds/Tests/ConvoyFollower_Arland_ClearField_Offroad_1Truck.ent",
 };
 const PREFIX = /\[ConvoyFollower\]\s+([A-Z0-9_]+):\s*(.*)$/;
+const ERROR = /\b(?:SCRIPT|ENGINE|WORLD|RESOURCES|RPL)\s*\(E\)/;
+const HELIPAD_RESOURCE = "Prefabs/Compositions/Misc/SubCompositions/Utility/Helipad_Lights_US_01.et";
+const HELIPAD_BASELINE = ".cache/client/runs/vanilla-gm-arland-helipad-baseline/logs/console.log";
+
+export interface OffroadDiagnostic {
+  line: number;
+  text: string;
+  phase: "load" | "gameplay" | "post-result" | "shutdown";
+  resource?: string;
+  reproducedBaseline?: { id: string; reference: string; interpretation: string };
+}
+
+interface ReportGate {
+  passed: boolean;
+  failures: string[];
+}
 
 export interface OffroadReport {
   surfaceRequirement: SurfaceRequirement;
@@ -26,6 +42,19 @@ export interface OffroadReport {
   failures: string[];
   passed: boolean;
   interpretation: string;
+  scope: {
+    startLine: number;
+    endLine: number;
+    gameLine?: number;
+    initLine?: number;
+    terminalLine?: number;
+    shutdownLine?: number;
+  };
+  scenario: ReportGate;
+  surface: ReportGate & { requirement: SurfaceRequirement };
+  runtime: { clean: boolean; errors: OffroadDiagnostic[]; reproducedBaselineCount: number };
+  lifecycle: { observed: boolean; clean: boolean | null; errors: OffroadDiagnostic[]; failureEvents: string[] };
+  fullRun: { passed: boolean; clean: boolean; errorCount: number; reproducedBaselineCount: number; failureEventCount: number };
 }
 
 function numberField(text: string, name: string): number | undefined {
@@ -57,28 +86,68 @@ export function summarizeOffroadLog(logText: string, fixture: OffroadFixture = "
     const relativeReload = lines.slice(gameIndex + 1).findIndex((line) => /Workbench Reload Game/.test(line));
     if (relativeReload >= 0) end = gameIndex + 1 + relativeReload;
   }
+  // Include this launch's load errors, including those before probe init. A
+  // previous world teardown/reload is a boundary, not part of the new result.
+  let start = 0;
+  for (let index = 0; index < gameIndex; index += 1) {
+    if (/Workbench Reload Game|\bGame destroyed\b/.test(lines[index])) start = index + 1;
+  }
   let initIndex = -1;
-  for (let index = end - 1; index >= 0; index -= 1) {
+  for (let index = end - 1; index >= start; index -= 1) {
     if (/\[ConvoyFollower\]\s+OFFROAD_INIT:/.test(lines[index])) {
       initIndex = index;
       break;
     }
   }
-  const run = initIndex >= 0 ? lines.slice(initIndex, end) : [];
+  let terminalIndex = -1;
+  let shutdownIndex = -1;
+  for (let index = Math.max(start, initIndex); index < end; index += 1) {
+    if (terminalIndex < 0 && /\[ConvoyFollower\]\s+OFFROAD_RESULT:/.test(lines[index])) terminalIndex = index;
+    if (shutdownIndex < 0 && /\[ConvoyFollower\]\s+WORLD_CLEANUP:|\bGame destroyed\b/.test(lines[index])) shutdownIndex = index;
+  }
+  const physicalEnd = Math.min(terminalIndex >= 0 ? terminalIndex + 1 : end, shutdownIndex >= 0 ? shutdownIndex : end);
+  const run = initIndex >= 0 ? lines.slice(initIndex, physicalEnd) : [];
   let lastLoadedFixture: string | undefined;
-  for (const line of lines.slice(0, initIndex + 1)) {
+  for (const line of lines.slice(start, initIndex + 1)) {
     const normalized = line.replaceAll("\\", "/");
-    for (const world of Object.values(WORLDS)) {
-      if (normalized.includes(world)) lastLoadedFixture = world;
-    }
+    const loadedWorld = /Entities load ['"]([^'"]+\.ent)['"]/.exec(normalized)?.[1];
+    if (loadedWorld) lastLoadedFixture = loadedWorld;
   }
   const initWorld = initIndex >= 0 ? /\bworld=(\S+)/.exec(lines[initIndex])?.[1] : undefined;
   const expectedLabel = path.posix.basename(expectedWorld, ".ent");
-  const observedWorld = lastLoadedFixture === expectedWorld && (initWorld === undefined || initWorld === expectedLabel);
-  const enteredGame = gameIndex >= 0 && initIndex >= 0 && gameIndex < end;
+  const observedWorld = (lastLoadedFixture === expectedWorld || lastLoadedFixture?.endsWith(`:${expectedWorld}`) === true) &&
+    (initWorld === undefined || initWorld === expectedLabel);
+  const enteredGame = gameIndex >= start && initIndex >= start && gameIndex < physicalEnd;
   const eventCounts: Record<string, number> = {};
   const failureEvents: string[] = [];
-  const errorLines = run.filter((line) => /\b(?:SCRIPT|ENGINE|WORLD|RESOURCES)\s*\(E\)/.test(line));
+  const diagnostics: OffroadDiagnostic[] = [];
+  let lastResource: { name: string; line: number } | undefined;
+  for (let index = start; index < end; index += 1) {
+    const line = lines[index];
+    const resource = /(?:GetResourceObject|Entity prefab load)\s+@?"(?:\{[^}]+\})?([^"]+)"/.exec(line)?.[1];
+    if (resource) lastResource = { name: resource.replaceAll("\\", "/"), line: index };
+    if (!ERROR.test(line)) continue;
+    const diagnostic: OffroadDiagnostic = {
+      line: index + 1,
+      text: line,
+      phase: shutdownIndex >= 0 && index >= shutdownIndex ? "shutdown"
+        : terminalIndex >= 0 && index > terminalIndex ? "post-result"
+          : gameIndex < 0 || index < gameIndex ? "load" : "gameplay",
+    };
+    // Require nearby resource context as well as the exact known signature;
+    // the same field name in another resource is not the reproduced baseline.
+    if (lastResource && index - lastResource.line <= 3) diagnostic.resource = lastResource.name;
+    if (diagnostic.resource === HELIPAD_RESOURCE &&
+        /\bWORLD\s*\(E\):\s*Unknown keyword\/data 'm_bShowDebugShape' at offset 2307\(0x903\)\s*$/.test(line)) {
+      diagnostic.reproducedBaseline = {
+        id: "vanilla-arland-helipad-show-debug-shape",
+        reference: HELIPAD_BASELINE,
+        interpretation: "Exact resource/signature reproduced without this addon; retained as a strict error.",
+      };
+    }
+    diagnostics.push(diagnostic);
+  }
+  const errorLines = diagnostics.map((diagnostic) => diagnostic.text);
   const finalMetrics: Record<string, number | boolean> = {};
   const numericNames = [
     "lead_path", "follower_path", "lead_offroad_path", "follower_offroad_path",
@@ -158,14 +227,15 @@ export function summarizeOffroadLog(logText: string, fixture: OffroadFixture = "
     if (group.unpaved && group.wheels.size >= 4) counts.unpaved += 1;
     else counts.pavedOrUnknown += 1;
   }
-  const failures: string[] = [];
+  const surfaceFailures: string[] = [];
   if (surfaceRequirement === "unpaved") {
     for (const truck of ["CF_SmokeLead", "CF_SmokeFollower1"]) {
       if ((movingSurfaceSamples[truck]?.unpaved ?? 0) < 2) {
-        failures.push(`${truck} needs at least two moving samples with four or more wheels on known unpaved ground; road-network distance is not surface evidence.`);
+        surfaceFailures.push(`${truck} needs at least two moving samples with four or more wheels on known unpaved ground; road-network distance is not surface evidence.`);
       }
     }
   }
+  const failures: string[] = [];
   if (!observedWorld) failures.push(`Expected isolated ${fixture} offroad world was not observed for this run.`);
   if (!enteredGame) failures.push("No actual GAME interval with the offroad probe was observed.");
   if (routeLength === undefined || routeLength < 60 || routeLength > 100) failures.push("No surveyed 60–100 m route was selected.");
@@ -185,15 +255,55 @@ export function summarizeOffroadLog(logText: string, fixture: OffroadFixture = "
   if (typeof finalMetrics.max_nonprogress_s !== "number" || finalMetrics.max_nonprogress_s >= 15) failures.push("The follower stopped making progress for too long or lacks evidence.");
   if (typeof finalMetrics.settled_s !== "number" || finalMetrics.settled_s < 10 || finalMetrics.seated_chain !== true) failures.push("A seated assigned chain must settle for ten consecutive seconds.");
   if (failureEvents.length) failures.push("The selected run contains a lost, stuck, removed, reboarded, inverted, or failed convoy event.");
-  if (errorLines.length) failures.push("The selected probe run contains engine or script errors.");
+  const scenario: ReportGate = { passed: failures.length === 0, failures: [...failures] };
+  const surface = { requirement: surfaceRequirement, passed: surfaceFailures.length === 0, failures: surfaceFailures };
+  failures.unshift(...surfaceFailures);
+  const runtimeErrors = diagnostics.filter(({ phase }) => phase === "load" || phase === "gameplay");
+  const lifecycleErrors = diagnostics.filter(({ phase }) => phase === "post-result" || phase === "shutdown");
+  // Keep the old full-run event gate strict. A teardown removal is not an
+  // in-game chain failure, but it is still visible and prevents a clean full
+  // lifecycle claim; terminal-bounded scenario acceptance remains separate.
+  const laterFailureEvents = lines.slice(physicalEnd, end).filter((line) => {
+    const event = PREFIX.exec(line);
+    return event !== null && (["LOST", "STUCK_TERMINAL", "CONVOY_UNIT_REMOVED", "REBOARD_STARTED", "ORDER_INVERSION"].includes(event[1]) ||
+      (event[1] === "OFFROAD_RESULT" && event[2].startsWith("FAIL")));
+  });
+  failureEvents.push(...laterFailureEvents);
+  if (laterFailureEvents.length) failures.push("Post-result or shutdown convoy failure events remain in the strict full-run gate; see lifecycle findings separately from the physical scenario.");
+  if (errorLines.length) failures.push("The selected full run contains engine, script, resource, world, or replication errors; reproduced baseline errors remain strict failures.");
+  const reproducedBaselineCount = diagnostics.filter(({ reproducedBaseline }) => reproducedBaseline !== undefined).length;
   return {
     surfaceRequirement, movingSurfaceSamples,
     expectedWorld, observedWorld, enteredGame, routeLength, result, finalMetrics,
     independentlyObservedMovingSeconds: maxStreak, eventCounts, failureEvents, errorLines,
     failures, passed: failures.length === 0,
+    scope: {
+      startLine: start + 1, endLine: end,
+      gameLine: gameIndex >= 0 ? gameIndex + 1 : undefined,
+      initLine: initIndex >= 0 ? initIndex + 1 : undefined,
+      terminalLine: terminalIndex >= 0 ? terminalIndex + 1 : undefined,
+      shutdownLine: shutdownIndex >= 0 ? shutdownIndex + 1 : undefined,
+    },
+    scenario, surface,
+    runtime: {
+      clean: runtimeErrors.length === 0, errors: runtimeErrors,
+      reproducedBaselineCount: runtimeErrors.filter(({ reproducedBaseline }) => reproducedBaseline !== undefined).length,
+    },
+    lifecycle: {
+      observed: shutdownIndex >= 0,
+      clean: lifecycleErrors.length || laterFailureEvents.length ? false : shutdownIndex >= 0 ? true : null,
+      errors: lifecycleErrors,
+      failureEvents: laterFailureEvents,
+    },
+    fullRun: {
+      passed: failures.length === 0, clean: diagnostics.length === 0 && failureEvents.length === 0,
+      errorCount: diagnostics.length, reproducedBaselineCount, failureEventCount: failureEvents.length,
+    },
     interpretation: failures.length === 0
-      ? `Strict log evidence supports a physical one-truck ${surfaceRequirement} run. Inspect the gameplay video before making a visual demonstration claim.`
-      : "Requested terrain and following acceptance remain unproved; a geometry candidate or GAME transition alone is insufficient.",
+      ? `Strict log evidence supports a physical one-truck ${surfaceRequirement} run within the supplied log. Inspect the gameplay video; unobserved shutdown remains untested.`
+      : scenario.passed && surface.passed
+        ? "Physical scenario and requested surface gates passed, but the supplied full run has strict runtime/lifecycle errors. No error-free or overall PASS claim is supported."
+        : "Physical scenario or requested surface acceptance failed; see the separate gates and runtime/lifecycle diagnostics. A probe PASS alone is insufficient.",
   };
 }
 

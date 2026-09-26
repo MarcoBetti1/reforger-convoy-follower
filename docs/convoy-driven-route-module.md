@@ -27,3 +27,9 @@ This module measures an observed trail; it does not certify that a wider or diff
 A future own-steering adapter can use the goal and route tangent while applying speed, curvature and collision constraints. A native-waypoint adapter must preserve intermediate bends: issuing a single distant MOVE may let native navigation cut a corner even when the sampled route is correct. Neither adapter is implemented here.
 
 The native probe covers startup, straight interpolation, monotonic progress, bounded advancement, off-route rejection, stopped spacing, duplicate suppression, target changes, discontinuity, an S bend, a close hairpin, height interpolation, and both history limits. Its terminal marker is `DRIVEN_ROUTE_RESULT: PASS/FAIL`; physical acceptance remains a separate one-truck recorded-route test before two- and three-truck integration.
+
+## Experimental native MOVE geometry radius
+
+The server profile now accepts `m_fMoveCompletionRadius`. Its shipped and example value is **0**, which retains the existing `m_fMovingGap` completion radius. Positive values clamp to 2–20 m and affect ordinary `FOLLOWING` MOVE creation and radius restoration only; arrival, unload and return-specific radii remain unchanged. `m_fMovingGap` still controls existing spacing and restart thresholds.
+
+The isolated pacing comparison may set `m_fMoveCompletionRadius: 5` while keeping `m_fMovingGap: 20`. This makes geometry completion distinct from desired spacing before the first waypoint is added. It is **experimental**: native cruise pacing is currently attached only to a test follower, and is not integrated into production convoy control. A smaller radius by itself does not provide safe spacing or collision avoidance. Keep 0 for ordinary use until the combined pacing/geometry contract passes physical tests. This setting does not connect `CF_DrivenRoute` to the controller.

@@ -16,6 +16,8 @@ Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M
  coords 1600.0 38.0312 2940.0
  angles 0 90 0
  components {
+  CF_FollowCruiseProbeComponent "{93F247C85EAB601D}" {
+  }
   CF_SurfaceContactProbeComponent "{27C1F5096A824BE3}" {
   }
  }

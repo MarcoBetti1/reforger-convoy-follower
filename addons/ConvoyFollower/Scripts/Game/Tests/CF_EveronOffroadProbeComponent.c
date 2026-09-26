@@ -29,6 +29,11 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 	protected bool m_bFinished;
 	protected bool m_bOccupied;
 	protected bool m_bGoalReached;
+	protected AICarMovementComponent m_LeadCruiseMovement;
+	protected bool m_bOwnLeadCruise;
+	protected bool m_bLeadHoldPoseValid;
+	protected vector m_vLeadHeldPosition;
+	protected int m_iLeadHoldStillSeconds;
 	protected bool m_bOrderSent;
 	protected IEntity m_eOccupant;
 	protected int m_iStage;
@@ -57,8 +62,81 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 
 	override void EOnPostFrame(IEntity owner, float timeSlice)
 	{
+		if (CF_ConvoySession.CF_IsWorldCleanup())
+			return;
 		if (m_bHoldLead && m_Lead)
 			ApplyLeadBrake();
+	}
+
+	override void OnDelete(IEntity owner)
+	{
+		if (GetGame())
+			GetGame().GetCallqueue().Remove(Poll);
+		ResetLeadCruiseOverride();
+		m_Lead = null;
+		m_Follower = null;
+	}
+
+	protected void ResetLeadCruiseOverride()
+	{
+		if (m_bOwnLeadCruise && m_LeadCruiseMovement && GetGame() && GetGame().GetWorld() &&
+			!CF_ConvoySession.CF_IsWorldCleanup())
+			m_LeadCruiseMovement.ResetCruiseSpeed();
+		m_bOwnLeadCruise = false;
+		m_LeadCruiseMovement = null;
+	}
+
+	protected void RequestLeadCruiseStop()
+	{
+		AICarMovementComponent movement = AICarMovementComponent.Cast(m_Lead.FindComponent(AICarMovementComponent));
+		AIAgent agent;
+		if (movement)
+			agent = movement.GetAIAgent();
+		if (!agent || agent.GetControlledEntity() != m_Lead)
+		{
+			Print("[ConvoyFollower] OFFROAD_LEAD_CRUISE_MISSING: no native car movement proven to own lead");
+			return;
+		}
+		m_LeadCruiseMovement = movement;
+		m_LeadCruiseMovement.SetCruiseSpeed(0);
+		m_bOwnLeadCruise = true;
+		Print("[ConvoyFollower] OFFROAD_LEAD_CRUISE_STOP: controlled=" + m_Lead.GetName() +
+			" requested_kmh=0 physical_hold_pending=true");
+	}
+
+	protected bool CheckLeadHold()
+	{
+		CarControllerComponent car = CarControllerComponent.Cast(m_Lead.FindComponent(CarControllerComponent));
+		if (!car || !car.GetSimulation())
+			return false;
+		VehicleWheeledSimulation sim = car.GetSimulation();
+		if (!m_bLeadHoldPoseValid)
+		{
+			if (Speed(m_Lead) <= 2.0 && m_LastSteps[0] <= 0.3)
+				m_iLeadHoldStillSeconds++;
+			else
+				m_iLeadHoldStillSeconds = 0;
+			if (m_iLeadHoldStillSeconds >= 2)
+			{
+				m_bLeadHoldPoseValid = true;
+				m_vLeadHeldPosition = m_Lead.GetOrigin();
+			}
+		}
+		float drift;
+		if (m_bLeadHoldPoseValid)
+			drift = vector.DistanceXZ(m_Lead.GetOrigin(), m_vLeadHeldPosition);
+		Print("[ConvoyFollower] OFFROAD_LEAD_HOLD: origin=" + m_Lead.GetOrigin() +
+			" forward=" + m_Lead.GetWorldTransformAxis(2) + " speed_kmh=" + sim.GetSpeedKmh() +
+			" brake=" + sim.GetBrake() + " throttle=" + sim.GetThrottle() + " gear=" + sim.GetGear() +
+			" engine=" + sim.EngineIsOn() + " handbrake=" + sim.IsHandbrakeOn() +
+			" persistent=" + car.GetPersistentHandBrake() + " owns_cruise_zero=" + m_bOwnLeadCruise +
+			" settled_pose=" + m_bLeadHoldPoseValid + " drift_m=" + drift);
+		if (m_bLeadHoldPoseValid && drift > 2.0)
+		{
+			Finish("FAIL test lead drift exceeded 2m after settled hold");
+			return false;
+		}
+		return true;
 	}
 
 	protected bool Resolve()
@@ -367,6 +445,9 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 
 	protected bool StartDrive()
 	{
+		ResetLeadCruiseOverride();
+		m_bLeadHoldPoseValid = false;
+		m_iLeadHoldStillSeconds = 0;
 		if (m_PilotWaypoint)
 			m_PilotGroup.RemoveWaypoint(m_PilotWaypoint);
 		Resource prefab = Resource.Load("{750A8D1695BD6998}Prefabs/AI/Waypoints/AIWaypoint_Move.et");
@@ -519,6 +600,8 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 
 	protected void Poll()
 	{
+		if (CF_ConvoySession.CF_IsWorldCleanup())
+			return;
 		if (m_bFinished)
 			return;
 		m_iTicks++;
@@ -594,8 +677,11 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 			if (m_PilotWaypoint)
 				m_PilotGroup.RemoveWaypoint(m_PilotWaypoint);
 			m_PilotWaypoint = null;
+			RequestLeadCruiseStop();
 			Print("[ConvoyFollower] OFFROAD_GOAL_REACHED: goal_gap=" + goalGap + " lead brake applied");
 		}
+		if (m_bGoalReached && !CheckLeadHold())
+			return;
 		float finalLeadGap;
 		float finalLeadWidth;
 		int finalLeadRoad;

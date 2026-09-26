@@ -31,6 +31,8 @@ The feature-courses-v3 pack passed all five Workbench configurations. Live clien
 
 ## Known baseline shutdown errors
 
+Separate **load-time** baseline: `.cache/client/runs/vanilla-gm-arland-helipad-baseline/logs/console.log` loaded only `core` and `ArmaReforger`, reached GAME at 22:36:04.447, and reproduced `Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)` at 22:36:04.806 under the base `Helipad_Lights_US_01.et` resource. The taxiway comparison has the same error. It remains reported; it is distinct from both convoy movement failures and shutdown errors below.
+
 The two `'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!` errors are **also present without ConvoyFollower** in `D:\SteamLibrary\reforger-automation\smoke-config\logs\console.log`, lines 177–178. Its loaded-addons section lists only `core` and `ArmaReforger`; the errors occur immediately before `Game destroyed` during a failed base-server startup.
 
 The older Raven-only client log `.cache/client/runs/2026-09-24T18-46-40-134Z-24108/logs/console.log` reproduces both errors at 14:15:50.353/.357 and UI texture resource-leak reports after destruction. It did not load ConvoyFollower. All 61 `.edds` paths reported as leaks in road81-v4c also appear in that older run; none is a ConvoyFollower asset path.

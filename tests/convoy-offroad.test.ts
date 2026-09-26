@@ -122,4 +122,124 @@ describe("strict offroad physical report", () => {
     expect(summarizeOffroadLog(physicalLog().replace("settled_s=10", "settled_s=9")).passed).toBe(false);
     expect(summarizeOffroadLog(physicalLog() + "\nSCRIPT (E): offroad runtime error").passed).toBe(false);
   });
+
+  it("separates physical and surface acceptance without weakening the strict result", () => {
+    const terrain = summarizeOffroadLog(physicalLog().replaceAll("grass_lush.gamemat", "concrete.gamemat"));
+    expect(terrain.scenario.passed).toBe(true);
+    expect(terrain.surface.passed).toBe(false);
+    expect(terrain.runtime.clean).toBe(true);
+    expect(terrain.passed).toBe(false);
+
+    const spacing = summarizeOffroadLog(physicalLog().replace("max_link_gap=41", "max_link_gap=91"));
+    expect(spacing.scenario.passed).toBe(false);
+    expect(spacing.surface.passed).toBe(true);
+    expect(spacing.runtime.clean).toBe(true);
+  });
+
+  it("includes load and replication errors before the probe initializes", () => {
+    const log = physicalLog().replace("SCRIPT : [ConvoyFollower] OFFROAD_INIT:",
+      "WORLD (E): early resource failure\nRPL (E): early replication failure\nSCRIPT : [ConvoyFollower] OFFROAD_INIT:");
+    const report = summarizeOffroadLog(log);
+    expect(report.scenario.passed).toBe(true);
+    expect(report.runtime.clean).toBe(false);
+    expect(report.runtime.errors.map(error => error.phase)).toEqual(["load", "load"]);
+    expect(report.errorLines).toHaveLength(2);
+    expect(report.passed).toBe(false);
+  });
+
+  it("also retains errors from this launch before the world-load line", () => {
+    const report = summarizeOffroadLog("SCRIPT (E): addon startup failure\n" + physicalLog());
+    expect(report.runtime.errors[0]).toMatchObject({ line: 1, phase: "load" });
+    expect(report.passed).toBe(false);
+  });
+
+  it("annotates only the exact contextual Helipad baseline and never waives it", () => {
+    const resource = "Prefabs/Compositions/Misc/SubCompositions/Utility/Helipad_Lights_US_01.et";
+    const diagnostic = `WORLD : Entity prefab load @"{472BE7BF1240C1CE}${resource}"\nWORLD (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)`;
+    const log = physicalLog().replace("SCRIPT : [ConvoyFollower] OFFROAD_ROUTE_SELECTED:",
+      diagnostic + "\nSCRIPT : [ConvoyFollower] OFFROAD_ROUTE_SELECTED:");
+    const report = summarizeOffroadLog(log);
+    expect(report.scenario.passed).toBe(true);
+    expect(report.surface.passed).toBe(true);
+    expect(report.runtime.errors[0]).toMatchObject({
+      resource, phase: "gameplay",
+      reproducedBaseline: {
+        id: "vanilla-arland-helipad-show-debug-shape",
+        reference: ".cache/client/runs/vanilla-gm-arland-helipad-baseline/logs/console.log",
+      },
+    });
+    expect(report.fullRun).toEqual({ passed: false, clean: false, errorCount: 1, reproducedBaselineCount: 1, failureEventCount: 0 });
+    expect(report.passed).toBe(false);
+    expect(report.interpretation).toContain("Physical scenario and requested surface gates passed");
+
+    for (const changed of [
+      log.replace(resource, "Prefabs/Other.et"),
+      log.replace("offset 2307(0x903)", "offset 2308(0x904)"),
+      log.replace(`WORLD : Entity prefab load @"{472BE7BF1240C1CE}${resource}"\n`, ""),
+    ]) {
+      const unmatched = summarizeOffroadLog(changed);
+      expect(unmatched.fullRun.reproducedBaselineCount).toBe(0);
+      expect(unmatched.passed).toBe(false);
+    }
+  });
+
+  it("bounds physical evidence at the terminal while retaining later shutdown failures", () => {
+    const snapshot = physicalLog();
+    const log = snapshot + "\nSCRIPT : [ConvoyFollower] WORLD_CLEANUP: detached 1 sessions" +
+      "\nSCRIPT : [ConvoyFollower] CONVOY_UNIT_REMOVED: teardown" +
+      "\nENGINE : Game destroyed.\nRESOURCES (E): texture leak\nRPL (E): shutdown replication error";
+    const report = summarizeOffroadLog(log);
+    expect(report.scenario.passed).toBe(true);
+    expect(report.failureEvents).toHaveLength(1);
+    expect(report.lifecycle.failureEvents).toEqual(report.failureEvents);
+    expect(report.runtime.clean).toBe(true);
+    expect(report.lifecycle.observed).toBe(true);
+    expect(report.lifecycle.clean).toBe(false);
+    expect(report.lifecycle.errors.map(error => error.phase)).toEqual(["shutdown", "shutdown"]);
+    expect(report.fullRun.errorCount).toBe(2);
+    expect(report.passed).toBe(false);
+    expect(report.scope.terminalLine).toBe(snapshot.split("\n").length);
+    expect(report.scope.shutdownLine).toBe(snapshot.split("\n").length + 1);
+  });
+
+  it("does not claim an unobserved lifecycle is clean or hide post-result errors", () => {
+    const report = summarizeOffroadLog(physicalLog());
+    expect(report.passed).toBe(true);
+    expect(report.lifecycle).toEqual({ observed: false, clean: null, errors: [], failureEvents: [] });
+    expect(report.interpretation).toContain("unobserved shutdown remains untested");
+    const later = summarizeOffroadLog(physicalLog() + "\nSCRIPT (E): after-result callback failure");
+    expect(later.scenario.passed).toBe(true);
+    expect(later.runtime.clean).toBe(true);
+    expect(later.lifecycle).toMatchObject({ observed: false, clean: false });
+    expect(later.lifecycle.errors[0].phase).toBe("post-result");
+    expect(later.passed).toBe(false);
+  });
+
+  it("does not waive a later convoy failure event even without engine errors", () => {
+    const report = summarizeOffroadLog(physicalLog() +
+      "\nSCRIPT : [ConvoyFollower] WORLD_CLEANUP: detached 1 sessions" +
+      "\nSCRIPT : [ConvoyFollower] CONVOY_UNIT_REMOVED: teardown");
+    expect(report.scenario.passed).toBe(true);
+    expect(report.runtime.clean).toBe(true);
+    expect(report.lifecycle.clean).toBe(false);
+    expect(report.fullRun.failureEventCount).toBe(1);
+    expect(report.passed).toBe(false);
+  });
+
+  it("keeps a previous run's errors outside the selected reloaded run", () => {
+    const previous = physicalLog() + "\nRPL (E): old failure\nENGINE : Game destroyed.";
+    const report = summarizeOffroadLog(previous + "\nWorkbench Reload Game\n" + physicalLog());
+    expect(report.passed).toBe(true);
+    expect(report.errorLines).toEqual([]);
+    expect(report.scope.startLine).toBeGreaterThan(previous.split("\n").length);
+  });
+
+  it("cannot reuse an earlier fixture PASS for a later unrelated world's GAME", () => {
+    const log = physicalLog() + "\nWorkbench Reload Game\nWORLD : Entities load 'worlds/GameMaster/GM_Arland.ent'" +
+      "\nSCRIPT : SCR_BaseGameMode::OnGameStateChanged = GAME";
+    const report = summarizeOffroadLog(log);
+    expect(report.observedWorld).toBe(false);
+    expect(report.result).toBeUndefined();
+    expect(report.passed).toBe(false);
+  });
 });

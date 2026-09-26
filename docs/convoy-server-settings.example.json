@@ -7,5 +7,6 @@
   "m_fExceptionRepeatSeconds": 45,
   "m_iMaxConvoyUnits": 5,
   "m_fMovingGap": 20,
+  "m_fMoveCompletionRadius": 0,
   "m_fStoppedGap": 10
 }

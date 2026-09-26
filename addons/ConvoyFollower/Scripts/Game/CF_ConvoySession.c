@@ -379,7 +379,7 @@ class CF_ConvoySession
 		if (ownerVehicle)
 			ownerCar = CarControllerComponent.Cast(ownerVehicle.FindComponent(CarControllerComponent));
 		if (!ownerVehicle || session.IsConvoyVehicle(ownerVehicle) || !ownerCar ||
-			!ownerCar.GetSimulation() || ownerCar.GetSimulation().GetSpeedKmh() > 2.0)
+			!ownerCar.GetSimulation() || Math.AbsFloat(ownerCar.GetSimulation().GetSpeedKmh()) > 2.0)
 		{
 			session.m_sPanelOrderState = "blocked: stop the lead vehicle before ordering Hold";
 			return false;
@@ -478,7 +478,7 @@ class CF_ConvoySession
 			if (movingLead)
 				movingCar = CarControllerComponent.Cast(movingLead.FindComponent(CarControllerComponent));
 			if (movingCar && movingCar.GetSimulation() &&
-				movingCar.GetSimulation().GetSpeedKmh() > 5.0)
+				Math.AbsFloat(movingCar.GetSimulation().GetSpeedKmh()) > 5.0)
 			{
 				m_sPanelOrderState = "blocked: lead moved before all trucks held; use Resume to regroup";
 				m_iPanelOrder = CF_PANEL_ORDER_NONE;
