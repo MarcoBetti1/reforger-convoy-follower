@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{9BC1E7D33519A220}Worlds/Tests/ConvoyFollower_Arland_RoadWidthSurvey.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

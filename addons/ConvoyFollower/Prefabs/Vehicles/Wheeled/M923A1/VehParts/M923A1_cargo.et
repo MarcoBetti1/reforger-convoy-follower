@@ -14,6 +14,17 @@ GenericEntity : "{278E487E19D82680}Prefabs/Vehicles/Core/Vehicle_Cargo_Base.et" 
      VisibilityRange 2.5
      "Sort Priority" 16
     }
+    CF_PullAheadAtUnloadAction "{A0274ACF7D3B5011}" {
+     ParentContextList {
+      "door_rear"
+     }
+     UIInfo SCR_ActionUIInfo "{A0274ACF7D3B5012}" {
+      Name "Pull ahead and wait"
+      m_sIconName "veh_trunk"
+     }
+     VisibilityRange 2.5
+     "Sort Priority" 17
+    }
     CF_ResumeConvoyAction "{F01E6B11A51B9F10}" {
      ParentContextList {
       "door_rear"

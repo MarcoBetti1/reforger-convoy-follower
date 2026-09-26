@@ -53,16 +53,7 @@ SCR_ChimeraCharacter : "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR
       "default"
      }
      UIInfo SCR_ActionUIInfo "{6B0E6BF12B614D46}" {
-      Name "Start convoy in closest empty vehicle"
-     }
-     VisibilityRange 2.5
-    }
-    CF_AddConvoyAction "{43617AEA7C4242E6}" {
-     ParentContextList {
-      "default"
-     }
-     UIInfo SCR_ActionUIInfo "{45416288F7E64B62}" {
-      Name "Add to convoy in closest empty vehicle"
+      Name "Join my convoy in closest empty vehicle"
      }
      VisibilityRange 2.5
     }

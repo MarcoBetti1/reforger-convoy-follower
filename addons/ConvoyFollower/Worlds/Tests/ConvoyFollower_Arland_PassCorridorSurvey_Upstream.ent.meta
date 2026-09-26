@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{6F41A6B2916DDC58}Worlds/Tests/ConvoyFollower_Arland_PassCorridorSurvey_Upstream.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

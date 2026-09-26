@@ -124,6 +124,155 @@ describe("convoy smoke runner", () => {
     expect(() => parseSmokeArgs(["--trucks", "3", "--variant", "forward-wait"])).toThrow("requires --trucks 2");
   });
 
+  it("passes the separate lane-blocked case only for the specific refusal and stationary seated probe", () => {
+    expect(parseSmokeArgs(["--trucks", "2", "--variant", "forward-blocked"]).variant).toBe("forward-blocked");
+    const layer = readFileSync(path.resolve("addons", "ConvoyFollower", "Worlds", "Tests",
+      "ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_ForwardBlocked_Layers", "default.layer"), "utf8");
+    expect(layer).toContain("CF_ForwardBlockedProbeComponent");
+    expect(layer).toContain("m_bStraightReleaseRoadGoal 1");
+    const base = [
+      "WORLD : Entities load '$ConvoyFollower:Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_ForwardBlocked.ent'",
+      "SCRIPT : [ConvoyFollower] AUTO_INIT: expected=2",
+      "SCRIPT : SCR_BaseGameMode::OnGameStateChanged = GAME",
+      "SCRIPT : [ConvoyFollower] AUTO_EN_ROUTE_METRICS: max_gap=90 warning_s=0 no_progress_s=2",
+      "SCRIPT : [ConvoyFollower] AUTO_RESULT: PASS stable road arrival",
+    ];
+    const blocked = "SCRIPT : [ConvoyFollower] FORWARD_WAIT_REJECTED: Move your lead vehicle off the driving lane to let this truck pass";
+    const probePass = "SCRIPT : [ConvoyFollower] AUTO_FORWARD_BLOCKED_RESULT: PASS center-lane lead rejected; Unit 1 remained seated and stationary";
+    expect(summarizeSmokeLog([...base, blocked, probePass].join("\n"), 2, "forward-blocked").passed).toBe(true);
+    expect(summarizeSmokeLog([...base, probePass].join("\n"), 2, "forward-blocked").passed).toBe(false);
+    expect(summarizeSmokeLog([...base, blocked, probePass,
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_REQUESTED: unsafe move was accepted",
+    ].join("\n"), 2, "forward-blocked").passed).toBe(false);
+    expect(summarizeSmokeLog([...base, blocked,
+      "SCRIPT : [ConvoyFollower] AUTO_FORWARD_BLOCKED_RESULT: FAIL truck moved",
+    ].join("\n"), 2, "forward-blocked").passed).toBe(false);
+    expect(() => parseSmokeArgs(["--trucks", "3", "--variant", "forward-blocked"])).toThrow("requires --trucks 2");
+  });
+
+  it("requires two physical forward parks and an explicit resumed three-truck chain", () => {
+    expect(parseSmokeArgs(["--trucks", "3", "--variant", "forward-twoahead"]).variant).toBe("forward-twoahead");
+    const layer = readFileSync(path.resolve("addons", "ConvoyFollower", "Worlds", "Tests",
+      "ConvoyFollower_Arland_OpenRoad_Auto_3Trucks_ForwardTwoAhead_Layers", "default.layer"), "utf8");
+    expect(layer).toContain("CF_ForwardTwoAheadProbeComponent");
+    expect(layer).toContain("m_iFilmForwardMode 1");
+    expect((layer.match(/SCR_AIGroup\s+CF_SmokeGroup\d\s*:/g) ?? []).length).toBe(3);
+    const base = [
+      "WORLD : Entities load '$ConvoyFollower:Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_3Trucks_ForwardTwoAhead.ent'",
+      "SCRIPT : [ConvoyFollower] AUTO_INIT: expected=3",
+      "SCRIPT : SCR_BaseGameMode::OnGameStateChanged = GAME",
+      "SCRIPT : [ConvoyFollower] AUTO_EN_ROUTE_METRICS: max_gap=125 warning_s=0 no_progress_s=4",
+      "SCRIPT : [ConvoyFollower] AUTO_RESULT: PASS stable road arrival",
+    ];
+    const sequence = [
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_PARKED: Unit 1",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_BAY_CLEAR: Unit 1",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_PARKED: Unit 2",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_BAY_CLEAR: Unit 2",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_PARKED: spacing=19 projected_order_spacing=18",
+      "SCRIPT : [ConvoyFollower] FORWARD_OUTBOUND_HOLD_REQUESTED: owner passed 20m",
+      "SCRIPT : [ConvoyFollower] FORWARD_OUTBOUND_HOLD_COMPLETE: Unit 3 seated",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_RESUME_LINE: owner passed parked line",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_POST_RESUME: owner/Unit1/Unit2/Unit3 positions",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_RESULT: PASS two trucks parked and convoy resumed",
+    ];
+    const good = summarizeSmokeLog([...base, ...sequence].join("\n"), 3, "forward-twoahead");
+    expect(good.passed).toBe(true);
+    expect(good.twoAheadParkingPassed).toBe(true);
+    expect(good.twoAheadHoldObserved).toBe(true);
+    expect(good.twoAheadHoldPassed).toBe(true);
+    expect(summarizeSmokeLog([...base, ...sequence.slice(0, 2), sequence.at(-1)!].join("\n"), 3, "forward-twoahead").passed).toBe(false);
+    expect(summarizeSmokeLog([...base, ...sequence.slice(0, -1),
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_RESULT: FAIL physical inversion",
+    ].join("\n"), 3, "forward-twoahead").passed).toBe(false);
+    const failedPassAfterParking = summarizeSmokeLog([...base, ...sequence.slice(0, 5),
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_RESULT: FAIL owner did not pass",
+    ].join("\n"), 3, "forward-twoahead");
+    expect(failedPassAfterParking.passed).toBe(false);
+    expect(failedPassAfterParking.twoAheadParkingPassed).toBe(true);
+    expect(failedPassAfterParking.twoAheadHoldObserved).toBe(false);
+    expect(failedPassAfterParking.twoAheadHoldPassed).toBe(false);
+    const missingCompletedHold = summarizeSmokeLog([...base, ...sequence.filter((line) =>
+      !line.includes("FORWARD_OUTBOUND_HOLD_COMPLETE"))].join("\n"), 3, "forward-twoahead");
+    expect(missingCompletedHold.twoAheadHoldObserved).toBe(false);
+    expect(missingCompletedHold.passed).toBe(false);
+    const falseStall = summarizeSmokeLog([...base, ...sequence.slice(0, -1),
+      "SCRIPT : [ConvoyFollower] STUCK_TERMINAL: Unit 3 left while waiting",
+      "SCRIPT : [ConvoyFollower] CONVOY_UNIT_REMOVED: former position 1",
+      sequence.at(-1)!,
+    ].join("\n"), 3, "forward-twoahead");
+    expect(falseStall.twoAheadParkingPassed).toBe(true);
+    expect(falseStall.twoAheadHoldPassed).toBe(false);
+    expect(falseStall.passed).toBe(false);
+    const shutdownAfterPass = summarizeSmokeLog([...base, ...sequence,
+      "SCRIPT : [ConvoyFollower] CONVOY_UNIT_REMOVED: F5 teardown after terminal PASS",
+    ].join("\n"), 3, "forward-twoahead");
+    expect(shutdownAfterPass.twoAheadHoldPassed).toBe(true);
+    expect(shutdownAfterPass.passed).toBe(true);
+    expect(() => parseSmokeArgs(["--trucks", "2", "--variant", "forward-twoahead"])).toThrow("requires --trucks 3");
+  });
+
+  it("keeps the surveyed width-8 road fixture distinct from the failed narrow two-ahead fixture", () => {
+    expect(parseSmokeArgs(["--trucks", "3", "--variant", "forward-twoahead-wide"]).variant).toBe("forward-twoahead-wide");
+    expect(() => parseSmokeArgs(["--trucks", "2", "--variant", "forward-twoahead-wide"])).toThrow("requires --trucks 3");
+    const layer = readFileSync(path.resolve("addons", "ConvoyFollower", "Worlds", "Tests",
+      "ConvoyFollower_Arland_WideRoad_Auto_3Trucks_ForwardTwoAhead_Layers", "default.layer"), "utf8");
+    expect(layer).toContain("m_bWideRoadGoal 1");
+    expect(layer).toContain("CF_ForwardTwoAheadProbeComponent");
+    expect((layer.match(/SCR_AIGroup\s+CF_SmokeGroup\d\s*:/g) ?? []).length).toBe(3);
+    const log = [
+      "WORLD : Entities load '$ConvoyFollower:Worlds/Tests/ConvoyFollower_Arland_WideRoad_Auto_3Trucks_ForwardTwoAhead.ent'",
+      "SCRIPT : [ConvoyFollower] AUTO_INIT: expected=3",
+      "SCRIPT : SCR_BaseGameMode::OnGameStateChanged = GAME",
+      "SCRIPT : [ConvoyFollower] AUTO_EN_ROUTE_METRICS: max_gap=125 warning_s=0 no_progress_s=4",
+      "SCRIPT : [ConvoyFollower] AUTO_RESULT: PASS stable road arrival",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_PARKED: Unit 1",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_BAY_CLEAR: Unit 1",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_PARKED: Unit 2",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_BAY_CLEAR: Unit 2",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_PARKED: spacing=19 projected_order_spacing=18",
+      "SCRIPT : [ConvoyFollower] FORWARD_OUTBOUND_HOLD_REQUESTED: owner passed 20m",
+      "SCRIPT : [ConvoyFollower] FORWARD_OUTBOUND_HOLD_COMPLETE: Unit 3 seated",
+      "SCRIPT : [ConvoyFollower] FORWARD_WAIT_RESUME_LINE: owner passed parked line",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_POST_RESUME: owner/Unit1/Unit2/Unit3 positions",
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_RESULT: PASS physical chain resumed",
+    ];
+    const report = summarizeSmokeLog(log.join("\n"), 3, "forward-twoahead-wide");
+    expect(report.expectedWorld).toContain("WideRoad_Auto_3Trucks_ForwardTwoAhead");
+    expect(report.passed).toBe(true);
+    expect(summarizeSmokeLog(log.join("\n"), 3, "forward-twoahead").passed).toBe(false);
+    expect(summarizeSmokeLog([...log.slice(0, -1),
+      "SCRIPT : [ConvoyFollower] AUTO_TWO_AHEAD_RESULT: FAIL no owner pass",
+    ].join("\n"), 3, "forward-twoahead-wide").passed).toBe(false);
+  });
+
+  it("rejects a gameplay PASS when the selected F5 run has an engine or script error", () => {
+    const goodRun = [
+      "WORLD : Entities load '$ConvoyFollower:Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_ForwardWait.ent'",
+      "SCRIPT : [ConvoyFollower] AUTO_INIT: expected=2",
+      "SCRIPT : SCR_BaseGameMode::OnGameStateChanged = GAME",
+      "SCRIPT : [ConvoyFollower] AUTO_EN_ROUTE_METRICS: max_gap=101 warning_s=0 no_progress_s=1",
+      "SCRIPT : [ConvoyFollower] AUTO_RESULT: PASS stable road arrival",
+      "SCRIPT : [ConvoyFollower] AUTO_FORWARD_RESULT: PASS unit1 parked forward and unit2 advanced",
+    ];
+    expect(summarizeSmokeLog(goodRun.join("\n"), 2, "forward-wait").passed).toBe(true);
+    const errorAfterInit = summarizeSmokeLog([...goodRun, "SCRIPT (E): convoy action exception"].join("\n"), 2, "forward-wait");
+    expect(errorAfterInit.passed).toBe(false);
+    expect(errorAfterInit.errorLines).toHaveLength(1);
+    expect(errorAfterInit.interpretation).toContain("Inspect them");
+    const errorBeforeInit = summarizeSmokeLog([goodRun[0], "WORLD (E): failed to resolve a scene entity", ...goodRun.slice(1)].join("\n"), 2, "forward-wait");
+    expect(errorBeforeInit.passed).toBe(false);
+    expect(errorBeforeInit.errorLines).toHaveLength(1);
+    const knownBaseLoad = "WORLD (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)";
+    const withKnownBaseline = summarizeSmokeLog([goodRun[0], knownBaseLoad, ...goodRun.slice(1)].join("\n"), 2, "forward-wait");
+    expect(withKnownBaseline.passed).toBe(true);
+    expect(withKnownBaseline.errorLines).toHaveLength(0);
+    expect(withKnownBaseline.baselineLoadErrorLines).toHaveLength(1);
+    const sameErrorDuringGame = summarizeSmokeLog([...goodRun, knownBaseLoad].join("\n"), 2, "forward-wait");
+    expect(sameErrorDuringGame.passed).toBe(false);
+    expect(sameErrorDuringGame.errorLines).toHaveLength(1);
+  });
+
   it("keeps appended Workbench previews from supplying stale pass evidence", () => {
     const log = [
       "WORLD : Entities load '$ConvoyFollower:Worlds/Tests/ConvoyFollower_Arland_Auto_1Truck.ent'",
@@ -181,6 +330,26 @@ describe("convoy smoke runner", () => {
       "SCRIPT : [ConvoyFollower] AUTO_SEQUENCE_RESULT: PASS explicit release parked, next truck advanced, and both returned",
     ].join("\n"), 2, "release");
     expect(good.passed).toBe(true);
+  });
+
+  it("requires physical parking, bay advance, and return evidence in the wide-road release fixture", () => {
+    expect(parseSmokeArgs(["--trucks", "2", "--variant", "release-wide"]).variant).toBe("release-wide");
+    expect(() => parseSmokeArgs(["--trucks", "3", "--variant", "release-wide"])).toThrow("requires --trucks 2");
+    const base = [
+      "WORLD : Entities load '$ConvoyFollower:Worlds/Tests/ConvoyFollower_Arland_WideRoad_Auto_2Trucks_Release.ent'",
+      "SCRIPT : [ConvoyFollower] AUTO_INIT: expected=2",
+      "SCRIPT : SCR_BaseGameMode::OnGameStateChanged = GAME",
+      "SCRIPT : [ConvoyFollower] AUTO_RESULT: PASS stable road arrival",
+      "SCRIPT : [ConvoyFollower] AUTO_EN_ROUTE_METRICS: max_gap=125 warning_s=0 no_progress_s=2",
+    ];
+    const result = "SCRIPT : [ConvoyFollower] AUTO_SEQUENCE_RESULT: PASS explicit release parked, next truck advanced, and both returned";
+    expect(summarizeSmokeLog([...base, result].join("\n"), 2, "release-wide").passed).toBe(false);
+    expect(summarizeSmokeLog([...base,
+      "SCRIPT : [ConvoyFollower] AUTO_SEQUENCE_PARKED: unit1 seated; unit2 advanced to bay",
+      "SCRIPT : [ConvoyFollower] AUTO_SEQUENCE_RETURN_MERGED: both drivers seated in active convoy",
+      "SCRIPT : [ConvoyFollower] AUTO_SEQUENCE_RETURN_DRIVE: goal=<1268,34,3005>",
+      result,
+    ].join("\n"), 2, "release-wide").passed).toBe(true);
   });
 
   it("requires an explicit count and avoids a timed keep-open run", () => {

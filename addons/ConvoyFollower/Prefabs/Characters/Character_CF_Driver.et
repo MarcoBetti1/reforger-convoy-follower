@@ -53,16 +53,7 @@ SCR_ChimeraCharacter : "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_
       "default"
      }
      UIInfo SCR_ActionUIInfo "{7FC8CB91D62C5132}" {
-      Name "Start convoy in closest empty vehicle"
-     }
-     VisibilityRange 2.5
-    }
-    CF_AddConvoyAction "{44F3F0C619B6B176}" {
-     ParentContextList {
-      "default"
-     }
-     UIInfo SCR_ActionUIInfo "{0D509DC667219ABE}" {
-      Name "Add to convoy in closest empty vehicle"
+      Name "Join my convoy in closest empty vehicle"
      }
      VisibilityRange 2.5
     }

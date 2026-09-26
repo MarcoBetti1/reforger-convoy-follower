@@ -7,6 +7,11 @@ class CF_ConvoySession
 	protected static const int CF_PENDING_START = 1;
 	protected static const int CF_PENDING_ADD = 2;
 	protected static const int CF_PENDING_REPLACE = 3;
+	protected static const int CF_PANEL_ORDER_NONE = 0;
+	protected static const int CF_PANEL_ORDER_HOLD = 1;
+	protected static const int CF_PANEL_ORDER_RESUME = 2;
+	protected static const int CF_PANEL_ORDER_DISMOUNT = 3;
+	protected static const float CF_PANEL_HOLD_TIMEOUT_MS = 90000.0;
 	protected static const int CF_UNLOAD_NONE = 0;
 	protected static const int CF_UNLOAD_SHIFTING = 1;
 	protected static const int CF_UNLOAD_DEPARTING = 2;
@@ -37,10 +42,14 @@ class CF_ConvoySession
 	// Released trucks stay seated in a physically parked return line. They do
 	// not follow until the owner drives homeward past the entire line.
 	protected ref array<CF_DriverControllerComponent> m_aReturnQueue = {};
+	// Explicit forward departures park separately. A homeward crossing must
+	// never pull these trucks into the rear return convoy by accident.
+	protected ref array<CF_DriverControllerComponent> m_aForwardWait = {};
 	// Rare activation failures remain owned and seated, rather than being
 	// silently dropped from the session during a partial return merge.
 	protected ref array<CF_DriverControllerComponent> m_aStrandedUnits = {};
 	protected CF_DriverControllerComponent m_UnloadHead;
+	protected bool m_bUnloadHeadForward;
 	protected CF_DriverControllerComponent m_ShiftingReturn;
 	protected int m_iUnloadPhase;
 	protected int m_iShiftIndex;
@@ -53,6 +62,8 @@ class CF_ConvoySession
 	protected bool m_bUnloadBayPositionValid;
 	protected IEntity m_OriginalLeadVehicle;
 	protected bool m_bUnloadAnchorLock;
+	protected bool m_bForwardOutboundHoldActive;
+	protected bool m_bForwardOutboundHoldComplete;
 	protected bool m_bUnloadReleaseBlocked;
 	protected bool m_bUnloadPollScheduled;
 	protected bool m_bSessionClosed;
@@ -70,6 +81,9 @@ class CF_ConvoySession
 	protected int m_iOrderRewireCooldownPolls;
 	protected bool m_bOrderRecoveryDeferredLogged;
 	protected string m_sReleasePlanFailureReason;
+	protected int m_iPanelOrder;
+	protected string m_sPanelOrderState;
+	protected float m_fPanelOrderDeadlineMs;
 
 	protected static int GetPlayerId(IEntity user)
 	{
@@ -90,6 +104,50 @@ class CF_ConvoySession
 			return null;
 
 		return s_mSessions.Get(playerId);
+	}
+
+	// Boarding AI does not reserve the pilot seat when its waypoint is issued.
+	// Keep a server-side claim from assignment until the driver releases the
+	// vehicle, including trucks parked in either waiting line.
+	static bool IsVehicleAssignedToAnotherDriver(Vehicle vehicle, CF_DriverControllerComponent candidate)
+	{
+		if (!Replication.IsServer() || !vehicle)
+			return false;
+		for (int i = 0; i < s_mSessions.Count(); i++)
+		{
+			CF_ConvoySession session = s_mSessions.GetElement(i);
+			if (session && !session.m_bSessionClosed && session.HoldsAssignedVehicle(vehicle, candidate))
+				return true;
+		}
+		return false;
+	}
+
+	protected bool HoldsAssignedVehicle(Vehicle vehicle, CF_DriverControllerComponent candidate)
+	{
+		if (m_PendingDriver && m_PendingDriver != candidate &&
+			m_PendingDriver.CF_GetAssignedVehicle() == vehicle)
+			return true;
+		foreach (CF_DriverControllerComponent unit : m_aUnits)
+		{
+			if (unit && unit != candidate && unit.CF_GetAssignedVehicle() == vehicle)
+				return true;
+		}
+		foreach (CF_DriverControllerComponent parked : m_aReturnQueue)
+		{
+			if (parked && parked != candidate && parked.CF_GetAssignedVehicle() == vehicle)
+				return true;
+		}
+		foreach (CF_DriverControllerComponent parkedAhead : m_aForwardWait)
+		{
+			if (parkedAhead && parkedAhead != candidate && parkedAhead.CF_GetAssignedVehicle() == vehicle)
+				return true;
+		}
+		foreach (CF_DriverControllerComponent stranded : m_aStrandedUnits)
+		{
+			if (stranded && stranded != candidate && stranded.CF_GetAssignedVehicle() == vehicle)
+				return true;
+		}
+		return false;
 	}
 
 	// This is used only for local interaction visibility. Server-side action
@@ -117,7 +175,8 @@ class CF_ConvoySession
 	{
 		CF_ConvoySession session = GetForPlayer(user);
 		return session && session.m_aUnits.Count() > 0 &&
-			session.m_aUnits.Count() + session.m_aReturnQueue.Count() + session.m_aStrandedUnits.Count() <
+			session.m_aUnits.Count() + session.m_aReturnQueue.Count() +
+			session.m_aForwardWait.Count() + session.m_aStrandedUnits.Count() <
 			CF_ConvoySettings.Get().m_iMaxConvoyUnits &&
 			!session.m_PendingDriver && !session.m_UnloadHead && candidate && candidate.CanAssign(user);
 	}
@@ -127,6 +186,273 @@ class CF_ConvoySession
 		CF_ConvoySession session = GetForPlayer(user);
 		return session && session.m_aUnits.Count() > 0 && !session.m_PendingDriver &&
 			!session.m_UnloadHead && candidate && candidate.CanAssign(user);
+	}
+
+	protected static string CF_GetPanelTruckLabel(CF_DriverControllerComponent unit, int identity)
+	{
+		if (!unit || !unit.CF_GetAssignedVehicle())
+			return "No assigned truck";
+		string vehicleName = unit.CF_GetAssignedVehicle().GetName();
+		if (vehicleName.IsEmpty())
+			vehicleName = "Truck";
+		return vehicleName + " #" + identity;
+	}
+
+	// The map panel reads only this server roster. Identity survives a physical
+	// rewire, while position and state come from the current ordered chain.
+	static string CF_GetOwnerPanelSnapshot(IEntity user)
+	{
+		if (!Replication.IsServer())
+			return string.Empty;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session)
+			return string.Empty;
+		string rows = string.Empty;
+		for (int i = 0; i < session.m_aUnits.Count(); i++)
+		{
+			CF_DriverControllerComponent unit = session.m_aUnits[i];
+			if (!unit)
+				continue;
+			int identity = session.GetIdentityNumber(unit);
+			string target = "owner";
+			if (i > 0)
+				target = "Unit " + session.GetIdentityNumber(session.m_aUnits[i - 1]);
+			string row = "" + identity + "|" + (i + 1) + "|" + CF_GetPanelTruckLabel(unit, identity) + "|" +
+				unit.CF_GetPanelStateLabel() + "|" + target;
+			if (!rows.IsEmpty())
+				rows += ";";
+			rows += row;
+		}
+		foreach (CF_DriverControllerComponent parked : session.m_aReturnQueue)
+		{
+			if (!parked)
+				continue;
+			int parkedIdentity = session.GetIdentityNumber(parked);
+			if (!rows.IsEmpty())
+				rows += ";";
+			rows += "" + parkedIdentity + "|return|" + CF_GetPanelTruckLabel(parked, parkedIdentity) + "|" +
+				parked.CF_GetPanelStateLabel() + "|parked return line";
+		}
+		foreach (CF_DriverControllerComponent forwardParked : session.m_aForwardWait)
+		{
+			if (!forwardParked)
+				continue;
+			int forwardIdentity = session.GetIdentityNumber(forwardParked);
+			if (!rows.IsEmpty())
+				rows += ";";
+			rows += "" + forwardIdentity + "|ahead|" + CF_GetPanelTruckLabel(forwardParked, forwardIdentity) + "|" +
+				forwardParked.CF_GetPanelStateLabel() + "|parked forward line";
+		}
+		foreach (CF_DriverControllerComponent stranded : session.m_aStrandedUnits)
+		{
+			if (!stranded)
+				continue;
+			int strandedIdentity = session.GetIdentityNumber(stranded);
+			if (!rows.IsEmpty())
+				rows += ";";
+			rows += "" + strandedIdentity + "|stranded|" + CF_GetPanelTruckLabel(stranded, strandedIdentity) + "|" +
+				stranded.CF_GetPanelStateLabel() + "|needs recovery";
+		}
+		return rows;
+	}
+
+	protected bool CF_CanUsePanelOrders()
+	{
+		return !m_bSessionClosed && !m_PendingDriver && !m_UnloadHead &&
+			m_iUnloadPhase == CF_UNLOAD_NONE && !m_bUnloadAnchorLock &&
+			!m_bUnloadReleaseBlocked && !m_bReturnPending &&
+			m_aReturnQueue.IsEmpty() && m_aForwardWait.IsEmpty() &&
+			m_aStrandedUnits.IsEmpty() && !m_aUnits.IsEmpty();
+	}
+
+	static bool CF_PanelHold(IEntity user)
+	{
+		if (!Replication.IsServer())
+			return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session)
+			return false;
+		if (!session.CF_CanUsePanelOrders())
+		{
+			session.m_sPanelOrderState = "blocked: finish or cancel the current convoy maneuver first";
+			return false;
+		}
+		if (session.m_iPanelOrder == CF_PANEL_ORDER_HOLD)
+		{
+			session.m_sPanelOrderState = "executing: Hold is already in progress";
+			return false;
+		}
+		Vehicle ownerVehicle = session.GetOwnerPilotedVehicle();
+		// The owner may step out of a parked lead truck to unload or give the
+		// order. The last observed lead remains valid only while it is nearby.
+		if (!ownerVehicle && session.m_OriginalLeadVehicle &&
+			vector.Distance(user.GetOrigin(), session.m_OriginalLeadVehicle.GetOrigin()) <= 25.0)
+			ownerVehicle = Vehicle.Cast(session.m_OriginalLeadVehicle);
+		CarControllerComponent ownerCar;
+		if (ownerVehicle)
+			ownerCar = CarControllerComponent.Cast(ownerVehicle.FindComponent(CarControllerComponent));
+		if (!ownerVehicle || session.IsConvoyVehicle(ownerVehicle) || !ownerCar ||
+			!ownerCar.GetSimulation() || ownerCar.GetSimulation().GetSpeedKmh() > 2.0)
+		{
+			session.m_sPanelOrderState = "blocked: stop the lead vehicle before ordering Hold";
+			return false;
+		}
+		foreach (CF_DriverControllerComponent unit : session.m_aUnits)
+		{
+			if (!unit || !unit.CF_CanApproachPanelHold())
+			{
+				session.m_sPanelOrderState = "blocked: all drivers must be seated in the active convoy";
+				return false;
+			}
+		}
+		session.m_iPanelOrder = CF_PANEL_ORDER_HOLD;
+		session.m_fPanelOrderDeadlineMs = GetGame().GetWorld().GetWorldTime() + CF_PANEL_HOLD_TIMEOUT_MS;
+		session.m_sPanelOrderState = "accepted: trucks approaching before holding in vehicles";
+		Print("[ConvoyFollower] PANEL_HOLD_ACCEPTED: owner stopped; active trucks will hold once individually slow");
+		session.CF_UpdatePanelOrderState();
+		session.ScheduleUnloadPoll();
+		return true;
+	}
+
+	static bool CF_PanelResume(IEntity user)
+	{
+		if (!Replication.IsServer())
+			return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session)
+			return false;
+		if (!session.CF_CanUsePanelOrders() || !session.GetOwnerPilotedVehicle())
+		{
+			session.m_sPanelOrderState = "blocked: enter the lead vehicle and finish any active maneuver";
+			return false;
+		}
+		bool anyHeld = false;
+		foreach (CF_DriverControllerComponent unit : session.m_aUnits)
+		{
+			if (!unit || !unit.CF_IsBoarded() ||
+				!unit.CF_CanPanelResume())
+			{
+				session.m_sPanelOrderState = "blocked: all assigned drivers must be seated and able to resume";
+				return false;
+			}
+			if (unit.CF_IsPanelHeld())
+				anyHeld = true;
+		}
+		if (!anyHeld && session.m_iPanelOrder != CF_PANEL_ORDER_HOLD)
+		{
+			session.m_sPanelOrderState = "blocked: convoy is already following";
+			return false;
+		}
+		foreach (CF_DriverControllerComponent resumed : session.m_aUnits)
+		{
+			if (!resumed.CF_IsMovementActive())
+				resumed.CF_PanelResume();
+		}
+		session.m_iPanelOrder = CF_PANEL_ORDER_RESUME;
+		session.m_fPanelOrderDeadlineMs = GetGame().GetWorld().GetWorldTime() + CF_PANEL_HOLD_TIMEOUT_MS;
+		session.m_sPanelOrderState = "accepted: resuming convoy chain";
+		Print("[ConvoyFollower] PANEL_RESUME_ACCEPTED: owner resumed the assigned daisy chain");
+		return true;
+	}
+
+	static bool CF_PanelDismount(IEntity user)
+	{
+		if (!Replication.IsServer())
+			return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session)
+			return false;
+		// StandDown removes membership and releases the assigned truck. Until a
+		// retained-assignment get-out/reboard state exists, do not present that
+		// destructive behavior as a temporary dismount command.
+		session.m_sPanelOrderState = "blocked: retained-driver dismount is not available yet";
+		return false;
+	}
+
+	static string CF_GetOwnerPanelOrderState(IEntity user)
+	{
+		if (!Replication.IsServer())
+			return "blocked: server state unavailable";
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session)
+			return "idle";
+		session.CF_UpdatePanelOrderState();
+		if (session.m_sPanelOrderState.IsEmpty())
+			return "idle";
+		return session.m_sPanelOrderState;
+	}
+
+	protected void CF_UpdatePanelOrderState()
+	{
+		if (m_iPanelOrder == CF_PANEL_ORDER_HOLD)
+		{
+			Vehicle movingLead = GetOwnerPilotedVehicle();
+			CarControllerComponent movingCar;
+			if (movingLead)
+				movingCar = CarControllerComponent.Cast(movingLead.FindComponent(CarControllerComponent));
+			if (movingCar && movingCar.GetSimulation() &&
+				movingCar.GetSimulation().GetSpeedKmh() > 5.0)
+			{
+				m_sPanelOrderState = "blocked: lead moved before all trucks held; use Resume to regroup";
+				m_iPanelOrder = CF_PANEL_ORDER_NONE;
+				return;
+			}
+			if (GetGame().GetWorld().GetWorldTime() >= m_fPanelOrderDeadlineMs)
+			{
+				m_sPanelOrderState = "blocked: Hold timed out; use Resume to regroup the convoy";
+				m_iPanelOrder = CF_PANEL_ORDER_NONE;
+				Print("[ConvoyFollower] PANEL_HOLD_TIMEOUT: some trucks did not slow within 90 seconds");
+				return;
+			}
+			bool allHeldAndStopped = true;
+			foreach (CF_DriverControllerComponent unit : m_aUnits)
+			{
+				if (!unit || !unit.CF_CanApproachPanelHold())
+				{
+					m_sPanelOrderState = "blocked: a driver left the active seated convoy";
+					m_iPanelOrder = CF_PANEL_ORDER_NONE;
+					return;
+				}
+				if (!unit.CF_IsPanelHeld() && unit.CF_CanPanelHold())
+					unit.CF_PanelHold();
+				if (!unit.CF_IsPanelHeld() || !unit.CF_IsPanelVehicleSlow(2.0))
+				{
+					allHeldAndStopped = false;
+				}
+			}
+			if (!allHeldAndStopped)
+			{
+				m_sPanelOrderState = "executing: trucks approaching and stopping";
+				return;
+			}
+			m_sPanelOrderState = "completed: all trucks holding in vehicles";
+			m_iPanelOrder = CF_PANEL_ORDER_NONE;
+		}
+		else if (m_iPanelOrder == CF_PANEL_ORDER_RESUME)
+		{
+			if (GetGame().GetWorld().GetWorldTime() >= m_fPanelOrderDeadlineMs)
+			{
+				m_sPanelOrderState = "blocked: convoy did not resume within 90 seconds";
+				m_iPanelOrder = CF_PANEL_ORDER_NONE;
+				return;
+			}
+			foreach (CF_DriverControllerComponent unit : m_aUnits)
+			{
+				if (!unit || !unit.CF_IsBoarded())
+				{
+					m_sPanelOrderState = "blocked: a driver is no longer seated";
+					m_iPanelOrder = CF_PANEL_ORDER_NONE;
+					return;
+				}
+				if (!unit.CF_IsMovementActive())
+				{
+					m_sPanelOrderState = "executing: drivers are taking follow positions";
+					return;
+				}
+			}
+			m_sPanelOrderState = "completed: convoy following";
+			m_iPanelOrder = CF_PANEL_ORDER_NONE;
+		}
 	}
 
 	static bool Start(IEntity user, CF_DriverControllerComponent candidate)
@@ -203,6 +529,11 @@ class CF_ConvoySession
 		if (!Replication.IsServer() || !CanReleaseAtUnload(user, driver))
 			return false;
 		CF_ConvoySession session = GetForPlayer(user);
+		if (!session.m_aForwardWait.IsEmpty())
+		{
+			session.m_sReleasePlanFailureReason = "A forward waiting line is active; use Pull ahead and wait";
+			return false;
+		}
 		vector waitingPoint;
 		return session.TryFindReleaseSlot(waitingPoint) || session.CanShiftReturnLineForGap();
 	}
@@ -221,6 +552,11 @@ class CF_ConvoySession
 			return false;
 
 		CF_ConvoySession session = GetForPlayer(user);
+		if (!session.m_aForwardWait.IsEmpty())
+		{
+			session.m_sReleasePlanFailureReason = "Finish the forward waiting line before starting a rear return line";
+			return false;
+		}
 		vector anchor = driver.CF_GetUnloadAnchor();
 		if (session.m_aReturnQueue.IsEmpty())
 		{
@@ -256,6 +592,7 @@ class CF_ConvoySession
 		}
 
 		session.m_UnloadHead = driver;
+		session.m_bUnloadHeadForward = false;
 		session.m_bUnloadAnchorLock = true;
 		session.m_bUnloadReleaseBlocked = false;
 		session.ResetReturnCrossing();
@@ -281,6 +618,267 @@ class CF_ConvoySession
 			session.BeginNextReturnShift();
 		}
 		session.ScheduleUnloadPoll();
+		return true;
+	}
+
+	// A per-unit panel order uses the stable driver identity, never a mutable
+	// convoy position. Only the current cargo-bay truck can be released.
+	static bool CF_PanelPullBack(IEntity user, int unitIdentity)
+	{
+		if (!Replication.IsServer())
+			return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session || session.m_aUnits.IsEmpty() ||
+			session.GetIdentityNumber(session.m_aUnits[0]) != unitIdentity)
+		{
+			if (session)
+				session.m_sPanelOrderState = "blocked: select the truck at the unload bay";
+			return false;
+		}
+		bool accepted = ReleaseAtUnload(user, session.m_aUnits[0]);
+		if (accepted && session.m_bUnloadReleaseBlocked)
+		{
+			session.m_sPanelOrderState = "blocked: rear release could not start";
+			return false;
+		}
+		if (accepted)
+			session.m_sPanelOrderState = "executing: pulling back to the return line";
+		else
+			session.m_sPanelOrderState = "blocked: " + GetReleasePlanFailureReason(user);
+		return accepted;
+	}
+
+	// Both the map order and the truck's rear cargo action use this server
+	// preflight. The cargo action must not guess a mutable convoy position or
+	// offer a forward slot that the map order would reject.
+	protected bool TryFindForwardWaitSlot(IEntity user, CF_DriverControllerComponent driver, out vector waitingPoint)
+	{
+		m_sReleasePlanFailureReason = string.Empty;
+		if (!CanReleaseAtUnload(user, driver))
+		{
+			m_sReleasePlanFailureReason = driver.CF_GetReleaseEligibilityReason();
+			return false;
+		}
+		if (!m_aReturnQueue.IsEmpty())
+		{
+			m_sReleasePlanFailureReason = "Finish the rear return line first";
+			return false;
+		}
+		vector anchor = driver.CF_GetUnloadAnchor();
+		if (!m_aForwardWait.IsEmpty() && vector.Distance(anchor, m_vUnloadAnchor) > 20.0)
+		{
+			m_sReleasePlanFailureReason = "The forward waiting line belongs to another stopping place";
+			return false;
+		}
+		if (!driver.CF_FindForwardUnloadWaitingPoint(m_aForwardWait.Count(), waitingPoint))
+		{
+			m_sReleasePlanFailureReason = driver.CF_GetReleasePlanFailureReason();
+			return false;
+		}
+		if (m_aForwardWait.IsEmpty())
+			return true;
+
+		float newDistanceFromBay = vector.Distance(waitingPoint, m_vUnloadBayPosition);
+		foreach (CF_DriverControllerComponent alreadyAhead : m_aForwardWait)
+		{
+			Vehicle parkedTruck;
+			if (alreadyAhead)
+				parkedTruck = alreadyAhead.CF_GetAssignedVehicle();
+			if (!alreadyAhead || !alreadyAhead.CF_IsForwardWaitParked() || !parkedTruck)
+			{
+				m_sReleasePlanFailureReason = "Previous forward truck has not parked safely";
+				return false;
+			}
+			vector offset = waitingPoint - parkedTruck.GetOrigin();
+			float centerGap = Math.Sqrt(offset[0] * offset[0] + offset[2] * offset[2]);
+			float parkedDistanceFromBay = vector.Distance(parkedTruck.GetOrigin(), m_vUnloadBayPosition);
+			if (centerGap < 16.0 || newDistanceFromBay + 12.0 > parkedDistanceFromBay)
+			{
+				m_sReleasePlanFailureReason = "No separate road slot behind the parked forward truck";
+				Print("[ConvoyFollower] FORWARD_WAIT_REJECTED: ahead slots too close or out of order; center_gap=" +
+					centerGap + " new_bay_gap=" + newDistanceFromBay + " parked_bay_gap=" + parkedDistanceFromBay);
+				return false;
+			}
+		}
+		return true;
+	}
+
+	static bool CanPlanForwardWaitAtUnload(IEntity user, CF_DriverControllerComponent driver)
+	{
+		if (!Replication.IsServer())
+			return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session || !driver)
+			return false;
+		vector waitingPoint;
+		return session.TryFindForwardWaitSlot(user, driver, waitingPoint);
+	}
+
+	static bool ReleaseForwardAtUnload(IEntity user, CF_DriverControllerComponent driver)
+	{
+		if (!Replication.IsServer())
+			return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session || !driver || session.m_aUnits.IsEmpty() || session.m_aUnits[0] != driver)
+			return false;
+		// Identity is resolved from the occupied front truck on the server.
+		return CF_PanelPullAhead(user, session.GetIdentityNumber(driver));
+	}
+
+	static bool CF_PanelPullAhead(IEntity user, int unitIdentity)
+	{
+		if (!Replication.IsServer())
+			return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session || session.m_aUnits.IsEmpty() ||
+			session.GetIdentityNumber(session.m_aUnits[0]) != unitIdentity)
+		{
+			if (session)
+				session.m_sPanelOrderState = "blocked: select the truck at the unload bay";
+			return false;
+		}
+		CF_DriverControllerComponent driver = session.m_aUnits[0];
+		vector anchor = driver.CF_GetUnloadAnchor();
+		vector waitingPoint;
+		if (!session.TryFindForwardWaitSlot(user, driver, waitingPoint))
+		{
+			session.m_sPanelOrderState = "blocked: " + session.m_sReleasePlanFailureReason;
+			Print("[ConvoyFollower] FORWARD_WAIT_REJECTED: " + session.m_sReleasePlanFailureReason +
+				"; phase=" + session.m_iUnloadPhase + " anchor_lock=" + session.m_bUnloadAnchorLock +
+				" driver_state=" + driver.CF_GetPanelStateLabel());
+			return false;
+		}
+		if (session.m_aForwardWait.IsEmpty())
+		{
+			session.m_vUnloadAnchor = anchor;
+			session.m_OriginalLeadVehicle = driver.CF_GetCachedPlayerVehicle();
+		}
+		if (session.m_aForwardWait.IsEmpty())
+		{
+			Vehicle firstTruck = driver.CF_GetAssignedVehicle();
+			if (!firstTruck)
+				return false;
+			session.m_vUnloadBayPosition = firstTruck.GetOrigin();
+			session.m_bUnloadBayPositionValid = true;
+			Print("[ConvoyFollower] UNLOAD_BAY_RECORDED: " + session.m_vUnloadBayPosition);
+		}
+		session.m_UnloadHead = driver;
+		session.m_bUnloadHeadForward = true;
+		session.m_iUnloadPhase = CF_UNLOAD_DEPARTING;
+		session.m_bUnloadAnchorLock = true;
+		session.m_bUnloadReleaseBlocked = false;
+		SCR_PlayerController radioController = session.GetOrderingController();
+		if (radioController)
+			radioController.CF_DiscardQueuedConvoyRadioEvent(CF_RadioEvent.STUCK);
+		foreach (CF_DriverControllerComponent unit : session.m_aUnits)
+		{
+			if (unit)
+				unit.CF_SetUnloadSequenceHold(true);
+		}
+		for (int i = 1; i < session.m_aUnits.Count(); i++)
+		{
+			if (session.m_aUnits[i])
+				session.m_aUnits[i].CF_HoldForUnloadQueue();
+		}
+		if (!driver.CF_BeginForwardDeparture(waitingPoint))
+		{
+			session.FailUnloadSequence("front truck could not begin forward road route");
+			session.m_sPanelOrderState = "blocked: forward driving order failed";
+			return false;
+		}
+		session.m_sPanelOrderState = "executing: front truck driving ahead to wait";
+		session.ScheduleUnloadPoll();
+		return true;
+	}
+
+	// Parked-ahead drivers never rejoin on a homeward return crossing. The
+	// owner must pass the farthest forward truck and explicitly resume them.
+	static bool CF_PanelResumeForwardLine(IEntity user)
+	{
+		if (!Replication.IsServer())
+			return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session)
+			return false;
+		if (session.m_aForwardWait.IsEmpty() || session.m_UnloadHead ||
+			session.m_iUnloadPhase != CF_UNLOAD_NONE || !session.m_aReturnQueue.IsEmpty() ||
+			!session.m_aStrandedUnits.IsEmpty())
+		{
+			session.m_sPanelOrderState = "blocked: finish the waiting maneuver before resuming ahead trucks";
+			return false;
+		}
+		Vehicle ownerVehicle = session.GetOwnerPilotedVehicle();
+		CF_DriverControllerComponent farthest = session.m_aForwardWait[0];
+		Vehicle farthestTruck;
+		if (farthest)
+			farthestTruck = farthest.CF_GetAssignedVehicle();
+		if (!ownerVehicle || !farthestTruck)
+		{
+			session.m_sPanelOrderState = "blocked: drive the lead vehicle past the forward waiting line";
+			return false;
+		}
+		vector fromBay = farthestTruck.GetOrigin() - session.m_vUnloadAnchor;
+		float length = Math.Sqrt(fromBay[0] * fromBay[0] + fromBay[2] * fromBay[2]);
+		if (length < 15.0)
+		{
+			session.m_sPanelOrderState = "blocked: the forward waiting line is too close to the bay";
+			return false;
+		}
+		vector fromLine = ownerVehicle.GetOrigin() - farthestTruck.GetOrigin();
+		float ahead = (fromLine[0] * fromBay[0] + fromLine[2] * fromBay[2]) / length;
+		float lateral = (fromLine[0] * fromBay[2] - fromLine[2] * fromBay[0]) / length;
+		if (lateral < 0)
+			lateral = -lateral;
+		if (ahead < 8.0 || lateral > CF_RETURN_CORRIDOR)
+		{
+			session.m_sPanelOrderState = "blocked: pass all forward waiting trucks on the same road before resuming them";
+			return false;
+		}
+		foreach (CF_DriverControllerComponent parkedAhead : session.m_aForwardWait)
+		{
+			if (!parkedAhead || !parkedAhead.CF_CanResumeForwardWait())
+			{
+				session.m_sPanelOrderState = "blocked: a forward waiting driver is no longer seated";
+				return false;
+			}
+		}
+		if (!session.m_aUnits.IsEmpty())
+		{
+			foreach (CF_DriverControllerComponent outboundHold : session.m_aUnits)
+			{
+				if (!outboundHold || !outboundHold.CF_IsForwardOutboundHeld())
+				{
+					session.m_sPanelOrderState = "blocked: wait for unreleased trucks to settle at the unload bay";
+					return false;
+				}
+			}
+		}
+		ref array<CF_DriverControllerComponent> oldActive = {};
+		foreach (CF_DriverControllerComponent active : session.m_aUnits)
+			oldActive.Insert(active);
+		session.m_aUnits.Clear();
+		foreach (CF_DriverControllerComponent aheadUnit : session.m_aForwardWait)
+		{
+			aheadUnit.CF_ResumeForwardWait();
+			session.m_aUnits.Insert(aheadUnit);
+		}
+		foreach (CF_DriverControllerComponent outbound : oldActive)
+		{
+			if (!outbound)
+				continue;
+			outbound.CF_SetUnloadSequenceHold(false);
+			outbound.CF_ResumeFromUnloadQueue();
+			session.m_aUnits.Insert(outbound);
+		}
+		session.m_aForwardWait.Clear();
+		session.m_bForwardOutboundHoldActive = false;
+		session.m_bForwardOutboundHoldComplete = false;
+		session.m_bUnloadAnchorLock = false;
+		session.m_bUnloadReleaseBlocked = false;
+		session.m_bUnloadBayPositionValid = false;
+		session.RewireTargets();
+		session.m_sPanelOrderState = "executing: forward waiting trucks rejoining behind lead vehicle";
+		Print("[ConvoyFollower] FORWARD_WAIT_RESUME_LINE: owner passed parked line; drivers rejoined chain in road order");
 		return true;
 	}
 
@@ -429,7 +1027,9 @@ class CF_ConvoySession
 
 	protected void FailUnloadSequence(string reason)
 	{
+		bool forwardWait = m_bUnloadHeadForward;
 		m_UnloadHead = null;
+		m_bUnloadHeadForward = false;
 		m_ShiftingReturn = null;
 		m_iUnloadPhase = CF_UNLOAD_NONE;
 		m_bUnloadReleaseBlocked = true;
@@ -438,7 +1038,13 @@ class CF_ConvoySession
 			if (unit)
 				unit.CF_HoldForUnloadQueue();
 		}
-		Print("[ConvoyFollower] UNLOAD_RELEASE_FAILED: " + reason + "; outbound line held");
+		if (forwardWait)
+		{
+			m_sPanelOrderState = "blocked: " + reason;
+			Print("[ConvoyFollower] FORWARD_WAIT_FAILED: " + reason + "; outbound line held");
+		}
+		else
+			Print("[ConvoyFollower] UNLOAD_RELEASE_FAILED: " + reason + "; outbound line held");
 		CF_NotifyOwnerFailure(CF_ConvoyFailureEvent.UNLOAD_BLOCKED);
 	}
 
@@ -453,16 +1059,29 @@ class CF_ConvoySession
 			return;
 
 		driver.CF_CompleteUnloadDeparture();
-		if (!driver.CF_IsUnloadDeparted())
+		if (m_bUnloadHeadForward && !driver.CF_IsForwardWaitParked())
+			return;
+		if (!m_bUnloadHeadForward && !driver.CF_IsUnloadDeparted())
 			return;
 		m_aUnits.RemoveOrdered(0);
-		m_aReturnQueue.Insert(driver);
+		if (m_bUnloadHeadForward)
+		{
+			m_aForwardWait.Insert(driver);
+			m_sPanelOrderState = "completed: truck parked ahead and bay is clear";
+			Print("[ConvoyFollower] FORWARD_WAIT_BAY_CLEAR: truck parked ahead; next truck may approach recorded bay");
+		}
+		else
+		{
+			m_aReturnQueue.Insert(driver);
+			m_sPanelOrderState = "completed: truck parked on rear return line";
+			Print("[ConvoyFollower] UNLOAD_RETURN_PARKED: front truck settled behind the convoy; next truck may approach bay");
+		}
 		m_UnloadHead = null;
+		m_bUnloadHeadForward = false;
 		m_ShiftingReturn = null;
 		m_iUnloadPhase = CF_UNLOAD_NONE;
 		m_bUnloadReleaseBlocked = false;
 		ResetReturnCrossing();
-		Print("[ConvoyFollower] UNLOAD_RETURN_PARKED: front truck settled behind the convoy; next truck may approach bay");
 		RewireTargets();
 		ResumeUnloadQueueAtAnchor();
 		ScheduleUnloadPoll();
@@ -473,7 +1092,9 @@ class CF_ConvoySession
 		if (!Replication.IsServer() || m_iUnloadPhase != CF_UNLOAD_DEPARTING ||
 			driver != m_UnloadHead)
 			return;
+		bool forwardWait = m_bUnloadHeadForward;
 		m_UnloadHead = null;
+		m_bUnloadHeadForward = false;
 		m_ShiftingReturn = null;
 		m_iUnloadPhase = CF_UNLOAD_NONE;
 		m_bUnloadReleaseBlocked = true;
@@ -486,7 +1107,13 @@ class CF_ConvoySession
 			unit.CF_SetUnloadSequenceHold(true);
 			unit.CF_HoldForUnloadQueue();
 		}
-		Print("[ConvoyFollower] UNLOAD_RELEASE_FAILED: front turn did not settle; outbound queue held");
+		if (forwardWait)
+		{
+			m_sPanelOrderState = "blocked: forward truck did not reach a safe road waiting slot";
+			Print("[ConvoyFollower] FORWARD_WAIT_FAILED: truck did not reach road slot; outbound queue held");
+		}
+		else
+			Print("[ConvoyFollower] UNLOAD_RELEASE_FAILED: front turn did not settle; outbound queue held");
 		CF_NotifyOwnerFailure(CF_ConvoyFailureEvent.UNLOAD_BLOCKED);
 		// The route controller logs the observed failure. Do not translate
 		// every failed unload maneuver into a radio claim that the truck is
@@ -501,6 +1128,7 @@ class CF_ConvoySession
 		return session && driver && !session.m_aUnits.IsEmpty() &&
 			session.m_aUnits[0] == driver && !session.m_PendingDriver &&
 			!session.m_UnloadHead && session.m_iUnloadPhase == CF_UNLOAD_NONE &&
+			session.m_aForwardWait.IsEmpty() &&
 			(session.m_bUnloadAnchorLock || session.m_bUnloadReleaseBlocked);
 	}
 
@@ -511,6 +1139,8 @@ class CF_ConvoySession
 		CF_ConvoySession session = GetForPlayer(user);
 		session.m_bUnloadAnchorLock = false;
 		session.m_bUnloadReleaseBlocked = false;
+		session.m_bForwardOutboundHoldActive = false;
+		session.m_bForwardOutboundHoldComplete = false;
 		session.m_bReturnPending = false;
 		session.m_iReturnPendingPolls = 0;
 		session.ResetReturnCrossing();
@@ -523,6 +1153,38 @@ class CF_ConvoySession
 		}
 		session.UpdateReleasePermission();
 		Print("[ConvoyFollower] UNLOAD_CANCELLED_BY_PLAYER: outbound trucks resume following; parked return line stays parked");
+		return true;
+	}
+
+	// Map-panel recovery for an unsupported truck or a blocked rear cargo
+	// interaction. Resolve the active front driver on the server; parked rear
+	// and forward waiting lines remain assigned and do not move.
+	static bool CF_PanelCancelUnload(IEntity user)
+	{
+		if (!Replication.IsServer())
+			return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session)
+			return false;
+		if (!session.m_aForwardWait.IsEmpty())
+		{
+			session.m_sPanelOrderState = "blocked: trucks are parked ahead; pass that line and use Resume ahead";
+			return false;
+		}
+		if (session.m_aUnits.IsEmpty() ||
+			!CanResumeFollowing(user, session.m_aUnits[0]))
+		{
+			session.m_sPanelOrderState = "blocked: no outbound unload hold is ready to cancel";
+			return false;
+		}
+		if (!ResumeFollowing(user, session.m_aUnits[0]))
+		{
+			session.m_sPanelOrderState = "blocked: outbound unload hold could not be canceled";
+			return false;
+		}
+		session.m_iPanelOrder = CF_PANEL_ORDER_RESUME;
+		session.m_fPanelOrderDeadlineMs = GetGame().GetWorld().GetWorldTime() + CF_PANEL_HOLD_TIMEOUT_MS;
+		session.m_sPanelOrderState = "executing: outbound line resuming; parked trucks remain waiting";
 		return true;
 	}
 
@@ -598,6 +1260,8 @@ class CF_ConvoySession
 		if (!m_bUnloadAnchorLock || m_UnloadHead || m_bUnloadReleaseBlocked)
 			return;
 		m_bUnloadAnchorLock = false;
+		m_bForwardOutboundHoldActive = false;
+		m_bForwardOutboundHoldComplete = false;
 		foreach (CF_DriverControllerComponent unit : m_aUnits)
 		{
 			if (!unit)
@@ -606,6 +1270,37 @@ class CF_ConvoySession
 			unit.CF_ResumeFromUnloadQueue();
 		}
 		Print("[ConvoyFollower] UNLOAD_SEQUENCE_LEFT: unreleased trucks resume ordinary follow; return line remains parked");
+	}
+
+	protected void HoldOutboundForForwardWaitLine()
+	{
+		if (m_aForwardWait.IsEmpty() || m_aUnits.IsEmpty())
+			return;
+		if (!m_bForwardOutboundHoldActive)
+		{
+			m_bForwardOutboundHoldActive = true;
+			m_bForwardOutboundHoldComplete = false;
+			m_sPanelOrderState = "executing: unreleased trucks settling at the unload bay";
+			Print("[ConvoyFollower] FORWARD_OUTBOUND_HOLD_REQUESTED: parked-ahead line active; unreleased trucks will wait seated for explicit resume");
+		}
+		bool allHeld = true;
+		foreach (CF_DriverControllerComponent unit : m_aUnits)
+		{
+			if (!unit)
+			{
+				allHeld = false;
+				continue;
+			}
+			unit.CF_RequestForwardOutboundHold();
+			if (!unit.CF_IsForwardOutboundHeld())
+				allHeld = false;
+		}
+		if (allHeld && !m_bForwardOutboundHoldComplete)
+		{
+			m_bForwardOutboundHoldComplete = true;
+			m_sPanelOrderState = "completed: unreleased trucks holding at bay; pass parked line and Resume ahead";
+			Print("[ConvoyFollower] FORWARD_OUTBOUND_HOLD_COMPLETE: all unreleased trucks seated and waiting");
+		}
 	}
 
 	protected void ScheduleUnloadPoll()
@@ -646,6 +1341,11 @@ class CF_ConvoySession
 		foreach (CF_DriverControllerComponent parked : m_aReturnQueue)
 		{
 			if (parked && parked.CF_GetAssignedVehicle() == vehicle)
+				return true;
+		}
+		foreach (CF_DriverControllerComponent parkedAhead : m_aForwardWait)
+		{
+			if (parkedAhead && parkedAhead.CF_GetAssignedVehicle() == vehicle)
 				return true;
 		}
 		foreach (CF_DriverControllerComponent stranded : m_aStrandedUnits)
@@ -699,6 +1399,10 @@ class CF_ConvoySession
 
 	protected bool ShouldResumeOutbound(Vehicle ownerVehicle)
 	{
+		// Trucks parked ahead never trigger ordinary auto-follow. The owner
+		// must explicitly rejoin that line after physically passing it.
+		if (!m_aForwardWait.IsEmpty())
+			return false;
 		if (m_aUnits.IsEmpty() ||
 			vector.Distance(ownerVehicle.GetOrigin(), m_vUnloadAnchor) <= CF_UNLOAD_LEAVE_DISTANCE)
 			return false;
@@ -886,11 +1590,24 @@ class CF_ConvoySession
 		m_iOwnerMissingPolls = 0;
 
 		Vehicle ownerVehicle = GetOwnerPilotedVehicle();
+		if (m_iPanelOrder == CF_PANEL_ORDER_HOLD)
+			CF_UpdatePanelOrderState();
 		PollOrdinaryOrderRecovery(ownerVehicle);
 		if (m_aReturnQueue.IsEmpty() && !m_bUnloadAnchorLock && !m_UnloadHead && ownerVehicle &&
 			!IsConvoyVehicle(ownerVehicle))
 			m_OriginalLeadVehicle = ownerVehicle;
 
+		// A forward line is deliberately held when its original lead truck
+		// leaves the unload bay. The owner may have stepped out or handed its
+		// wheel to another driver; requiring the owner to remain in the pilot
+		// seat left unreleased trucks idling at the bay until false stall removal.
+		Vehicle forwardLineLead = ownerVehicle;
+		if (!forwardLineLead)
+			forwardLineLead = Vehicle.Cast(m_OriginalLeadVehicle);
+		if (!m_UnloadHead && !m_bUnloadReleaseBlocked && m_bUnloadAnchorLock && forwardLineLead &&
+			!m_aForwardWait.IsEmpty() &&
+			vector.Distance(forwardLineLead.GetOrigin(), m_vUnloadAnchor) > CF_UNLOAD_LEAVE_DISTANCE)
+			HoldOutboundForForwardWaitLine();
 		if (!m_UnloadHead && !m_bUnloadReleaseBlocked && m_bUnloadAnchorLock && ownerVehicle &&
 			ShouldResumeOutbound(ownerVehicle))
 			ResumeOutboundAfterLeave();
@@ -1096,7 +1813,8 @@ class CF_ConvoySession
 		SCR_PlayerController controller = GetOrderingController();
 		if (controller)
 		{
-			controller.CF_SetConvoyMemberCount(m_aUnits.Count() + m_aReturnQueue.Count() + m_aStrandedUnits.Count());
+			controller.CF_SetConvoyMemberCount(m_aUnits.Count() + m_aReturnQueue.Count() +
+				m_aForwardWait.Count() + m_aStrandedUnits.Count());
 			controller.CF_ClearConvoyRadioQueue();
 		}
 		if (failedParked.IsEmpty() && failedOutbound.IsEmpty())
@@ -1212,6 +1930,14 @@ class CF_ConvoySession
 				ResetReturnCrossing();
 			}
 		}
+		for (int k = m_aForwardWait.Count() - 1; k >= 0; k--)
+		{
+			if (m_aForwardWait[k] == driver)
+			{
+				m_aForwardWait.RemoveOrdered(k);
+				removedReturn = true;
+			}
+		}
 		for (int j = m_aStrandedUnits.Count() - 1; j >= 0; j--)
 		{
 			if (m_aStrandedUnits[j] == driver)
@@ -1238,13 +1964,14 @@ class CF_ConvoySession
 				m_bUnloadReleaseBlocked = false;
 			Print("[ConvoyFollower] CONVOY_UNIT_REMOVED: former position " + (index + 1));
 			RewireTargets();
-			if (m_bUnloadAnchorLock)
+			if (m_bUnloadAnchorLock && !m_bForwardOutboundHoldActive)
 				ResumeUnloadQueueAtAnchor();
 		}
 		else if (removedReturn)
 			RewireTargets();
 
-		if (m_aUnits.IsEmpty() && m_aReturnQueue.IsEmpty() && m_aStrandedUnits.IsEmpty() && !m_PendingDriver)
+		if (m_aUnits.IsEmpty() && m_aReturnQueue.IsEmpty() && m_aForwardWait.IsEmpty() &&
+			m_aStrandedUnits.IsEmpty() && !m_PendingDriver)
 			CloseSession();
 	}
 
@@ -1330,6 +2057,7 @@ class CF_ConvoySession
 		if (session.m_PendingDriver && session.m_PendingDriver != driver)
 			return false;
 		return session.FindUnit(driver) >= 0 || session.m_aReturnQueue.Contains(driver) ||
+			session.m_aForwardWait.Contains(driver) ||
 			session.m_aStrandedUnits.Contains(driver) || session.m_PendingDriver == driver;
 	}
 
@@ -1365,6 +2093,14 @@ class CF_ConvoySession
 				session.ResetReturnCrossing();
 			}
 		}
+		for (int aheadIndex = session.m_aForwardWait.Count() - 1; aheadIndex >= 0; aheadIndex--)
+		{
+			if (session.m_aForwardWait[aheadIndex] == driver)
+			{
+				session.m_aForwardWait.RemoveOrdered(aheadIndex);
+				session.RemoveIdentity(driver);
+			}
+		}
 		for (int k = session.m_aStrandedUnits.Count() - 1; k >= 0; k--)
 		{
 			if (session.m_aStrandedUnits[k] == driver)
@@ -1376,12 +2112,13 @@ class CF_ConvoySession
 
 		driver.CF_StandDownFromSession();
 		if (session.m_aUnits.IsEmpty() && session.m_aReturnQueue.IsEmpty() &&
+			session.m_aForwardWait.IsEmpty() &&
 			session.m_aStrandedUnits.IsEmpty() && !session.m_PendingDriver)
 			session.CloseSession();
 		else
 		{
 			session.RewireTargets();
-			if (resumeAtAnchor)
+			if (resumeAtAnchor && !session.m_bForwardOutboundHoldActive)
 				session.ResumeUnloadQueueAtAnchor();
 		}
 		return true;
@@ -1404,6 +2141,7 @@ class CF_ConvoySession
 	bool IsOwnedRadioMember(CF_DriverControllerComponent driver)
 	{
 		return driver && (FindUnit(driver) >= 0 || m_aReturnQueue.Contains(driver) ||
+			m_aForwardWait.Contains(driver) ||
 			m_aStrandedUnits.Contains(driver));
 	}
 
@@ -1484,7 +2222,8 @@ class CF_ConvoySession
 		SCR_PlayerController controller = GetOrderingController();
 		if (controller)
 		{
-			controller.CF_SetConvoyMemberCount(m_aUnits.Count() + m_aReturnQueue.Count() + m_aStrandedUnits.Count());
+			controller.CF_SetConvoyMemberCount(m_aUnits.Count() + m_aReturnQueue.Count() +
+				m_aForwardWait.Count() + m_aStrandedUnits.Count());
 			controller.CF_ClearConvoyRadioQueue();
 		}
 	}
@@ -1522,6 +2261,11 @@ class CF_ConvoySession
 			if (parked && !drivers.Contains(parked))
 				drivers.Insert(parked);
 		}
+		foreach (CF_DriverControllerComponent parkedAhead : m_aForwardWait)
+		{
+			if (parkedAhead && !drivers.Contains(parkedAhead))
+				drivers.Insert(parkedAhead);
+		}
 		foreach (CF_DriverControllerComponent stranded : m_aStrandedUnits)
 		{
 			if (stranded && !drivers.Contains(stranded))
@@ -1544,6 +2288,7 @@ class CF_ConvoySession
 		m_UnloadHead = null;
 		m_iUnloadPhase = CF_UNLOAD_NONE;
 		m_aReturnQueue.Clear();
+		m_aForwardWait.Clear();
 		m_aStrandedUnits.Clear();
 		m_aIdentityDrivers.Clear();
 		m_aIdentityNumbers.Clear();

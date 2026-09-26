@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{A671E312D487B9F0}Worlds/Tests/ConvoyFollower_Arland_OwnerDriveCalibration.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

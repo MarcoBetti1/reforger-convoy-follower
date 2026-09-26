@@ -11,6 +11,8 @@ class CF_SmokeProbeComponent : ScriptComponent
 	protected int m_iExpectedTrucks;
 	[Attribute(defvalue: "0", params: "0 1 1", desc: "Use the surveyed straight-road goal for the separate two-truck release fixture")]
 	protected bool m_bStraightReleaseRoadGoal;
+	[Attribute(defvalue: "0", params: "0 1 1", desc: "Use the surveyed eight-metre Arland road goal for the separate wide-road forward-line fixture")]
+	protected bool m_bWideRoadGoal;
 	[Attribute(defvalue: "300", params: "120 600 1", desc: "Maximum total test seconds; pause-resume needs an extra owner-on-foot interval")]
 	protected int m_iMaxTestSeconds;
 	[Attribute(defvalue: "210", params: "120 450 1", desc: "Maximum drive seconds including any planned stop or owner exit")]
@@ -147,7 +149,9 @@ class CF_SmokeProbeComponent : ScriptComponent
 		m_bMaintainArrivalBrake = false;
 		if (m_Lead)
 		{
-			ClearEventMask(m_Lead, EntityEvent.POSTFRAME);
+			// Keep POSTFRAME active: the independent two-ahead companion on this
+			// same lead entity needs its own physical-drive callback after arrival.
+			// The false flag above makes this component's brake callback inert.
 			CarControllerComponent car = CarControllerComponent.Cast(m_Lead.FindComponent(CarControllerComponent));
 			if (car)
 			{
@@ -345,8 +349,36 @@ class CF_SmokeProbeComponent : ScriptComponent
 			Print("[ConvoyFollower] AUTO_ROUTE_EXPLICIT: connected straight release road goal=" + m_vRoadGoal +
 				" from=" + m_vInitialLeadPosition);
 		}
+		else if (m_bWideRoadGoal)
+		{
+			// Surveyed nominal width-8 road near Arland candidate 28. Keeping
+			// this fixture opt-in preserves every earlier smoke route unchanged.
+			vector desiredWideGoal = Vector(1453.0, 36.7, 3052.0);
+			vector resolvedWideGoal;
+			bool connectedWideGoal = roads.GetReachableWaypointInRoad(m_vInitialLeadPosition, desiredWideGoal, 35.0, resolvedWideGoal);
+			if (!connectedWideGoal || vector.Distance(desiredWideGoal, resolvedWideGoal) > 15.0 ||
+				vector.Distance(m_vInitialLeadPosition, resolvedWideGoal) < 180.0)
+			{
+				Print("[ConvoyFollower] AUTO_ROUTE_EXPLICIT: FAIL wide road goal unavailable desired=" +
+					desiredWideGoal + " resolved=" + resolvedWideGoal + " connected=" + connectedWideGoal);
+				return false;
+			}
+			BaseRoad wideRoad;
+			float wideRoadGap;
+			roads.GetClosestRoad(resolvedWideGoal, wideRoad, wideRoadGap);
+			if (!wideRoad || wideRoad.GetWidth() < 8.0 || wideRoadGap > 5.0)
+			{
+				Print("[ConvoyFollower] AUTO_ROUTE_EXPLICIT: FAIL wide road goal lacks measured width resolved=" +
+					resolvedWideGoal + " road_gap=" + wideRoadGap);
+				return false;
+			}
+			m_vRoadGoal = resolvedWideGoal;
+			bestScore = 1000000.0;
+			Print("[ConvoyFollower] AUTO_ROUTE_EXPLICIT: connected width-8 road goal=" + m_vRoadGoal +
+				" from=" + m_vInitialLeadPosition + " mapped_width=" + wideRoad.GetWidth());
+		}
 		vector initialForward = m_Lead.GetWorldTransformAxis(2);
-		for (int radiusIndex = 0; radiusIndex < 3 && !m_bStraightReleaseRoadGoal; radiusIndex++)
+		for (int radiusIndex = 0; radiusIndex < 3 && !m_bStraightReleaseRoadGoal && !m_bWideRoadGoal; radiusIndex++)
 		{
 			float radius = 160.0 + radiusIndex * 70.0;
 			for (int directionIndex = 0; directionIndex < directions.Count(); directionIndex++)
@@ -475,16 +507,33 @@ class CF_SmokeProbeComponent : ScriptComponent
 			if (gap > widestGap)
 				widestGap = gap;
 			float roadDistance = 1000000.0;
+			float roadWidth = -1.0;
+			float allowedRoadDistance = CF_MAX_FINAL_ROAD_DISTANCE;
 			if (roads)
 			{
 				BaseRoad road;
 				roads.GetClosestRoad(truck.GetOrigin(), road, roadDistance);
+				if (road)
+				{
+					roadWidth = road.GetWidth();
+					float widthAllowance = roadWidth * 0.5 + 2.0;
+					if (widthAllowance > allowedRoadDistance)
+						allowedRoadDistance = widthAllowance;
+					if (allowedRoadDistance > 6.0)
+						allowedRoadDistance = 6.0;
+				}
 			}
-			if (!m_Drivers[i].CF_IsActiveConvoyMember() ||
-				m_Drivers[i].CF_IsOrderInverted() ||
-				m_FollowerPaths[i] < CF_MIN_FOLLOWER_PATH || gap > CF_MAX_FINAL_LINK_GAP ||
-				roadDistance > CF_MAX_FINAL_ROAD_DISTANCE)
+			bool unitReady = m_Drivers[i].CF_IsActiveConvoyMember() &&
+				!m_Drivers[i].CF_IsOrderInverted() &&
+				m_FollowerPaths[i] >= CF_MIN_FOLLOWER_PATH && gap <= CF_MAX_FINAL_LINK_GAP &&
+				roadDistance <= allowedRoadDistance;
+			if (!unitReady)
 				allReady = false;
+			if (m_bRoadGoalReached && m_iDrivingTicks % 5 == 0)
+				Print("[ConvoyFollower] AUTO_FINAL_ROAD_CHECK: unit=" + (i + 1) +
+					" road_dist=" + roadDistance + " road_width=" + roadWidth +
+					" allowed=" + allowedRoadDistance + " predecessor_gap=" + gap +
+					" path=" + m_FollowerPaths[i] + " ready=" + unitReady);
 			previous = truck;
 		}
 		return allReady;

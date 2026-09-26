@@ -13,6 +13,8 @@ class CF_ConvoyFilmCameraComponent : ScriptComponent
 	protected int m_iCameraSide;
 	[Attribute(defvalue: "0", params: "0 1 1", desc: "Hold a wide unload-bay shot until every truck starts the return route")]
 	protected int m_iFilmBayMode;
+	[Attribute(defvalue: "0", params: "0 1 1", desc: "Frame the unload bay and forward waiting slots in the same test shot")]
+	protected int m_iFilmForwardMode;
 	protected ref array<IEntity> m_Followers = {};
 	protected CF_SmokeProbeComponent m_RouteProbe;
 	protected CameraBase m_FilmCamera;
@@ -120,8 +122,18 @@ class CF_ConvoyFilmCameraComponent : ScriptComponent
 				else
 				{
 					vector bayRoadside = Vector(-m_vBayAxis[2], 0, m_vBayAxis[0]);
-					target = m_vBayLead - m_vBayAxis * 20.0 + vector.Up * 2.0;
-					eye = target + bayRoadside * (80.0 * sideSign) + m_vBayAxis * 8.0 + vector.Up * 45.0;
+					if (m_iFilmForwardMode > 0)
+					{
+						// Unlike the fixed rear-return shot, include the two
+						// connected road slots ahead of the stopped player lead.
+						target = m_vBayLead + m_vBayAxis * 42.0 + vector.Up * 2.0;
+						eye = target + bayRoadside * (110.0 * sideSign) + vector.Up * 72.0;
+					}
+					else
+					{
+						target = m_vBayLead - m_vBayAxis * 20.0 + vector.Up * 2.0;
+						eye = target + bayRoadside * (80.0 * sideSign) + m_vBayAxis * 8.0 + vector.Up * 45.0;
+					}
 				}
 			}
 		}
@@ -141,7 +153,10 @@ class CF_ConvoyFilmCameraComponent : ScriptComponent
 				return;
 			}
 			m_FilmCamera.SetWorldTransform(cameraMatrix);
-			m_FilmCamera.SetFOVDegree(55.0);
+			if (m_iFilmForwardMode > 0)
+				m_FilmCamera.SetFOVDegree(62.0);
+			else
+				m_FilmCamera.SetFOVDegree(55.0);
 			bool selected = cameraManager.SetCamera(m_FilmCamera);
 			Print("[ConvoyFollower] AUTO_FILM_CAMERA_SETUP: selected=" + selected +
 				" index=" + m_FilmCamera.GetCameraIndex());

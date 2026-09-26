@@ -1,0 +1,22 @@
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1331.34 15.4287 3337.98
+}
+
+// Survey focus markers only. Select a named marker in World Editor and frame
+// the selection to inspect terrain; neither marker proves vehicle passage.
+SCR_SpawnPoint CF_RoadCandidate28 : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1392.14 37.0254 3036.06
+}
+
+SCR_SpawnPoint CF_RoadCandidate43 : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1665.91 35.8511 3237.07
+}
+
+Vehicle CF_RoadSurveyAnchor : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1327.34 15.4287 3331.98
+ angles 0 92 0
+ components {
+  CF_RoadWidthSurveyProbeComponent "{A3D9235B3EAE7F11}" {
+  }
+ }
+}

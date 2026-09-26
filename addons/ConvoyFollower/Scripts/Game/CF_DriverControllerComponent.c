@@ -32,6 +32,9 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected static const int CF_RETURN_WAIT = 18;
 	protected static const int CF_RETURN_TURNING = 19;
 	protected static const int CF_RETURN_BLOCKED = 20;
+	protected static const int CF_PANEL_HOLD = 21;
+	protected static const int CF_FORWARD_WAIT_DEPARTED = 22;
+	protected static const int CF_FORWARD_OUTBOUND_HOLD = 23;
 
 	protected static const float CF_ON_FOOT_GAP = 2.0;
 	protected static const float CF_ON_FOOT_REORDER_DISTANCE = 3.0;
@@ -71,10 +74,17 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected static const float CF_UNLOAD_BAY_READY_RADIUS = 8.0;
 	protected static const float CF_UNLOAD_BAY_READY_EXIT_RADIUS = 12.0;
 	protected static const float CF_STOPPED_ROAD_CLOSE_DISTANCE = 5.0;
+	protected static const float CF_STOPPED_ROAD_MAX_DISTANCE = 6.0;
+	protected static const float CF_STOPPED_ROAD_SHOULDER_BUFFER = 2.0;
+	protected static const float CF_ARRIVAL_ROAD_RECOVERY_RADIUS = 2.5;
+	protected static const float CF_ARRIVAL_ROAD_RECOVERY_TIMEOUT = 25.0;
 	protected static const float CF_ROUTE_SAMPLE_DISTANCE = 5.0;
 	protected static const int CF_ROUTE_SAMPLE_LIMIT = 64;
 	protected static const float CF_LEAD_TRAIL_SAMPLE_DISTANCE = 6.0;
 	protected static const float CF_LEAD_TRAIL_REACHED_DISTANCE = 12.0;
+	// A stopped truck can coast past its current sample while the waypoint
+	// completes. Resync only to a later point it actually drove through.
+	protected static const float CF_LEAD_TRAIL_RESYNC_DISTANCE = 8.0;
 	protected static const float CF_LEAD_TRAIL_LOOKAHEAD_DISTANCE = 36.0;
 	protected static const float CF_LEAD_TRAIL_COMPLETED_DISTANCE = 20.0;
 	protected static const float CF_LEAD_TRAIL_WAYPOINT_LOOKAHEAD = 24.0;
@@ -83,8 +93,23 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected static const float CF_REBOARD_EPISODE_RESET_SECONDS = 90.0;
 	protected static const int CF_REBOARD_EPISODE_MAX_EXITS = 3;
 	protected static const float CF_UNLOAD_BAY_CLEAR_DISTANCE = 18.0;
+	// A forward-wait truck parks on the mapped road. The owner needs room to
+	// pass it later; a single-track lane is not a usable forward waiting slot.
+	protected static const float CF_FORWARD_PASS_MIN_ROAD_WIDTH = 8.0;
+	// A direct rearward goal asks the vehicle AI to turn around without a
+	// verified lateral stage. Only offer that attempt on a measured wide road.
+	protected static const float CF_REAR_DIRECT_MIN_ROAD_WIDTH = 8.0;
+	protected static const float CF_REAR_DIRECT_MAX_ROAD_OFFSET = 6.0;
+	protected static const float CF_FORWARD_PASS_SAMPLE_DISTANCE = 8.0;
+	protected static const float CF_FORWARD_PASS_MAX_ROAD_OFFSET = 4.0;
 	protected static const float CF_UNLOAD_SLOT_RADIUS = 5.0;
 	protected static const float CF_UNLOAD_SLOT_STILL_SECONDS = 2.0;
+	// Forward parking needs spare distance for a truck to settle on a grade.
+	// The rear return maneuver keeps its separately tested capture radius.
+	protected static const float CF_FORWARD_SLOT_BRAKE_RADIUS = 6.5;
+	protected static const float CF_FORWARD_SLOT_WAYPOINT_RADIUS = 3.5;
+	protected static const float CF_FORWARD_SLOT_STILL_SECONDS = 6.0;
+	protected static const float CF_FORWARD_SLOT_STILL_MOVEMENT = 0.4;
 	protected static const float CF_UNLOAD_DEPART_TIMEOUT_SECONDS = 120.0;
 	protected static const float CF_UNLOAD_SLOT_REISSUE_CHECK_SECONDS = 15.0;
 	protected static const float CF_UNLOAD_SLOT_REISSUE_MIN_PROGRESS = 3.0;
@@ -134,6 +159,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected bool m_bArrivalCloseLogged;
 	protected bool m_bOrderInversionLogged;
 	protected bool m_bUnloadSequenceHold;
+	protected bool m_bForwardOutboundHoldRequested;
 	protected bool m_bUnloadAnchorValid;
 	protected bool m_bUnloadClearReported;
 	protected bool m_bUnloadSlotParkedLogged;
@@ -144,8 +170,12 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected bool m_bTurnProbeOccupied;
 	protected bool m_bReleaseRouteHistoryFallback;
 	protected bool m_bArrivalRoadHold;
+	protected bool m_bArrivalRoadRecoveryActive;
+	protected bool m_bArrivalRoadRecoveryAttempted;
+	protected bool m_bArrivalRoadRecoveryBlocked;
 	protected bool m_bOwnVehicleBrake;
 	protected bool m_bUnloadSlotBrakeCaptured;
+	protected bool m_bForwardWaitDeparture;
 	protected bool m_bUnloadBayGoalValid;
 	protected bool m_bUnloadIntermediateActive;
 	protected string m_sReleasePlanFailureReason;
@@ -155,7 +185,9 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected int m_iReturnTurnPhase;
 	protected int m_iReturnGoalReissues;
 	protected float m_fUnloadSlotStillSeconds;
+	protected float m_fForwardParkedDiagnosticSeconds;
 	protected float m_fArrivalTruckStillSeconds;
+	protected float m_fArrivalRoadRecoverySeconds;
 	protected float m_fTurnStageSeconds;
 	protected float m_fUnloadDepartureDiagnosticSeconds;
 	protected float m_fUnloadDepartureElapsedSeconds;
@@ -177,6 +209,8 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected vector m_vUnloadWaitingPoint;
 	protected vector m_vUnloadBayGoal;
 	protected vector m_vLastUnloadTruckPosition;
+	protected vector m_vUnloadStillnessAnchor;
+	protected vector m_vForwardParkedPosition;
 	protected vector m_vUnloadSlotProgressPosition;
 	protected vector m_vUnloadIntermediateGoal;
 	protected vector m_vArrivalLastTruckPosition;
@@ -215,10 +249,11 @@ class CF_DriverControllerComponent : ScriptComponent
 		if (state != CF_ARRIVING)
 			SetUnloadReleaseReady(false);
 		m_iState = state;
-		if (state != CF_UNLOAD_DEPARTING && state != CF_UNLOAD_DEPARTED)
+		if (state != CF_UNLOAD_DEPARTING && state != CF_UNLOAD_DEPARTED &&
+			state != CF_FORWARD_WAIT_DEPARTED)
 			m_bUnloadSlotBrakeCaptured = false;
 		if (state != CF_ARRIVING)
-			m_bArrivalRoadHold = false;
+			CF_ResetArrivalRoadRecovery();
 		if (Replication.IsServer())
 		{
 			Replication.BumpMe();
@@ -236,10 +271,17 @@ class CF_DriverControllerComponent : ScriptComponent
 		if (!m_Truck || !CF_IsBoarded())
 			return false;
 		if (m_iState == CF_UNLOAD_QUEUE || m_iState == CF_UNLOAD_DEPARTED ||
+			m_iState == CF_FORWARD_WAIT_DEPARTED ||
+			m_iState == CF_FORWARD_OUTBOUND_HOLD ||
+			m_iState == CF_PANEL_HOLD ||
 			m_iState == CF_RETURN_WAIT || m_iState == CF_RETURN_BLOCKED)
 			return true;
 		if (m_iState == CF_ARRIVING)
 		{
+			if (m_bArrivalRoadRecoveryBlocked)
+				return true;
+			if (m_bArrivalRoadRecoveryActive)
+				return false;
 			bool withinArrivalGoal = false;
 			if (m_bUnloadSequenceHold && m_bUnloadBayGoalValid)
 				withinArrivalGoal = vector.Distance(m_Truck.GetOrigin(), m_vUnloadBayGoal) <=
@@ -260,16 +302,104 @@ class CF_DriverControllerComponent : ScriptComponent
 		}
 		if (m_iState != CF_UNLOAD_DEPARTING || m_iUnloadTurnPhase != 2)
 			return false;
+		float brakeCaptureRadius = CF_UNLOAD_SLOT_RADIUS + 4.0;
+		if (m_bForwardWaitDeparture)
+			brakeCaptureRadius = CF_FORWARD_SLOT_BRAKE_RADIUS;
 		if (!m_bUnloadSlotBrakeCaptured &&
-			vector.Distance(m_Truck.GetOrigin(), m_vUnloadWaitingPoint) <= CF_UNLOAD_SLOT_RADIUS + 4.0 &&
+			vector.Distance(m_Truck.GetOrigin(), m_vUnloadWaitingPoint) <= brakeCaptureRadius &&
 			(m_bReleaseRouteHistoryFallback || CF_IsTruckNearMappedRoad()))
 		{
 			m_bUnloadSlotBrakeCaptured = true;
 			ClearWaypoints();
 			Print("[ConvoyFollower] UNLOAD_SLOT_BRAKE_CAPTURED: Unit " + m_iUnitNumber +
 				" stopping at validated return slot " + m_vUnloadWaitingPoint);
+			if (m_bForwardWaitDeparture)
+				CF_LogForwardParkAlignment("brake_capture");
 		}
 		return m_bUnloadSlotBrakeCaptured;
+	}
+
+	// Road width alone does not show whether a long parked truck leaves room
+	// to pass. Record its actual heading and lateral centerline offset at the
+	// brake capture and completed park; the live pass test decides acceptance.
+	protected void CF_LogForwardParkAlignment(string phase)
+	{
+		if (!m_Truck)
+			return;
+		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
+		{
+			Print("[ConvoyFollower] FORWARD_PARK_ALIGNMENT: " + phase +
+				" truck=" + m_Truck.GetName() + " road navigation unavailable");
+			return;
+		}
+		vector origin = m_Truck.GetOrigin();
+		BaseRoad road;
+		float roadDistance;
+		aiWorld.GetRoadNetworkManager().GetClosestRoad(origin, road, roadDistance);
+		if (!road)
+		{
+			Print("[ConvoyFollower] FORWARD_PARK_ALIGNMENT: " + phase +
+				" truck=" + m_Truck.GetName() + " no mapped road");
+			return;
+		}
+		ref array<vector> points = {};
+		road.GetPoints(points);
+		float bestDistance = 1000000.0;
+		vector tangent = vector.Zero;
+		vector center = vector.Zero;
+		for (int i = 0; i < points.Count() - 1; i++)
+		{
+			vector start = points[i];
+			vector end = points[i + 1];
+			float dx = end[0] - start[0];
+			float dz = end[2] - start[2];
+			float lengthSquared = dx * dx + dz * dz;
+			if (lengthSquared < 0.01)
+				continue;
+			float progress = ((origin[0] - start[0]) * dx +
+				(origin[2] - start[2]) * dz) / lengthSquared;
+			if (progress < 0.0)
+				progress = 0.0;
+			else if (progress > 1.0)
+				progress = 1.0;
+			vector projected = Vector(start[0] + dx * progress, origin[1],
+				start[2] + dz * progress);
+			float distance = vector.DistanceXZ(origin, projected);
+			if (distance >= bestDistance)
+				continue;
+			bestDistance = distance;
+			center = projected;
+			float length = Math.Sqrt(lengthSquared);
+			tangent = Vector(dx / length, 0, dz / length);
+		}
+		if (tangent == vector.Zero)
+			return;
+		if (tangent[0] * m_vOutboundTravelDirection[0] +
+			tangent[2] * m_vOutboundTravelDirection[2] < 0)
+			tangent = Vector(-tangent[0], 0, -tangent[2]);
+		vector facing = m_Truck.GetWorldTransformAxis(2);
+		float facingLength = Math.Sqrt(facing[0] * facing[0] + facing[2] * facing[2]);
+		float headingDot = -2.0;
+		if (facingLength > 0.1)
+			headingDot = (facing[0] * tangent[0] + facing[2] * tangent[2]) / facingLength;
+		float signedLateral = -tangent[2] * (origin[0] - center[0]) +
+			tangent[0] * (origin[2] - center[2]);
+		Print("[ConvoyFollower] FORWARD_PARK_ALIGNMENT: " + phase +
+			" truck=" + m_Truck.GetName() + " origin=" + origin +
+			" slot_gap=" + vector.Distance(origin, m_vUnloadWaitingPoint) +
+			" road_width=" + road.GetWidth() + " road_distance=" + roadDistance +
+			" signed_lateral=" + signedLateral + " outbound_tangent=" + tangent +
+			" heading_dot=" + headingDot);
+	}
+
+	protected void CF_ResetArrivalRoadRecovery()
+	{
+		m_bArrivalRoadHold = false;
+		m_bArrivalRoadRecoveryActive = false;
+		m_bArrivalRoadRecoveryAttempted = false;
+		m_bArrivalRoadRecoveryBlocked = false;
+		m_fArrivalRoadRecoverySeconds = 0;
 	}
 
 	protected void CF_UpdateVehicleBrake()
@@ -526,6 +656,114 @@ class CF_DriverControllerComponent : ScriptComponent
 		return m_iUnitNumber;
 	}
 
+	string CF_GetPanelStateLabel()
+	{
+		if (m_iState == CF_PANEL_HOLD)
+			return "holding in vehicle";
+		if (m_iState == CF_FOLLOWING)
+			return "following";
+		if (m_iState == CF_ARRIVING)
+			return "closing at stop";
+		if (m_iState == CF_LOST)
+			return "lost";
+		if (m_iState == CF_UNLOAD_QUEUE)
+			return "waiting to unload";
+		if (m_iState == CF_FORWARD_OUTBOUND_HOLD)
+			return "holding outbound for forward line";
+		if (m_iState == CF_UNLOAD_DEPARTING)
+			return "moving to waiting slot";
+		if (m_iState == CF_UNLOAD_DEPARTED)
+			return "parked in return line";
+		if (m_iState == CF_FORWARD_WAIT_DEPARTED)
+			return "parked ahead";
+		if (m_iState == CF_RETURN_WAIT)
+			return "waiting to return";
+		if (m_iState == CF_RETURN_TURNING)
+			return "turning for return";
+		if (m_iState == CF_RETURN_BLOCKED)
+			return "return blocked";
+		if (m_iState == CF_REBOARDING)
+			return "reboarding";
+		if (m_iState == CF_BOARDING)
+			return "boarding";
+		if (m_iState == CF_WAITING_FOR_PREDECESSOR || m_iState == CF_WAITING_FOR_LEAD)
+			return "waiting for lead";
+		if (m_iState == CF_GETTING_OUT)
+			return "getting out";
+		if (m_iState == CF_PAUSED_ON_FOOT)
+			return "waiting for owner";
+		return "not driving";
+	}
+
+	bool CF_IsPanelHeld()
+	{
+		return m_iState == CF_PANEL_HOLD && CF_IsBoarded();
+	}
+
+	bool CF_IsPanelVehicleSlow(float maxKmh)
+	{
+		if (!CF_IsBoarded())
+			return false;
+		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+		if (!car || !car.GetSimulation())
+			return false;
+		return car.GetSimulation().GetSpeedKmh() <= maxKmh;
+	}
+
+	bool CF_CanPanelHold()
+	{
+		return CF_CanApproachPanelHold() && CF_IsPanelVehicleSlow(10.0);
+	}
+
+	// A driver may still be closing the normal convoy gap when the owner
+	// orders Hold. Keep that waypoint until this truck itself slows; clearing
+	// a fast truck's MOVE order can send it into an uncontrolled stop.
+	bool CF_CanApproachPanelHold()
+	{
+		return CF_IsBoarded() &&
+			(m_iState == CF_FOLLOWING || m_iState == CF_ARRIVING ||
+			m_iState == CF_WAITING_FOR_PREDECESSOR || m_iState == CF_WAITING_FOR_LEAD ||
+			m_iState == CF_PAUSED_ON_FOOT || m_iState == CF_PANEL_HOLD);
+	}
+
+	bool CF_PanelHold()
+	{
+		if (!Replication.IsServer() || !CF_CanPanelHold())
+			return false;
+		if (m_iState == CF_PANEL_HOLD)
+			return true;
+		ClearWaypoints();
+		SetState(CF_PANEL_HOLD);
+		Print("[ConvoyFollower] PANEL_HOLD: Unit " + m_iUnitNumber + " remains seated");
+		return true;
+	}
+
+	bool CF_CanPanelResume()
+	{
+		Resource movePrefab = Resource.Load(CF_MOVE_WAYPOINT);
+		bool resumableState = m_iState == CF_PANEL_HOLD || m_iState == CF_FOLLOWING ||
+			m_iState == CF_ARRIVING || m_iState == CF_WAITING_FOR_PREDECESSOR ||
+			m_iState == CF_WAITING_FOR_LEAD || m_iState == CF_LOST;
+		return resumableState && CF_IsBoarded() && m_Group && movePrefab.IsValid() &&
+			GetTargetVehicle() && (!m_Predecessor || m_Predecessor.CF_IsBoarded());
+	}
+
+	bool CF_PanelResume()
+	{
+		if (!Replication.IsServer() || !CF_CanPanelResume())
+			return false;
+		IEntity target = GetTargetVehicle();
+		StartFollowing(target, false, false);
+		Print("[ConvoyFollower] PANEL_RESUME: Unit " + m_iUnitNumber +
+			" follows its assigned predecessor");
+		return m_iState == CF_FOLLOWING;
+	}
+
+	bool CF_CanPanelDismount()
+	{
+		return CF_IsPanelHeld() && CF_IsPanelVehicleSlow(2.0);
+	}
+
 	bool CF_IsOrderInverted()
 	{
 		return m_bOrderInversionLogged && CF_IsMovementActive();
@@ -548,6 +786,19 @@ class CF_DriverControllerComponent : ScriptComponent
 		// m_Truck is server-owned; action visibility uses the replicated flag,
 		// while the server also verifies that this driver remains seated.
 		return !Replication.IsServer() || CF_IsBoarded();
+	}
+
+	string CF_GetReleaseEligibilityReason()
+	{
+		if (!CF_IsBoarded())
+			return "driver is not seated in the assigned truck";
+		if (m_iState != CF_ARRIVING)
+			return "front truck has not settled at the unload bay";
+		if (!m_bSessionReleaseAllowed)
+			return "another unload maneuver is still active";
+		if (!m_bUnloadReleaseReady)
+			return "wait for the lead vehicle and front truck to settle";
+		return "ready";
 	}
 
 	void CF_SetSessionReleaseAllowed(bool allowed)
@@ -597,6 +848,13 @@ class CF_DriverControllerComponent : ScriptComponent
 			m_bUnloadBayGoalValid = false;
 		}
 		m_bUnloadSequenceHold = active;
+		if (!active)
+		{
+			m_bForwardOutboundHoldRequested = false;
+			m_fLostSeconds = 0;
+			m_fStuckSeconds = 0;
+			m_iStuckRetries = 0;
+		}
 	}
 
 	// The session records the first released truck's actual unloading place.
@@ -656,6 +914,32 @@ class CF_DriverControllerComponent : ScriptComponent
 		return m_iState == CF_UNLOAD_DEPARTED && CF_IsBoarded();
 	}
 
+	bool CF_IsForwardWaitParked()
+	{
+		return m_iState == CF_FORWARD_WAIT_DEPARTED && CF_IsBoarded() &&
+			CF_IsAtUnloadWaitingPoint();
+	}
+
+	bool CF_CanResumeForwardWait()
+	{
+		return m_iState == CF_FORWARD_WAIT_DEPARTED && CF_IsBoarded() && m_Session;
+	}
+
+	bool CF_ResumeForwardWait()
+	{
+		if (!Replication.IsServer() || !CF_CanResumeForwardWait())
+			return false;
+		m_bForwardWaitDeparture = false;
+		m_bUnloadSequenceHold = false;
+		m_bUnloadAnchorValid = false;
+		m_bUnloadSlotBrakeCaptured = false;
+		ResetLeadTrail(null);
+		SetState(CF_WAITING_FOR_PREDECESSOR);
+		Print("[ConvoyFollower] FORWARD_WAIT_RESUME: Unit " + m_iUnitNumber +
+			" returning to its assigned chain");
+		return true;
+	}
+
 	// The rear action runs its visibility check on clients, where m_Truck is
 	// server-owned. The session verifies the actual parked roster on use.
 	bool CF_IsReturnParkedForActions()
@@ -670,11 +954,16 @@ class CF_DriverControllerComponent : ScriptComponent
 
 	bool CF_IsAtUnloadWaitingPoint()
 	{
-		return (m_iState == CF_UNLOAD_DEPARTING || m_iState == CF_UNLOAD_DEPARTED) &&
+		float requiredStillSeconds = CF_UNLOAD_SLOT_STILL_SECONDS;
+		if (m_bForwardWaitDeparture)
+			requiredStillSeconds = CF_FORWARD_SLOT_STILL_SECONDS;
+		return (m_iState == CF_UNLOAD_DEPARTING || m_iState == CF_UNLOAD_DEPARTED ||
+			m_iState == CF_FORWARD_WAIT_DEPARTED) &&
 			CF_IsBoarded() && m_Truck && m_iUnloadTurnPhase == 2 &&
+			(!m_bForwardWaitDeparture || m_bUnloadSlotBrakeCaptured) &&
 			vector.Distance(m_Truck.GetOrigin(), m_vUnloadWaitingPoint) <= CF_UNLOAD_SLOT_RADIUS + 4.0 &&
 			(m_bReleaseRouteHistoryFallback || CF_IsTruckNearMappedRoad()) &&
-			m_fUnloadSlotStillSeconds >= CF_UNLOAD_SLOT_STILL_SECONDS;
+			m_fUnloadSlotStillSeconds >= requiredStillSeconds;
 	}
 
 	bool CF_IsUnloadBayClear(vector anchor)
@@ -714,6 +1003,266 @@ class CF_DriverControllerComponent : ScriptComponent
 		if (!TryGetVehicleFacing(m_Truck, facing) ||
 			facing[0] * direction[0] + facing[2] * direction[2] < 0.5)
 			return false;
+		return true;
+	}
+
+	// Forward waiting is a distinct player order. It is deliberately refused
+	// when the player's parked lead vehicle occupies the departure lane; the
+	// AI must not be asked to improvise a pass through a blocked narrow road.
+	bool CF_FindForwardUnloadWaitingPoint(int alreadyParked, out vector candidate)
+	{
+		candidate = vector.Zero;
+		m_sReleasePlanFailureReason = "No clear road waiting spot ahead";
+		if (!Replication.IsServer() || !m_Truck || !CF_IsBoarded() ||
+			m_iState != CF_ARRIVING || alreadyParked < 0 || alreadyParked > 4)
+			return false;
+		m_bReleaseRouteHistoryFallback = false;
+		vector travel;
+		if (!TryGetOutboundTravelDirection(travel))
+		{
+			m_sReleasePlanFailureReason = "Drive forward before ordering a truck ahead; no approach direction is known";
+			return false;
+		}
+		IEntity leadVehicle = m_LastPlayerVehicle;
+		if (!leadVehicle)
+		{
+			m_sReleasePlanFailureReason = "Park the lead vehicle before ordering a truck ahead";
+			return false;
+		}
+		vector current = m_Truck.GetOrigin();
+		vector lead = leadVehicle.GetOrigin();
+		vector toLead = lead - current;
+		float leadAhead = toLead[0] * travel[0] + toLead[2] * travel[2];
+		float leadLateral = toLead[0] * travel[2] - toLead[2] * travel[0];
+		if (leadLateral < 0)
+			leadLateral = -leadLateral;
+		if (leadAhead > -4.0 && leadAhead < 30.0 && leadLateral < 8.0)
+		{
+			m_sReleasePlanFailureReason = "Move your lead vehicle off the driving lane to let this truck pass";
+			return false;
+		}
+		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
+		{
+			m_sReleasePlanFailureReason = "Vehicle road navigation is unavailable here";
+			return false;
+		}
+		// Reserve the farthest slot first, leaving space for later trucks to
+		// wait closer to the bay without overtaking one another.
+		// The AI can settle about five metres before the mapped waypoint.
+		// Leave that stopping shortfall in each successive truck's gap.
+		float distanceAhead = 85.0 - alreadyParked * 28.0;
+		// Follow the actual approach road's points. A parked lead may be angled
+		// toward the shoulder; projecting its facing for 85 m can miss a bend
+		// even when the same road remains connected and clear.
+		RoadNetworkManager roads = aiWorld.GetRoadNetworkManager();
+		vector desired;
+		if (!TryGetForwardRoadArcPoint(roads, current, lead, travel, distanceAhead, desired))
+		{
+			m_sReleasePlanFailureReason = "No mapped road continues far enough ahead; choose a clearer stopping place";
+			return false;
+		}
+		vector roadPoint;
+		bool connected = roads.GetReachableWaypointInRoad(current, desired, 8.0, roadPoint);
+		Print("[ConvoyFollower] FORWARD_WAIT_ROAD_SCAN: road_arc_goal=" + desired +
+			" connected=" + connected + " road_point=" + roadPoint);
+		if (!connected || vector.Distance(roadPoint, desired) > 8.0)
+		{
+			m_sReleasePlanFailureReason = "No connected road slot ahead; choose a clearer stopping place";
+			return false;
+		}
+		vector toSlot = roadPoint - current;
+		float slotAhead = toSlot[0] * travel[0] + toSlot[2] * travel[2];
+		if (slotAhead < CF_UNLOAD_BAY_CLEAR_DISTANCE + 5.0 ||
+			vector.Distance(roadPoint, lead) < CF_UNLOAD_BAY_CLEAR_DISTANCE)
+		{
+			m_sReleasePlanFailureReason = "The forward road slot is too close to the unloading bay";
+			return false;
+		}
+		if (!HasForwardPassingRoadWidth(roads, roadPoint))
+		{
+			m_sReleasePlanFailureReason = "Road too narrow to pass a parked convoy truck; choose a wider road or turnout";
+			return false;
+		}
+		m_bTurnProbeOccupied = false;
+		GetGame().GetWorld().QueryEntitiesBySphere(roadPoint, 5.5, ConsiderTurnObstacle);
+		if (m_bTurnProbeOccupied)
+		{
+			m_sReleasePlanFailureReason = "Another vehicle occupies the forward waiting spot";
+			return false;
+		}
+		candidate = roadPoint;
+		m_sReleasePlanFailureReason = string.Empty;
+		return true;
+	}
+
+	// Measure a forward slot along the same road segment that the truck used
+	// at the bay. Do not enlarge the road snap radius to pick an unrelated lane.
+	protected bool TryGetForwardRoadArcPoint(RoadNetworkManager roads, vector truck,
+		vector lead, vector travel, float distanceAhead, out vector goal)
+	{
+		goal = vector.Zero;
+		if (!roads)
+			return false;
+		BaseRoad road;
+		float truckRoadDistance;
+		roads.GetClosestRoad(truck, road, truckRoadDistance);
+		if (!road || truckRoadDistance > 8.0)
+			return false;
+		ref array<vector> points = {};
+		road.GetPoints(points);
+		if (points.Count() < 2)
+			return false;
+		int closestSegment = -1;
+		float closestProgress;
+		float closestDistance = 1000000.0;
+		vector closestDirection = vector.Zero;
+		for (int i = 0; i < points.Count() - 1; i++)
+		{
+			vector start = points[i];
+			vector end = points[i + 1];
+			float dx = end[0] - start[0];
+			float dz = end[2] - start[2];
+			float lengthSquared = dx * dx + dz * dz;
+			if (lengthSquared < 0.01)
+				continue;
+			float progress = ((lead[0] - start[0]) * dx + (lead[2] - start[2]) * dz) / lengthSquared;
+			if (progress < 0.0)
+				progress = 0.0;
+			else if (progress > 1.0)
+				progress = 1.0;
+			vector projected = Vector(start[0] + dx * progress, lead[1], start[2] + dz * progress);
+			float distance = vector.DistanceXZ(lead, projected);
+			if (distance >= closestDistance)
+				continue;
+			closestDistance = distance;
+			closestSegment = i;
+			closestProgress = progress;
+			float length = Math.Sqrt(lengthSquared);
+			closestDirection = Vector(dx / length, 0, dz / length);
+		}
+		if (closestSegment < 0 || closestDistance > 24.0)
+			return false;
+		float alignment = closestDirection[0] * travel[0] + closestDirection[2] * travel[2];
+		if (alignment < 0.25 && alignment > -0.25)
+			return false;
+		bool increasing = alignment > 0.0;
+		float remaining = distanceAhead;
+		int segment = closestSegment;
+		float progressAlongSegment = closestProgress;
+		while (segment >= 0 && segment < points.Count() - 1)
+		{
+			vector a = points[segment];
+			vector b = points[segment + 1];
+			float segmentLength = vector.DistanceXZ(a, b);
+			if (segmentLength < 0.01)
+			{
+				if (increasing)
+					segment++;
+				else
+					segment--;
+				continue;
+			}
+			float available;
+			if (increasing)
+				available = (1.0 - progressAlongSegment) * segmentLength;
+			else
+				available = progressAlongSegment * segmentLength;
+			if (remaining <= available)
+			{
+				float goalProgress = progressAlongSegment;
+				if (increasing)
+					goalProgress += remaining / segmentLength;
+				else
+					goalProgress -= remaining / segmentLength;
+				goal = a + (b - a) * goalProgress;
+				return true;
+			}
+			remaining -= available;
+			if (increasing)
+			{
+				segment++;
+				progressAlongSegment = 0.0;
+			}
+			else
+			{
+				segment--;
+				progressAlongSegment = 1.0;
+			}
+		}
+		return false;
+	}
+
+	// Width is a conservative nominal-road preflight, not proof that shoulders,
+	// rocks, trees, or another vehicle leave a passable physical corridor.
+	// Sample either side of the slot so a wide road ending at a narrow bend is
+	// not treated as a safe waiting place.
+	protected bool HasForwardPassingRoadWidth(RoadNetworkManager roads, vector slot)
+	{
+		if (!roads)
+			return false;
+		BaseRoad road;
+		float roadDistance;
+		roads.GetClosestRoad(slot, road, roadDistance);
+		float slotWidth;
+		if (road)
+			slotWidth = road.GetWidth();
+		if (!road || roadDistance > CF_FORWARD_PASS_MAX_ROAD_OFFSET ||
+			slotWidth < CF_FORWARD_PASS_MIN_ROAD_WIDTH)
+		{
+			Print("[ConvoyFollower] FORWARD_PASS_WIDTH_REJECTED: slot=" + slot +
+				" width=" + slotWidth + " road_distance=" + roadDistance);
+			return false;
+		}
+		ref array<vector> points = {};
+		road.GetPoints(points);
+		vector tangent = vector.Zero;
+		float closestSegmentDistance = 1000000.0;
+		for (int i = 1; i < points.Count(); i++)
+		{
+			vector start = points[i - 1];
+			vector end = points[i];
+			float dx = end[0] - start[0];
+			float dz = end[2] - start[2];
+			float lengthSquared = dx * dx + dz * dz;
+			if (lengthSquared < 0.01)
+				continue;
+			float progress = ((slot[0] - start[0]) * dx + (slot[2] - start[2]) * dz) / lengthSquared;
+			if (progress < 0.0)
+				progress = 0.0;
+			else if (progress > 1.0)
+				progress = 1.0;
+			vector projected = Vector(start[0] + dx * progress, slot[1], start[2] + dz * progress);
+			float distance = vector.DistanceXZ(slot, projected);
+			if (distance >= closestSegmentDistance)
+				continue;
+			closestSegmentDistance = distance;
+			float length = Math.Sqrt(lengthSquared);
+			tangent = Vector(dx / length, 0, dz / length);
+		}
+		if (tangent == vector.Zero)
+			return false;
+		for (int direction = -1; direction <= 1; direction += 2)
+		{
+			float signedDistance = CF_FORWARD_PASS_SAMPLE_DISTANCE;
+			if (direction < 0)
+				signedDistance = -signedDistance;
+			vector sample = slot + tangent * signedDistance;
+			BaseRoad sampleRoad;
+			float sampleDistance;
+			roads.GetClosestRoad(sample, sampleRoad, sampleDistance);
+			float sampleWidth;
+			if (sampleRoad)
+				sampleWidth = sampleRoad.GetWidth();
+			if (!sampleRoad || sampleDistance > CF_FORWARD_PASS_MAX_ROAD_OFFSET ||
+				sampleWidth < CF_FORWARD_PASS_MIN_ROAD_WIDTH)
+			{
+				Print("[ConvoyFollower] FORWARD_PASS_WIDTH_REJECTED: sample=" + sample +
+					" width=" + sampleWidth +
+					" road_distance=" + sampleDistance);
+				return false;
+			}
+		}
 		return true;
 	}
 
@@ -920,6 +1469,25 @@ class CF_DriverControllerComponent : ScriptComponent
 			m_sReleasePlanFailureReason = "Another vehicle blocks the waiting spot";
 			return false;
 		}
+		if (!m_bReleaseRouteHistoryFallback)
+		{
+			vector turnStage;
+			string turnSide;
+			if (!TryChooseTurnStage(travel, turnStage, turnSide))
+			{
+				float currentWidth;
+				float slotWidth;
+				if (!CF_HasWideMappedRearTurn(m_Truck.GetOrigin(), roadPoint,
+					currentWidth, slotWidth))
+				{
+					m_sReleasePlanFailureReason = "No safe rear turnaround here; use a wider turnout or Pull ahead and wait";
+					Print("[ConvoyFollower] UNLOAD_REAR_REJECTED: Unit " + m_iUnitNumber +
+						" no lateral road stage; road widths truck=" + currentWidth +
+						" slot=" + slotWidth + " (need " + CF_REAR_DIRECT_MIN_ROAD_WIDTH + " m)");
+					return false;
+				}
+			}
+		}
 
 		float homeX = roadPoint[0] - outboundTail[0];
 		float homeZ = roadPoint[2] - outboundTail[2];
@@ -1042,7 +1610,41 @@ class CF_DriverControllerComponent : ScriptComponent
 		return true;
 	}
 
+	protected bool CF_HasWideMappedRearTurn(vector current, vector slot,
+		out float currentWidth, out float slotWidth)
+	{
+		currentWidth = 0;
+		slotWidth = 0;
+		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
+			return false;
+		RoadNetworkManager roads = aiWorld.GetRoadNetworkManager();
+		BaseRoad currentRoad;
+		BaseRoad slotRoad;
+		float currentOffset;
+		float slotOffset;
+		if (roads.GetClosestRoad(current, currentRoad, currentOffset) <= 0 || !currentRoad ||
+			roads.GetClosestRoad(slot, slotRoad, slotOffset) <= 0 || !slotRoad)
+			return false;
+		currentWidth = currentRoad.GetWidth();
+		slotWidth = slotRoad.GetWidth();
+		return currentOffset <= CF_REAR_DIRECT_MAX_ROAD_OFFSET &&
+			slotOffset <= CF_REAR_DIRECT_MAX_ROAD_OFFSET &&
+			currentWidth >= CF_REAR_DIRECT_MIN_ROAD_WIDTH &&
+			slotWidth >= CF_REAR_DIRECT_MIN_ROAD_WIDTH;
+	}
+
 	bool CF_BeginUnloadDeparture(vector waitingPoint)
+	{
+		return CF_BeginDeparture(waitingPoint, false);
+	}
+
+	bool CF_BeginForwardDeparture(vector waitingPoint)
+	{
+		return CF_BeginDeparture(waitingPoint, true);
+	}
+
+	protected bool CF_BeginDeparture(vector waitingPoint, bool forwardWait)
 	{
 		if (!Replication.IsServer() || !CF_CanReleaseAtUnload() || !m_Session || !m_Truck ||
 			(!m_bUnloadAnchorValid && !m_LastPlayerVehicle))
@@ -1055,12 +1657,29 @@ class CF_DriverControllerComponent : ScriptComponent
 			return false;
 		float behindCurrent = (current[0] - waitingPoint[0]) * travel[0] +
 			(current[2] - waitingPoint[2]) * travel[2];
-		if (behindCurrent < 12.0 || vector.Distance(waitingPoint, anchor) < CF_UNLOAD_BAY_CLEAR_DISTANCE)
+		if ((!forwardWait && behindCurrent < 12.0) ||
+			(forwardWait && behindCurrent > -CF_UNLOAD_BAY_CLEAR_DISTANCE) ||
+			vector.Distance(waitingPoint, anchor) < CF_UNLOAD_BAY_CLEAR_DISTANCE)
 			return false;
 		vector stage;
 		string side;
-		bool stagedTurn = TryChooseTurnStage(travel, stage, side);
+		bool stagedTurn = !forwardWait && TryChooseTurnStage(travel, stage, side);
+		if (!forwardWait && !stagedTurn && !m_bReleaseRouteHistoryFallback)
+		{
+			float currentWidth;
+			float slotWidth;
+			if (!CF_HasWideMappedRearTurn(current, waitingPoint,
+				currentWidth, slotWidth))
+			{
+				m_sReleasePlanFailureReason = "No safe rear turnaround here; use a wider turnout or Pull ahead and wait";
+				Print("[ConvoyFollower] UNLOAD_REAR_REJECTED: Unit " + m_iUnitNumber +
+					" departure changed; road widths truck=" + currentWidth +
+					" slot=" + slotWidth);
+				return false;
+			}
+		}
 
+		m_bForwardWaitDeparture = forwardWait;
 		m_vUnloadAnchor = anchor;
 		m_bUnloadAnchorValid = true;
 		m_vOutboundTravelDirection = travel;
@@ -1096,6 +1715,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		if (!IssueMoveWaypoint(firstWaypoint))
 		{
 			Print("[ConvoyFollower] UNLOAD_RELEASE_FAILED: Unit " + m_iUnitNumber + " could not issue road waypoint");
+			m_bForwardWaitDeparture = false;
 			SetState(CF_ARRIVING);
 			SetUnloadReleaseReady(true);
 			return false;
@@ -1105,10 +1725,15 @@ class CF_DriverControllerComponent : ScriptComponent
 		{
 			if (stagedTurn)
 				waypoint.SetCompletionRadius(CF_TURN_STAGE_RADIUS);
+			else if (forwardWait)
+				waypoint.SetCompletionRadius(CF_FORWARD_SLOT_WAYPOINT_RADIUS);
 			else
 				waypoint.SetCompletionRadius(CF_UNLOAD_SLOT_RADIUS);
 		}
-		if (stagedTurn)
+		if (forwardWait)
+			Print("[ConvoyFollower] FORWARD_WAIT_REQUESTED: Unit " + m_iUnitNumber +
+				" driving to connected road slot " + waitingPoint);
+		else if (stagedTurn)
 			Print("[ConvoyFollower] UNLOAD_TURN_STAGE: Unit " + m_iUnitNumber + " taking clear " + side + " road stage before return slot");
 		else
 			Print("[ConvoyFollower] UNLOAD_DIRECT_ROUTE: Unit " + m_iUnitNumber + " routing to validated return slot without a lateral road stage");
@@ -1129,6 +1754,45 @@ class CF_DriverControllerComponent : ScriptComponent
 		Print("[ConvoyFollower] UNLOAD_QUEUE_HOLD: Unit " + m_iUnitNumber + " waiting seated for bay clearance");
 	}
 
+	// A forward waiting line is a deliberate stop, including any trucks that
+	// have not been released. If the front truck is still approaching the bay,
+	// keep its MOVE order until it is close and slow; never call it stalled
+	// because the owner is driving past the parked-ahead trucks.
+	void CF_RequestForwardOutboundHold()
+	{
+		if (!Replication.IsServer() || !m_Session || !CF_IsBoarded())
+			return;
+		m_bForwardOutboundHoldRequested = true;
+		m_fLostSeconds = 0;
+		m_fStuckSeconds = 0;
+		m_iStuckRetries = 0;
+		CF_TryCompleteForwardOutboundHold();
+	}
+
+	protected void CF_TryCompleteForwardOutboundHold()
+	{
+		if (!m_bForwardOutboundHoldRequested || !CF_IsBoarded() ||
+			m_iState == CF_FORWARD_OUTBOUND_HOLD)
+			return;
+		if (m_iState != CF_UNLOAD_QUEUE)
+		{
+			if (m_iState != CF_ARRIVING || !m_bUnloadBayGoalValid ||
+				vector.Distance(m_Truck.GetOrigin(), m_vUnloadBayGoal) >
+				CF_UNLOAD_BAY_READY_EXIT_RADIUS + 3.0 ||
+				!CF_IsPanelVehicleSlow(10.0))
+				return;
+		}
+		ClearWaypoints();
+		SetState(CF_FORWARD_OUTBOUND_HOLD);
+		Print("[ConvoyFollower] FORWARD_OUTBOUND_HOLD: Unit " + m_iUnitNumber +
+			" waiting seated at the unload line until explicit resume");
+	}
+
+	bool CF_IsForwardOutboundHeld()
+	{
+		return m_iState == CF_FORWARD_OUTBOUND_HOLD && CF_IsBoarded();
+	}
+
 	void CF_ResumeFromUnloadQueue()
 	{
 		if (!Replication.IsServer() || !CF_IsBoarded())
@@ -1147,7 +1811,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			Print("[ConvoyFollower] UNLOAD_RELEASE_ABORTED: Unit " + m_iUnitNumber + " returning toward parked target");
 			return;
 		}
-		if (m_iState != CF_UNLOAD_QUEUE)
+		if (m_iState != CF_UNLOAD_QUEUE && m_iState != CF_FORWARD_OUTBOUND_HOLD)
 			return;
 		m_fStateSeconds = 0;
 		SetState(CF_WAITING_FOR_PREDECESSOR);
@@ -1158,14 +1822,26 @@ class CF_DriverControllerComponent : ScriptComponent
 	{
 		if (!Replication.IsServer() || m_iState != CF_UNLOAD_DEPARTING || !CF_IsAtUnloadWaitingPoint())
 			return;
-		// The session keeps this truck in its parked return roster. It remains
-		// seated and receives no follow order until the lead vehicle crosses
-		// the return line homeward.
+		// The session records the chosen waiting side. A forward wait remains
+		// separate from the rear return line and cannot auto-rejoin on a
+		// homeward crossing.
 		ClearWaypoints();
 		m_Predecessor = null;
 		m_bUnloadSequenceHold = false;
-		SetState(CF_UNLOAD_DEPARTED);
-		Print("[ConvoyFollower] RETURN_PARKED: former Unit " + m_iUnitNumber + " seated behind convoy tail");
+		if (m_bForwardWaitDeparture)
+		{
+			SetState(CF_FORWARD_WAIT_DEPARTED);
+			m_vForwardParkedPosition = m_Truck.GetOrigin();
+			m_fForwardParkedDiagnosticSeconds = 0;
+			Print("[ConvoyFollower] FORWARD_WAIT_PARKED: former Unit " + m_iUnitNumber +
+				" seated ahead; explicit owner resume required");
+			CF_LogForwardParkAlignment("parked");
+		}
+		else
+		{
+			SetState(CF_UNLOAD_DEPARTED);
+			Print("[ConvoyFollower] RETURN_PARKED: former Unit " + m_iUnitNumber + " seated behind convoy tail");
+		}
 	}
 
 	bool CF_FindHomewardShiftPoint(out vector candidate, float distanceMeters)
@@ -1356,7 +2032,11 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_bUnloadClearReported = true;
 		ClearWaypoints();
 		SetState(CF_UNLOAD_QUEUE);
-		Print("[ConvoyFollower] UNLOAD_TURN_BLOCKED: Unit " + m_iUnitNumber + " holding seated: " + reason);
+		if (m_bForwardWaitDeparture)
+			Print("[ConvoyFollower] FORWARD_WAIT_BLOCKED: Unit " + m_iUnitNumber +
+				" holding seated: " + reason);
+		else
+			Print("[ConvoyFollower] UNLOAD_TURN_BLOCKED: Unit " + m_iUnitNumber + " holding seated: " + reason);
 		if (m_Session)
 			m_Session.OnUnloadDepartureFailed(this);
 	}
@@ -1492,10 +2172,20 @@ class CF_DriverControllerComponent : ScriptComponent
 		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
 		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
 			return false;
-		Road nearestRoad;
+		BaseRoad nearestRoad;
 		float roadDistance;
-		return aiWorld.GetRoadNetworkManager().GetClosestRoad(m_Truck.GetOrigin(),
-			nearestRoad, roadDistance) > 0 && roadDistance <= CF_STOPPED_ROAD_CLOSE_DISTANCE;
+		if (aiWorld.GetRoadNetworkManager().GetClosestRoad(m_Truck.GetOrigin(),
+			nearestRoad, roadDistance) <= 0 || !nearestRoad)
+			return false;
+		// Vehicle AI may finish a four-metre MOVE a little past its mapped
+		// centerline. Allow only a small shoulder margin on a wide road; the
+		// former five-metre guard remains on narrow roads.
+		float allowedDistance = nearestRoad.GetWidth() * 0.5 + CF_STOPPED_ROAD_SHOULDER_BUFFER;
+		if (allowedDistance < CF_STOPPED_ROAD_CLOSE_DISTANCE)
+			allowedDistance = CF_STOPPED_ROAD_CLOSE_DISTANCE;
+		if (allowedDistance > CF_STOPPED_ROAD_MAX_DISTANCE)
+			allowedDistance = CF_STOPPED_ROAD_MAX_DISTANCE;
+		return roadDistance <= allowedDistance;
 	}
 
 	// Near a stopped predecessor, aiming at its exact center across a junction
@@ -1569,6 +2259,28 @@ class CF_DriverControllerComponent : ScriptComponent
 			}
 		}
 
+		// Following a stop and reboard, the engine may consume a near MOVE while
+		// the truck coasts beyond the cursor's sample. The old cursor then stays
+		// behind it, so the 36 m lookahead can repeatedly select the same
+		// already-completed waypoint even as the predecessor drives away. Find
+		// the first later sample under the truck and resume from there. Do not
+		// jump straight to the moving target across a road junction.
+		if (m_iLeadTrailCursor < m_aLeadTrailPositions.Count() - 1 &&
+			vector.Distance(m_Truck.GetOrigin(), m_aLeadTrailPositions[m_iLeadTrailCursor]) >
+			CF_LEAD_TRAIL_REACHED_DISTANCE)
+		{
+			for (int sampleIndex = m_iLeadTrailCursor + 1; sampleIndex < m_aLeadTrailPositions.Count(); sampleIndex++)
+			{
+				if (vector.Distance(m_Truck.GetOrigin(), m_aLeadTrailPositions[sampleIndex]) >
+					CF_LEAD_TRAIL_RESYNC_DISTANCE)
+					continue;
+				Print("[ConvoyFollower] FOLLOW_TRAIL_RESYNC: Unit " + m_iUnitNumber +
+					" route point " + m_iLeadTrailCursor + " to " + sampleIndex);
+				m_iLeadTrailCursor = sampleIndex;
+				break;
+			}
+		}
+
 		// The moving gap itself is wide enough to consume nearby samples. A
 		// point farther along the trail remains the next road-routed MOVE goal.
 		while (m_iLeadTrailCursor < m_aLeadTrailPositions.Count() - 1 &&
@@ -1628,7 +2340,21 @@ class CF_DriverControllerComponent : ScriptComponent
 		if (!m_Truck)
 			return;
 		vector current = m_Truck.GetOrigin();
-		if (vector.Distance(current, m_vLastUnloadTruckPosition) < 1.0)
+		if (m_bForwardWaitDeparture)
+		{
+			// Per-poll motion below one metre still let a truck roll several
+			// metres downhill while the old timer called it stationary.
+			if (m_fUnloadSlotStillSeconds <= 0)
+				m_vUnloadStillnessAnchor = current;
+			if (vector.Distance(current, m_vUnloadStillnessAnchor) > CF_FORWARD_SLOT_STILL_MOVEMENT)
+			{
+				m_vUnloadStillnessAnchor = current;
+				m_fUnloadSlotStillSeconds = 0;
+			}
+			else
+				m_fUnloadSlotStillSeconds += elapsed;
+		}
+		else if (vector.Distance(current, m_vLastUnloadTruckPosition) < 1.0)
 			m_fUnloadSlotStillSeconds += elapsed;
 		else
 			m_fUnloadSlotStillSeconds = 0;
@@ -1735,7 +2461,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_fTargetStillSeconds = 0;
 		m_bStopSettleIssued = false;
 		m_bArrivalCloseLogged = false;
-		m_bArrivalRoadHold = false;
+		CF_ResetArrivalRoadRecovery();
 		m_iStuckRetries = 0;
 		m_bOrderInversionLogged = false;
 		if (m_iState == CF_RETURN_WAIT || m_iState == CF_RETURN_TURNING || m_iState == CF_RETURN_BLOCKED)
@@ -1747,7 +2473,8 @@ class CF_DriverControllerComponent : ScriptComponent
 			Print("[ConvoyFollower] RETURN_RETARGET: Unit " + m_iUnitNumber + " waiting for new homeward predecessor");
 			return;
 		}
-		if (m_iState != CF_PAUSED_ON_FOOT && m_iState != CF_UNLOAD_QUEUE)
+		if (m_iState != CF_PAUSED_ON_FOOT && m_iState != CF_UNLOAD_QUEUE &&
+			m_iState != CF_FORWARD_OUTBOUND_HOLD)
 			SetState(CF_WAITING_FOR_PREDECESSOR);
 		Print("[ConvoyFollower] RETARGET: Unit " + m_iUnitNumber + " assigned new predecessor");
 	}
@@ -1765,10 +2492,11 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_fTargetStillSeconds = 0;
 		m_bStopSettleIssued = false;
 		m_bArrivalCloseLogged = false;
-		m_bArrivalRoadHold = false;
+		CF_ResetArrivalRoadRecovery();
 		m_iStuckRetries = 0;
 		m_bOrderInversionLogged = false;
-		if (m_iState != CF_PAUSED_ON_FOOT && m_iState != CF_BOARDING && m_iState != CF_UNLOAD_QUEUE)
+		if (m_iState != CF_PAUSED_ON_FOOT && m_iState != CF_BOARDING &&
+			m_iState != CF_UNLOAD_QUEUE && m_iState != CF_FORWARD_OUTBOUND_HOLD)
 			SetState(CF_WAITING_FOR_PREDECESSOR);
 		Print("[ConvoyFollower] LINK_HOLD: Unit " + m_iUnitNumber + " waiting for predecessor");
 	}
@@ -1826,6 +2554,14 @@ class CF_DriverControllerComponent : ScriptComponent
 				m_Group = null;
 			return false;
 		}
+		if (CF_ConvoySession.IsVehicleAssignedToAnotherDriver(m_Truck, this))
+		{
+			Print("[ConvoyFollower] ASSIGN_REJECTED: vehicle was claimed by another convoy driver before boarding");
+			m_Truck = null;
+			if (!wasOnFootFollower)
+				m_Group = null;
+			return false;
+		}
 
 		m_Driver = driver;
 		m_Leader = leader;
@@ -1843,6 +2579,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_bUnloadAnchorValid = false;
 		CF_SetSessionReleaseAllowed(true);
 		m_bUnloadClearReported = false;
+		m_bForwardWaitDeparture = false;
 		m_bUnloadSlotParkedLogged = false;
 		m_bReturnTurnFailed = false;
 		m_bReturnWaitForOwnerPass = false;
@@ -1975,6 +2712,8 @@ class CF_DriverControllerComponent : ScriptComponent
 
 		if (!pilotFree)
 			return true;
+		if (CF_ConvoySession.IsVehicleAssignedToAnotherDriver(vehicle, this))
+			return true;
 
 		float distance = vector.Distance(GetOwner().GetOrigin(), vehicle.GetOrigin());
 		if (distance < m_fCandidateDistance)
@@ -2051,7 +2790,9 @@ class CF_DriverControllerComponent : ScriptComponent
 			return;
 		}
 		m_iUnloadReboardState = 0;
-		if (m_iState == CF_UNLOAD_QUEUE || m_iState == CF_UNLOAD_DEPARTING || m_iState == CF_UNLOAD_DEPARTED ||
+		if (m_iState == CF_UNLOAD_QUEUE || m_iState == CF_FORWARD_OUTBOUND_HOLD ||
+			m_iState == CF_UNLOAD_DEPARTING || m_iState == CF_UNLOAD_DEPARTED ||
+			m_iState == CF_FORWARD_WAIT_DEPARTED ||
 			m_iState == CF_RETURN_WAIT || m_iState == CF_RETURN_TURNING || m_iState == CF_RETURN_BLOCKED)
 			m_iUnloadReboardState = m_iState;
 		m_iReboardAttempts = 0;
@@ -2284,8 +3025,95 @@ class CF_DriverControllerComponent : ScriptComponent
 			" closing on predecessor route point " + stoppedRoadGoal);
 	}
 
+	// A MOVE can finish while a fast arriving truck is still sliding. If it
+	// settles outside the mapped shoulder, one tight road MOVE may correct it.
+	// Never announce arrival or repeat short reverse-seeking orders off road.
+	protected bool CF_UpdateArrivalRoadRecovery(float elapsed, float separation)
+	{
+		if (m_iState != CF_ARRIVING || !m_Truck || !m_LeadVehicle)
+			return false;
+		if (m_bArrivalRoadRecoveryBlocked)
+			return true;
+		if (m_bArrivalRoadRecoveryActive)
+		{
+			m_fArrivalRoadRecoverySeconds += elapsed;
+			if (CF_IsTruckNearMappedRoad() && CF_IsPanelVehicleSlow(2.0))
+			{
+				m_bArrivalRoadRecoveryActive = false;
+				m_bArrivalRoadHold = true;
+				ClearWaypoints();
+				CF_UpdateVehicleBrake();
+				Print("[ConvoyFollower] ARRIVAL_ROAD_RECOVERED: Unit " + m_iUnitNumber +
+					" seated and stopped on mapped road");
+				return true;
+			}
+			if (m_fArrivalRoadRecoverySeconds >= CF_ARRIVAL_ROAD_RECOVERY_TIMEOUT)
+			{
+				m_bArrivalRoadRecoveryActive = false;
+				m_bArrivalRoadRecoveryBlocked = true;
+				ClearWaypoints();
+				CF_UpdateVehicleBrake();
+				Print("[ConvoyFollower] ARRIVAL_ROAD_BLOCKED: Unit " + m_iUnitNumber +
+					" could not settle on mapped road after one correction; release unavailable");
+			}
+			return true;
+		}
+		if (CF_IsTruckNearMappedRoad() ||
+			m_fTargetStillSeconds < CF_STOP_DETECT_SECONDS ||
+			separation > CF_ConvoySettings.Get().m_fStoppedGap + 16.0 ||
+			!CF_IsPanelVehicleSlow(2.0) ||
+			(!m_bArrivalRoadHold && HasOwnWaypointInGroup()))
+			return false;
+
+		m_bArrivalRoadHold = false;
+		m_bArrivalCloseLogged = false;
+		SetUnloadReleaseReady(false);
+		if (m_bArrivalRoadRecoveryAttempted)
+		{
+			m_bArrivalRoadRecoveryBlocked = true;
+			ClearWaypoints();
+			CF_UpdateVehicleBrake();
+			Print("[ConvoyFollower] ARRIVAL_ROAD_BLOCKED: Unit " + m_iUnitNumber +
+				" drifted off mapped road again; release unavailable");
+			return true;
+		}
+		m_bArrivalRoadRecoveryAttempted = true;
+		vector roadGoal;
+		if (!CF_TryGetStoppedTrailRoadGoal(m_LeadVehicle, roadGoal))
+		{
+			m_bArrivalRoadRecoveryBlocked = true;
+			ClearWaypoints();
+			CF_UpdateVehicleBrake();
+			Print("[ConvoyFollower] ARRIVAL_ROAD_BLOCKED: Unit " + m_iUnitNumber +
+				" has no reachable predecessor road point; release unavailable");
+			return true;
+		}
+		m_bTurnProbeOccupied = false;
+		GetGame().GetWorld().QueryEntitiesBySphere(roadGoal, 4.5, ConsiderTurnObstacle);
+		if (m_bTurnProbeOccupied || !IssueMoveWaypoint(roadGoal))
+		{
+			m_bArrivalRoadRecoveryBlocked = true;
+			ClearWaypoints();
+			CF_UpdateVehicleBrake();
+			Print("[ConvoyFollower] ARRIVAL_ROAD_BLOCKED: Unit " + m_iUnitNumber +
+				" road correction is occupied or unavailable; release unavailable");
+			return true;
+		}
+		SCR_AIWaypoint correction = SCR_AIWaypoint.Cast(m_Waypoint);
+		if (correction)
+			correction.SetCompletionRadius(CF_ARRIVAL_ROAD_RECOVERY_RADIUS);
+		m_bArrivalRoadRecoveryActive = true;
+		m_fArrivalRoadRecoverySeconds = 0;
+		CF_UpdateVehicleBrake();
+		Print("[ConvoyFollower] ARRIVAL_ROAD_RECOVERY: Unit " + m_iUnitNumber +
+			" correcting off-road stop toward " + roadGoal);
+		return true;
+	}
+
 	protected bool CF_ShouldHoldCompletedArrival(float separation)
 	{
+		if (!CF_IsTruckNearMappedRoad())
+			return false;
 		if (m_iState == CF_ARRIVING && m_bArrivalCloseLogged &&
 			m_bUnloadSequenceHold && m_bUnloadBayGoalValid)
 			return vector.Distance(m_Truck.GetOrigin(), m_vUnloadBayGoal) <=
@@ -2387,7 +3215,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_fTargetStillSeconds = 0;
 		m_bStopSettleIssued = false;
 		m_bArrivalCloseLogged = false;
-		m_bArrivalRoadHold = false;
+		CF_ResetArrivalRoadRecovery();
 		m_bPauseWasLost = false;
 		m_fStateSeconds = 0;
 		m_fLostSeconds = 0;
@@ -2430,7 +3258,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_fTargetStillSeconds = 0;
 		m_bStopSettleIssued = false;
 		m_bArrivalCloseLogged = false;
-		m_bArrivalRoadHold = false;
+		CF_ResetArrivalRoadRecovery();
 		m_fStateSeconds = 0;
 		m_fLostSeconds = 0;
 		m_fStuckSeconds = 0;
@@ -2537,6 +3365,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_bUnloadAnchorValid = false;
 		CF_SetSessionReleaseAllowed(true);
 		m_bUnloadClearReported = false;
+		m_bForwardWaitDeparture = false;
 		m_bUnloadSlotParkedLogged = false;
 		m_bReturnTurnFailed = false;
 		m_bReturnWaitForOwnerPass = false;
@@ -2873,13 +3702,16 @@ class CF_DriverControllerComponent : ScriptComponent
 				Print("[ConvoyFollower] REBOARDED: Unit " + m_iUnitNumber + " returned to assigned driver seat");
 				m_iReboardAttempts = 0;
 				m_fStateSeconds = 0;
-				if (m_iUnloadReboardState == CF_UNLOAD_QUEUE)
-				{
-					m_iUnloadReboardState = 0;
-					SetState(CF_UNLOAD_QUEUE);
-					return;
-				}
-				if (m_iUnloadReboardState == CF_UNLOAD_DEPARTING || m_iUnloadReboardState == CF_UNLOAD_DEPARTED)
+			if (m_iUnloadReboardState == CF_UNLOAD_QUEUE ||
+				m_iUnloadReboardState == CF_FORWARD_OUTBOUND_HOLD)
+			{
+				int holdState = m_iUnloadReboardState;
+				m_iUnloadReboardState = 0;
+				SetState(holdState);
+				return;
+			}
+				if (m_iUnloadReboardState == CF_UNLOAD_DEPARTING || m_iUnloadReboardState == CF_UNLOAD_DEPARTED ||
+					m_iUnloadReboardState == CF_FORWARD_WAIT_DEPARTED)
 				{
 					int resumeState = m_iUnloadReboardState;
 					m_iUnloadReboardState = 0;
@@ -2889,7 +3721,8 @@ class CF_DriverControllerComponent : ScriptComponent
 					vector reboardDestination = m_vUnloadWaitingPoint;
 					if (resumeState == CF_UNLOAD_DEPARTING && m_iUnloadTurnPhase == 1)
 						reboardDestination = m_vUnloadTurnStage;
-					if (vector.Distance(m_Truck.GetOrigin(), reboardDestination) > CF_UNLOAD_SLOT_RADIUS + 4.0)
+					if (resumeState == CF_UNLOAD_DEPARTING &&
+						vector.Distance(m_Truck.GetOrigin(), reboardDestination) > CF_UNLOAD_SLOT_RADIUS + 4.0)
 					{
 						if (!IssueMoveWaypoint(reboardDestination))
 							Print("[ConvoyFollower] UNLOAD_REBOARD_MOVE_FAILED: Unit " + m_iUnitNumber);
@@ -2988,8 +3821,11 @@ class CF_DriverControllerComponent : ScriptComponent
 		}
 
 		if (m_iState != CF_FOLLOWING && m_iState != CF_LOST && m_iState != CF_PAUSED_ON_FOOT &&
+			m_iState != CF_PANEL_HOLD &&
 			m_iState != CF_ARRIVING && m_iState != CF_UNLOAD_QUEUE &&
+			m_iState != CF_FORWARD_OUTBOUND_HOLD &&
 			m_iState != CF_UNLOAD_DEPARTING && m_iState != CF_UNLOAD_DEPARTED &&
+			m_iState != CF_FORWARD_WAIT_DEPARTED &&
 			m_iState != CF_RETURN_WAIT && m_iState != CF_RETURN_TURNING && m_iState != CF_RETURN_BLOCKED)
 			return;
 
@@ -3023,6 +3859,12 @@ class CF_DriverControllerComponent : ScriptComponent
 			}
 			return;
 		}
+		if (m_iState == CF_PANEL_HOLD)
+			return;
+		if (m_bForwardOutboundHoldRequested)
+			CF_TryCompleteForwardOutboundHold();
+		if (m_iState == CF_FORWARD_OUTBOUND_HOLD)
+			return;
 		SampleTruckRoute();
 		if (m_iState == CF_UNLOAD_QUEUE)
 			return;
@@ -3132,15 +3974,22 @@ class CF_DriverControllerComponent : ScriptComponent
 					" no_best_s=" + m_fUnloadNoBestProgressSeconds +
 					" reissues=" + m_iUnloadSlotReissues);
 				CF_ResetUnloadSlotProgressSample();
-				if (currentGap > CF_UNLOAD_SLOT_RADIUS + 6.0 &&
+				bool nearForwardSlotWithoutWaypoint = m_bForwardWaitDeparture &&
+					currentGap > CF_FORWARD_SLOT_BRAKE_RADIUS &&
+					!HasOwnWaypointInGroup() &&
+					m_fUnloadNoBestProgressSeconds >= CF_UNLOAD_SLOT_REISSUE_CHECK_SECONDS;
+				if ((currentGap > CF_UNLOAD_SLOT_RADIUS + 6.0 || nearForwardSlotWithoutWaypoint) &&
 					!m_bUnloadSlotBrakeCaptured && !m_bUnloadIntermediateActive &&
 					((netMovement < CF_UNLOAD_SLOT_REISSUE_MIN_PROGRESS &&
 					gapImprovement < CF_UNLOAD_SLOT_REISSUE_MIN_PROGRESS) ||
-					m_fUnloadNoBestProgressSeconds >= CF_UNLOAD_SLOT_BEST_PROGRESS_TIMEOUT_SECONDS) &&
+					m_fUnloadNoBestProgressSeconds >= CF_UNLOAD_SLOT_BEST_PROGRESS_TIMEOUT_SECONDS ||
+					nearForwardSlotWithoutWaypoint) &&
 					m_iUnloadSlotReissues < CF_UNLOAD_SLOT_MAX_REISSUES)
 				{
 					m_iUnloadSlotReissues++;
-					bool intermediateIssued = CF_TryIssueUnloadIntermediate();
+					bool intermediateIssued = false;
+					if (!nearForwardSlotWithoutWaypoint)
+						intermediateIssued = CF_TryIssueUnloadIntermediate();
 					if (!intermediateIssued && !IssueMoveWaypoint(m_vUnloadWaitingPoint))
 					{
 						FailUnloadDeparture("stalled return-slot route could not be replanned");
@@ -3150,7 +3999,12 @@ class CF_DriverControllerComponent : ScriptComponent
 					{
 						SCR_AIWaypoint retriedWaypoint = SCR_AIWaypoint.Cast(m_Waypoint);
 						if (retriedWaypoint)
-							retriedWaypoint.SetCompletionRadius(CF_UNLOAD_SLOT_RADIUS);
+						{
+							if (m_bForwardWaitDeparture)
+								retriedWaypoint.SetCompletionRadius(CF_FORWARD_SLOT_WAYPOINT_RADIUS);
+							else
+								retriedWaypoint.SetCompletionRadius(CF_UNLOAD_SLOT_RADIUS);
+						}
 					}
 					CF_ResetUnloadBestProgress();
 					m_bUnloadIntermediateActive = intermediateIssued;
@@ -3161,7 +4015,10 @@ class CF_DriverControllerComponent : ScriptComponent
 			if (!m_bUnloadClearReported && CF_IsUnloadBayClear(m_vUnloadAnchor))
 			{
 				m_bUnloadClearReported = true;
-				Print("[ConvoyFollower] UNLOAD_BAY_CLEAR: Unit " + m_iUnitNumber + " settled behind tail");
+				if (m_bForwardWaitDeparture)
+					Print("[ConvoyFollower] FORWARD_WAIT_SLOT_CLEAR: Unit " + m_iUnitNumber + " settled ahead and cleared cargo bay");
+				else
+					Print("[ConvoyFollower] UNLOAD_BAY_CLEAR: Unit " + m_iUnitNumber + " settled behind tail");
 				if (m_Session)
 					m_Session.OnUnloadBayCleared(this);
 			}
@@ -3181,6 +4038,43 @@ class CF_DriverControllerComponent : ScriptComponent
 				m_bUnloadSlotParkedLogged = true;
 				ClearWaypoints();
 				Print("[ConvoyFollower] RETURN_WAITING: former Unit " + m_iUnitNumber + " seated at rear return slot");
+			}
+			return;
+		}
+		if (m_iState == CF_FORWARD_WAIT_DEPARTED)
+		{
+			UpdateUnloadSlotStillness(elapsed);
+			m_fForwardParkedDiagnosticSeconds += elapsed;
+			if (m_fForwardParkedDiagnosticSeconds >= 5.0)
+			{
+				m_fForwardParkedDiagnosticSeconds = 0;
+				CarControllerComponent parkedCar = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+				VehicleWheeledSimulation parkedSim;
+				if (parkedCar)
+					parkedSim = parkedCar.GetSimulation();
+				float parkedSpeedKmh = 0;
+				float parkedBrake = 0;
+				float parkedThrottle = 0;
+				int parkedGear = 0;
+				bool handbrakeOn = false;
+				if (parkedSim)
+				{
+					parkedSpeedKmh = parkedSim.GetSpeedKmh();
+					parkedBrake = parkedSim.GetBrake();
+					parkedThrottle = parkedSim.GetThrottle();
+					parkedGear = parkedSim.GetGear();
+					handbrakeOn = parkedSim.IsHandbrakeOn();
+				}
+				Print("[ConvoyFollower] FORWARD_WAIT_PARK_STATUS: Unit " + m_iUnitNumber +
+					" origin=" + m_Truck.GetOrigin() +
+					" slot_gap=" + vector.Distance(m_Truck.GetOrigin(), m_vUnloadWaitingPoint) +
+					" drift=" + vector.Distance(m_Truck.GetOrigin(), m_vForwardParkedPosition) +
+					" still_s=" + m_fUnloadSlotStillSeconds +
+					" parked=" + CF_IsForwardWaitParked() +
+					" speed_kmh=" + parkedSpeedKmh +
+					" brake=" + parkedBrake + " throttle=" + parkedThrottle +
+					" gear=" + parkedGear + " handbrake=" + handbrakeOn +
+					" persistent=" + (parkedCar && parkedCar.GetPersistentHandBrake()));
 			}
 			return;
 		}
@@ -3449,7 +4343,8 @@ class CF_DriverControllerComponent : ScriptComponent
 				m_fRangeWarningSeconds = 0;
 		}
 
-		if (!returnMergeGrace && separation > CF_ConvoySettings.Get().m_fLostDistance)
+		if (!returnMergeGrace && !m_bForwardOutboundHoldRequested &&
+			separation > CF_ConvoySettings.Get().m_fLostDistance)
 			m_fLostSeconds += elapsed;
 		else
 			m_fLostSeconds = 0;
@@ -3478,7 +4373,8 @@ class CF_DriverControllerComponent : ScriptComponent
 		vector leadTrailGoal = GetLeadTrailGoal(m_LeadVehicle);
 
 		m_fStuckSeconds += elapsed;
-		if (m_fStuckSeconds >= CF_ConvoySettings.Get().m_fStuckCheckSeconds)
+		if (!m_bForwardOutboundHoldRequested &&
+			m_fStuckSeconds >= CF_ConvoySettings.Get().m_fStuckCheckSeconds)
 		{
 			float movement = vector.Distance(m_vLastTruckPosition, m_Truck.GetOrigin());
 			float targetMovement = vector.Distance(m_vLastStallTargetPosition, m_LeadVehicle.GetOrigin());
@@ -3519,6 +4415,8 @@ class CF_DriverControllerComponent : ScriptComponent
 			SetState(CF_ARRIVING);
 			Print("[ConvoyFollower] ARRIVAL_APPROACH: Unit " + m_iUnitNumber + " closing behind stopped convoy target");
 		}
+		if (CF_UpdateArrivalRoadRecovery(elapsed, separation))
+			return;
 		if (m_iState == CF_ARRIVING)
 		{
 			if (vector.Distance(m_Truck.GetOrigin(), m_vArrivalLastTruckPosition) < 0.8)
@@ -3538,6 +4436,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			else if (m_bArrivalCloseLogged &&
 				separation <= CF_ConvoySettings.Get().m_fStoppedGap + CF_ARRIVAL_RELEASE_EXIT_BUFFER)
 				withinArrivalGate = true;
+			withinArrivalGate = withinArrivalGate && CF_IsTruckNearMappedRoad();
 			bool nearStoppedTarget = m_fTargetStillSeconds >= CF_STOP_DETECT_SECONDS &&
 				m_fArrivalTruckStillSeconds >= CF_UNLOAD_SLOT_STILL_SECONDS && withinArrivalGate;
 			SetUnloadReleaseReady(!m_Predecessor && nearStoppedTarget);
@@ -3591,6 +4490,10 @@ class CF_DriverControllerComponent : ScriptComponent
 			if (m_fWaypointSeconds >= retryDelay &&
 				separation > desiredGap + gapBuffer)
 			{
+				Print("[ConvoyFollower] FOLLOW_WAYPOINT_REBUILD: Unit " + m_iUnitNumber +
+					" cursor=" + m_iLeadTrailCursor + "/" + m_aLeadTrailPositions.Count() +
+					" truck=" + m_Truck.GetOrigin() + " goal=" + leadTrailGoal +
+					" target=" + m_LeadVehicle.GetOrigin() + " advance=" + targetAdvance);
 				if (!IssueMoveWaypoint(leadTrailGoal))
 				{
 					Print("[ConvoyFollower] FOLLOW_FAILED: cannot restore completed move waypoint");

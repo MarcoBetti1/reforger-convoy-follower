@@ -32,6 +32,8 @@ Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1
    m_iExpectedTrucks 2
    m_bStraightReleaseRoadGoal 1
   }
+  CF_ForwardWaitProbeComponent "{C3AF78B43EAC4F8D}" {
+  }
   CF_ConvoyFilmCameraComponent "{5EDB83429767AE10}" {
    m_iExpectedTrucks 2
    m_iFilmBayMode 1

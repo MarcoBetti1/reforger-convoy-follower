@@ -44,6 +44,93 @@ modded class SCR_PlayerController
 	protected bool m_bCFHasRoutineCall;
 	protected float m_fCFLastRoutineCallMs;
 
+	void CF_RequestPanelSnapshot()
+	{
+		if (System.IsConsoleApp() || !GetGame() || this != GetGame().GetPlayerController())
+			return;
+		Rpc(CF_RpcAskPanelSnapshot);
+	}
+
+	void CF_SubmitPanelOrder(int command, int unitIdentity = 0)
+	{
+		if (System.IsConsoleApp() || !GetGame() || this != GetGame().GetPlayerController())
+			return;
+		Rpc(CF_RpcAskPanelOrder, command, unitIdentity);
+	}
+
+	protected IEntity CF_GetPanelOwnerEntity()
+	{
+		if (!Replication.IsServer() || !GetGame())
+			return null;
+		IEntity user = GetControlledEntity();
+		PlayerManager manager = GetGame().GetPlayerManager();
+		if (!user || !manager)
+			return null;
+		int playerId = GetPlayerId();
+		if (playerId <= 0 || manager.GetPlayerController(playerId) != this ||
+			manager.GetPlayerIdFromControlledEntity(user) != playerId || !CF_ConvoySession.GetForPlayer(user))
+			return null;
+		return user;
+	}
+
+	protected void CF_SendPanelSnapshotToOwner(IEntity user)
+	{
+		if (!user)
+		{
+			Rpc(CF_RpcDoPanelSnapshot, string.Empty, "blocked: no convoy owned by this player");
+			return;
+		}
+		Rpc(CF_RpcDoPanelSnapshot, CF_ConvoySession.CF_GetOwnerPanelSnapshot(user),
+			CF_ConvoySession.CF_GetOwnerPanelOrderState(user));
+	}
+
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void CF_RpcAskPanelSnapshot()
+	{
+		CF_SendPanelSnapshotToOwner(CF_GetPanelOwnerEntity());
+	}
+
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void CF_RpcAskPanelOrder(int command, int unitIdentity)
+	{
+		IEntity user = CF_GetPanelOwnerEntity();
+		if (!user)
+		{
+			CF_SendPanelSnapshotToOwner(null);
+			return;
+		}
+		bool accepted = false;
+		if (command == CF_ConvoyPanelOrder.FOLLOW)
+			accepted = CF_ConvoySession.CF_PanelResume(user);
+		else if (command == CF_ConvoyPanelOrder.HOLD)
+			accepted = CF_ConvoySession.CF_PanelHold(user);
+		else if (command == CF_ConvoyPanelOrder.WAIT_AHEAD)
+			accepted = CF_ConvoySession.CF_PanelPullAhead(user, unitIdentity);
+		else if (command == CF_ConvoyPanelOrder.PULL_REAR)
+			accepted = CF_ConvoySession.CF_PanelPullBack(user, unitIdentity);
+		else if (command == CF_ConvoyPanelOrder.RESUME_AHEAD_LINE)
+			accepted = CF_ConvoySession.CF_PanelResumeForwardLine(user);
+		else if (command == CF_ConvoyPanelOrder.CANCEL_UNLOAD)
+			accepted = CF_ConvoySession.CF_PanelCancelUnload(user);
+		if (!accepted)
+			Print("[ConvoyFollower] PANEL_ORDER_BLOCKED: " + command + " unit " + unitIdentity);
+		else
+			Print("[ConvoyFollower] PANEL_ORDER_ACCEPTED: " + command + " unit " + unitIdentity);
+		CF_SendPanelSnapshotToOwner(user);
+	}
+
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void CF_RpcDoPanelSnapshot(string roster, string orderState)
+	{
+		if (System.IsConsoleApp() || !GetGame() || this != GetGame().GetPlayerController())
+			return;
+		SCR_MapEntity mapEntity = SCR_MapEntity.GetMapInstance();
+		if (!mapEntity)
+			return;
+		mapEntity.CF_SetPanelSnapshot(roster);
+		mapEntity.CF_SetPanelFeedback(orderState);
+	}
+
 	bool CF_HasActiveConvoy()
 	{
 		return m_iCFConvoyMemberCount > 0;
