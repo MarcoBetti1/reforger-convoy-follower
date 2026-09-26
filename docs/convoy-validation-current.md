@@ -127,7 +127,19 @@ The policy genuinely ran: Unit Two had49 eligible observations and35 reduced-cap
 - Natural exit, watcher/recorder completion and fresh empty game/process inventory are in `closure-review.json`. **9 runtime /0 post-result /64 shutdown errors** remain.
 - Private silent desktop recording:516.4s, SHA`037A70CA31D4A02A2E2002599E721E4A371CE86067CB44729DC05B626F9D0D88`. One live arrival view was inspected; no full-playback or ordinary-input claim.
 
-The next bounded comparison admits rear-pressure feedback from a healthy, exact bound entry approach before genuine route join. It must retain genuine join for route/progress credit, the same physical gates and one cruise writer. This targets departure cohesion, not another navigation rewrite.
+### Earlier entry feedback: rejected candidate
+
+`ordinary-three-entry-pacing-v1` added pacing-only admission for a healthy exact recorded entry approach, preserving genuine join for route/progress credit, the physical gates and the single cruise writer. All five configurations and packaging passed for **`EDC4B52E856E4786647B81E6B8C9C54D02A347BFCEB4C40F6F127B3D23E19334`**. The frozen580-file source differed from the prior middle-pacing candidate only in the trail controller. **Neither pacing candidate is promoted.**
+
+The physical result worsened: link peaks **60.3095 /93.3601 /64.334m**, terminal failure at118.276s and **zero formal hold samples**. The new entry admission ran, and a brief middle-truck prejoin cap reduction occurred between sampled pacing records. That does not establish sustained cohesion. Unit Two separately entered the preserved native arrival recovery; its later capture cannot repair the terminal verdict.
+
+Unit Three failed the authored route `ADVANCE_LIMIT`, then cleared its owned activity; this was **not** a native UNREACHABLE failure. At the adjacent214→215 projection, candidate station319.530 exceeded budget319.528 by0.00213623m against the existing0.001m tolerance. Do not label that a proven floating-point defect: the observed lateral offset and small turn predict almost the same projection difference, while logged coordinates are too coarse to establish the precise rejected subguard. Preserve this concrete route-transition issue for a conservative correction without granting unearned progress.
+
+- [Independent review](../.cache/client/runs/ordinary-three-entry-pacing-v1/independent-three-review.md), SHA`E9992E6BA6AA01AA231CDA2138C1DCEC53474DB7AB0270D7357C6E3E7D21CB0D`, verifies580 sources,212 packed text resources and3 deployment files. Full console SHA`C6917AF53C24ACB9490ECD98CD1BAE4152116C224896AEE34098F7DF463BC59B`; terminal snapshot SHA`D0DB46636664D18413F5B473BE8507F76B737E04728DA8F4209A25AD4444E223`, exact prefix+171ms.
+- **9 runtime /0 post-result /62 shutdown errors** remain. Natural client exit, completed watcher/recorder and fresh empty game/process inventory are recorded in `closure-review.json`.
+- Private silent recording203.866667s, SHA`2121B968D8940C9D41EE564D23039BEFE16582811141D2D25A81914F1369AA34`. Two live views covered staging/travel; no full playback or ordinary-input claim.
+
+**Product decision:** retain integrated arrival recovery and the successful one-truck supply milestone. Move to the [two-loaded-truck workflow](convoy-supply-trip-milestone.md#next-practical-milestone-two-loaded-trucks), preserving the spacing and route failures above. Do not launch another pacing-gain comparison simply to improve one peak number. The useful next demonstration is actual loading, retained Hold, delivery and Resume for both trucks.
 
 ## Preserved failed controls
 
@@ -151,7 +163,7 @@ Earlier route, native-request, explicit-Hold, Resume and input failures remain i
 ## Next usable-trip actions
 
 1. Preserve the demonstrated ordinary-driver baseline; address concrete supply-trip blockers before broadening driving experiments.
-2. Preserve the demonstrated bounded arrival recovery and successful one-follower delivery. Compare earlier rear-pressure feedback during a successor's exact powered entry approach; the completed middle-link comparison activates too late to prevent departure spacing failure. Keep all-link physical gates and genuine route-join requirements. Exercise interruption of recovery when a concrete command fixture is ready.
+2. Build the isolated two-loaded-truck trip from the ordinary mixed two-follower observer, using the integrated controller and coordinated native actions. Preserve per-unit Hold/Resume proof and conservation across all four containers. Keep the failed pacing candidates private and the concrete adjacent-projection fault visible; no threshold relaxation or automatic tuning loop.
 3. Resolve ordinary input through a supported, discriminating control; do not repeat unchanged key/click matrices or treat capture as input success.
 4. Complete and record the ordinary Supply Day workflow with retained assignments, useful status and one spokesperson. Extend to two/three followers and realistic interruptions.
 5. Continue the full roadmap: verified unpaved routes, regroup/return, role changes, Soviet and multiplayer coverage, performance/configuration and release polish.

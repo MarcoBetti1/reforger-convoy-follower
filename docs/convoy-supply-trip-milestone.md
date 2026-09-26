@@ -35,3 +35,15 @@ This uses the frozen tested package, which passed all five script configurations
 ## Scope
 
 This proves an autonomous **native-action supply trip** under the stated route and pace. The fixture loads before recruitment, stages the same test owner at the rear and in lead seats, uses a native AI lead, and invokes real server Hold/Resume. Ordinary keyboard/mouse menus, walking and human driving remain unproved. It does not establish repeated runs, two/three loaded followers, multiplayer or general release readiness. The [ordinary Supply Day instructions](convoy-supply-showcase.md) describe the player workflow still to inspect.
+
+## Next practical milestone: two loaded trucks
+
+Build the next isolated trip from the existing ordinary **two-follower mixed observer**, preserving this one-driver regression. Its current Hold/Resume observer deliberately requires one follower; adding a second truck alone would not prove both trucks' behavior.
+
+Keep the ordinary groups, native lead, route, recruitment and per-unit travel/180-second arrival checks. Add two coordinated native cargo workers and sequential owner staging: load100 into each original truck, drive, issue real Hold to both for at least30 seconds, unload each into the same distinct destination, then Resume and prove at least20m/three powered intervals independently for both original assignments. Unit Two must retain its immediate predecessor and genuinely resume its recorded route. Preserve baseline and resumed evidence separately.
+
+Use one shared source beside the midpoint of the actual starting cargo origins and the existing destination at `1667.4 19.8 3360.7`. Prior two-truck settled positions were roughly7.9m and7.0m from that destination; installed native ranges are12m. This makes a simple unload while Held plausible without requiring pull-off maneuvers, but native discovery/eligibility must verify the placement. No truck repositioning, range override or transfer fallback should rescue it.
+
+Track the exact original source/cargo1/cargo2/destination containers throughout: **1800/0/0/0 →1600/100/100/0 →1600/0/100/100 →1600/0/0/200**. Only one transfer runs at a time; cancellation and three-second stability must precede the next transfer. Keep the existing native subscription warmup and exact contributor/destination checks. Two autonomous copies of the current worker would conflict over owner staging and conservation snapshots, so the coordinator must activate each explicitly.
+
+The existing60m spacing and all movement/hold gates remain. A delivery can be observed while an overall driving gate still fails; report both. This next fixture is planned, not implemented or tested, and it will still leave ordinary keyboard/menu use and multiplayer as separate requirements.
