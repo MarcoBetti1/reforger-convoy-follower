@@ -10,6 +10,30 @@ class CF_DrivenRouteGuidance
 	float ArcGap;
 	float CrossTrack;
 	bool HasArcGap;
+
+	// Value-only failure snapshot. These fields never feed route decisions.
+	bool HasAdvanceDiagnostic;
+	vector DiagnosticPose;
+	int DiagnosticPriorSegment;
+	float DiagnosticPriorProgress;
+	int DiagnosticSegment;
+	float DiagnosticLoopProgress;
+	vector DiagnosticA;
+	vector DiagnosticB;
+	vector DiagnosticNext;
+	float DiagnosticStationA;
+	float DiagnosticStationB;
+	float DiagnosticStationNext;
+	float DiagnosticLength;
+	float DiagnosticRaw;
+	bool DiagnosticAdjacentAvailable;
+	float DiagnosticAdjacentRaw;
+	bool DiagnosticRoundedCorner;
+	bool DiagnosticNextSegment;
+	float DiagnosticCandidate;
+	float DiagnosticBudgetEnd;
+	float DiagnosticBudget;
+	float DiagnosticCorridorError;
 }
 
 class CF_DrivenRoute
@@ -122,6 +146,7 @@ class CF_DrivenRoute
 		result.ArcGap = -1;
 		result.CrossTrack = 0;
 		result.HasArcGap = false;
+		result.HasAdvanceDiagnostic = false;
 		if (!m_Initialized)
 			return;
 		result.Goal = m_Points[0];
@@ -206,6 +231,41 @@ class CF_DrivenRoute
 			}
 			if (candidate > budgetEnd + 0.001)
 			{
+				// Snapshot only the already-rejected decision, before retirement.
+				// Keep Query's cursor, candidate, budget and return behavior intact.
+				result.HasAdvanceDiagnostic = true;
+				result.DiagnosticPose = followerPosition;
+				result.DiagnosticPriorSegment = m_Segment;
+				result.DiagnosticPriorProgress = m_Progress;
+				result.DiagnosticSegment = segment;
+				result.DiagnosticLoopProgress = progress;
+				result.DiagnosticA = a;
+				result.DiagnosticB = b;
+				result.DiagnosticStationA = m_Stations[segment];
+				result.DiagnosticStationB = m_Stations[segment + 1];
+				result.DiagnosticLength = length;
+				result.DiagnosticRaw = raw;
+				result.DiagnosticRoundedCorner = roundedCorner;
+				result.DiagnosticNextSegment = nextSegment;
+				result.DiagnosticCandidate = candidate;
+				result.DiagnosticBudgetEnd = budgetEnd;
+				result.DiagnosticBudget = maxAdvance;
+				result.DiagnosticCorridorError = corridorError;
+				result.DiagnosticAdjacentAvailable = segment < m_Points.Count() - 2;
+				result.DiagnosticNext = vector.Zero;
+				result.DiagnosticStationNext = 0;
+				result.DiagnosticAdjacentRaw = 0;
+				if (result.DiagnosticAdjacentAvailable)
+				{
+					vector diagnosticNext = m_Points[segment + 2];
+					float diagnosticLength = m_Stations[segment + 2] - m_Stations[segment + 1];
+					float diagnosticX = diagnosticNext[0] - b[0];
+					float diagnosticZ = diagnosticNext[2] - b[2];
+					result.DiagnosticNext = diagnosticNext;
+					result.DiagnosticStationNext = m_Stations[segment + 2];
+					result.DiagnosticAdjacentRaw = ((followerPosition[0] - b[0]) * diagnosticX +
+						(followerPosition[2] - b[2]) * diagnosticZ) / (diagnosticLength * diagnosticLength);
+				}
 				result.State = ADVANCE_LIMIT;
 				return;
 			}
