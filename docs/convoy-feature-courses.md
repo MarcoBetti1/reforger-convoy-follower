@@ -121,6 +121,12 @@ The bounded v2 calibration failed all five input stages. During active physics, 
 
 `CF_DrivenRoute` passed all 25 native geometry cases in actual `GAME` on frozen `convoy-guidance-v1`, after five-configuration validation and packaging. It is not wired into production driving, and those cases do not prove vehicle execution. See [the module contract](convoy-driven-route-module.md) and `.cache/client/runs/driven-route-geometry-v1/gameplay-at-terminal.log`. The next useful comparison keeps the working AI lead and changes only follower guidance.
 
+## Private callback-action calibration
+
+`Worlds/Tests/CF_ActionInput_Arland.ent` uses an original local player in the pilot seat, with AI inactive and no convoy followers. Its private character controller writes bounded thrust only through the callback-provided action manager, then releases to neutral. It does not simulate keyboard input or replace normal driver controls. Use the frozen package/source from the [input-calibration record](convoy-input-calibration.md), an isolated profile, terminal snapshot at `ACTION_INPUT_RESULT:`, and full recording/normal closure.
+
+V6 (`5EA78318...`) passed the declared uphill-thrust and neutral-release calibration, while retained runtime/shutdown errors make its strict full run FAIL. One explicitly observed neutral-baseline suspension is separately counted without credit; powered or unexplained gaps still fail. The truck coasted after release: no brake/precise-stop, steering, UI, NPC-driver or real supply-trip claim follows. Keep this test disabled in normal prefabs and scenarios. Earlier v3/v4/v5 failures are retained under their original contracts.
+
 ## Running clean comparisons
 
 Keep addon scripts and worlds unchanged while Workbench is open. Stop/close it before editing and repacking. Retain failed logs and recordings with the build that produced them. For packed-client tests, use an isolated addon parent directory and an explicit addon GUID; see [the operations playbook](operations-playbook.md). Use full-map long routes, tricky turns, multiplayer, player input, and audio as separate final acceptance gates.

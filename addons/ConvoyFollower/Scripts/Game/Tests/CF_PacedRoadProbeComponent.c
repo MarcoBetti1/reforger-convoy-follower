@@ -42,6 +42,7 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 	protected float m_fPacedTerminalMs;
 	protected bool m_bPacedExitPending;
 	protected bool m_bPacedExitRequested;
+	protected int m_iPacedExitDeferrals;
 	protected bool m_bPacedDeleting;
 	protected ref array<ref CF_PacedRoadTruckSample> m_PacedTrucks = {};
 	protected ref CF_NativeCruiseControl m_PacedCruise;
@@ -76,6 +77,8 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 	protected static const float PACED_OBSERVATION_MS = 180000.0;
 	protected static const float PACED_TIMEOUT_MS = 480000.0;
 	protected static const int PACED_EXIT_DELAY_MS = 30000;
+	protected static const int PACED_EXIT_RETRY_MS = 100;
+	protected static const int PACED_EXIT_MAX_DEFERRALS = 1;
 
 	override void OnPostInit(IEntity owner)
 	{
@@ -787,8 +790,21 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 		float elapsedMs = GetGame().GetWorld().GetWorldTime() - m_fPacedTerminalMs;
 		if (elapsedMs < PACED_EXIT_DELAY_MS)
 		{
+			// Callqueue/world-clock rounding produced 29999.8 ms in a live
+			// run. Recheck the same ownership gates once after a small margin;
+			// never shorten the minimum grace or retry a large clock mismatch.
+			float remainingMs = PACED_EXIT_DELAY_MS - elapsedMs;
+			if (remainingMs <= PACED_EXIT_RETRY_MS && m_iPacedExitDeferrals < PACED_EXIT_MAX_DEFERRALS)
+			{
+				m_iPacedExitDeferrals++;
+				m_bPacedExitPending = true;
+				Print("[ConvoyFollower] PACED_EXIT_DEFERRED: run_id=" + m_sPacedRun +
+					" elapsed_ms=" + elapsedMs + " retry_ms=" + PACED_EXIT_RETRY_MS + " deferrals=" + m_iPacedExitDeferrals);
+				GetGame().GetCallqueue().CallLater(RequestPacedExit, PACED_EXIT_RETRY_MS, false);
+				return;
+			}
 			Print("[ConvoyFollower] PACED_EXIT_REFUSED: run_id=" + m_sPacedRun +
-				" phase=request reason=post_terminal_delay_not_elapsed elapsed_ms=" + elapsedMs);
+				" phase=request reason=post_terminal_delay_not_elapsed elapsed_ms=" + elapsedMs + " deferrals=" + m_iPacedExitDeferrals);
 			return;
 		}
 		m_bPacedExitRequested = true;

@@ -1,0 +1,15 @@
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1375.06 20.1534 3336.05
+}
+
+Vehicle CF_ActionInputLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1371.06 20.1534 3330.05
+ angles 0 92 0
+ components {
+  CF_ActionInputProbeComponent "{5536B697F2334B01}" {
+   m_bActionCalibrationEnabled 1
+   m_bActionAutoExit 1
+   m_bAutoOpenMap 0
+  }
+ }
+}

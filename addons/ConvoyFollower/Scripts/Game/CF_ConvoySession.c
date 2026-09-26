@@ -2491,6 +2491,20 @@ class CF_ConvoySession
 		return index + 1;
 	}
 
+	// Read-only current-chain lookup. Do not cache the index across a rechain,
+	// or use return/stranded/forward queues as active successor demand.
+	CF_DriverControllerComponent CF_GetImmediateActiveSuccessor(CF_DriverControllerComponent driver)
+	{
+		int index = FindUnit(driver);
+		if (index < 0 || index + 1 >= m_aUnits.Count())
+			return null;
+		CF_DriverControllerComponent successor = m_aUnits[index + 1];
+		Vehicle truck = driver.CF_GetAssignedVehicle();
+		if (!successor || !truck || successor.CF_GetDiagnosticTargetVehicle() != truck)
+			return null;
+		return successor;
+	}
+
 	bool IsOwnedRadioMember(CF_DriverControllerComponent driver)
 	{
 		return driver && (FindUnit(driver) >= 0 || m_aReturnQueue.Contains(driver) ||

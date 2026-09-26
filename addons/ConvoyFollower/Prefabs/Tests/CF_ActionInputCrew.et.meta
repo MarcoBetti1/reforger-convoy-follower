@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{B4C701EAAA4E2F60}Prefabs/Tests/CF_ActionInputCrew.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

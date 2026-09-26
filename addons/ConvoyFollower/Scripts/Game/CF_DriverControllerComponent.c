@@ -650,6 +650,13 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_fCruiseAccumulator = 0;
 	}
 
+	// Neutral extension point for isolated pacing comparisons. The existing
+	// native cruise lease remains the only writer; normal controllers are unchanged.
+	protected float CF_AdjustFollowingSpeedCap(float frontLimit, float predecessorSpeed, IEntity target)
+	{
+		return frontLimit;
+	}
+
 	// One speed-cap owner for the assigned AI truck. The existing navigation
 	// poll owns route/waypoints; this faster loop never writes driving inputs.
 	protected void CF_UpdateNativeCruise(float elapsed)
@@ -708,6 +715,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			if (!arrivalHold)
 			{
 				limit = CF_FollowSpeedPolicy.MaxSpeedKmh(gap, CF_ConvoySettings.Get().m_fStoppedGap, predecessorSpeed);
+				limit = CF_AdjustFollowingSpeedCap(limit, predecessorSpeed, target);
 				reason = "predecessor_pacing";
 			}
 		}

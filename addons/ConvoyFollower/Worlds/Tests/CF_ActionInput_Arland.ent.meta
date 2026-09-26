@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{72A9DD873C5A416B}Worlds/Tests/CF_ActionInput_Arland.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

@@ -1,0 +1,7 @@
+SCR_ChimeraCharacter : "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Crew.et" {
+ ID "586829BE847BC015"
+ components {
+  CF_ActionInputCharacterController "{520EA1D2F659CEA5}" {
+  }
+ }
+}
