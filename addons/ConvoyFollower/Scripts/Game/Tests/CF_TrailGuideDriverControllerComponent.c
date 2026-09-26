@@ -698,6 +698,42 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		return super.MoveWaypoint(destination);
 	}
 
+	// Called only after this frame's actual Query and guide update. At the
+	// recorded end, an exact predecessor arrival Wait is stronger evidence
+	// than waiting for our polling timer while driving into a one-metre guide.
+	protected bool CF_TryGuideArrivalHandoff(CF_EntityFollowWaypoint waypoint, CF_EntityFollowActivity activity)
+	{
+		if (!CF_IsOrdinaryEntityContext() || m_bEntityStopAttempted || m_bOriginalFollowBlocked)
+			return false;
+		string reason;
+		if (!CF_ReadRearGuideBinding(m_LeadVehicle, waypoint, activity, reason))
+			return false;
+		CF_EntityFollowDriverControllerComponent predecessor = CF_EntityFollowDriverControllerComponent.Cast(m_Predecessor);
+		if (!predecessor || !m_Session || m_Session.CF_GetImmediateActiveSuccessor(predecessor) != this)
+			return false;
+		if (predecessor.CF_GetAssignedVehicle() != m_LeadVehicle ||
+			!predecessor.CF_HasSelectedArrivalWait(m_Session, m_LeadVehicle))
+			return false;
+		float terminalRemainder = m_TrailGuidance.RecordedEnd - CF_ConvoySettings.Get().m_fMovingGap - m_fTrailGuideStation;
+		// One metre is the existing guide-update granularity; thirty metres
+		// is the existing recorded lookahead, not permission to skip a route.
+		if (!(terminalRemainder >= 0 && terminalRemainder <= 1.0))
+			return false;
+		float arcGap = m_TrailGuidance.ArcGap;
+		float realGap = vector.Distance(m_Truck.GetOrigin(), m_LeadVehicle.GetOrigin());
+		if (!(arcGap >= 0 && arcGap <= 30.0) || !(realGap >= 0 && realGap <= 30.0))
+			return false;
+		string handoff = "[ConvoyFollower] TRAIL_GUIDE_ARRIVAL_HANDOFF: unit=" + m_iUnitNumber;
+		handoff += " epoch=" + m_iTrailEpoch + " predecessor_id=" + m_LeadVehicle.GetID();
+		handoff += " guide_id=" + m_TrailGuide.GetID() + " waypoint_id=" + waypoint.GetID();
+		handoff += " retired_sequence=" + activity.CF_GetSequence() + " real_gap_m=" + realGap + " arc_gap_m=" + arcGap;
+		handoff += " terminal_remainder_m=" + terminalRemainder + " target_still_s=" + m_fTargetStillSeconds;
+		handoff += " selected_predecessor_arrival_wait=true reason=recorded_end_arrival_wait capture_credit=false";
+		Print(handoff);
+		CF_BeginStoppedEntityApproach();
+		return true; // Handled transition, including any truthful creation failure.
+	}
+
 	protected void CF_UpdateTrailGuide()
 	{
 		CF_InvalidateRearGuideQuery();
@@ -799,6 +835,8 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 			CF_BlockTrail("route_state_" + m_TrailGuidance.State);
 			return;
 		}
+		if (CF_TryGuideArrivalHandoff(waypoint, activity))
+			return;
 		CF_StampRearGuideQuery(waypoint, activity);
 		if (m_iTrailLogs < 480 && now >= m_fTrailNextLogMs && m_TrailGuide)
 		{

@@ -751,6 +751,28 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			vector.Distance(m_vEntityWaitTargetAnchor, m_EntityWaitTarget.GetOrigin()) < CF_STOP_DETECT_DISTANCE;
 	}
 
+	// Read-only handoff evidence. A slow or explicitly held predecessor is
+	// not an ordinary arrival; require its exact selected owned arrival Wait.
+	bool CF_HasSelectedArrivalWait(CF_ConvoySession session, IEntity truck)
+	{
+		if (!session || session != m_Session || !truck || truck != m_Truck ||
+			m_bEntityFallbackFailed || m_bOriginalFollowBlocked || m_bArrivalRoadRecoveryBlocked)
+			return false;
+		if (m_iState != CF_ARRIVING || !m_EntityCapturedWait || m_EntityCapturedWait.IsPanelHold())
+			return false;
+		if (m_EntityCapturedWait.GetActionState() == EAIActionState.COMPLETED ||
+			m_EntityCapturedWait.GetActionState() == EAIActionState.FAILED)
+			return false;
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		if (!CF_HasCapturedWaitLease(m_EntityCapturedWait, driver, m_Truck, m_Group))
+			return false;
+		float speed;
+		if (!CF_EntitySpeed(m_Truck, speed) || !(speed >= 0 && speed <= CF_ENTITY_STOP_SPEED_KMH))
+			return false;
+		SCR_AIUtilityComponent utility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
+		return utility && utility.GetCurrentBehavior() == m_EntityCapturedWait;
+	}
+
 	protected void CF_ReleaseCapturedWait(string reason, bool allowNativeCompletion = true)
 	{
 		if (!m_EntityCapturedWait)
@@ -1298,6 +1320,25 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		return applied;
 	}
 
+	// Callers establish the same ordinary context and stopped predecessor.
+	// This starts one approach; it grants no still time or capture evidence.
+	protected bool CF_BeginStoppedEntityApproach()
+	{
+		m_EntityStopTarget = m_LeadVehicle;
+		m_bEntityStopAttempted = true;
+		m_iEntityStopEpisode++;
+		m_iEntityStopReplacements = 1;
+		m_bStopSettleIssued = true;
+		// Parameter values bind when the tree starts. Retire the old owned
+		// target first, then use the unchanged real-predecessor stopped gap.
+		if (!CF_CreateEntityFollow(m_vLastWaypointPosition, CF_ConvoySettings.Get().m_fStoppedGap, "stopped_predecessor"))
+		{
+			CF_FailEntityApproach("stopped_entity_replacement_failed");
+			return false;
+		}
+		return true;
+	}
+
 	override protected void SettleBehindStoppedTarget(float elapsed, float separation)
 	{
 		if (m_bOriginalFollowGraph && m_bOriginalFollowBlocked)
@@ -1329,21 +1370,8 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			m_fEntityStableSeconds = 0;
 			return;
 		}
-		if (!m_bEntityStopAttempted)
-		{
-			m_EntityStopTarget = m_LeadVehicle;
-			m_bEntityStopAttempted = true;
-			m_iEntityStopEpisode++;
-			m_iEntityStopReplacements = 1;
-			m_bStopSettleIssued = true;
-			// Parameter values are bound when the native tree starts. One new
-			// same-entity activity supplies the configured stopped distance.
-			if (!CF_CreateEntityFollow(m_vLastWaypointPosition, CF_ConvoySettings.Get().m_fStoppedGap, "stopped_predecessor"))
-			{
-				CF_FailEntityApproach("stopped_entity_replacement_failed");
-				return;
-			}
-		}
+		if (!m_bEntityStopAttempted && !CF_BeginStoppedEntityApproach())
+			return;
 		if (m_bArrivalRoadHold || m_bArrivalRoadRecoveryBlocked)
 			return;
 		CF_EntityFollowWaypoint arrivalWaypoint = CF_GetEntityFollowWaypoint();

@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{CC4C0BBE6BF54E27}Missions/ConvoyFollower_Arland_SupplyDay.conf"
+ Configurations {
+  CONFResourceClass PC {
+  }
+  CONFResourceClass HEADLESS : PC {
+  }
+ }
+}

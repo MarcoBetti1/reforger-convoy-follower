@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{3DF57A249A6843E2}Worlds/Showcase/ConvoyFollower_Arland_SupplyDay.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

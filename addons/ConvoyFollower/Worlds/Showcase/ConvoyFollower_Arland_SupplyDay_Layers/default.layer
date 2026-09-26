@@ -1,0 +1,83 @@
+// Ordinary-action supply scene: no scripted recruitment, pilot, braking or transfer.
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1375.06 20.1534 3336.05
+ m_Info SCR_UIInfo "{56B4CC4ECACA2C37}" {
+  Name "Convoy supply staging - daylight"
+ }
+}
+
+SCR_AIGroup CF_ShowcaseDriverGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1350.99 17.515 3335.1
+}
+
+SCR_AIGroup CF_ShowcaseDriverGroup2 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1331.34 15.4287 3335.98
+}
+
+SCR_AIGroup CF_ShowcaseDriverGroup3 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1304.8 12.7968 3338.4
+}
+
+Vehicle CF_ShowcaseSupplyTruck1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1346.99 17.515 3331.1
+ angles 0 92 0
+}
+
+Vehicle CF_ShowcaseSupplyTruck2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1327.34 15.4287 3331.98
+ angles 0 92 0
+}
+
+Vehicle CF_ShowcaseSupplyTruck3 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1300.8 12.7968 3334.4
+ angles 0 92 0
+}
+
+Vehicle CF_ShowcasePlayerTruck : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1371.06 20.1534 3330.05
+ angles 0 92 0
+}
+
+GenericEntity CF_ShowcaseSupplySource : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+ coords 1342.99 17.515 3337.1
+ angles 0 90 0
+ components {
+  SCR_ResourceComponent "{5D8AA552F85C2FBB}" {
+   m_aContainers {
+    SCR_ResourceContainerVirtual "{5D8AA552C6324D54}" {
+     m_fResourceValueCurrent 1800
+     m_fResourceValueMax 3000
+     m_vBoundingVolumeMins -2 0 -2
+     m_vBoundingVolumeMaxs 2 2 2
+    }
+   }
+  }
+ }
+ {
+  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+   coords 0 0 0
+  }
+ }
+}
+
+GenericEntity CF_ShowcaseSupplyDestination : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+ coords 1541.59 31.2082 3345.58
+ angles 0 90 0
+ components {
+  SCR_ResourceComponent "{5D8AA552F85C2FBB}" {
+   m_aContainers {
+    SCR_ResourceContainerVirtual "{5D8AA552C6324D54}" {
+     m_fResourceValueCurrent 0
+     m_fResourceValueMax 3000
+     m_vBoundingVolumeMins -2 0 -2
+     m_vBoundingVolumeMaxs 2 2 2
+    }
+   }
+  }
+ }
+ {
+  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+   coords 0 0 0
+  }
+ }
+}

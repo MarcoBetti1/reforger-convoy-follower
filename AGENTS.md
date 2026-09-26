@@ -8,7 +8,7 @@ Read [docs/convoy-validation-current.md](docs/convoy-validation-current.md) firs
 
 The earlier combined candidate is `.cache/packed/convoy-departure-panel-v1`, data SHA-256 `C657779ABA984D49894FBBD9623DBFB6AB993DE898B22347A65C9969CA627ACD`; all five script configurations and packaging passed. Initial-departure Wait, panel event resolution, danger telemetry and the one-follower paced world are included. The two-follower run fails spacing at 121.072 m despite its bounded 180.513-second hold; runtime and shutdown errors remain. Compilation and that hold do not establish general live behavior. Follow the current validation record for exact outcomes and the separate panel comparison.
 
-[docs/convoy-development-brief.md](docs/convoy-development-brief.md) is the revised product direction, superseding the earlier bounded overnight brief. [docs/convoy-development-reset.md](docs/convoy-development-reset.md) is its adaptive roadmap. Preserve newer code and evidence rather than resetting to revisions quoted in the brief. This setup leaves the saved goal untouched. Implementation, validation and synchronization await the user's subsequent update and resumption.
+[docs/convoy-development-brief.md](docs/convoy-development-brief.md) is the revised product direction, superseding the earlier bounded overnight brief. [docs/convoy-development-reset.md](docs/convoy-development-reset.md) is its adaptive roadmap. Preserve newer code and evidence rather than resetting to revisions quoted in the brief. The documentation-only setup turn is complete; the subsequent active goal authorizes implementation, validation and synchronization. Historical setup restrictions in dated evidence do not describe the current execution state.
 
 ## Fast paths verified on this machine
 
