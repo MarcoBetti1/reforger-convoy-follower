@@ -1,5 +1,7 @@
 # Native supply transfer: proposed focused test
 
+**September 26 execution update:** two private versions compiled and ran. The first exposed a still-open Game Master editor. The second closed it through the supported native API and confirmed a ready character with no open menu, but loading remained ineligible before action dispatch. Source/truck quantities stayed 1,800/0. No supply transfer or cancellation pass is claimed. See [current validation](convoy-validation-current.md) for exact packages, recordings, nine retained runtime errors and the timed-closure limits. Next isolate the native action predicate; retain the transfer plan below without weakening its requirements.
+
 Read-only installed-source review, September 26, 2026. **This test has not been implemented or run.** It proposes a bounded autonomous check of the same native actions used by the truck cargo menu. It would establish real game resource transfer and transport, not ordinary keyboard/menu input, multiplayer replication, or a completed player supply trip.
 
 ## Installed contract

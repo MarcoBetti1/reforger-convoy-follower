@@ -8,8 +8,8 @@ Updated September 26, 2026. **The mod is not release ready.** This page separate
 
 Deliver a usable recruit/assign → load → follow → stop/Hold → unload → Resume trip and demonstration, then complete the broader release scope. Prioritize failures that interrupt that trip over additional diagnostic machinery.
 
-- Prior public checkpoint: **`a4f2c29`**. The exact tested ordinary-driver integration is now promoted in this working checkpoint: twelve source files and the generated database. Preserve it and the frozen comparisons; older brief revisions are not reset targets.
-- Independent harness checkpoint: `642332a`. Generic tooling belongs there; addon scripts, worlds and convoy evidence belong here.
+- Public ordinary-driver checkpoint: **`ed127af`**. The exact tested integration is canonical: twelve source files and the generated database. Preserve it and the frozen comparisons; older brief revisions are not reset targets.
+- Independent harness checkpoint: `c18fa8a`, including the verified native Game Master play-mode setup lesson. Generic tooling belongs there; addon scripts, worlds and convoy evidence belong here.
 - The [full development brief](convoy-development-brief.md) remains unchanged. The [adaptive roadmap](convoy-development-reset.md) and [roadmap](roadmap.md) retain the complete product scope.
 - Keep the actual predecessor chain, original assignments, one radio spokesperson and five-follower cap excluding the player's lead vehicle.
 - Authored-source promotion is already complete. The [source checkpoint](convoy-authored-source-checkpoint.md) records that historical boundary; do not repeat export work without a concrete regression.
@@ -66,7 +66,14 @@ The exact tested controller and US/USSR prefab wiring, matching observers and tw
 
 ## Current product boundary
 
-Preserve this working movement/arrival baseline and progress to real native supply actions and the [ordinary Supply Day scene](convoy-supply-showcase.md). A cache-only static cargo-action fixture is under review; it will test loading and unloading to the same store through native initialized actions, with conserved quantities. It is not yet compiled or run and is not a delivery or input test. A separate cache-only panel distance label is also uncompiled/unrun; neither candidate is included in the tested package.
+Preserve this working movement/arrival baseline and progress to real native supply actions and the [ordinary Supply Day scene](convoy-supply-showcase.md). The ordinary two-driver gameplay crop, `.cache/test-videos/ordinary-two-arrival-v1-gameplay.mp4`, was shown after inspecting a sampled arrival frame; it is driving/arrival footage, not a complete supply demonstration.
+
+Two private static cargo-action fixtures compiled across all five configurations and ran. Both retained 1,800 supplies in native storage and zero in the truck; neither started loading. They establish setup boundaries, not transfer or delivery:
+
+- `native-cargo-action-v1`, pack `50587A63...`, failed its 90-second eligibility bound while Game Master remained open. Its [review](../.cache/client/runs/native-cargo-action-v1/independent-cargo-review.md) retains nine runtime errors and the declared 150-second forced close; natural cleanup was not observed.
+- `native-cargo-action-v2`, pack `6801D9667AE41105C13304DF64DBEC87E4A505B82942E0797B157CFA4601FB66`, used supported native editor closure. Later guards and a live player-view capture confirmed editor/menu closed and `CanInteract == true`. The remaining action-eligibility conjunction still failed: native load/unload and cancellation remain unexercised. Its [review](../.cache/client/runs/native-cargo-action-v2/independent-cargo-review.md) retains nine runtime errors, zero recorded post-result errors and unobserved natural shutdown. Exact-prefix snapshot: +223 ms, SHA `9D32F83E91DD7254ED8F1A301D5F6F97FE6E24697472DDB556C88CEF37DA765F`. The client ended at its declared 150-second timer; watcher/recorder exits and fresh process/window checks were verified. Private video: 184.2 s, SHA `4384D735CBE5FF352542908283F069C4A130364F069200D5ADE55316B0C4AAE0`.
+
+Compiled private source: `.cache/native-cargo-action-v2/source/ConvoyFollower`, 572 frozen files, source-manifest SHA `26D124C646CABA40F920313877A0DCC58E02735A2608B06756D98682FA34C9F6`. Probe SHA: `A603298E...74FC0F`. It is not canonical and changes no convoy driving. A source-only v3 observation candidate is being prepared to distinguish duration/per-frame/show/perform predicates. Identify the exact native rejection before changing fixture settings; do not bypass eligibility or set supply counts. A separate cache-only panel distance label remains uncompiled/unrun.
 
 ## Preserved failed controls
 

@@ -1,5 +1,11 @@
 # Reforger operations playbook
 
+## September 26: native Game Master play-mode setup
+
+A direct Game Master world can retain its editor overlay after a fixture spawns and assigns the local controlled character. `SetControlledEntity` alone did not make ordinary world interactions available. In a bounded standalone comparison, the installed `SCR_EditorManagerEntity.CanCloseInstance()` / `CloseInstance()` API closed the editor; later frames reported `IsOpenedInstance() == false`, `CanInteract() == true`, and no open menu, corroborated by the live player view.
+
+Use this only as explicit test-scene preparation, after validating the local player/world binding. `CloseInstance()` returning true means an instance existed; observe the resulting state before acting. This is not keyboard delivery, reticle selection or normal UI proof. The separate cargo action remained ineligible and transferred zero supplies, so editor closure alone is not a cargo-transfer success. Keep those stages distinct when diagnosing test setup.
+
 ## September 26 input-delivery boundary
 
 Fresh Notepad **Add New Tab** accessibility input failed with `coordinate input geometry is unavailable`; after a fresh screenshot, Ctrl+N failed with `failed to activate captured window`. No empty tab or positive key-delivery control was established, and the selected unsaved document was left untouched. The on-screen keyboard reports higher Windows integrity; a close click returned but it remained listed and visible, so removal and causality remain unproved. Stop repeated ungrounded inputs, preserve the boundary, and use a verified empty-document keypress control before another game input comparison. See [the input investigation](convoy-input-investigation.md). These generic lessons are mirrored in the independent harness; they do not establish an addon-panel defect or justify changing OS security settings.
