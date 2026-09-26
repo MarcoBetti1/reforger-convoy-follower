@@ -8,7 +8,7 @@ Updated September 26, 2026. **The mod is not release ready.** This page separate
 
 Deliver a usable recruit/assign → load → follow → stop/Hold → unload → Resume trip and demonstration, then complete the broader release scope. Prioritize failures that interrupt that trip over additional diagnostic machinery.
 
-- Public ordinary-driver checkpoint: **`ed127af`**. The exact tested integration is canonical: twelve source files and the generated database. Preserve it and the frozen comparisons; older brief revisions are not reset targets.
+- Public controller checkpoint: **`e8e3b01`**, including the tested bounded arrival recovery. The ordinary-driver integration began at `ed127af`; the native supply-trip milestone is retained at `763aa1c`. Preserve these increments and the frozen comparisons; older brief revisions are not reset targets.
 - Independent harness checkpoint: `eb42722`, including verified native Game Master play-mode, cargo setup and seated/idling delivery lessons, plus the explicitly unrun authenticated-join comparison. Generic tooling belongs there; addon scripts, worlds and convoy evidence belong here.
 - The [full development brief](convoy-development-brief.md) remains unchanged. The [adaptive roadmap](convoy-development-reset.md) and [roadmap](roadmap.md) retain the complete product scope.
 - Keep the actual predecessor chain, original assignments, one radio spokesperson and five-follower cap excluding the player's lead vehicle.
@@ -115,7 +115,19 @@ The full physical/strict result remains **FAIL**: Unit Three had already exceede
 - [Surface review](../.cache/client/runs/ordinary-three-arrival-recovery-v1/surface-review.md) establishes actual moving dirt contact for lead and all three followers:10/10/13/15 qualifying samples, each with six contacting wheels. Unit Two briefly contacted grass while moving. This is a mapped mixed road, not continuous grass or off-network proof.
 - Recovery timeout, command interruption and possession branches are source-reviewed but not positively exercised. Normal player input and multiplayer remain separate requirements.
 
-The next private comparison enables the existing rear-pacing mechanism on the middle follower: it was accelerating while its successor was already at full throttle on the climb. Only the ordinary controller policy and its observer's exact expected-policy attribution change; world, lead speed, pacing algorithm and physical gates remain fixed. Pack`AC5D5AC7A8786C7E6AC46B749AB73C61D65FCBE283CE2F8D106D035F33948BF9` passed all five configurations; live `ordinary-three-middle-pacing-v1` is pending final review. Do not claim a spacing improvement before that result.
+### Middle-link pacing: exercised, departure spacing still fails
+
+`ordinary-three-middle-pacing-v1` enabled the existing rear-pacing policy on the middle follower and updated only the observer's expected-policy attribution. World, 20 km/h lead, pacing algorithm and physical gates remained fixed. All five configurations passed for pack **`AC5D5AC7A8786C7E6AC46B749AB73C61D65FCBE283CE2F8D106D035F33948BF9`**. This candidate remains private.
+
+All three followers traveled 322.841 /313.750 /321.104 m with41/30/30 powered intervals, captured arrival normally and retained assignments. All four trucks held **180.493 seconds /180 samples with zero measured drift**. No arrival recovery was needed. Physical/strict result remains **FAIL** because Unit Three peaked at **63.7183 m**. The different peak from the earlier run is not a proven causal improvement.
+
+The policy genuinely ran: Unit Two had49 eligible observations and35 reduced-cap observations; the last unit correctly had no successor. But admission came too late during initial departure: Unit Three genuinely joined its guide at16:19:25.492, Unit Two first admitted feedback at25.542 with a59.5121m rear gap, and the60m gate failed at25.711. The first logged reduced cap came at26.608. Earlier, the exact bound successor was already moving under power in its entry approach, which the existing pacing predicate excluded.
+
+- [Independent review](../.cache/client/runs/ordinary-three-middle-pacing-v1/independent-three-review.md) verifies the unchanged physical gates and source/deployment provenance. Full log SHA`B709F406080637B0851F6DD9BE649BCD4BCC67BE43E34FB74E140CCBE6FDB6A4`; terminal snapshot SHA`03FC7C12919565B37464C5199FE6924D34D16A5BA626FA8FA6A58078F2585C2A`, exact prefix captured+21ms.
+- Natural exit, watcher/recorder completion and fresh empty game/process inventory are in `closure-review.json`. **9 runtime /0 post-result /64 shutdown errors** remain.
+- Private silent desktop recording:516.4s, SHA`037A70CA31D4A02A2E2002599E721E4A371CE86067CB44729DC05B626F9D0D88`. One live arrival view was inspected; no full-playback or ordinary-input claim.
+
+The next bounded comparison admits rear-pressure feedback from a healthy, exact bound entry approach before genuine route join. It must retain genuine join for route/progress credit, the same physical gates and one cruise writer. This targets departure cohesion, not another navigation rewrite.
 
 ## Preserved failed controls
 
@@ -139,7 +151,7 @@ Earlier route, native-request, explicit-Hold, Resume and input failures remain i
 ## Next usable-trip actions
 
 1. Preserve the demonstrated ordinary-driver baseline; address concrete supply-trip blockers before broadening driving experiments.
-2. Preserve the demonstrated bounded arrival recovery and successful one-follower delivery. Complete the middle-link rear-pacing comparison for the remaining three-follower spacing failure; inspect all links and actual pacing activation, not only the tail gap. Exercise interruption of recovery when a concrete command fixture is ready.
+2. Preserve the demonstrated bounded arrival recovery and successful one-follower delivery. Compare earlier rear-pressure feedback during a successor's exact powered entry approach; the completed middle-link comparison activates too late to prevent departure spacing failure. Keep all-link physical gates and genuine route-join requirements. Exercise interruption of recovery when a concrete command fixture is ready.
 3. Resolve ordinary input through a supported, discriminating control; do not repeat unchanged key/click matrices or treat capture as input success.
 4. Complete and record the ordinary Supply Day workflow with retained assignments, useful status and one spokesperson. Extend to two/three followers and realistic interruptions.
 5. Continue the full roadmap: verified unpaved routes, regroup/return, role changes, Soviet and multiplayer coverage, performance/configuration and release polish.

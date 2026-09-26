@@ -2,7 +2,7 @@
 
 ## Current ordinary-driver courses
 
-The same three-follower course now has a completed bounded-recovery comparison, `ordinary-three-arrival-recovery-v1`: Unit Two recovered from a native arrival failure and all four trucks held180.543s without measured drift. Its full result still fails because Unit Three had earlier peaked at67.7483m. Exact controller sources are integrated; the subsequent middle-link rear-pacing comparison is separate. See [current validation](convoy-validation-current.md) before reusing either checkpoint.
+The same three-follower course now has a completed bounded-recovery comparison, `ordinary-three-arrival-recovery-v1`: Unit Two recovered from a native arrival failure and all four trucks held180.543s without measured drift. Its full result still fails because Unit Three had earlier peaked at67.7483m. Exact recovery sources are integrated. The subsequent private `ordinary-three-middle-pacing-v1` exercised middle-link pacing and completed180.493s of stable arrival, but failed spacing at63.7183m: feedback started only after the successor joined its guide, too late in departure. See [current validation](convoy-validation-current.md) before reusing either checkpoint.
 
 The native supply-trip regression is `Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_1Truck.ent`. Its completed v1 physically loaded 100, transported it, held/unloaded to a distinct destination and resumed with the original assignment. See the [milestone and reproduction steps](convoy-supply-trip-milestone.md); normal keyboard/menu input remains separate.
 
