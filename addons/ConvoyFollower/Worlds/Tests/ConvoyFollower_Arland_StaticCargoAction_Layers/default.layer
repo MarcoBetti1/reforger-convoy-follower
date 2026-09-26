@@ -1,0 +1,34 @@
+// Static native action plumbing. No recruit, driving, transfer or brake helpers.
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1341.1 16.85 3330.9
+}
+
+Vehicle CF_CargoActionTruck : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1346.99 17.515 3331.1
+ angles 0 92 0
+ components {
+  CF_NativeCargoActionProbeComponent "{A8017C2C6A2C8BF9}" {
+   m_bEnableScenarioSupplies 1
+  }
+ }
+}
+
+GenericEntity CF_CargoActionSource : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+ coords 1340.99 16.85 3337.1
+ angles 0 90 0
+ {
+  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+   coords 0 0 0
+   components {
+    SCR_ResourceComponent "{5D247A59598D71AE}" {
+     m_aContainers {
+      SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
+       m_fResourceValueCurrent 1800
+       m_fResourceValueMax 3000
+      }
+     }
+    }
+   }
+  }
+ }
+}

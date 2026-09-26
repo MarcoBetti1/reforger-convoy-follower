@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{C42C89B96F781DA3}Worlds/Tests/ConvoyFollower_Arland_StaticCargoAction.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

@@ -41,21 +41,19 @@ Vehicle CF_ShowcasePlayerTruck : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M92
 GenericEntity CF_ShowcaseSupplySource : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
  coords 1342.99 17.515 3337.1
  angles 0 90 0
- components {
-  SCR_ResourceComponent "{5D8AA552F85C2FBB}" {
-   m_aContainers {
-    SCR_ResourceContainerVirtual "{5D8AA552C6324D54}" {
-     m_fResourceValueCurrent 1800
-     m_fResourceValueMax 3000
-     m_vBoundingVolumeMins -2 0 -2
-     m_vBoundingVolumeMaxs 2 2 2
-    }
-   }
-  }
- }
  {
   GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
    coords 0 0 0
+   components {
+    SCR_ResourceComponent "{5D247A59598D71AE}" {
+     m_aContainers {
+      SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
+       m_fResourceValueCurrent 1800
+       m_fResourceValueMax 3000
+      }
+     }
+    }
+   }
   }
  }
 }
@@ -63,21 +61,27 @@ GenericEntity CF_ShowcaseSupplySource : "{08B059F856BF38EF}Prefabs/Compositions/
 GenericEntity CF_ShowcaseSupplyDestination : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
  coords 1541.59 31.2082 3345.58
  angles 0 90 0
- components {
-  SCR_ResourceComponent "{5D8AA552F85C2FBB}" {
-   m_aContainers {
-    SCR_ResourceContainerVirtual "{5D8AA552C6324D54}" {
-     m_fResourceValueCurrent 0
-     m_fResourceValueMax 3000
-     m_vBoundingVolumeMins -2 0 -2
-     m_vBoundingVolumeMaxs 2 2 2
+ {
+  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+   coords 0 0 0
+   components {
+    SCR_ResourceComponent "{5D247A59598D71AE}" {
+     m_aContainers {
+      SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
+       m_fResourceValueCurrent 0
+       m_fResourceValueMax 3000
+      }
+     }
     }
    }
   }
  }
- {
-  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
-   coords 0 0 0
+}
+
+// Native scenario setting only; ordinary recruitment, controls and transfer remain manual.
+GenericEntity CF_ShowcaseScenarioSettings {
+ components {
+  CF_SupplyScenarioSettingsComponent "{9896508C211D4AA2}" {
   }
  }
 }

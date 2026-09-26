@@ -1,8 +1,10 @@
-# Native supply transfer: proposed focused test
+# Native supply transfer: verified action test and delivery plan
 
-**September 26 execution update:** two private versions compiled and ran. The first exposed a still-open Game Master editor. The second closed it through the supported native API and confirmed a ready character with no open menu, but loading remained ineligible before action dispatch. Source/truck quantities stayed 1,800/0. No supply transfer or cancellation pass is claimed. See [current validation](convoy-validation-current.md) for exact packages, recordings, nine retained runtime errors and the timed-closure limits. Next isolate the native action predicate; retain the transfer plan below without weakening its requirements.
+**September 26 execution update:** `native-cargo-action-v6` completed the static native-action check. Source/truck quantities moved **1,800/0 → 1,700/100 → 1,800/0**, using the original native load/unload actions and exact storage/cargo containers. Both cancellations were followed by at least three seconds of unchanged counts. Pack: `CC39384DD7C1A9DFFE64EC180A781FD03B0C5AFBBC313F8736F0A31E10A7EE4C`. This is transfer proof at one location; physical delivery and ordinary input remain separate gates. The [current validation record](convoy-validation-current.md) retains errors and closure limits.
 
-Read-only installed-source review, September 26, 2026. **This test has not been implemented or run.** It proposes a bounded autonomous check of the same native actions used by the truck cargo menu. It would establish real game resource transfer and transport, not ordinary keyboard/menu input, multiplayer replication, or a completed player supply trip.
+The verified regression world is `Worlds/Tests/ConvoyFollower_Arland_StaticCargoAction.ent`; its `CF_NativeCargoActionProbeComponent` is opt-in and does not run in ordinary worlds. It uses the real controlled character, closes the native Game Master editor, explicitly enables scenario supplies, waits for physical/native-action readiness, and dispatches native actions. It does not write resource quantities or vehicle controls. The fixture deliberately unloads into its original storage; the full delivery plan below still needs travel to a distinct destination.
+
+Three setup lessons resolved the failures: Game Master disables SUPPLIES by default; a spawned truck needs observed settling before the static baseline; and native `CanBePerformed` creates a spatial subscription whose queue updates on a later frame. Unload's first `NoStorage`/empty queue resolved after **33.1 ms** in v6. The bounded readiness wait preserves all eligibility and conservation checks. Earlier v1–v5 failures remain in their run directories.
 
 ## Installed contract
 
@@ -37,7 +39,7 @@ Twelve metres is the configured resource-search range, **not player interaction 
 
 Selected source SHA-256 values: load action `D64D9397108552BDFD239685828828EE41EA0E4D107200D0B51602D772113344`; unload action `6813732DB7B5EE1B89A01D292AEC56A48C77C5321FE9D302EEAAD6DA72E5F0E2`; cargo prefab `125F56BB16E89036047BD8B3730130CEE2365C36F55319CA984D61291EFDB4F6`; interaction handler `4273C266067EB965A3E4269D53BE6E75CD20978EF8D1C0E7ACCC1D0BE52BD354`.
 
-## Minimal proposed sequence
+## Complete delivery fixture still to validate
 
 1. **Bind the original objects.** Use one standard M923 transport, one source and one destination, with no competing accessible storage or unrelated resource consumers. The [Supply Day scene](convoy-supply-showcase.md) declares source 1,800/destination 0, but actual loading reach remains unverified. Record the live truck, action owner/cargo child, storage entities, resource types, capacities, player/controller and world. Require stable initial counts before starting. Initial world values are setup; no runtime resource setters are permitted during the measurement.
 2. **Establish native eligibility.** Use the real local controlled player character on foot beside the actual rear context, alive and outside any seat transition. Enumerate the initialized native action objects and select the exact load action belonging to this truck. Require enabled manager, `CanBeShown` and `CanBePerformed`, appropriate interaction reach, and the expected storage in the native queue. The action's eligibility code obtains the local player's resource-inventory replication ID, so an arbitrary AI or headless dedicated-server caller is not equivalent. Start with a standalone/listen-owner fixture.
