@@ -1,6 +1,6 @@
 # Native cruise integration boundary
 
-September 26, 2026. `CF_NativeCruiseControl` is connected to ordinary driving in the existing working source, and the test-only cruise writer has been removed from the taxiway follower. Stored production-cruise-v1 logs show five-configuration validation and packaging. The completed production-cruise-radius5-v2 run demonstrates production pacing and narrow fixture hold/restart checks but fails spacing at 64.3798 m; player-commanded Hold remains unverified. See the current [validation record](convoy-validation-current.md) for newer experiments and error accounting. This documentation-only reconciliation preserves that work; further implementation or live testing awaits the user's goal update and resumption.
+September 26, 2026. `CF_NativeCruiseControl` is connected to ordinary driving; the test-only cruise writer has been removed from the taxiway follower. Production pacing, explicit server Hold/Resume and later moving-restart comparisons have physical evidence with distinct limits; see the current [validation record](convoy-validation-current.md). Human input, possession, repeated startup, and broader regression gates remain open. The arrival-zero experiment adds a zero cap for latched ordinary arrival and native behavior diagnostics; its physical result must be judged separately from the earlier compiled integration.
 
 ## API and ownership
 

@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{D8B7D0BBD8A24CFE}Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_2Trucks.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

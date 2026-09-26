@@ -17,6 +17,8 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 	protected SCR_PlayerController m_Controller;
 	protected ref array<TextWidget> m_Rows = {};
 	protected ref array<Widget> m_RowButtons = {};
+	protected ref array<Widget> m_Buttons = {};
+	protected int m_iClickTraceCount;
 	protected ref array<int> m_UnitIds = {};
 	protected int m_iSelectedIdentity;
 	protected TextWidget m_SelectedLabel;
@@ -110,13 +112,18 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 			return null;
 		button.SetName(name);
 		PlaceInPanel(workspace, button, x, y, w, h);
+		m_Buttons.Insert(button);
 		button.AddHandler(this);
 		TextWidget text = TextWidget.Cast(workspace.CreateWidget(WidgetType.TextWidgetTypeID,
 			WidgetFlags.VISIBLE | WidgetFlags.NO_LOCALIZATION | WidgetFlags.CENTER | WidgetFlags.VCENTER | WidgetFlags.IGNORE_CURSOR,
 			Color.FromRGBA(255, 255, 255, 255), 0, button));
 		if (text)
 		{
-			PlaceInPanel(workspace, text, 0, 0, w, h);
+			// A button child has ButtonWidgetSlot, not FrameWidgetSlot. Fill
+			// the already DPI-scaled button while keeping centered text flags.
+			ButtonSlot.SetPadding(text, 0, 0, 0, 0);
+			ButtonSlot.SetHorizontalAlign(text, LayoutHorizontalAlign.Stretch);
+			ButtonSlot.SetVerticalAlign(text, LayoutVerticalAlign.Stretch);
 			text.SetText(label);
 			text.SetExactFontSize((int)Math.Round(workspace.DPIUnscale(14)));
 		}
@@ -247,6 +254,7 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 		m_DrawCommands = null;
 		m_Rows.Clear();
 		m_RowButtons.Clear();
+		m_Buttons.Clear();
 		m_UnitIds.Clear();
 		m_SelectedLabel = null;
 		m_WaitAheadButton = null;
@@ -260,11 +268,65 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 		return m_Root != null;
 	}
 
+	// Event callbacks may identify a button child. Only resolve an ancestor
+	// registered by this panel, and require its chain to reach our live root.
+	protected Widget ResolveOwnButton(Widget source)
+	{
+		if (!m_Root)
+			return null;
+		Widget resolved;
+		for (int depth = 0; source && depth < 16; depth++)
+		{
+			if (source == m_Root)
+				return resolved;
+			if (!resolved && m_Buttons.Contains(source))
+				resolved = source;
+			source = source.GetParent();
+		}
+		return null;
+	}
+
+	protected void TraceClickEvent(string phase, Widget w, Widget resolved, int x, int y, int button)
+	{
+		// Temporary, bounded input-path evidence for the packed panel comparison.
+		// Logging does not create an event or change whether it is consumed.
+		if (m_iClickTraceCount < 12)
+		{
+			m_iClickTraceCount++;
+			string sourceName = "none";
+			string sourceType = "none";
+			string resolvedName = "none";
+			if (w)
+			{
+				sourceName = w.GetName();
+				sourceType = w.GetTypeName();
+			}
+			if (resolved)
+				resolvedName = resolved.GetName();
+			Print("[ConvoyFollower] PANEL_CLICK: phase=" + phase + " source='" + sourceName + "' type=" + sourceType +
+				" resolved='" + resolvedName + "' x=" + x + " y=" + y + " button=" + button);
+		}
+	}
+
+	override bool OnMouseButtonDown(Widget w, int x, int y, int button)
+	{
+		TraceClickEvent("down", w, ResolveOwnButton(w), x, y, button);
+		return false;
+	}
+
+	override bool OnMouseButtonUp(Widget w, int x, int y, int button)
+	{
+		TraceClickEvent("up", w, ResolveOwnButton(w), x, y, button);
+		return false;
+	}
+
 	override bool OnClick(Widget w, int x, int y, int button)
 	{
-		if (!w)
+		Widget resolved = ResolveOwnButton(w);
+		TraceClickEvent("click", w, resolved, x, y, button);
+		if (!resolved)
 			return false;
-		string name = w.GetName();
+		string name = resolved.GetName();
 		if (name == "CF_Close")
 		{
 			// Close the native map menu, which restores gameplay input. Merely

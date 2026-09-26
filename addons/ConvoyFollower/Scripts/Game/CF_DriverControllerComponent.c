@@ -272,6 +272,112 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected ref CF_NativeCruiseControl m_NativeCruise;
 	protected float m_fCruiseAccumulator;
 	protected float m_fNextCruiseDiagnosticMs;
+	// Only a fresh assignment waits for its first predecessor departure.
+	// Later arrival, Resume and recovery keep their established behavior.
+	[RplProp()]
+	protected bool m_bInitialDeparturePending;
+	protected IEntity m_InitialDepartureTarget;
+	protected vector m_vInitialDepartureAnchor;
+	protected vector m_vInitialDepartureForward;
+	protected float m_fNextInitialDepartureLogMs;
+	protected ref CF_InitialDepartureWait m_InitialDepartureWait;
+
+	protected bool CF_IsInitialDepartureWaiting()
+	{
+		return m_bInitialDeparturePending &&
+			(m_iState == CF_WAITING_FOR_LEAD || m_iState == CF_WAITING_FOR_PREDECESSOR);
+	}
+
+	protected void CF_ReleaseInitialDepartureWait(bool allowNativeCompletion = true)
+	{
+		if (m_InitialDepartureWait)
+			m_InitialDepartureWait.Retire(allowNativeCompletion && !CF_IsControlBlocked());
+		m_InitialDepartureWait = null;
+	}
+
+	protected void CF_ResetInitialDeparture(bool allowNativeCompletion = true)
+	{
+		CF_ReleaseInitialDepartureWait(allowNativeCompletion);
+		m_bInitialDeparturePending = false;
+		m_InitialDepartureTarget = null;
+		m_vInitialDepartureForward = vector.Zero;
+		m_fNextInitialDepartureLogMs = 0;
+	}
+
+	// Returns true while the first departure is still pending. This runs for
+	// every boarded member, even before CanTargetMove permits its predecessor.
+	protected bool CF_WaitForInitialDeparture(IEntity target)
+	{
+		if (!m_bInitialDeparturePending)
+			return false;
+		if (CF_IsControlBlocked() || m_bPanelHoldRequested)
+			return true;
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		if (!CF_IsLiveAIPilot(driver, m_Truck) || !CF_IsBoardingHandoverReady(driver))
+			return true;
+		if (!CF_IsInitialDepartureWaiting())
+			SetState(CF_WAITING_FOR_PREDECESSOR);
+		if (target != m_InitialDepartureTarget || (target && m_vInitialDepartureForward == vector.Zero))
+		{
+			m_InitialDepartureTarget = target;
+			m_vInitialDepartureForward = vector.Zero;
+			if (target)
+			{
+				m_vInitialDepartureAnchor = target.GetOrigin();
+				TryGetVehicleFacing(target, m_vInitialDepartureForward);
+			}
+			m_fNextInitialDepartureLogMs = 0;
+		}
+		AIControlComponent control = driver.GetAIControlComponent();
+		SCR_AIUtilityComponent utility = SCR_AIUtilityComponent.Cast(control.GetAIAgent().FindComponent(SCR_AIUtilityComponent));
+		if (!utility)
+			return true;
+		if (m_InitialDepartureWait && !m_InitialDepartureWait.IsUsable())
+			CF_ReleaseInitialDepartureWait();
+		if (!m_InitialDepartureWait)
+		{
+			m_InitialDepartureWait = new CF_InitialDepartureWait(utility, null);
+			m_InitialDepartureWait.Bind(driver, m_Truck);
+			utility.AddAction(m_InitialDepartureWait);
+		}
+		float advance;
+		float forwardKmh;
+		float goalDistance;
+		float goalAhead;
+		if (target && m_vInitialDepartureForward != vector.Zero)
+		{
+			advance = vector.Dot(target.GetOrigin() - m_vInitialDepartureAnchor, m_vInitialDepartureForward);
+			Physics physics = target.GetPhysics();
+			vector targetFacing;
+			if (physics && TryGetVehicleFacing(target, targetFacing))
+				forwardKmh = 3.6 * vector.Dot(physics.GetVelocity(), targetFacing);
+			vector goal = GetLeadTrailGoal(target);
+			vector toGoal = goal - m_Truck.GetOrigin();
+			goalDistance = toGoal.Length();
+			vector facing;
+			if (TryGetVehicleFacing(m_Truck, facing))
+				goalAhead = vector.Dot(toGoal, facing);
+		}
+		bool ready = target && target == GetTargetVehicle(false) && CanTargetMove() &&
+			advance >= 3.0 && forwardKmh > 1.5 && goalAhead > 2.0 &&
+			goalDistance > CF_ConvoySettings.Get().GetMoveCompletionRadius() + 2.0;
+		float nowMs = GetGame().GetWorld().GetWorldTime();
+		if (ready || nowMs >= m_fNextInitialDepartureLogMs)
+		{
+			m_fNextInitialDepartureLogMs = nowMs + 5000.0;
+			Print("[ConvoyFollower] INITIAL_DEPARTURE: Unit " + m_iUnitNumber +
+				" ready=" + ready + " target=" + target + " advance_m=" + advance +
+				" forward_kmh=" + forwardKmh + " goal_distance=" + goalDistance +
+				" goal_ahead=" + goalAhead + " wait_selected=" + (utility.GetCurrentBehavior() == m_InitialDepartureWait));
+		}
+		if (!ready)
+			return true;
+		CF_ResetInitialDeparture();
+		CF_ReleaseNativeCruise("initial_departure_ready");
+		CF_ReleaseVehicleBrake();
+		Replication.BumpMe();
+		return false;
+	}
 
 	protected bool CF_PlayerControlsDriverOrTruck()
 	{
@@ -375,12 +481,14 @@ class CF_DriverControllerComponent : ScriptComponent
 			// Native invokes this before deactivating AI or switching player
 			// control. Both release methods still recheck exact live ownership.
 			CF_ReleaseNativeCruise("before_player_possession");
+			CF_ReleaseInitialDepartureWait();
 			CF_ReleaseVehicleBrake();
 		}
 		else
 		{
 			// A late observation cannot safely clear a new pilot's inputs.
 			// Sticky limits may remain on this unsupported direct-control path.
+			CF_ReleaseInitialDepartureWait(false);
 			if (m_NativeCruise)
 				m_NativeCruise.DetachForWorldCleanup();
 			m_bOwnVehicleBrake = false;
@@ -422,6 +530,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	{
 		// Removing/failing a live GetIn can queue a GetOut. Relinquish only
 		// our bookkeeping on terminal handback failure, never that activity.
+		CF_ResetInitialDeparture(false);
 		if (m_NativeCruise)
 			m_NativeCruise.DetachForWorldCleanup();
 		m_bOwnVehicleBrake = false;
@@ -555,7 +664,13 @@ class CF_DriverControllerComponent : ScriptComponent
 			return;
 		}
 		bool explicitHold = m_bPanelHoldRequested || m_iState == CF_PANEL_HOLD;
-		if (!explicitHold && (!CF_IsMovementActive() || m_bUnloadSequenceHold ||
+		// Once ordinary arrival has latched its stopped pose, do not request
+		// positive pacing against the brake owner as a small gap drift grows.
+		// StartFollowing clears the arrival latch and restores ordinary pacing.
+		bool arrivalHold = m_iState == CF_ARRIVING &&
+			(m_bArrivalTrailHold || m_bArrivalRoadHold);
+		bool initialWait = CF_IsInitialDepartureWaiting();
+		if (!explicitHold && !initialWait && (!CF_IsMovementActive() || m_bUnloadSequenceHold ||
 			m_bArrivalRoadRecoveryActive || m_bArrivalRoadRecoveryBlocked))
 		{
 			CF_ReleaseNativeCruise("outside_ordinary_following");
@@ -571,8 +686,12 @@ class CF_DriverControllerComponent : ScriptComponent
 		float gap = -1;
 		float predecessorSpeed;
 		string reason = "explicit_hold";
+		if (!explicitHold && arrivalHold)
+			reason = "arrival_hold";
+		if (!explicitHold && initialWait)
+			reason = "initial_departure";
 		IEntity target = GetTargetVehicle();
-		if (!explicitHold)
+		if (!explicitHold && !initialWait)
 		{
 			CarControllerComponent targetCar;
 			if (target)
@@ -584,8 +703,11 @@ class CF_DriverControllerComponent : ScriptComponent
 			}
 			gap = vector.DistanceXZ(m_Truck.GetOrigin(), target.GetOrigin());
 			predecessorSpeed = targetCar.GetSimulation().GetSpeedKmh();
-			limit = CF_FollowSpeedPolicy.MaxSpeedKmh(gap, CF_ConvoySettings.Get().m_fStoppedGap, predecessorSpeed);
-			reason = "predecessor_pacing";
+			if (!arrivalHold)
+			{
+				limit = CF_FollowSpeedPolicy.MaxSpeedKmh(gap, CF_ConvoySettings.Get().m_fStoppedGap, predecessorSpeed);
+				reason = "predecessor_pacing";
+			}
 		}
 		if (!m_NativeCruise)
 			m_NativeCruise = new CF_NativeCruiseControl();
@@ -604,6 +726,34 @@ class CF_DriverControllerComponent : ScriptComponent
 			" lead_kmh=" + predecessorSpeed + " actual_kmh=" + sim.GetSpeedKmh() +
 			" requested_kmh=" + m_NativeCruise.GetRequestedSpeedKmh() + " brake=" + sim.GetBrake() +
 			" throttle=" + sim.GetThrottle() + " engine=" + sim.EngineIsOn() + " state=" + m_iState);
+		if (arrivalHold || explicitHold)
+		{
+			ChimeraCharacter heldDriver = ChimeraCharacter.Cast(m_Driver);
+			AIControlComponent heldControl = heldDriver.GetAIControlComponent();
+			AIAgent heldAgent;
+			if (heldControl)
+				heldAgent = heldControl.GetAIAgent();
+			SCR_AIUtilityComponent heldUtility;
+			if (heldAgent)
+				heldUtility = SCR_AIUtilityComponent.Cast(heldAgent.FindComponent(SCR_AIUtilityComponent));
+			SCR_AIGroupUtilityComponent heldGroupUtility;
+			if (m_Group)
+				heldGroupUtility = SCR_AIGroupUtilityComponent.Cast(m_Group.FindComponent(SCR_AIGroupUtilityComponent));
+			string behavior = "none";
+			string groupAction = "none";
+			if (heldUtility && heldUtility.GetCurrentBehavior())
+				behavior = heldUtility.GetCurrentBehavior().Type().ToString() + ":" +
+					heldUtility.GetCurrentBehavior().GetActionState();
+			if (heldGroupUtility && heldGroupUtility.GetCurrentAction())
+				groupAction = heldGroupUtility.GetCurrentAction().Type().ToString() + ":" +
+					heldGroupUtility.GetCurrentAction().GetActionState();
+			Print("[ConvoyFollower] SEATED_HOLD_ACTIVITY: Unit " + m_iUnitNumber +
+				" reason=" + reason + " behavior=" + behavior + " group_action=" + groupAction +
+				" origin=" + m_Truck.GetOrigin() + " forward=" + m_Truck.GetWorldTransformAxis(2) +
+				" gear=" + sim.GetGear() + " handbrake=" + sim.IsHandbrakeOn() +
+				" persistent=" + car.GetPersistentHandBrake() + " owns_brake=" + m_bOwnVehicleBrake +
+				" waypoint=" + HasOwnWaypointInGroup());
+		}
 	}
 
 	protected void SetState(int state)
@@ -612,6 +762,8 @@ class CF_DriverControllerComponent : ScriptComponent
 			return;
 
 		CF_ReleaseNativeCruise("state_change");
+		if (state != CF_WAITING_FOR_LEAD && state != CF_WAITING_FOR_PREDECESSOR)
+			CF_ReleaseInitialDepartureWait();
 		if (state != CF_ARRIVING)
 			SetUnloadReleaseReady(false);
 		m_iState = state;
@@ -636,6 +788,8 @@ class CF_DriverControllerComponent : ScriptComponent
 	{
 		if (!m_Truck || !CF_IsBoarded())
 			return false;
+		if (CF_IsInitialDepartureWaiting())
+			return true;
 		if (m_iState == CF_UNLOAD_QUEUE || m_iState == CF_UNLOAD_DEPARTED ||
 			m_iState == CF_FORWARD_WAIT_DEPARTED ||
 			m_iState == CF_FORWARD_OUTBOUND_HOLD ||
@@ -1041,6 +1195,12 @@ class CF_DriverControllerComponent : ScriptComponent
 		return m_Truck;
 	}
 
+	// Diagnostic observation must not update the remembered player vehicle.
+	IEntity CF_GetDiagnosticTargetVehicle()
+	{
+		return GetTargetVehicle(false);
+	}
+
 	bool CF_IsBoarded()
 	{
 		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
@@ -1194,6 +1354,8 @@ class CF_DriverControllerComponent : ScriptComponent
 		{
 			if (m_Predecessor && m_Predecessor.CF_HasPanelHoldRequest())
 				return "waiting behind held predecessor";
+			if (m_bInitialDeparturePending)
+				return "waiting for predecessor departure";
 			return "waiting for lead";
 		}
 		if (m_iState == CF_GETTING_OUT)
@@ -1302,6 +1464,12 @@ class CF_DriverControllerComponent : ScriptComponent
 		// active MOVE. A fully held truck starts a fresh predecessor order.
 		if (!wasApproachingHold)
 			StartFollowing(target, false, false);
+		if (CF_IsInitialDepartureWaiting())
+		{
+			Print("[ConvoyFollower] PANEL_RESUME: Unit " + m_iUnitNumber +
+				" accepted; waiting for predecessor departure");
+			return true;
+		}
 		Print("[ConvoyFollower] PANEL_RESUME: Unit " + m_iUnitNumber +
 			" follows its assigned predecessor");
 		return CF_IsMovementActive();
@@ -3216,6 +3384,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		}
 
 		CF_ReleaseNativeCruise("new_assignment");
+		CF_ResetInitialDeparture();
 		m_Truck = FindNearestEmptyTruck(driver);
 		if (!m_Truck)
 		{
@@ -3235,6 +3404,7 @@ class CF_DriverControllerComponent : ScriptComponent
 
 		m_Driver = driver;
 		m_Leader = leader;
+		m_bInitialDeparturePending = true;
 		CF_SetPanelHoldRequested(false);
 		m_PassengerVehicle = null;
 		m_bStopAfterPassengerExit = false;
@@ -3916,7 +4086,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		return IssueGetOutWaypointFor(m_Truck);
 	}
 
-	protected IEntity GetLeadVehicle()
+	protected IEntity GetLeadVehicle(bool rememberVehicle = true)
 	{
 		ChimeraCharacter leader = ChimeraCharacter.Cast(m_Leader);
 		if (!leader || !leader.IsInVehicle())
@@ -3930,17 +4100,17 @@ class CF_DriverControllerComponent : ScriptComponent
 		if (vehicle == m_Truck)
 			return null;
 
-		if (vehicle)
+		if (vehicle && rememberVehicle)
 			m_LastPlayerVehicle = vehicle;
 		return vehicle;
 	}
 
-	protected IEntity GetTargetVehicle()
+	protected IEntity GetTargetVehicle(bool rememberVehicle = true)
 	{
 		// Every unit remembers the player's last vehicle. If the first unit
 		// is lost while the player is outside, its successor can lead the
 		// remaining chain toward the same parked vehicle.
-		IEntity playerVehicle = GetLeadVehicle();
+		IEntity playerVehicle = GetLeadVehicle(rememberVehicle);
 		if (m_Predecessor)
 			return m_Predecessor.CF_GetAssignedVehicle();
 		if (m_bUnloadSequenceHold)
@@ -3966,6 +4136,8 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected void StartFollowing(IEntity targetVehicle, bool rejoined, bool emitRadio)
 	{
 		if (CF_IsControlBlocked() || m_bPanelHoldRequested)
+			return;
+		if (CF_WaitForInitialDeparture(targetVehicle))
 			return;
 		if (m_LeadVehicle != targetVehicle)
 			CF_ReleaseNativeCruise("following_target_change");
@@ -4014,6 +4186,8 @@ class CF_DriverControllerComponent : ScriptComponent
 		if (CF_IsControlBlocked())
 			return;
 		if (m_bPanelHoldRequested)
+			return;
+		if (CF_WaitForInitialDeparture(targetVehicle))
 			return;
 		if (m_LeadVehicle != targetVehicle)
 			CF_ReleaseNativeCruise("arrival_target_change");
@@ -4125,6 +4299,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected void ResetToIdle()
 	{
 		CF_StopControlWatch();
+		CF_ResetInitialDeparture();
 		CF_ReleaseNativeCruise("reset_idle");
 		if (m_Driver)
 		{
@@ -4456,6 +4631,8 @@ class CF_DriverControllerComponent : ScriptComponent
 				if (m_iState != CF_WAITING_FOR_LEAD && m_iState != CF_WAITING_FOR_PREDECESSOR)
 					return;
 				IEntity targetVehicle = GetTargetVehicle();
+				if (CF_WaitForInitialDeparture(targetVehicle))
+					return;
 				if (targetVehicle && CanTargetMove())
 				{
 					ChimeraCharacter orderingPlayer = ChimeraCharacter.Cast(m_Leader);
@@ -4627,6 +4804,8 @@ class CF_DriverControllerComponent : ScriptComponent
 
 			ChimeraCharacter orderingPlayer = ChimeraCharacter.Cast(m_Leader);
 			IEntity targetVehicle = GetTargetVehicle();
+			if (CF_WaitForInitialDeparture(targetVehicle))
+				return;
 			if (orderingPlayer && targetVehicle && CanTargetMove())
 			{
 				if (orderingPlayer.IsInVehicle() && !m_bUnloadSequenceHold)
@@ -5452,6 +5631,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	void CF_DetachForWorldCleanup()
 	{
 		CF_StopControlWatch();
+		CF_ResetInitialDeparture(false);
 		if (m_NativeCruise)
 			m_NativeCruise.DetachForWorldCleanup();
 		m_fCruiseAccumulator = 0;
@@ -5500,6 +5680,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			return;
 		}
 		CF_ReleaseNativeCruise("controller_deleted");
+		CF_ResetInitialDeparture();
 		if (m_Driver)
 		{
 			ClearEventMask(m_Driver, EntityEvent.FRAME);

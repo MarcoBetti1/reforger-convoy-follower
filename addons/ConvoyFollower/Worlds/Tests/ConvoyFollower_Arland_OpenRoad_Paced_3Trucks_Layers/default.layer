@@ -1,0 +1,61 @@
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1375.06 20.1534 3336.05
+}
+
+SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1375.06 20.1534 3334.05
+}
+
+SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1350.99 17.515 3335.1
+}
+
+SCR_AIGroup CF_SmokeGroup2 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1331.34 15.4287 3335.98
+}
+
+SCR_AIGroup CF_SmokeGroup3 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1304.8 12.7968 3338.4
+}
+
+Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1346.99 17.515 3331.1
+ angles 0 92 0
+ components {
+  CF_SurfaceContactProbeComponent "{37061BA016EB4E52}" {
+  }
+ }
+}
+
+Vehicle CF_SmokeFollower2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1327.34 15.4287 3331.98
+ angles 0 92 0
+ components {
+  CF_SurfaceContactProbeComponent "{E3470A85B2D34F4B}" {
+  }
+ }
+}
+
+Vehicle CF_SmokeFollower3 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1300.8 12.7968 3334.4
+ angles 0 92 0
+ components {
+  CF_SurfaceContactProbeComponent "{8D5B26A68B704327}" {
+  }
+ }
+}
+
+Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1371.06 20.1534 3330.05
+ angles 0 92 0
+ components {
+  CF_SurfaceContactProbeComponent "{EBABFDB6CE604137}" {
+  }
+  CF_PacedRoadProbeComponent "{12CFDB798B574C58}" {
+   m_iExpectedTrucks 3
+   m_sPacedWorld "Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_3Trucks.ent"
+  }
+  CF_ConvoyFilmCameraComponent "{5EDB83429767AE10}" {
+  }
+ }
+}

@@ -56,6 +56,8 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 	protected int m_iRestartLeadMovingSamples;
 	protected int m_iRestartFollowerMovingSamples;
 	protected int m_iPostTerminalSeconds;
+	protected vector m_vPostTerminalFollowerStart;
+	protected float m_fPostTerminalFollowerMaxDrift;
 	protected bool m_bTerminalWasPass;
 	protected bool m_bPostTerminalFailed;
 	protected bool m_bOrderSent;
@@ -893,6 +895,8 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 			return;
 		m_bFinished = true;
 		m_bTerminalWasPass = result.IndexOf("PASS") == 0;
+		if (m_bTerminalWasPass && m_Follower)
+			m_vPostTerminalFollowerStart = m_Follower.GetOrigin();
 		// Keep the already verified native wait through post-result observation.
 		// A failure during a moving leg gets a single best-effort native hold.
 		if (!m_bHoldLead && ResolveLeadOwnership())
@@ -937,11 +941,28 @@ class CF_EveronOffroadProbeComponent : ScriptComponent
 				m_LastSteps[0] = vector.DistanceXZ(m_Lead.GetOrigin(), previousLead);
 				m_LastPositions[0] = m_Lead.GetOrigin();
 				CheckLeadHold();
+				if (!ChainSeated())
+					FailFixture("post_result_seated_chain_lost");
+				else
+				{
+					float followerDrift = vector.DistanceXZ(m_Follower.GetOrigin(), m_vPostTerminalFollowerStart);
+					if (followerDrift > m_fPostTerminalFollowerMaxDrift)
+						m_fPostTerminalFollowerMaxDrift = followerDrift;
+					Print("[ConvoyFollower] OFFROAD_FOLLOWER_HOLD: observed_s=" + m_iPostTerminalSeconds +
+						" origin=" + m_Follower.GetOrigin() + " drift_m=" + followerDrift +
+						" max_drift_m=" + m_fPostTerminalFollowerMaxDrift + " speed_kmh=" + Speed(m_Follower));
+					if (followerDrift > 2.0)
+						FailFixture("post_result_follower_drift_exceeded_2m");
+				}
 			}
-			if (m_iPostTerminalSeconds >= 30)
+			// The preceding run crossed 2 m follower drift after the old 30 s
+			// window. Observe both trucks for three minutes; this only measures
+			// the production follower and never supplies its brake or AI order.
+			if (m_iPostTerminalSeconds >= 180 || m_bPostTerminalFailed)
 			{
 				Print("[ConvoyFollower] OFFROAD_OBSERVATION_COMPLETE: seconds=" + m_iTicks +
-					" observed_s=" + m_iPostTerminalSeconds + " failed=" + m_bPostTerminalFailed);
+					" observed_s=" + m_iPostTerminalSeconds + " failed=" + m_bPostTerminalFailed +
+					" follower_max_drift_m=" + m_fPostTerminalFollowerMaxDrift);
 				GetGame().GetCallqueue().Remove(Poll);
 			}
 			return;

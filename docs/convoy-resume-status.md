@@ -1,6 +1,14 @@
 # Truthful Resume status
 
-Candidate, September 26, 2026. Included in the existing `convoy-moving-restart-v1` package, which passed five-configuration validation and packaging. That run issued no explicit panel Resume, so gameplay validation of this status contract remains pending. The newer ResumeStatus fixture draft is unvalidated and is not evidence for this package. See the [current validation record](convoy-validation-current.md). This changes session status reporting, not navigation, cruise or the existing 60 m spacing acceptance gate. No implementation or test is authorized by this documentation-only setup.
+September 26, 2026. The status contract now has a targeted physical pass on frozen `convoy-resume-seat-v3`; the full run still fails spacing and strict runtime/lifecycle gates. The earlier `convoy-moving-restart-v1` run issued no explicit panel Resume and remains separate evidence. See the [current validation record](convoy-validation-current.md). This changes session status reporting, not navigation, cruise or the existing 60 m spacing acceptance gate.
+
+## Observed status episode
+
+The v3 fixture corrected a test-lead seat-transfer control gap that prevented v2 from reaching the new Resume episode. Its lead-only parking lease never supplied follower control. In `.cache/client/runs/resume-status-radius5-v3/`, the new Resume remained authoritative `waiting` through 100.397 seconds of stationary observation and 104.414 seconds without a fixture status-getter call. Completion followed production evidence of 10.6313 m progress, three forward samples and two powered samples. Independent restart checks measured 29.1049 m lead and 16.2655 m follower progress.
+
+The 30.148-second post-result window retained the convoy and measured 0.0308848 m maximum lead drift and zero follower drift. Later camera/control samples stayed stationary through approximately 429 seconds after terminal; those later samples do not retain the fixture's continuous identity assertions. The whole-course peak gap was **67.446 m**, exceeding 60 m during warmup; the smaller new-episode peak does not erase that failure. Nine runtime and 64 shutdown errors remain, with normal cleanup observed.
+
+Package SHA-256: `E4671BAE3CC73152785CB89D810B6908AA079F4D1634A6BBE3485DA91983E893`. The original first-result snapshot was captured 234 ms after the marker; full log, independent analysis and private 691.667-second recording remain in the run/video cache. This proves one status episode, not ordinary human input, multiple members, multiplayer or release readiness. Cancellation, repeated-command, changed-assignment, possession and curved-route branches below remain required.
 
 ## Problem and contract
 

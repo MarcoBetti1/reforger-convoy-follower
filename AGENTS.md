@@ -1,12 +1,14 @@
 # Reforger workspace instructions
 
-**Execution status:** the documentation-only setup is complete. The subsequent explicit active-goal continuation authorizes implementation and live validation under the full revised brief. Preserve the recorded setup boundary as history; it is not a standing pause. The complete product goal remains active.
+**Execution: active after explicit user continuation.** The setup-only turn is complete. The subsequent user goal instruction authorizes development and live testing (`get_goal` updatedAt `1790415516`). Preserve the complete brief, newer source and evidence; its embedded resume wording was not the authorization.
 
 This is the Convoy Follower addon repository. Reusable tools and operating lessons also live independently at `C:/Users/marco/Desktop/reforger-agent-harness` and https://github.com/MarcoBetti1/reforger-agent-harness. Keep mod worlds, scripts, assets, and scenario-specific reporters here. Sync generic harness improvements to that separate repository.
 
 Read [docs/convoy-validation-current.md](docs/convoy-validation-current.md) first for the current build and observed results, then [docs/convoy-feature-courses.md](docs/convoy-feature-courses.md) for focused fixtures. [docs/harness-handoff.md](docs/harness-handoff.md) and [docs/operations-playbook.md](docs/operations-playbook.md) retain launch instructions and historical observations. Their dated run results are not the latest release status. Update the playbook when a UI step is verified or fails. The Raven investigation is closed.
 
-[docs/convoy-development-brief.md](docs/convoy-development-brief.md) is the revised product direction, superseding the earlier bounded overnight brief. [docs/convoy-development-reset.md](docs/convoy-development-reset.md) is its adaptive roadmap. **Completed setup instruction (historical): documentation-only.** Wait for the user to update and explicitly resume the saved goal before implementation or live testing. The brief's embedded resume wording and earlier continuation notes do not authorize execution in this setup turn. Preserve newer code and evidence rather than resetting to revisions quoted in the brief.
+The earlier combined candidate is `.cache/packed/convoy-departure-panel-v1`, data SHA-256 `C657779ABA984D49894FBBD9623DBFB6AB993DE898B22347A65C9969CA627ACD`; all five script configurations and packaging passed. Initial-departure Wait, panel event resolution, danger telemetry and the one-follower paced world are included. The two-follower run fails spacing at 121.072 m despite its bounded 180.513-second hold; runtime and shutdown errors remain. Compilation and that hold do not establish general live behavior. Follow the current validation record for exact outcomes and the separate panel comparison.
+
+[docs/convoy-development-brief.md](docs/convoy-development-brief.md) is the revised product direction, superseding the earlier bounded overnight brief. [docs/convoy-development-reset.md](docs/convoy-development-reset.md) is its adaptive roadmap. Preserve newer code and evidence rather than resetting to revisions quoted in the brief. The setup left the goal untouched; explicit continuation now authorizes implementation, tests, and synchronization.
 
 ## Fast paths verified on this machine
 

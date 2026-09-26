@@ -1,0 +1,30 @@
+// Separate Resume-status regression on the existing surveyed taxiway.
+// Test-only lead seat transfers; no player-input or unpaved-surface claim.
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1617.0 38.8 2944.0
+}
+
+SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1619.0 38.8 2943.0
+}
+
+SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1600.0 38.2 2943.0
+}
+
+Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1600.0 38.0312 2940.0
+ angles 0 90 0
+}
+
+Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1620.0 38.5938 2940.0
+ angles 0 90 0
+ components {
+  CF_ResumeStatusProbeComponent "{B63C801DAF42E975}" {
+  }
+  CF_ConvoyFilmCameraComponent "{E6BF42A81759C03D}" {
+   m_iExpectedTrucks 1
+  }
+ }
+}

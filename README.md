@@ -33,6 +33,8 @@ For the current workflow, run `npm run cli -- doctor --mod <Workshop ID>` to che
 
 The addon source and radio assets are in this repository; generated audio provenance is documented in [the voice-pack notes](docs/convoy-generated-voice.md). Original unprocessed player recordings and model weights are not included. A public GitHub repository is source control, not a Workshop release or a claim that the current gameplay passes acceptance.
 
+`client:run --execute` and `convoy:record --execute` require at least **2 GiB free** on their output filesystems before creating directories or starting processes. The junction-aware check fails closed if space cannot be measured; dry runs remain available. It does not reserve capacity for a full run. See the [storage notes](docs/operations-playbook.md#storage-before-execution).
+
 GitHub Actions runs the TypeScript typecheck, unit tests, and build. Enfusion validation, addon packaging, and driving tests require a Windows machine with Arma Reforger Tools installed; a green GitHub check does not cover those steps.
 
 ## Licensing

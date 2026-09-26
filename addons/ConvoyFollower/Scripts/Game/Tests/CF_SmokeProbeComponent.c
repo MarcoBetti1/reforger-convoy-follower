@@ -596,6 +596,13 @@ class CF_SmokeProbeComponent : ScriptComponent
 		return allReady;
 	}
 
+	// The original one-truck smoke continues into its unload test. Focused
+	// driving subclasses can retain these arrival gates without that next task.
+	protected bool ShouldRunUnloadAfterRoadArrival()
+	{
+		return m_iExpectedTrucks == 1;
+	}
+
 	protected void UpdateArrivalStability(bool followersReady, float goalGap)
 	{
 		if (m_iDrivingTicks % 5 != 0)
@@ -919,7 +926,7 @@ class CF_SmokeProbeComponent : ScriptComponent
 					Finish("FAIL sustained en-route separation or nonprogress max_gap=" + m_fMaxEnRouteGap +
 						" warning_s=" + m_iMaxWarningSeconds +
 						" no_progress_s=" + m_iMaxNoProgressSeconds);
-				else if (m_iExpectedTrucks == 1)
+				else if (ShouldRunUnloadAfterRoadArrival())
 				{
 					m_bRoadArrivalPassed = true;
 					Print("[ConvoyFollower] AUTO_ROUTE_PASS: lead_path=" + m_fLeadPath + " follower_path=" + m_FollowerPaths[0] + " final_gap=" + widestGap + " min_goal_gap=" + m_fMinRoadGoalGap);
