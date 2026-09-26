@@ -9,7 +9,7 @@ Updated September 26, 2026. **The mod is not release ready.** This page separate
 Deliver a usable recruit/assign → load → follow → stop/Hold → unload → Resume trip and demonstration, then complete the broader release scope. Prioritize failures that interrupt that trip over additional diagnostic machinery.
 
 - Public controller checkpoint: **`e8e3b01`**, including the tested bounded arrival recovery. The ordinary-driver integration began at `ed127af`; the native supply-trip milestone is retained at `763aa1c`. Preserve these increments and the frozen comparisons; older brief revisions are not reset targets.
-- Independent harness checkpoint: `eb42722`, including verified native Game Master play-mode, cargo setup and seated/idling delivery lessons, plus the explicitly unrun authenticated-join comparison. Generic tooling belongs there; addon scripts, worlds and convoy evidence belong here.
+- Independent harness checkpoint: `b658022`, including verified native Game Master play-mode, cargo setup, initial multi-vehicle settling and seated/idling delivery lessons, plus the explicitly unrun authenticated-join comparison. Generic tooling belongs there; addon scripts, worlds and convoy evidence belong here.
 - The [full development brief](convoy-development-brief.md) remains unchanged. The [adaptive roadmap](convoy-development-reset.md) and [roadmap](roadmap.md) retain the complete product scope.
 - Keep the actual predecessor chain, original assignments, one radio spokesperson and five-follower cap excluding the player's lead vehicle.
 - Authored-source promotion is already complete. The [source checkpoint](convoy-authored-source-checkpoint.md) records that historical boundary; do not repeat export work without a concrete regression.
@@ -139,7 +139,22 @@ Unit Three failed the authored route `ADVANCE_LIMIT`, then cleared its owned act
 - **9 runtime /0 post-result /62 shutdown errors** remain. Natural client exit, completed watcher/recorder and fresh empty game/process inventory are recorded in `closure-review.json`.
 - Private silent recording203.866667s, SHA`2121B968D8940C9D41EE564D23039BEFE16582811141D2D25A81914F1369AA34`. Two live views covered staging/travel; no full playback or ordinary-input claim.
 
-**Product decision:** retain integrated arrival recovery and the successful one-truck supply milestone. Move to the [two-loaded-truck workflow](convoy-supply-trip-milestone.md#next-practical-milestone-two-loaded-trucks), preserving the spacing and route failures above. Do not launch another pacing-gain comparison simply to improve one peak number. The useful next demonstration is actual loading, retained Hold, delivery and Resume for both trucks.
+**Product decision:** retain integrated arrival recovery and the successful one-truck supply milestone. The [two-loaded-truck workflow](convoy-supply-trip-milestone.md#two-loaded-trucks-delivery-achieved-restart-still-fails) now demonstrates loading, retained Hold and delivery; repair its failed Resume next. Preserve the spacing and route failures above. Do not launch another pacing-gain comparison simply to improve one peak number.
+
+### Two loaded trucks: delivery and Hold work; Resume needs repair
+
+`loaded-pair-trip-v2` loaded100 into each original truck, transported both loads over328m from the shared source, and unloaded200 into the distinct destination. All451 cargo observations conserved the same four containers: **1800/0/0/0 →1600/100/100/0 →1600/0/100/100 →1600/0/0/200**. Each native action was cancelled and followed by at least3s of stable quantities. Both drivers stayed seated with their original assignments.
+
+Arrival completed **180.313s /180 selected-Wait samples per follower with zero measured drift**. Real server Hold then lasted **48.1325s /48samples**, covering both unloads, also with zero measured drift/speed. Original continuous driving segments were322.901m/29powered and299.130m/32powered; Unit Two genuinely followed Unit One's recorded route.
+
+**Overall physical and strict result: FAIL.** Peak links were52.4504/81.625m, so Unit Two exceeded the unchanged60m spacing gate. Resume was accepted but failed before any fresh movement: Unit Two reported `measured_step_spans_multiple_vertices`. Its cursor had stopped updating when the moving guide retired, although the truck continued its final real-predecessor approach. Resume submitted that accumulated movement at once. The later fixture `seat_transfer_precondition` is secondary to the failed production controller; it is not solely a seat-transfer fault.
+
+- All five configurations and packaging passed in `.cache/workbench-runs/convoy-loaded-pair-trip-v2-repair1`; pack **`037F30C6D6E18A284146536B7CEEBE6A08B547A4DE3AEC213C79A2F39701AE89`**. A preceding compile failure from an unsupported array `+=` operator is preserved separately. The exact six regression resources and generated database are canonical; `.cache/loaded-pair-trip-v2/promotion.json` records them. Production driving code is unchanged by this promotion.
+- [Independent review](../.cache/client/runs/loaded-pair-trip-v2/independent-review.md) verifies585 frozen sources, three deployed files, exact four-container conservation and the terminal-prefix snapshot captured+245ms. **9 gameplay /0 post-result /64 shutdown errors** remain. Natural client closure, completed watcher/recorder and clear process/window inventories are recorded.
+- The initial `loaded-pair-trip-v1` failed its loading stationary guard at0.827s before any native transfer. The exact speed-versus-drift term was unlogged. V2 waits for both trucks to settle before pinning origins; successful native loading now validates that preparation. V1 remains preserved with9 gameplay/0post/68shutdown errors.
+- [130-second game-view highlights](../.cache/test-videos/loaded-pair-trip-v2-highlights.mp4) use raw intervals70–145,185–200 and398–438s. The private full recording is485.533333s, SHA`6650521EAF1E18BB6A1AF51E68C59337AD9DC47B2341A32F700F0B40679BCBA5`. Silent; four live views and one recorded frame were inspected, not full playback. This uses test-owner staging and a native AI lead; ordinary input remains unproved.
+
+**Next product fix:** maintain the retained physical route cursor through the owned final approach and parked Hold, then let a resumed follower wait safely until its predecessor opens a usable moving gap. The private v3 candidate is under development, not validated or promoted. Preserve the delivery milestone and spacing failure; do not start another isolated pacing-gain sweep.
 
 ## Preserved failed controls
 
@@ -153,7 +168,7 @@ Earlier route, native-request, explicit-Hold, Resume and input failures remain i
 ## What is still unproved
 
 - **Ordinary input:** supported desktop activation/click/key delivery remains unresolved, including vanilla controls. Capture and scripted engine-action calibration are not keyboard/panel proof. Elevated OSK accessibility exposed no supported Close action; its causal role remains unproved.
-- **Cargo:** native load, transport, distinct-destination unload and Resume are verified for one ordinary follower in the automated fixture. Multi-truck delivery and the ordinary cargo menu/input path remain unproved. Retain native eligibility, exact container counts and conservation; no count setters or transfer fallback.
+- **Cargo:** native load, transport and distinct-destination unloading are now verified for one and two ordinary followers in automated fixtures. Only the one-follower case completed powered Resume; the two-follower restart fails. The ordinary cargo menu/input path remains unproved. Retain native eligibility, exact container counts and conservation; no count setters or transfer fallback.
 - **Complete player workflow:** the [Supply Day scene](convoy-supply-showcase.md) is prepared, not a completed recruit/load/travel/unload/Resume demonstration.
 - **Wider driving:** repeatable ordinary one-, two- and three-follower trips, turns, longer sessions, sustained grass/off-network travel and varied stops remain required. Moving dirt contact is now measured for all participants on the mapped mixed course; a scene survey alone remains insufficient.
 - **Interruptions and roles:** selected-member Hold with downstream waiting, rechain, predecessor/driver loss, possession, blocked recovery, unload/return and regroup need relevant ordinary-driver evidence. The private deferred-timeout recovery still requires StandDown/reassignment.
@@ -163,7 +178,7 @@ Earlier route, native-request, explicit-Hold, Resume and input failures remain i
 ## Next usable-trip actions
 
 1. Preserve the demonstrated ordinary-driver baseline; address concrete supply-trip blockers before broadening driving experiments.
-2. Build the isolated two-loaded-truck trip from the ordinary mixed two-follower observer, using the integrated controller and coordinated native actions. Preserve per-unit Hold/Resume proof and conservation across all four containers. Keep the failed pacing candidates private and the concrete adjacent-projection fault visible; no threshold relaxation or automatic tuning loop.
+2. Repair the observed two-loaded-truck Resume transition and rerun its existing complete trip. Preserve per-unit movement/Hold/Resume proof and conservation across all four containers. Keep the failed pacing candidates private and the concrete adjacent-projection fault visible; no threshold relaxation or automatic tuning loop.
 3. Resolve ordinary input through a supported, discriminating control; do not repeat unchanged key/click matrices or treat capture as input success.
 4. Complete and record the ordinary Supply Day workflow with retained assignments, useful status and one spokesperson. Extend to two/three followers and realistic interruptions.
 5. Continue the full roadmap: verified unpaved routes, regroup/return, role changes, Soviet and multiplayer coverage, performance/configuration and release polish.

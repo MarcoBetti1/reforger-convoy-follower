@@ -150,9 +150,15 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
 		return tail.CF_IsTrailGuidePrototypeEnabled() && !tail.CF_IsTrailGuideBlocked();
 	}
 
+	// Fixture hook: the default keeps the original baseline evidence unchanged.
+	protected CF_OriginalTailGuideEvidence MixedEvidence(int unit)
+	{
+		return m_MixedUnits[unit - 1];
+	}
+
 	protected void ObserveMixedUnit(int unit)
 	{
-		CF_OriginalTailGuideEvidence evidence = m_MixedUnits[unit - 1];
+		CF_OriginalTailGuideEvidence evidence = MixedEvidence(unit);
 		CF_PacedRoadTruckSample sample = m_PacedTrucks[unit];
 		CF_PacedRoadTruckSample predecessor = m_PacedTrucks[unit - 1];
 		if (!sample || !predecessor || !sample.Truck || !predecessor.Truck)

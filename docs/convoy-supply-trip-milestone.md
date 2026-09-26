@@ -36,7 +36,15 @@ This uses the frozen tested package, which passed all five script configurations
 
 This proves an autonomous **native-action supply trip** under the stated route and pace. The fixture loads before recruitment, stages the same test owner at the rear and in lead seats, uses a native AI lead, and invokes real server Hold/Resume. Ordinary keyboard/mouse menus, walking and human driving remain unproved. It does not establish repeated runs, two/three loaded followers, multiplayer or general release readiness. The [ordinary Supply Day instructions](convoy-supply-showcase.md) describe the player workflow still to inspect.
 
-## Next practical milestone: two loaded trucks
+## Two loaded trucks: delivery achieved, restart still fails
+
+The implemented [two-truck world](../addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks.ent) and coordinated probes now provide the next regression case. `loaded-pair-trip-v2` loaded100 each, transported both original loads over328m, held both drivers seated and unloaded200 to the common distinct destination. Arrival lasted180.313s; explicit Hold lasted48.1325s, both with zero measured drift. All451 four-container observations conserved1800 supplies.
+
+**This is a partial milestone, not a full-trip pass.** Unit Two's peak gap81.625m exceeded60m. Resume was accepted but its retained route cursor rejected movement accumulated during the final approach; no fresh Resume movement was completed. The [independent review](../.cache/client/runs/loaded-pair-trip-v2/independent-review.md) preserves source/deployment verification,9 gameplay/0post/64shutdown errors and natural closure. The [130-second highlights](../.cache/test-videos/loaded-pair-trip-v2-highlights.mp4) show selected game footage; they are silent and edited, not a complete normal-input demonstration.
+
+The tested pack is `037F30C6D6E18A284146536B7CEEBE6A08B547A4DE3AEC213C79A2F39701AE89`, deployed under `.cache/standalone-loaded-pair-trip-v2-addons`. Its six regression resources and generated database are canonical. The production controller remains the integrated arrival-recovery version. The next comparison repairs the actual Resume transition while preserving the tests below.
+
+### Retained test design
 
 Build the next isolated trip from the existing ordinary **two-follower mixed observer**, preserving this one-driver regression. Its current Hold/Resume observer deliberately requires one follower; adding a second truck alone would not prove both trucks' behavior.
 
@@ -46,4 +54,4 @@ Use one shared source beside the midpoint of the actual starting cargo origins a
 
 Track the exact original source/cargo1/cargo2/destination containers throughout: **1800/0/0/0 →1600/100/100/0 →1600/0/100/100 →1600/0/0/200**. Only one transfer runs at a time; cancellation and three-second stability must precede the next transfer. Keep the existing native subscription warmup and exact contributor/destination checks. Two autonomous copies of the current worker would conflict over owner staging and conservation snapshots, so the coordinator must activate each explicitly.
 
-The existing60m spacing and all movement/hold gates remain. A delivery can be observed while an overall driving gate still fails; report both. This next fixture is planned, not implemented or tested, and it will still leave ordinary keyboard/menu use and multiplayer as separate requirements.
+The existing60m spacing and all movement/hold gates remain. A delivery can be observed while an overall driving gate still fails; report both. This fixture is now implemented and tested with the partial result above. Ordinary keyboard/menu use and multiplayer remain separate requirements.

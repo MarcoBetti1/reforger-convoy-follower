@@ -1,6 +1,6 @@
 # Roadmap
 
-**Current execution status — September 26, 2026: development resumed.** The subsequent active-goal continuation (`updatedAt: 1790444332`) authorizes development and live validation under the full brief. Setup-only descriptions below record the completed documentation turn; they do not override this continuation. Preserve newer work and completed evidence.
+**Current execution status — September 26, 2026: active development under the saved goal and latest user direction.** Earlier setup-only turns are complete. Preserve newer work and completed evidence; the latest user instruction controls scope.
 
 ## Current product direction — September 26, 2026
 
@@ -10,11 +10,13 @@ The complete brief is saved unchanged and reconciled with the existing roadmap. 
 
 ## Current development boundary
 
-The tested ordinary controller is integrated into US/USSR driver prefabs. US one- and two-follower travel and sustained arrival passed at a declared 20 km/h lead pace. One ordinary follower has now completed native loading, transport, real Hold, delivery of 100 supplies to a distinct destination and powered Resume with original assignments. The filmed automated supply trip is a working milestone; normal player input, multi-truck delivery, Soviet behavior and multiplayer remain unproved, and runtime/shutdown errors remain visible. Preserve this baseline and prioritize practical control and multi-follower operation. Exact results and failed controls are in current validation.
+The tested ordinary controller is integrated into US/USSR driver prefabs. US one- and two-follower travel and sustained arrival passed at a declared 20 km/h lead pace. Preserve the completed one-follower load/transport/Hold/delivery of 100 supplies/powered Resume baseline. The two-loaded-truck case now also delivered **200 supplies** to a distinct destination, retained both assignments, completed **180.313 s arrival** and **48.1325 s explicit Hold** with zero measured drift. Its overall result remains **FAIL**: Unit Two peaked at **81.625 m** against the 60 m spacing gate, then production Resume failed with `measured_step_spans_multiple_vertices` before fresh movement. Nine gameplay and 64 shutdown errors remain. See [current validation](convoy-validation-current.md) for exact results and failed controls.
+
+The two-truck regression resources are canonical. The next product repair is to preserve route observation through the owned final approach and Hold, then resume safely when the predecessor opens a usable gap. The private v3 repair is underway, not validated or promoted. Rerun the existing complete trip with unchanged gates; normal player input, a complete two-truck powered restart, Soviet behavior and multiplayer remain unproved.
 
 The playable milestones remain: dependable movement/hold/restart; an actual supply trip through normal player controls; multiple followers and interruptions; assignment, individual commands, arrival/regroup/return; and feedback, multiplayer, configuration, performance and distribution. Keep one spokesperson and the five-follower cap, excluding the player lead. A first supply demonstration is a meaningful milestone within the full brief.
 
-Generic tools and lessons belong in the independent [Reforger Agent Harness repository](https://github.com/MarcoBetti1/reforger-agent-harness); addon scripts, assets, worlds and convoy evidence belong here. Preserve harness `642332a`, mod history through `a4f2c29` and the newer ordinary integration. Workshop publication remains separate.
+Generic tools and lessons belong in the independent [Reforger Agent Harness repository](https://github.com/MarcoBetti1/reforger-agent-harness); addon scripts, assets, worlds and convoy evidence belong here. Preserve the current integrated controller, supply regressions and frozen failed comparisons; [current validation](convoy-validation-current.md) owns the latest source checkpoints. Workshop publication remains separate.
 
 ## Historical harness plan — retained for context
 
