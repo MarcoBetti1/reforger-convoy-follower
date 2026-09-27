@@ -39,7 +39,7 @@ Vehicle CF_ShowcasePlayerTruck : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M92
 }
 
 GenericEntity CF_ShowcaseSupplySource : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
- coords 1342.99 17.515 3337.1
+ coords 1337.305 16.5 3335.54
  angles 0 90 0
  {
   GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {

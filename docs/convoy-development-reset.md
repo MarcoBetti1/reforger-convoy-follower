@@ -12,7 +12,7 @@ Preserve the independent harness, authored-source promotion and all newer mod wo
 
 ## Product we are building
 
-**Latest concrete progress:** native delivery and sustained Hold now work for two loaded trucks in the automated fixture. The exact regression resources are canonical; their promotion does not turn the failed spacing/Resume result into a pass. Normal player input, complete two-truck restart, Soviet behavior and multiplayer remain unproved.
+**Latest concrete progress:** native delivery and sustained Hold work for two loaded trucks in the automated fixture. V3 also completed the held seat transfer and accepted owner-passenger Resume, with both original followers moving again. Overall spacing and qualified restart gates still failed; the short downhill onward leg limited the fresh powered evidence. Owner-passenger Resume and the two-truck source-placement correction are canonical and packaged; private movement candidates remain separate. Preserve the failed comparisons and extend the next useful onward leg without weakening gates. Normal player input, a qualified complete two-truck restart, Soviet behavior and multiplayer remain unproved.
 
 **Latest user priority, September 26:** zoom out from perfecting small diagnostic details and deliver a working, demonstrable convoy mod. The next playable milestone is recruit/assign, load, travel, stop, unload, and resume with retained drivers and one spokesperson. Prioritize failures that interrupt that trip. Use focused tests to choose a practical fix, document tolerable rough edges honestly, and avoid expanding diagnostic machinery without a concrete product benefit. Keep existing test failures visible; a useful demonstration and a strict test pass are different claims.
 

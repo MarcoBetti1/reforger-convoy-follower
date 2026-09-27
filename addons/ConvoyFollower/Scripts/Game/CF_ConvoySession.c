@@ -438,9 +438,9 @@ class CF_ConvoySession
 		// A repeated request must not reset evidence or overwrite its status.
 		if (session.m_iPanelOrder == CF_PANEL_ORDER_RESUME)
 			return false;
-		if (!session.CF_CanUsePanelOrders() || !session.GetOwnerPilotedVehicle())
+		if (!session.CF_CanUsePanelOrders() || !session.GetOwnerResumeVehicle(user))
 		{
-			session.m_sPanelOrderState = "blocked: enter the lead vehicle and finish any active maneuver";
+			session.m_sPanelOrderState = "blocked: enter the original lead vehicle and finish any active maneuver";
 			return false;
 		}
 		bool anyHeld = false;
@@ -1651,6 +1651,55 @@ class CF_ConvoySession
 			return;
 		m_bUnloadPollScheduled = true;
 		GetGame().GetCallqueue().CallLater(PollUnloadSequence, CF_UNLOAD_POLL_MS, false);
+	}
+
+	// Resume alone accepts the owner in any settled seat of the established
+	// lead. Other maneuvers retain their existing pilot-only admission.
+	protected Vehicle GetOwnerResumeVehicle(IEntity user)
+	{
+		if (!Replication.IsServer() || s_bWorldCleanup || m_bSessionClosed || !GetGame())
+			return null;
+		World world = GetGame().GetWorld();
+		if (!world || !user || user != m_OrderingPlayer || m_iOrderingPlayerId <= 0)
+			return null;
+		if (GetForPlayer(user) != this)
+			return null;
+		PlayerManager manager = GetGame().GetPlayerManager();
+		if (!manager || manager.GetPlayerControlledEntity(m_iOrderingPlayerId) != m_OrderingPlayer)
+			return null;
+		ChimeraCharacter owner = ChimeraCharacter.Cast(m_OrderingPlayer);
+		if (!owner || owner.GetWorld() != world || !owner.IsInVehicle())
+			return null;
+		SCR_DamageManagerComponent ownerDamage = owner.GetDamageManager();
+		if (ownerDamage && ownerDamage.IsDestroyed())
+			return null;
+		CharacterControllerComponent character = owner.GetCharacterController();
+		if (!character || character.IsUnconscious())
+			return null;
+		CompartmentAccessComponent access = owner.GetCompartmentAccessComponent();
+		if (!access || access.IsGettingIn() || access.IsGettingOut())
+			return null;
+		BaseCompartmentSlot slot = access.GetCompartment();
+		if (!slot || slot.GetOccupant() != owner)
+			return null;
+		Vehicle lead = Vehicle.Cast(access.GetVehicleIn(owner));
+		if (!lead || lead.GetWorld() != world || manager.GetPlayerIdFromControlledEntity(lead) > 0)
+			return null;
+		if (IsConvoyVehicle(lead) || IsVehicleAssignedToAnotherDriver(lead, null))
+			return null;
+		SCR_DamageManagerComponent leadDamage = SCR_DamageManagerComponent.GetDamageManager(lead);
+		if (leadDamage && leadDamage.IsDestroyed())
+			return null;
+		if (m_aUnits.IsEmpty())
+			return null;
+		CF_DriverControllerComponent head = m_aUnits[0];
+		if (!head || head.CF_GetOrderingPlayerId() != m_iOrderingPlayerId)
+			return null;
+		if (head.CF_GetCachedPlayerVehicle() != lead)
+			return null;
+		if (m_OriginalLeadVehicle && m_OriginalLeadVehicle != lead)
+			return null;
+		return lead;
 	}
 
 	protected Vehicle GetOwnerPilotedVehicle()
