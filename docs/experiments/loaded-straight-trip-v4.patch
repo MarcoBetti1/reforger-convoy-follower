@@ -1,0 +1,134 @@
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+index f4fe70c..c681b58 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+@@ -12,6 +12,10 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 	protected float m_fPairRestartWalkMeters;
+ 	[Attribute(defvalue: "6", params: "3.5 12 0.5", desc: "Declared minimum mapped width for this fixture's restart road; physical gates unchanged")]
+ 	protected float m_fPairRestartMinRoadWidth;
++	[Attribute(defvalue: "0", params: "0 1 1", desc: "Test-only explicit onward restart goal; legacy road walk remains the default")]
++	protected bool m_bPairExplicitRestartGoal;
++	[Attribute(defvalue: "0 0 0", desc: "Explicit onward goal; must resolve natively within 3m and 90-140m ahead of the stopped lead")]
++	protected vector m_vPairExplicitRestartGoal;
+ 	protected ref array<CF_LoadedPairCargoProbeComponent> m_PairCargo = {};
+ 	protected ref array<SCR_ResourceContainer> m_PairContainers = {};
+ 	protected ref array<float> m_PairHeldValues = {1800, 0, 0, 0};
+@@ -82,7 +86,8 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 			Print("[ConvoyFollower] LOADED_PAIR_INIT: run_id=" + m_sPacedRun +
+ 				" expected=2 command_only=true cargo_tested=false load_each=0 destination_total=0" +
+ 				" baseline_hold_s=180 explicit_hold_s=30 resume_each_m=20 resume_each_powered=3 max_link_m=60" +
+-				" total_timeout_s=720 command_timeout_s=240 lead_cap_kmh=20 restart_road_walk_m=" + m_fPairRestartWalkMeters +
++				" total_timeout_s=720 command_timeout_s=240 lead_cap_kmh=20 configured_restart_road_walk_m=" + m_fPairRestartWalkMeters +
++				" explicit_restart_goal_enabled=" + m_bPairExplicitRestartGoal +
+ 				" restart_min_road_width_m=" + m_fPairRestartMinRoadWidth +
+ 				" owner_staging=test_only ordinary_input=false source_count_writes=false follower_control_writes=false production_controller=true");
+ 			return;
+@@ -90,7 +95,8 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 		Print("[ConvoyFollower] LOADED_PAIR_INIT: run_id=" + m_sPacedRun +
+ 			" expected=2 load_each=100 destination_total=200 conserved_total=1800 baseline_hold_s=180 explicit_hold_s=30" +
+ 			" resume_each_m=20 resume_each_powered=3 max_link_m=60 total_timeout_s=720 command_timeout_s=240" +
+-			" restart_road_walk_m=" + m_fPairRestartWalkMeters +
++			" configured_restart_road_walk_m=" + m_fPairRestartWalkMeters +
++			" explicit_restart_goal_enabled=" + m_bPairExplicitRestartGoal +
+ 			" restart_min_road_width_m=" + m_fPairRestartMinRoadWidth +
+ 			" owner_staging=test_only ordinary_input=false source_count_writes=false follower_control_writes=false production_controller=true");
+ 	}
+@@ -716,10 +722,9 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 		if (!m_bPacedHoldingLead && vector.DistanceXZ(position, m_vRestartGoal) <= 8) HoldLeadAtRoadGoal();
+ 	}
+ 
+-	// Proven lead-only parking and native seat operations are copied verbatim
+-	// below from CF_OriginalFollowResumeProbeComponent; the survey walks the
+-	// declared fixture distance (70 m by default, 45 m before the junction)
+-	// while each follower must still establish its fresh physical 20 m segment.
++	// Lead-only parking and native seat operations retain the original fixture
++	// gates. The survey defaults to a road walk; an explicit onward goal is
++	// opt-in and does not establish route clearance, grade or physical movement.
+ 	protected float CommandSpeed(Vehicle truck)
+ 	{
+ 		CarControllerComponent car;
+@@ -746,9 +751,12 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 
+ 	protected bool RejectCommandExtension(string reason, float width = -1, float roadDistance = -1)
+ 	{
++		string goalContract = " recorded_road_walk_m=" + m_fPairRestartWalkMeters;
++		if (m_bPairExplicitRestartGoal)
++			goalContract = " explicit_onward_goal=" + m_vPairExplicitRestartGoal + " road_walk_attempted=false route_grade_known=false clearance_known=false";
+ 		Print("[ConvoyFollower] ORIGINAL_RESUME_SURVEY_REJECT: run_id=" + m_sPacedRun + " reason=" + reason +
+ 			" width=" + width + " required_width=" + m_fPairRestartMinRoadWidth + " road_distance=" + roadDistance +
+-			" recorded_road_walk_m=" + m_fPairRestartWalkMeters + " geometry_only=true");
++			goalContract + " geometry_only=true");
+ 		return false;
+ 	}
+ 
+@@ -764,24 +772,52 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 		float width = road.GetWidth();
+ 		if (width < m_fPairRestartMinRoadWidth) return RejectCommandExtension("road_width_below_declared_minimum", width, roadDistance);
+ 		if (roadDistance > 5) return RejectCommandExtension("road_distance_over_5m", width, roadDistance);
+-		array<vector> points = {};
+-		road.GetPoints(points);
+ 		vector forward = m_Lead.GetWorldTransformAxis(2);
+ 		vector candidate;
+-		if (!CF_RoadPolyline.TryWalk(points, m_Lead.GetOrigin(), forward, m_fPairRestartWalkMeters, candidate))
+-			return RejectCommandExtension("forward_road_walk_unavailable", width, roadDistance);
++		if (m_bPairExplicitRestartGoal)
++		{
++			candidate = m_vPairExplicitRestartGoal;
++			if (candidate == vector.Zero) return RejectCommandExtension("explicit_goal_missing", width, roadDistance);
++			// Positive bounded checks reject nonfinite authored components too.
++			for (int coordinate = 0; coordinate < 3; coordinate++)
++				if (!(candidate[coordinate] >= -100000 && candidate[coordinate] <= 100000))
++					return RejectCommandExtension("explicit_goal_invalid", width, roadDistance);
++			float requestedDistance = vector.DistanceXZ(candidate, m_Lead.GetOrigin());
++			if (!(requestedDistance >= 90 && requestedDistance <= 140))
++				return RejectCommandExtension("explicit_goal_outside_90_140m", width, roadDistance);
++		}
++		else
++		{
++			array<vector> points = {};
++			road.GetPoints(points);
++			if (!CF_RoadPolyline.TryWalk(points, m_Lead.GetOrigin(), forward, m_fPairRestartWalkMeters, candidate))
++				return RejectCommandExtension("forward_road_walk_unavailable", width, roadDistance);
++		}
+ 		vector reached;
+ 		if (!roads.GetReachableWaypointInRoad(m_Lead.GetOrigin(), candidate, 5, reached))
+ 			return RejectCommandExtension("native_reachability_failed", width, roadDistance);
+ 		if (vector.DistanceXZ(candidate, reached) > 3) return RejectCommandExtension("native_snap_over_3m", width, roadDistance);
+ 		vector delta = reached - m_Lead.GetOrigin();
+ 		float distance = vector.DistanceXZ(reached, m_Lead.GetOrigin());
+-		if (distance < m_fPairRestartWalkMeters - 15 || distance > m_fPairRestartWalkMeters + 15)
++		if (m_bPairExplicitRestartGoal)
++		{
++			if (!(distance >= 90 && distance <= 140))
++				return RejectCommandExtension("resolved_explicit_distance_outside_90_140m", width, roadDistance);
++		}
++		else if (distance < m_fPairRestartWalkMeters - 15 || distance > m_fPairRestartWalkMeters + 15)
+ 			return RejectCommandExtension("resolved_distance_outside_walk_band", width, roadDistance);
+ 		if (delta[0] * forward[0] + delta[2] * forward[2] < distance * 0.5)
+ 			return RejectCommandExtension("resolved_goal_not_forward", width, roadDistance);
+ 		m_vRestartGoal = reached;
+ 		m_vRestartAxis = Vector(delta[0] / distance, 0, delta[2] / distance);
++		if (m_bPairExplicitRestartGoal)
++		{
++			Print("[ConvoyFollower] ORIGINAL_RESUME_SURVEY: run_id=" + m_sPacedRun + " road_id=" + roadId +
++				" width=" + width + " required_width=" + m_fPairRestartMinRoadWidth + " road_distance=" + roadDistance + " start=" + m_Lead.GetOrigin() +
++				" explicit_onward_goal=" + candidate + " goal=" + reached + " chord_m=" + distance + " endpoint_height_delta_m=" + delta[1] +
++				" axis=" + m_vRestartAxis + " road_walk_attempted=false route_grade_known=false clearance_known=false geometry_only=true");
++			return true;
++		}
+ 		Print("[ConvoyFollower] ORIGINAL_RESUME_SURVEY: run_id=" + m_sPacedRun + " road_id=" + roadId +
+ 			" width=" + width + " required_width=" + m_fPairRestartMinRoadWidth + " road_distance=" + roadDistance + " start=" + m_Lead.GetOrigin() +
+ 			" goal=" + reached + " axis=" + m_vRestartAxis + " recorded_road_walk_m=" + m_fPairRestartWalkMeters + " geometry_only=true");
+diff --git a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer
+index 16340d1..1798495 100644
+--- a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer
+@@ -49,6 +49,8 @@ Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1
+    m_vStraightReleaseRoadGoal 1610.5 19.9302 3365.83
+    m_fPairRestartWalkMeters 45
+    m_fPairRestartMinRoadWidth 3.5
++   m_bPairExplicitRestartGoal 1
++   m_vPairExplicitRestartGoal 1697.17 25.722 3301.33
+    m_bPacedAutoExit 1
+    m_fPacedLeadSpeedKmh 20
+    m_iExpectedTrucks 2
