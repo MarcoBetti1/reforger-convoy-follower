@@ -1,0 +1,397 @@
+--- /dev/null
++++ b/addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalHeadGuideRoad81Driver.et
+@@ -0,0 +1,12 @@
++SCR_ChimeraCharacter : "{66B7879B5C694135}Prefabs/Tests/Character_CF_OriginalTailGuideDriver.et" {
++ ID "97A11620A2E14E44"
++ components {
++  CF_OriginalTailGuideDriverComponent "{E7F041D76B47D760}" {
++   m_bOriginalFollowGraph 1
++   m_bTrailPrejoinLookahead 1
++   m_bTrailProjectionCorrection 1
++   m_bTrailHeadArrival 1
++   m_bEntityRearPacing 0
++  }
++ }
++}
+--- /dev/null
++++ b/addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalHeadGuideRoad81Driver.et.meta
+@@ -0,0 +1,9 @@
++MetaFileClass {
++ Name "{EDFE23F8E8D44112}Prefabs/Tests/Character_CF_OriginalHeadGuideRoad81Driver.et"
++ Configurations {
++  EntityTemplateResourceClass PC {
++  }
++  EntityTemplateResourceClass HEADLESS : PC {
++  }
++ }
++}
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
+@@ -89,6 +89,10 @@
+ // targets a recorded guide bound to its own immediate original predecessor.
+ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ {
++	[Attribute(defvalue: "0", desc: "Matched private Road81 one-follower control/guide comparison; ordinary mixed fixtures unchanged")]
++	protected bool m_bHeadRoad81Comparison;
++	[Attribute(defvalue: "0", desc: "Require genuine actual-player-trail guide instead of the matched direct head")]
++	protected bool m_bHeadRoad81Guide;
+ 	protected ref array<ref CF_OriginalTailGuideEvidence> m_MixedUnits = {};
+ 	protected bool m_bMixedFailed;
+ 	protected bool m_bMixedFatal;
+@@ -99,13 +103,29 @@
+ 		if (!Replication.IsServer()) return;
+ 		for (int unit = 1; unit <= m_iExpectedTrucks; unit++)
+ 			m_MixedUnits.Insert(new CF_OriginalTailGuideEvidence());
+-		if (m_iExpectedTrucks != 2 && m_iExpectedTrucks != 3)
++		if (m_bHeadRoad81Comparison)
++		{
++			string expectedWorld = "Worlds/Tests/ConvoyFollower_Arland_Road81_DirectHead_1Truck.ent";
++			if (m_bHeadRoad81Guide) expectedWorld = "Worlds/Tests/ConvoyFollower_Arland_Road81_GuideHead_1Truck.ent";
++			if (m_iExpectedTrucks != 1 || m_fPacedLeadSpeedKmh != 20 || m_sPacedWorld != expectedWorld ||
++				GetGame().GetWorldFile() != expectedWorld)
++				MixedFailure("head_road81_contract_mismatch", 0);
++			Print("[ConvoyFollower] HEAD_ROAD81_INIT: run_id=" + m_sPacedRun + " world=" + m_sPacedWorld +
++				" expected=1 guide_expected=" + m_bHeadRoad81Guide + " original_graph=true lead_cap_kmh=20" +
++				" required_progress_m=100 required_powered=3 peak_gap_m=60 arrival_s=180 max_drift_m=2" +
++				" cargo_tested=false hold_resume_tested=false ordinary_input=false");
++		}
++		else if (m_iExpectedTrucks != 2 && m_iExpectedTrucks != 3)
+ 			MixedFailure("requires_two_or_three_original_followers", 0);
++		if (m_bHeadRoad81Guide && !m_bHeadRoad81Comparison)
++			MixedFailure("head_guide_without_declared_comparison", 0);
+ 		CF_ConvoySettings settings = CF_ConvoySettings.Get();
+ 		if (settings.m_fMovingGap != 20.0 || settings.m_fStoppedGap != 10.0)
+ 			MixedFailure("comparison_requires_unchanged_20_10_gaps", 0);
++		string headMode = "direct_original";
++		if (m_bHeadRoad81Comparison && m_bHeadRoad81Guide) headMode = "recorded_player_trail_original";
+ 		Print("[ConvoyFollower] MIXED_FOLLOW_INIT: run_id=" + m_sPacedRun + " world=" + m_sPacedWorld +
+-			" expected=" + m_iExpectedTrucks + " unit1=direct_original unit2=recorded_guide_original" +
++			" expected=" + m_iExpectedTrucks + " unit1=" + headMode + " unit2=recorded_guide_original" +
+ 			" moving_distance_m=20 guide_capture_m=1 recorded_standoff_m=20 stopped_distance_m=10" +
+ 			" required_each_progress_m=100 required_each_powered=3 max_link_m=60 hold_s=180 max_drift_m=2" +
+ 			" first_interval_credit=false selection_gap_credit=false follower_writes=false test_only=true");
+@@ -146,8 +166,18 @@
+ 		return CF_OriginalTailGuideDriverComponent.Cast(driver);
+ 	}
+ 
++	protected bool MixedExpectsGuide(int unit)
++	{
++		return unit > 1 || (m_bHeadRoad81Comparison && m_bHeadRoad81Guide && unit == 1);
++	}
++
+ 	protected bool MixedModesMatch(int unit, CF_EntityFollowDriverControllerComponent driver, CF_TrailGuideDriverControllerComponent tail)
+ 	{
++		if (m_bHeadRoad81Comparison)
++		{
++			if (MixedExpectsGuide(unit)) return tail && tail.CF_IsHeadGuideArrivalEnabled();
++			return !CF_TrailGuideDriverControllerComponent.Cast(driver);
++		}
+ 		return !((unit == 1 && CF_TrailGuideDriverControllerComponent.Cast(driver)) || (unit > 1 && !tail));
+ 	}
+ 
+@@ -288,9 +318,9 @@
+ 			distance = selected.m_fCompletionDistance.m_Value;
+ 			sequence = selected.CF_GetSequence();
+ 		}
+-		bool guideTarget = unit > 1 && guide && target == guide;
++		bool guideTarget = MixedExpectsGuide(unit) && guide && target == guide;
+ 		bool directTarget = target == predecessor.Truck;
+-		bool movingMode = (unit == 1 && directTarget && distance == CF_ConvoySettings.Get().m_fMovingGap);
++		bool movingMode = (!MixedExpectsGuide(unit) && unit == 1 && directTarget && distance == CF_ConvoySettings.Get().m_fMovingGap);
+ 		if (guideTarget) movingMode = distance == 1.0;
+ 		bool stoppedMode = directTarget && distance == CF_ConvoySettings.Get().m_fStoppedGap;
+ 		bool exact = live && original && original.Lease && waypoint && utility && activeActions == 1;
+@@ -319,7 +349,7 @@
+ 			else { evidence.WaitKey = waitKey; evidence.WaitSamples++; }
+ 		}
+ 		bool eligible = m_bPacedStarted && exact && exactFormation && movingMode;
+-		if (unit > 1) eligible = eligible && routeBound && guideTarget && route.Joined && route.HasArcGap && route.RouteState == CF_DrivenRoute.TRACKING;
++		if (MixedExpectsGuide(unit)) eligible = eligible && routeBound && guideTarget && route.Joined && route.HasArcGap && route.RouteState == CF_DrivenRoute.TRACKING;
+ 		float now = GetGame().GetWorld().GetWorldTime();
+ 		vector position = sample.Truck.GetOrigin();
+ 		vector forward = sample.Truck.GetWorldTransformAxis(2);
+@@ -329,7 +359,7 @@
+ 		string targetKey = EntityKey(target);
+ 		bool consecutive = eligible && evidence.PreviousEligible && sequence == evidence.ActivitySequence;
+ 		if (consecutive) consecutive = actionKey == evidence.ActivityKey && waypointKey == evidence.WaypointKey && targetKey == evidence.NativeTargetKey;
+-		if (consecutive && unit > 1) consecutive = route.Epoch == evidence.RouteEpoch;
++		if (consecutive && MixedExpectsGuide(unit)) consecutive = route.Epoch == evidence.RouteEpoch;
+ 		float elapsed = (now - evidence.PreviousMs) * 0.001;
+ 		if (consecutive) consecutive = elapsed > 0 && elapsed <= 3.0;
+ 		float signedStep;
+@@ -426,7 +456,7 @@
+ 				CF_OriginalTailGuideEvidence evidence = m_MixedUnits[unit - 1];
+ 				if (evidence.BestProgress < CF_MIN_FOLLOWER_PATH || evidence.BestPoweredSamples < 3)
+ 					MixedFailure("continuous_exact_original_powered_progress_missing", unit);
+-				if (unit > 1 && !evidence.SawJoined) MixedFailure("tail_never_genuinely_joined_route", unit);
++				if (MixedExpectsGuide(unit) && !evidence.SawJoined) MixedFailure("tail_never_genuinely_joined_route", unit);
+ 			}
+ 		}
+ 		super.Finish(result);
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+@@ -8,6 +8,12 @@
+ {
+ 	[Attribute(defvalue: "0", desc: "Private one-follower recorded trail-guide experiment")]
+ 	protected bool m_bTrailGuidePrototype;
++	[Attribute(defvalue: "0", desc: "Private head-guide travel/arrival comparison; no new Hold/Resume support")]
++	protected bool m_bTrailHeadArrival;
++	protected CF_ConvoySession m_TrailHeadSession;
++	protected IEntity m_TrailHeadOwner;
++	protected IEntity m_TrailHeadLeadPilot;
++	protected int m_iTrailHeadOwnerId;
+ 	[Attribute(defvalue: "0", desc: "Private projected-station comparison: one adjacent corner; station is not physical travel")]
+ 	protected bool m_bTrailProjectionCorrection;
+ 	protected int m_iTrailProjectionLogs;
+@@ -354,6 +360,7 @@
+ 	bool CF_IsTrailGuidePrototypeEnabled() { return m_bTrailGuidePrototype; }
+ 	IEntity CF_GetTrailGuideEntity() { return m_TrailGuide; }
+ 	IEntity CF_GetTrailRealPredecessor() { return m_TrailPredecessor; }
++	bool CF_IsHeadGuideArrivalEnabled() { return m_bTrailHeadArrival; }
+ 	bool CF_IsTrailGuideBlocked() { return m_bTrailBlocked; }
+ 	bool CF_HasTrailJoined() { return m_bTrailJoined; }
+ 	int CF_GetTrailEpoch() { return m_iTrailEpoch; }
+@@ -389,6 +396,18 @@
+ 		CF_InvalidateRearGuideQuery();
+ 		m_TrailPredecessor = target;
+ 		m_TrailWorld = GetGame().GetWorld();
++		m_TrailHeadSession = null;
++		m_TrailHeadOwner = null;
++		m_TrailHeadLeadPilot = null;
++		m_iTrailHeadOwnerId = 0;
++		if (m_bTrailHeadArrival && !m_Predecessor)
++		{
++			m_TrailHeadSession = m_Session;
++			m_TrailHeadOwner = m_Leader;
++			m_iTrailHeadOwnerId = m_iOrderingPlayerId;
++			CarControllerComponent car = CarControllerComponent.Cast(target.FindComponent(CarControllerComponent));
++			if (car && car.GetPilotCompartmentSlot()) m_TrailHeadLeadPilot = car.GetPilotCompartmentSlot().GetOccupant();
++		}
+ 		m_iTrailEpoch++;
+ 		m_iTrailProjectionLogs = 0;
+ 		if (m_bTrailPrejoinLookahead)
+@@ -1003,6 +1022,42 @@
+ 		return super.MoveWaypoint(destination);
+ 	}
+ 
++	// Head-only comparison: current physical stop is arrival intent, never
++	// capture. The active guide lease separately seals our original pilot/truck.
++	protected bool CF_HeadGuideStoppedLeadReady()
++	{
++		if (!m_bTrailHeadArrival || m_Predecessor || !m_Session || m_Session != m_TrailHeadSession) return false;
++		if (!m_Session.IsCurrentLeader(this) || m_Session.GetUnitNumber(this) != 1) return false;
++		if (!m_Leader || m_Leader != m_TrailHeadOwner || m_iOrderingPlayerId != m_iTrailHeadOwnerId) return false;
++		if (CF_ConvoySession.GetForPlayer(m_Leader) != m_Session || m_Session.GetOrderingPlayerId() != m_iTrailHeadOwnerId) return false;
++		if (!m_LeadVehicle || m_LeadVehicle != m_TrailPredecessor || CF_GetCachedPlayerVehicle() != m_LeadVehicle) return false;
++		PlayerManager players = GetGame().GetPlayerManager();
++		if (!players || m_iTrailHeadOwnerId <= 0 || players.GetPlayerControlledEntity(m_iTrailHeadOwnerId) != m_Leader) return false;
++		ChimeraCharacter owner = ChimeraCharacter.Cast(m_Leader);
++		if (!owner || IsDriverDestroyed(owner) || owner.GetWorld() != m_TrailWorld) return false;
++		CharacterControllerComponent ownerCharacter = owner.GetCharacterController();
++		CompartmentAccessComponent ownerAccess = owner.GetCompartmentAccessComponent();
++		if (!ownerCharacter || ownerCharacter.IsUnconscious() || !ownerAccess || ownerAccess.IsGettingIn() || ownerAccess.IsGettingOut()) return false;
++		BaseCompartmentSlot ownerSlot = ownerAccess.GetCompartment();
++		if (ownerAccess.GetVehicleIn(owner) != m_LeadVehicle || !ownerSlot || ownerSlot.GetOccupant() != owner) return false;
++		CarControllerComponent car = CarControllerComponent.Cast(m_LeadVehicle.FindComponent(CarControllerComponent));
++		if (!car || !car.GetSimulation() || !car.GetPilotCompartmentSlot() || !m_TrailHeadLeadPilot) return false;
++		if (car.GetPilotCompartmentSlot().GetOccupant() != m_TrailHeadLeadPilot) return false;
++		ChimeraCharacter pilot = ChimeraCharacter.Cast(m_TrailHeadLeadPilot);
++		if (!pilot || IsDriverDestroyed(pilot) || pilot.GetWorld() != m_TrailWorld) return false;
++		CharacterControllerComponent character = pilot.GetCharacterController();
++		CompartmentAccessComponent access = pilot.GetCompartmentAccessComponent();
++		if (!character || character.IsUnconscious() || !access || access.IsGettingIn() || access.IsGettingOut()) return false;
++		if (access.GetVehicleIn(pilot) != m_LeadVehicle || access.GetCompartment() != car.GetPilotCompartmentSlot()) return false;
++		float speed = Math.AbsFloat(car.GetSimulation().GetSpeedKmh());
++		if (!(speed >= 0 && speed <= CF_ENTITY_STOP_SPEED_KMH)) return false;
++		Physics physics = m_LeadVehicle.GetPhysics();
++		if (!physics) return false;
++		vector velocity = physics.GetVelocity();
++		float stopMps = CF_ENTITY_STOP_SPEED_KMH / 3.6;
++		return velocity.LengthSq() >= 0 && velocity.LengthSq() <= stopMps * stopMps;
++	}
++
+ 	// Query the actual pose first, then propagate exact predecessor arrival
+ 	// intent near the recorded end before attempting another guide advance.
+ 	// The real-target approach must still earn its own measured capture.
+@@ -1013,13 +1068,21 @@
+ 		string reason;
+ 		if (!CF_ReadGuideBinding(m_LeadVehicle, waypoint, activity, reason, true))
+ 			return false;
+-		CF_EntityFollowDriverControllerComponent predecessor = CF_EntityFollowDriverControllerComponent.Cast(m_Predecessor);
+-		if (!predecessor || !m_Session || m_Session.CF_GetImmediateActiveSuccessor(predecessor) != this)
+-			return false;
+ 		bool predecessorCaptured;
+-		if (predecessor.CF_GetAssignedVehicle() != m_LeadVehicle ||
+-			!predecessor.CF_HasOwnedArrivalPhase(m_Session, m_LeadVehicle, predecessorCaptured))
+-			return false;
++		bool headStoppedLead = m_bTrailHeadArrival && !m_Predecessor;
++		if (headStoppedLead)
++		{
++			if (!CF_HeadGuideStoppedLeadReady()) return false;
++		}
++		else
++		{
++			CF_EntityFollowDriverControllerComponent predecessor = CF_EntityFollowDriverControllerComponent.Cast(m_Predecessor);
++			if (!predecessor || !m_Session || m_Session.CF_GetImmediateActiveSuccessor(predecessor) != this)
++				return false;
++			if (predecessor.CF_GetAssignedVehicle() != m_LeadVehicle ||
++				!predecessor.CF_HasOwnedArrivalPhase(m_Session, m_LeadVehicle, predecessorCaptured))
++				return false;
++		}
+ 		float terminalRemainder = m_TrailGuidance.RecordedEnd - m_TrailGuidance.LocalProgress;
+ 		// Thirty metres is the existing recorded lookahead. The actual joined
+ 		// cursor and real gap must both be near this same predecessor's end.
+@@ -1035,7 +1098,7 @@
+ 		handoff += " retired_sequence=" + activity.CF_GetSequence() + " real_gap_m=" + realGap + " arc_gap_m=" + arcGap;
+ 		handoff += " terminal_remainder_m=" + terminalRemainder + " target_still_s=" + m_fTargetStillSeconds;
+ 		handoff += " selected_predecessor_arrival_wait=" + predecessorCaptured;
+-		handoff += " reason=recorded_end_arrival_phase capture_credit=false";
++		handoff += " reason=recorded_end_arrival_phase head_actual_stopped_lead=" + headStoppedLead + " capture_credit=false";
+ 		Print(handoff);
+ 		// Start observation at the current pose; inherited still/stable timers
+ 		// must accrue normally after the predecessor actually stops.
+@@ -1208,6 +1271,10 @@
+ 		m_TrailRoute = null;
+ 		m_TrailGuidance = null;
+ 		m_TrailPredecessor = null;
++		m_TrailHeadSession = null;
++		m_TrailHeadOwner = null;
++		m_TrailHeadLeadPilot = null;
++		m_iTrailHeadOwnerId = 0;
+ 		m_bTrailBlocked = false;
+ 		m_bTrailJoined = false;
+ 		super.ResetToIdle();
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_DirectHead_1Truck.ent
+@@ -0,0 +1,3 @@
++SubScene {
++ Parent "{77C41EA429B6AC35}worlds/GameMaster/GM_Arland.ent"
++}
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_DirectHead_1Truck.ent.meta
+@@ -0,0 +1,9 @@
++MetaFileClass {
++ Name "{8DB5F62849D64C49}Worlds/Tests/ConvoyFollower_Arland_Road81_DirectHead_1Truck.ent"
++ Configurations {
++  ENTResourceClass PC {
++  }
++  ENTResourceClass HEADLESS : PC {
++  }
++ }
++}
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_DirectHead_1Truck_Layers/default.layer
+@@ -0,0 +1,46 @@
++// Matched Road81 one-follower course; no cargo or command-stage assistance.
++SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
++ coords 1298.8 34.9 3018.0
++}
++
++SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1299.7 34.9 3018.0
++}
++
++SCR_AIGroup CF_SmokeGroup1 : "{1A6888142AB58E06}Prefabs/Tests/Group_CF_EntityFollowDriver.et" {
++ coords 1280.3 34.3 3013.1
++ m_aUnitPrefabSlots {
++  "{695DE742279041A2}Prefabs/Tests/Character_CF_OriginalFollowDriver.et"
++ }
++}
++
++Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1281.45 34.24 3008.14
++ angles 0 75.43 0
++ components {
++  CF_SurfaceContactProbeComponent "{8E209E30EC4A43DA}" {
++  }
++ }
++}
++
++Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1300.85 34.92 3013.01
++ angles 0 76.09 0
++ components {
++  CF_SurfaceContactProbeComponent "{3B279CD25C5E4B6B}" {
++  }
++  CF_OriginalTailGuideProbeComponent "{BA3E073268484E6F}" {
++   m_bHeadRoad81Comparison 1
++   m_bHeadRoad81Guide 0
++   m_bStraightReleaseRoadGoal 1
++   m_vStraightReleaseRoadGoal 1564.43 40.3222 3071.77
++   m_bPacedAutoExit 1
++   m_fPacedLeadSpeedKmh 20
++   m_iExpectedTrucks 1
++   m_sPacedWorld "Worlds/Tests/ConvoyFollower_Arland_Road81_DirectHead_1Truck.ent"
++  }
++  CF_ConvoyFilmCameraComponent "{00244ACCC10B4ED8}" {
++   m_iExpectedTrucks 1
++  }
++ }
++}
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_GuideHead_1Truck.ent
+@@ -0,0 +1,3 @@
++SubScene {
++ Parent "{77C41EA429B6AC35}worlds/GameMaster/GM_Arland.ent"
++}
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_GuideHead_1Truck.ent.meta
+@@ -0,0 +1,9 @@
++MetaFileClass {
++ Name "{706BF11BCFA74559}Worlds/Tests/ConvoyFollower_Arland_Road81_GuideHead_1Truck.ent"
++ Configurations {
++  ENTResourceClass PC {
++  }
++  ENTResourceClass HEADLESS : PC {
++  }
++ }
++}
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_GuideHead_1Truck_Layers/default.layer
+@@ -0,0 +1,46 @@
++// Matched Road81 one-follower course; no cargo or command-stage assistance.
++SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
++ coords 1298.8 34.9 3018.0
++}
++
++SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1299.7 34.9 3018.0
++}
++
++SCR_AIGroup CF_SmokeGroup1 : "{1A6888142AB58E06}Prefabs/Tests/Group_CF_EntityFollowDriver.et" {
++ coords 1280.3 34.3 3013.1
++ m_aUnitPrefabSlots {
++  "{EDFE23F8E8D44112}Prefabs/Tests/Character_CF_OriginalHeadGuideRoad81Driver.et"
++ }
++}
++
++Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1281.45 34.24 3008.14
++ angles 0 75.43 0
++ components {
++  CF_SurfaceContactProbeComponent "{8E209E30EC4A43DA}" {
++  }
++ }
++}
++
++Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1300.85 34.92 3013.01
++ angles 0 76.09 0
++ components {
++  CF_SurfaceContactProbeComponent "{3B279CD25C5E4B6B}" {
++  }
++  CF_OriginalTailGuideProbeComponent "{BA3E073268484E6F}" {
++   m_bHeadRoad81Comparison 1
++   m_bHeadRoad81Guide 1
++   m_bStraightReleaseRoadGoal 1
++   m_vStraightReleaseRoadGoal 1564.43 40.3222 3071.77
++   m_bPacedAutoExit 1
++   m_fPacedLeadSpeedKmh 20
++   m_iExpectedTrucks 1
++   m_sPacedWorld "Worlds/Tests/ConvoyFollower_Arland_Road81_GuideHead_1Truck.ent"
++  }
++  CF_ConvoyFilmCameraComponent "{00244ACCC10B4ED8}" {
++   m_iExpectedTrucks 1
++  }
++ }
++}

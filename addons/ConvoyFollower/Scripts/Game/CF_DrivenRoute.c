@@ -6,6 +6,11 @@ class CF_DrivenRouteGuidance
 	vector Goal;
 	vector Tangent;
 	float Progress;
+	// Progress remains monotonic evidence; LocalProgress is the actual station.
+	float LocalProgress;
+	int ReverseProofSerial;
+	float ReverseStationTotal;
+	bool Reversing;
 	float RecordedEnd;
 	float ArcGap;
 	float CrossTrack;
@@ -66,6 +71,9 @@ class CF_DrivenRoute
 	protected int m_TargetKey;
 	protected int m_Segment;
 	protected float m_Progress;
+	protected float m_HighWaterProgress;
+	protected int m_ReverseProofSerial;
+	protected float m_ReverseStationTotal;
 	protected bool m_Initialized;
 	protected bool m_Joined;
 	protected bool m_HistoryLost;
@@ -82,6 +90,9 @@ class CF_DrivenRoute
 		m_Stations.Insert(0.0);
 		m_Segment = 0;
 		m_Progress = 0;
+		m_HighWaterProgress = 0;
+		m_ReverseProofSerial = 0;
+		m_ReverseStationTotal = 0;
 		m_Initialized = true;
 		m_Joined = false;
 		m_HistoryLost = false;
@@ -116,7 +127,8 @@ class CF_DrivenRoute
 	}
 
 	int GetPointCount() { return m_Points.Count(); }
-	float GetProgress() { return m_Progress; }
+	float GetProgress() { return m_HighWaterProgress; }
+	float GetLocalProgress() { return m_Progress; }
 	float GetRetainedLength()
 	{
 		if (m_Stations.Count() < 2)
@@ -153,19 +165,16 @@ class CF_DrivenRoute
 		return false;
 	}
 
-	// maxAdvance is a caller-supplied physical progress budget for this update,
-	// not a catch-up radius. Query never searches later nonadjacent segments.
-	// Before joining, APPROACH_START is a position to join, not an arrived state:
-	// HasArcGap stays false and ArcGap=-1 until a recorded segment is acquired.
-	void Query(int targetKey, vector followerPosition, float lookAhead, float spacing,
-		float maxAdvance, float maxCrossTrack, CF_DrivenRouteGuidance result)
+	protected void ClearGuidance(CF_DrivenRouteGuidance result)
 	{
-		if (!result)
-			return;
 		result.State = UNSEEDED;
 		result.Goal = vector.Zero;
 		result.Tangent = vector.Zero;
-		result.Progress = m_Progress;
+		result.Progress = m_HighWaterProgress;
+		result.LocalProgress = m_Progress;
+		result.ReverseProofSerial = m_ReverseProofSerial;
+		result.ReverseStationTotal = m_ReverseStationTotal;
+		result.Reversing = false;
 		result.RecordedEnd = 0;
 		result.ArcGap = -1;
 		result.CrossTrack = 0;
@@ -176,6 +185,39 @@ class CF_DrivenRoute
 		result.ProjectionSignedCorrection = 0;
 		result.ProjectionCandidateAdvance = 0;
 		result.HasPreviousPhysicalQuery = false;
+	}
+
+	// Called only after a complete local query has committed its physical cursor.
+	protected void FillGuidance(float lookAhead, float spacing, CF_DrivenRouteGuidance result)
+	{
+		m_HighWaterProgress = Math.Max(m_HighWaterProgress, m_Progress);
+		result.Progress = m_HighWaterProgress;
+		result.LocalProgress = m_Progress;
+		result.ReverseProofSerial = m_ReverseProofSerial;
+		result.ReverseStationTotal = m_ReverseStationTotal;
+		result.RecordedEnd = m_Stations[m_Stations.Count() - 1];
+		result.ArcGap = result.RecordedEnd - m_Progress;
+		result.HasArcGap = true;
+		float goalStation = Math.Min(m_Progress + lookAhead, result.RecordedEnd - spacing);
+		result.State = TRACKING;
+		if (goalStation <= m_Progress)
+		{
+			goalStation = m_Progress;
+			result.State = SPACING_HOLD;
+		}
+		SampleAt(goalStation, result.Goal, result.Tangent);
+	}
+
+	// maxAdvance is a caller-supplied physical progress budget for this update,
+	// not a catch-up radius. Query never searches later nonadjacent segments.
+	// Before joining, APPROACH_START is a position to join, not an arrived state:
+	// HasArcGap stays false and ArcGap=-1 until a recorded segment is acquired.
+	void Query(int targetKey, vector followerPosition, float lookAhead, float spacing,
+		float maxAdvance, float maxCrossTrack, CF_DrivenRouteGuidance result)
+	{
+		if (!result)
+			return;
+		ClearGuidance(result);
 		if (!m_Initialized)
 			return;
 		result.Goal = m_Points[0];
@@ -321,16 +363,6 @@ class CF_DrivenRoute
 		m_Joined = true;
 		m_Segment = segment;
 		m_Progress = progress;
-		result.Progress = progress;
-		result.ArcGap = result.RecordedEnd - progress;
-		result.HasArcGap = true;
-		float goalStation = Math.Min(progress + lookAhead, result.RecordedEnd - spacing);
-		result.State = TRACKING;
-		if (goalStation <= progress)
-		{
-			goalStation = progress;
-			result.State = SPACING_HOLD;
-		}
-		SampleAt(goalStation, result.Goal, result.Tangent);
+		FillGuidance(lookAhead, spacing, result);
 	}
 }

@@ -177,6 +177,10 @@ class CF_ConvoyFollowDriverControllerComponent : CF_TrailGuideDriverControllerCo
 		int oldGeneration = m_ArrivalRecoveryLease.Generation;
 		CF_CancelArrivalRecovery("predecessor_selected_arrival_wait");
 		SetState(CF_ARRIVING);
+		// Start this stopped episode at the current predecessor sample. Movement
+		// during recovery must not reset the fresh approach on the next settle tick.
+		m_vLastTargetPosition = m_LeadVehicle.GetOrigin();
+		m_fTargetStillSeconds = 0;
 		// No still-time, stable-pose or capture credit. The normal new real
 		// predecessor approach must subsequently satisfy all arrival gates.
 		bool issued = CF_BeginStoppedEntityApproach();

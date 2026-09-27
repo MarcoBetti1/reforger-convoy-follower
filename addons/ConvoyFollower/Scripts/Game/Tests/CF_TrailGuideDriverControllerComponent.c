@@ -40,15 +40,31 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 	protected vector m_vTrailEntryTangent;
 	protected float m_fTrailEntryLength;
 	protected bool m_bTrailEntryKnown;
+	protected bool m_bTrailEntryApproach;
 	protected bool m_bTrailGuideActive;
 	protected bool m_bTrailPoseInterrupted;
 	protected bool m_bTrailFollowerPose;
+	protected bool m_bTrailPhysicalQueried;
 	protected bool m_bTrailJoined;
 	protected bool m_bTrailBlocked;
 	protected int m_iTrailLogs;
 	protected int m_iTrailQueryFailureLogs;
+	protected int m_iRetainedPoseLeaseLogs;
+	protected int m_iRetainedPoseLoggedGeneration;
 	protected int m_iTrailResumeRejectLogs;
 	protected string m_sTrailBlockReason;
+	protected bool m_bTrailResumePending;
+	protected bool m_bTrailResumeTimedOut;
+	protected bool m_bTrailResumePosePreempted;
+	protected int m_iTrailResumePoseLogs;
+	protected ref CF_InitialDepartureWait m_TrailResumeWait;
+	protected CF_ConvoySession m_TrailResumeSession;
+	protected IEntity m_TrailResumeOwner;
+	protected IEntity m_TrailResumePredecessor;
+	protected int m_iTrailResumeEpoch;
+	protected float m_fTrailResumeBeginMs;
+	protected vector m_vTrailResumeAnchor;
+	protected vector m_vTrailResumeForward;
 	protected static const ResourceName CF_TRAIL_GUIDE_PREFAB = "{983C8B13A242454E}Prefabs/Tests/CF_TrailGuide.et";
 	protected static const ResourceName CF_TRAIL_WAYPOINT_PREFAB = "{F1418F3E681BA55E}Prefabs/Tests/AIWaypoint_CF_TrailGuide.et";
 
@@ -64,6 +80,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	override protected void SetState(int state)
 	{
+		if (m_bTrailResumePending && state != CF_WAITING_FOR_PREDECESSOR) CF_CancelTrailResume("state_change");
 		if (state != m_iState)
 			CF_InvalidateRearGuideQuery();
 		super.SetState(state);
@@ -72,6 +89,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 	override void CF_OnPlayerControlChanged(IEntity from, IEntity to)
 	{
 		CF_InvalidateRearGuideQuery();
+		if (m_bTrailResumePending && CF_IsControlBlocked()) CF_CancelTrailResume("player_control", false);
 		super.CF_OnPlayerControlChanged(from, to);
 	}
 
@@ -79,6 +97,14 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 	// the route, advances the guide or emits a native request.
 	protected bool CF_ReadRearGuideBinding(IEntity predecessor, CF_EntityFollowWaypoint waypoint,
 		CF_EntityFollowActivity activity, out string reason)
+	{
+		return CF_ReadGuideBinding(predecessor, waypoint, activity, reason, false);
+	}
+
+	// Only the arrival handoff may read a genuinely joined SPACING_HOLD.
+	// Pacing and failure recovery retain the strict TRACKING wrapper above.
+	protected bool CF_ReadGuideBinding(IEntity predecessor, CF_EntityFollowWaypoint waypoint,
+		CF_EntityFollowActivity activity, out string reason, bool arrivalScope)
 	{
 		reason = "guide_context";
 		if (!m_bTrailGuidePrototype || m_bTrailBlocked || m_bEntityFallbackFailed ||
@@ -90,8 +116,10 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 			predecessor != GetTargetVehicle(false))
 			return false;
 		reason = "guide_not_tracking";
-		if (!m_bTrailJoined || !m_TrailGuidance || !m_TrailGuidance.HasArcGap ||
-			m_TrailGuidance.State != CF_DrivenRoute.TRACKING)
+		if (!m_bTrailJoined || !m_TrailGuidance || !m_TrailGuidance.HasArcGap)
+			return false;
+		if (m_TrailGuidance.State != CF_DrivenRoute.TRACKING &&
+			!(arrivalScope && m_TrailGuidance.State == CF_DrivenRoute.SPACING_HOLD))
 			return false;
 		reason = "guide_target_binding";
 		if (!CF_TrailGuideWaypoint.Cast(waypoint) || !activity ||
@@ -174,6 +202,11 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	override string CF_GetPanelStateLabel()
 	{
+		if (m_bTrailResumePending)
+		{
+			if (m_bTrailResumeTimedOut) return "resume timed out: Hold, then Resume";
+			return "waiting for predecessor departure";
+		}
 		if (CF_HasPersistentFollowFailure() && !CF_IsControlBlocked() && !m_bPanelHoldRequested &&
 			(m_iState == CF_FOLLOWING || m_iState == CF_ARRIVING))
 			return "route blocked";
@@ -198,15 +231,124 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 			}
 			return false;
 		}
+		if (m_bTrailResumePending || (m_bTrailJoined && CF_IsPanelHeld())) return CF_BeginTrailResume();
 		return super.CF_PanelResume();
 	}
 
 	override protected void StartFollowing(IEntity targetVehicle, bool rejoined, bool emitRadio)
 	{
 		// Guard before the parent releases a Wait or resets its stop episode.
+		if (m_bTrailResumePending) return;
 		if (CF_HasPersistentFollowFailure())
 			return;
 		super.StartFollowing(targetVehicle, rejoined, emitRadio);
+	}
+
+	// Existing waiting-state and arrival paths consult this before issuing an order.
+	override protected bool CF_WaitForInitialDeparture(IEntity target)
+	{
+		if (m_bTrailResumePending) return true;
+		return super.CF_WaitForInitialDeparture(target);
+	}
+
+	protected void CF_CancelTrailResume(string reason, bool allowNativeCompletion = true)
+	{
+		if (!m_bTrailResumePending && !m_TrailResumeWait) return;
+		if (m_TrailResumeWait) m_TrailResumeWait.Retire(allowNativeCompletion && !CF_IsControlBlocked());
+		m_TrailResumeWait = null;
+		m_bTrailResumePending = false; m_bTrailResumeTimedOut = false;
+		m_bTrailResumePosePreempted = false;
+		m_TrailResumeSession = null; m_TrailResumeOwner = null; m_TrailResumePredecessor = null;
+		Print("[ConvoyFollower] TRAIL_RESUME_WAIT_RELEASE: unit=" + m_iUnitNumber + " reason=" + reason + " only_owned_wait=true");
+	}
+
+	protected bool CF_TrailResumeContext()
+	{
+		if (!m_bTrailResumePending || !m_TrailWorld || !GetGame()) return false;
+		if (GetGame().GetWorld() != m_TrailWorld || !m_TrailRoute || !m_TrailGuidance || !m_bTrailJoined) return false;
+		if (!m_Session || !m_TrailResumeSession || !m_Leader || !m_TrailResumeOwner) return false;
+		if (!m_TrailPredecessor || !m_TrailResumePredecessor || m_iState != CF_WAITING_FOR_PREDECESSOR || m_bPanelHoldRequested) return false;
+		if (m_iTrailEpoch != m_iTrailResumeEpoch || m_Session != m_TrailResumeSession || m_Leader != m_TrailResumeOwner) return false;
+		if (m_TrailPredecessor != m_TrailResumePredecessor || m_TrailPredecessor != m_LeadVehicle ||
+			m_TrailPredecessor != GetTargetVehicle(false) || !m_Predecessor) return false;
+		if (m_Predecessor.CF_GetAssignedVehicle() != m_TrailPredecessor ||
+			m_Session.CF_GetImmediateActiveSuccessor(m_Predecessor) != this) return false;
+		if (!m_TrailResumeWait || !m_TrailResumeWait.IsUsable() || m_bTrailBlocked) return false;
+		return CF_CapturedWaitOwnershipReady(ChimeraCharacter.Cast(m_Driver), m_Truck, m_Group);
+	}
+
+	protected bool CF_BeginTrailResume()
+	{
+		if (!Replication.IsServer() || !CF_CanPanelResume()) return false;
+		if (m_bTrailResumePending)
+		{
+			if (!CF_TrailResumeContext()) return false;
+			if (m_bTrailResumeTimedOut)
+			{ m_bTrailResumeTimedOut = false; m_fTrailResumeBeginMs = m_TrailWorld.GetWorldTime(); }
+			return true;
+		}
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		if (!CF_IsPanelHeld() || !m_bTrailJoined || !m_TrailRoute || !m_TrailGuidance) return false;
+		if (!m_TrailGuidance.HasArcGap ||
+			(m_TrailGuidance.State != CF_DrivenRoute.TRACKING && m_TrailGuidance.State != CF_DrivenRoute.SPACING_HOLD)) return false;
+		if (!m_Predecessor || m_Predecessor.CF_GetAssignedVehicle() != m_TrailPredecessor ||
+			m_TrailPredecessor != m_LeadVehicle || m_TrailPredecessor != GetTargetVehicle(false)) return false;
+		if (!CF_HasCapturedWaitLease(m_EntityCapturedWait, driver, m_Truck, m_Group) ||
+			!TryGetVehicleFacing(m_TrailPredecessor, m_vTrailResumeForward)) return false;
+		SCR_AIUtilityComponent utility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
+		if (!utility || utility.GetCurrentBehavior() != m_EntityCapturedWait) return false;
+		m_TrailResumeSession = m_Session; m_TrailResumeOwner = m_Leader;
+		m_TrailResumePredecessor = m_TrailPredecessor; m_iTrailResumeEpoch = m_iTrailEpoch;
+		m_vTrailResumeAnchor = m_TrailPredecessor.GetOrigin(); m_fTrailResumeBeginMs = m_TrailWorld.GetWorldTime();
+		CF_ReleaseCapturedWait("trail_resume_pending");
+		CF_SetPanelHoldRequested(false);
+		SetState(CF_WAITING_FOR_PREDECESSOR);
+		m_bTrailResumePending = true; m_bTrailResumeTimedOut = false;
+		m_TrailResumeWait = new CF_InitialDepartureWait(utility, null);
+		m_TrailResumeWait.Bind(driver, m_Truck);
+		utility.AddAction(m_TrailResumeWait);
+		Print("[ConvoyFollower] TRAIL_RESUME_PENDING: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
+			" predecessor_id=" + m_TrailPredecessor.GetID() + " timeout_s=60 owned_seated_wait=true movement_claim=false");
+		return true;
+	}
+
+	protected void CF_UpdateTrailResume()
+	{
+		if (!m_bTrailResumePending) return;
+		if (CF_ConvoySession.CF_IsWorldCleanup() || CF_IsControlBlocked())
+		{ CF_CancelTrailResume("ownership_or_cleanup", false); return; }
+		if (!CF_TrailResumeContext())
+		{ CF_CancelTrailResume("context_lost", false); CF_BlockTrail("resume_wait_context_lost"); return; }
+		if (m_bTrailResumeTimedOut) return;
+		if (m_TrailWorld.GetWorldTime() - m_fTrailResumeBeginMs > 60000)
+		{
+			m_bTrailResumeTimedOut = true;
+			Print("[ConvoyFollower] TRAIL_RESUME_WAIT_TIMEOUT: unit=" + m_iUnitNumber + " stays_seated=true stop_lead_hold_then_resume_required=true");
+			return;
+		}
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		SCR_AIUtilityComponent utility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
+		if (!utility || utility.GetCurrentBehavior() != m_TrailResumeWait || !m_TrailGuidance.HasArcGap ||
+			m_TrailGuidance.State != CF_DrivenRoute.TRACKING) return;
+		vector facing;
+		Physics physics = m_TrailPredecessor.GetPhysics();
+		if (!physics || !TryGetVehicleFacing(m_TrailPredecessor, facing)) return;
+		float advance = vector.Dot(m_TrailPredecessor.GetOrigin() - m_vTrailResumeAnchor, m_vTrailResumeForward);
+		if (advance < 3 || 3.6 * vector.Dot(physics.GetVelocity(), facing) <= 1.5) return;
+		float station = Math.Min(m_TrailGuidance.LocalProgress + 30, m_TrailGuidance.RecordedEnd - CF_ConvoySettings.Get().m_fMovingGap);
+		vector goal, tangent, truckForward;
+		if (!m_TrailRoute.ReadRecorded(station, goal, tangent) || !TryGetVehicleFacing(m_Truck, truckForward) ||
+			vector.Dot(goal - m_Truck.GetOrigin(), truckForward) <= 1) return;
+		IEntity predecessor = m_TrailResumePredecessor;
+		CF_CancelTrailResume("recorded_forward_goal_ready");
+		StartFollowing(predecessor, false, false);
+	}
+
+	override bool CF_RequestPanelHold()
+	{
+		bool accepted = super.CF_RequestPanelHold();
+		if (accepted) CF_CancelTrailResume("explicit_hold");
+		return accepted;
 	}
 
 	bool CF_IsTrailGuidePrototypeEnabled() { return m_bTrailGuidePrototype; }
@@ -258,6 +400,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		m_bTrailFollowerPose = false;
 		m_fTrailMeasuredBudget = 0;
 		m_bTrailEntryKnown = false;
+		m_bTrailEntryApproach = false;
 		m_bTrailPoseInterrupted = false;
 		m_bTrailJoined = false;
 		m_bTrailBlocked = false;
@@ -347,9 +490,80 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		m_bTrailPoseInterrupted = false;
 	}
 
+	// A retained joined route still needs actual-pose queries while its guide
+	// is retired for the owned direct arrival or captured Wait. Otherwise the
+	// next Resume submits the whole arrival displacement as one physical step.
+	protected void CF_UpdateRetainedTrailPose()
+	{
+		if (!m_bTrailGuidePrototype || m_bTrailGuideActive || m_TrailGuide || m_bTrailBlocked) return;
+		if (!m_bTrailJoined || !m_TrailRoute || !m_TrailGuidance || !m_bTrailFollowerPose) return;
+		if (m_bTrailPoseInterrupted || !Replication.IsServer() || !GetGame() || !m_TrailWorld) return;
+		if (GetGame().GetWorld() != m_TrailWorld || CF_ConvoySession.CF_IsWorldCleanup() || CF_IsControlBlocked()) return;
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		if (!CF_IsLiveAIPilot(driver, m_Truck) || !m_Session || !m_Predecessor) return;
+		if (m_Predecessor.CF_GetAssignedVehicle() != m_TrailPredecessor ||
+			m_Session.CF_GetImmediateActiveSuccessor(m_Predecessor) != this ||
+			m_TrailPredecessor != m_LeadVehicle || m_TrailPredecessor != GetTargetVehicle(false)) return;
+		bool ownedContext;
+		CF_OriginalFollowLease lease = m_OriginalFollowLease;
+		string reason;
+		if (lease && CF_IsOrdinaryEntityContext() && lease.Predecessor == m_TrailPredecessor &&
+			lease.NativeTarget == m_TrailPredecessor && lease.Waypoint == CF_GetEntityFollowWaypoint())
+		{
+			// Keep actual-pose observation continuous while the same owned direct
+			// arrival waits for native selection. This does not authorize execution.
+			if (!lease.Revoked && !lease.Failed && lease.BindingUnchanged() && CF_CheckOriginalFollowLease(lease, reason))
+				ownedContext = lease.Waypoint.GetEntity() == m_TrailPredecessor;
+			if (ownedContext && lease.Activity && (lease.Activity.GetActionState() == EAIActionState.COMPLETED ||
+				lease.Activity.GetActionState() == EAIActionState.FAILED)) ownedContext = false;
+			if (ownedContext && m_iRetainedPoseLeaseLogs < 8 && m_iRetainedPoseLoggedGeneration != lease.Generation &&
+				!lease.Executing(m_Group, reason))
+			{
+				m_iRetainedPoseLeaseLogs++;
+				m_iRetainedPoseLoggedGeneration = lease.Generation;
+				Print("[ConvoyFollower] TRAIL_RETAINED_POSE_LEASE: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
+					" generation=" + lease.Generation + " native_execution=false reason=" + reason +
+					" waypoint_id=" + lease.Waypoint.GetID() + " predecessor_id=" + m_TrailPredecessor.GetID() +
+					" actual_pose_only=true controls_written=false activity_credit=false");
+			}
+		}
+		if (!ownedContext && m_EntityCapturedWait &&
+			m_EntityCapturedWait.GetActionState() != EAIActionState.COMPLETED &&
+			m_EntityCapturedWait.GetActionState() != EAIActionState.FAILED &&
+			CF_HasCapturedWaitLease(m_EntityCapturedWait, driver, m_Truck, m_Group))
+		{
+			SCR_AIUtilityComponent utility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
+			ownedContext = utility && utility.GetCurrentBehavior() == m_EntityCapturedWait;
+		}
+		if (!ownedContext && CF_TrailResumeContext())
+		{
+			SCR_AIUtilityComponent waitingUtility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
+			// Native avoidance may preempt our still-healthy Wait. Keep observing
+			// the original AI truck; actual departure still requires selected Wait.
+			ownedContext = waitingUtility != null;
+			bool preempted = waitingUtility && waitingUtility.GetCurrentBehavior() != m_TrailResumeWait;
+			if (preempted && !m_bTrailResumePosePreempted && m_iTrailResumePoseLogs < 8)
+			{
+				m_iTrailResumePoseLogs++;
+				Print("[ConvoyFollower] TRAIL_RESUME_POSE: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
+					" world_ms=" + m_TrailWorld.GetWorldTime() + " truck_id=" + m_Truck.GetID() +
+					" predecessor_id=" + m_TrailPredecessor.GetID() + " measured_m=" + m_fTrailMeasuredBudget +
+					" native_execution=false reason=owned_resume_wait_preempted actual_pose_only=true activity_credit=false controls_written=false");
+			}
+			m_bTrailResumePosePreempted = preempted;
+		}
+		if (!ownedContext) return; // Keep pending measured motion; never grant gap credit.
+		CF_QueryTrailPose();
+		if (!m_bTrailBlocked && (!m_TrailGuidance.HasArcGap ||
+			(m_TrailGuidance.State != CF_DrivenRoute.TRACKING && m_TrailGuidance.State != CF_DrivenRoute.SPACING_HOLD)))
+			CF_BlockTrail("retained_route_state_" + m_TrailGuidance.State);
+		// No guide transform, native request, join/epoch reset or pacing receipt.
+	}
+
 	protected float CF_QueryTrailPose()
 	{
 		CF_InvalidateRearGuideQuery();
+		m_bTrailPhysicalQueried = true;
 		float budget;
 		string reason;
 		m_fTrailLastMeasured = m_fTrailMeasuredBudget;
@@ -359,7 +573,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		{
 			queried = m_TrailRoute.QueryPhysical(m_iTrailEpoch, m_Truck.GetOrigin(), m_fTrailLastMeasured,
 				30.0, CF_ConvoySettings.Get().m_fMovingGap, 5.0,
-				budget, m_fTrailTurnCos, m_fTrailArcFactor, reason, m_TrailGuidance);
+				budget, m_fTrailTurnCos, m_fTrailArcFactor, reason, m_TrailGuidance, true);
 		}
 		else
 		{
@@ -440,6 +654,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 			return;
 		m_TrailGuide = null;
 		m_bTrailGuideActive = false;
+		m_bTrailEntryApproach = false;
 		guide.CF_Revoke();
 		Print("[ConvoyFollower] TRAIL_GUIDE_RELEASE: unit=" + m_iUnitNumber + " guide_id=" + guide.GetID() +
 			" epoch=" + m_iTrailEpoch + " delete_owned=" + deleteOwned + " vehicle_transform_written=false");
@@ -469,6 +684,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	override void CF_SetConvoyTarget(CF_DriverControllerComponent predecessor, int unitNumber)
 	{
+		if (m_bTrailResumePending && predecessor != m_Predecessor) CF_CancelTrailResume("predecessor_changed");
 		CF_InvalidateRearGuideQuery();
 		super.CF_SetConvoyTarget(predecessor, unitNumber);
 		CF_RecordTrail();
@@ -560,6 +776,72 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		}
 	}
 
+	// Qualifies a short native approach to the exact original recorded point.
+	// Road resolution grants no route station, join, clearance or driving proof.
+	protected bool CF_QualifyEntryApproach(vector pose, vector entry, out string reason)
+	{
+		reason = "entry_road_network_unavailable";
+		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+		if (!aiWorld || !aiWorld.GetRoadNetworkManager()) return false;
+		RoadNetworkManager roads = aiWorld.GetRoadNetworkManager();
+		BaseRoad fromRoad, entryRoad;
+		float fromDistance, entryDistance;
+		reason = "entry_approach_not_near_road";
+		if (roads.GetClosestRoad(pose, fromRoad, fromDistance) < 0 || !fromRoad) return false;
+		if (!(fromDistance >= 0 && fromDistance <= 5)) return false;
+		if (roads.GetClosestRoad(entry, entryRoad, entryDistance) < 0 || !entryRoad) return false;
+		if (!(entryDistance >= 0 && entryDistance <= 5)) return false;
+		vector reached;
+		reason = "entry_native_reachability_failed";
+		if (!roads.GetReachableWaypointInRoad(pose, entry, 5, reached)) return false;
+		reason = "entry_native_snap_over_3m";
+		if (!(vector.DistanceXZ(reached, entry) <= 3)) return false;
+		reason = "native_original_entry_approach";
+		return true;
+	}
+
+	protected void CF_LogEntryGeometry(string reason, vector pose, float along, float lateral, float facingDot)
+	{
+		string line = "[ConvoyFollower] TRAIL_ENTRY_GEOMETRY: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch;
+		line += " world_ms=" + m_TrailWorld.GetWorldTime() + " reason=" + reason + " pose=" + pose;
+		line += " entry=" + m_vTrailEntry + " tangent=" + m_vTrailEntryTangent + " first_length_m=" + m_fTrailEntryLength;
+		line += " along_m=" + along + " lateral_m=" + lateral + " facing_dot=" + facingDot;
+		line += " distance_to_entry_m=" + vector.DistanceXZ(pose, m_vTrailEntry) + " joined=" + m_bTrailJoined;
+		line += " lateral_limit_m=2 facing_min=0.9 capture_near_m=3 approach_bound_m=30 forced_join=false";
+		Print(line);
+	}
+
+	// The native target remains fixed at entry while steering onto the road.
+	// Query is deferred until actual near/aligned capture, so no first-segment
+	// join or later-segment credit can arise from the approach's motion budget.
+	protected bool CF_CaptureEntryApproach(vector pose, float now)
+	{
+		vector offset = pose - m_vTrailEntry;
+		float along = vector.Dot(offset, m_vTrailEntryTangent);
+		vector lateral = offset - m_vTrailEntryTangent * along;
+		lateral[1] = 0;
+		vector facing = m_Truck.GetWorldTransformAxis(2);
+		facing[1] = 0;
+		if (!(facing.LengthSq() >= 0.5 && facing.LengthSq() <= 1.5))
+		{ CF_BlockTrail("entry_approach_facing_invalid"); return false; }
+		facing.Normalize();
+		float facingDot = vector.Dot(facing, m_vTrailEntryTangent);
+		string reason;
+		if (!(vector.DistanceXZ(pose, m_vTrailEntry) <= 30)) reason = "entry_approach_left_30m_bound";
+		else if (along > m_fTrailEntryLength) reason = "missed_original_entry_segment";
+		else if (now - m_fTrailGuideIssuedMs > 30000) reason = "entry_acquisition_timeout";
+		if (reason != string.Empty)
+		{
+			CF_LogEntryGeometry(reason, pose, along, lateral.Length(), facingDot);
+			CF_BlockTrail(reason);
+			return false;
+		}
+		if (!(vector.DistanceXZ(pose, m_vTrailEntry) <= 3 && lateral.Length() <= 2 && facingDot >= 0.9)) return false;
+		m_bTrailEntryApproach = false;
+		CF_LogEntryGeometry("physical_entry_capture_query_next", pose, along, lateral.Length(), facingDot);
+		return true;
+	}
+
 	protected bool CF_CreateTrailGuide()
 	{
 		if (m_bTrailBlocked)
@@ -591,11 +873,33 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		lateral[1] = 0;
 		vector facing = m_Truck.GetWorldTransformAxis(2);
 		facing[1] = 0;
-		facing.Normalize();
-		if (!m_bTrailJoined && (along > firstLength || lateral.Length() > 2.0 || vector.Dot(facing, tangent) < 0.9))
+		if (!(facing.LengthSq() >= 0.5 && facing.LengthSq() <= 1.5))
 		{
-			CF_BlockTrail("unsupported_initial_entry_geometry");
+			CF_LogEntryGeometry("entry_facing_invalid", m_Truck.GetOrigin(), along, lateral.Length(), -2);
+			CF_BlockTrail("entry_facing_invalid");
 			return true;
+		}
+		facing.Normalize();
+		bool entryApproach;
+		if (!m_bTrailJoined)
+		{
+			float facingDot = vector.Dot(facing, tangent);
+			string entryReason = "aligned_original_entry";
+			bool entryRejected;
+			if (!(along >= -100000 && along <= 100000) || !(lateral.Length() >= 0 && lateral.Length() <= 100000))
+			{ entryReason = "entry_pose_invalid"; entryRejected = true; }
+			else if (!(along <= firstLength)) { entryReason = "missed_original_entry_segment"; entryRejected = true; }
+			else if (lateral.Length() > 2.0 || facingDot < 0.9)
+			{
+				vector planarOffset = offset;
+				planarOffset[1] = 0;
+				entryReason = "entry_approach_not_near_or_forward";
+				if (!(planarOffset.Length() <= 30 && vector.Dot(planarOffset, facing) < -1)) entryRejected = true;
+				else if (!CF_QualifyEntryApproach(m_Truck.GetOrigin(), start, entryReason)) entryRejected = true;
+				else entryApproach = true;
+			}
+			CF_LogEntryGeometry(entryReason, m_Truck.GetOrigin(), along, lateral.Length(), facingDot);
+			if (entryRejected) { CF_BlockTrail(entryReason); return true; }
 		}
 		float initialStation;
 		if (m_bTrailJoined)
@@ -608,7 +912,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 				CF_BlockTrail("resume_route_not_physically_acquired");
 				return true;
 			}
-			initialStation = Math.Min(m_TrailGuidance.Progress + 30.0,
+			initialStation = Math.Min(m_TrailGuidance.LocalProgress + 30.0,
 				m_TrailGuidance.RecordedEnd - CF_ConvoySettings.Get().m_fMovingGap);
 			if (!m_TrailRoute.ReadRecorded(initialStation, start, tangent))
 			{
@@ -656,6 +960,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		m_fWaypointSeconds = 0;
 		m_fTrailGuideStation = initialStation;
 		m_bTrailGuideActive = true;
+		m_bTrailEntryApproach = entryApproach;
 		m_fTrailGuideIssuedMs = m_TrailWorld.GetWorldTime();
 		CF_BindOriginalFollow(waypoint);
 		m_Group.AddWaypoint(waypoint);
@@ -698,26 +1003,27 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		return super.MoveWaypoint(destination);
 	}
 
-	// Called only after this frame's actual Query and guide update. At the
-	// recorded end, an exact predecessor arrival Wait is stronger evidence
-	// than waiting for our polling timer while driving into a one-metre guide.
+	// Query the actual pose first, then propagate exact predecessor arrival
+	// intent near the recorded end before attempting another guide advance.
+	// The real-target approach must still earn its own measured capture.
 	protected bool CF_TryGuideArrivalHandoff(CF_EntityFollowWaypoint waypoint, CF_EntityFollowActivity activity)
 	{
 		if (!CF_IsOrdinaryEntityContext() || m_bEntityStopAttempted || m_bOriginalFollowBlocked)
 			return false;
 		string reason;
-		if (!CF_ReadRearGuideBinding(m_LeadVehicle, waypoint, activity, reason))
+		if (!CF_ReadGuideBinding(m_LeadVehicle, waypoint, activity, reason, true))
 			return false;
 		CF_EntityFollowDriverControllerComponent predecessor = CF_EntityFollowDriverControllerComponent.Cast(m_Predecessor);
 		if (!predecessor || !m_Session || m_Session.CF_GetImmediateActiveSuccessor(predecessor) != this)
 			return false;
+		bool predecessorCaptured;
 		if (predecessor.CF_GetAssignedVehicle() != m_LeadVehicle ||
-			!predecessor.CF_HasSelectedArrivalWait(m_Session, m_LeadVehicle))
+			!predecessor.CF_HasOwnedArrivalPhase(m_Session, m_LeadVehicle, predecessorCaptured))
 			return false;
-		float terminalRemainder = m_TrailGuidance.RecordedEnd - CF_ConvoySettings.Get().m_fMovingGap - m_fTrailGuideStation;
-		// One metre is the existing guide-update granularity; thirty metres
-		// is the existing recorded lookahead, not permission to skip a route.
-		if (!(terminalRemainder >= 0 && terminalRemainder <= 1.0))
+		float terminalRemainder = m_TrailGuidance.RecordedEnd - m_TrailGuidance.LocalProgress;
+		// Thirty metres is the existing recorded lookahead. The actual joined
+		// cursor and real gap must both be near this same predecessor's end.
+		if (!(terminalRemainder >= 0 && terminalRemainder <= 30.0))
 			return false;
 		float arcGap = m_TrailGuidance.ArcGap;
 		float realGap = vector.Distance(m_Truck.GetOrigin(), m_LeadVehicle.GetOrigin());
@@ -728,8 +1034,13 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		handoff += " guide_id=" + m_TrailGuide.GetID() + " waypoint_id=" + waypoint.GetID();
 		handoff += " retired_sequence=" + activity.CF_GetSequence() + " real_gap_m=" + realGap + " arc_gap_m=" + arcGap;
 		handoff += " terminal_remainder_m=" + terminalRemainder + " target_still_s=" + m_fTargetStillSeconds;
-		handoff += " selected_predecessor_arrival_wait=true reason=recorded_end_arrival_wait capture_credit=false";
+		handoff += " selected_predecessor_arrival_wait=" + predecessorCaptured;
+		handoff += " reason=recorded_end_arrival_phase capture_credit=false";
 		Print(handoff);
+		// Start observation at the current pose; inherited still/stable timers
+		// must accrue normally after the predecessor actually stops.
+		m_vLastTargetPosition = m_LeadVehicle.GetOrigin();
+		m_fTargetStillSeconds = 0;
 		CF_BeginStoppedEntityApproach();
 		return true; // Handled transition, including any truthful creation failure.
 	}
@@ -771,6 +1082,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		if (!activity || !utility || utility.GetCurrentAction() != activity || m_Group.GetCurrentWaypoint() != waypoint)
 			return; // Never advance a guide on unselected or unrelated activity evidence.
 		vector pose = m_Truck.GetOrigin();
+		if (m_bTrailEntryApproach && !CF_CaptureEntryApproach(pose, now)) return;
 		float budget = CF_QueryTrailPose();
 		if (m_bTrailBlocked)
 			return;
@@ -791,8 +1103,10 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 				Print("[ConvoyFollower] TRAIL_GUIDE_JOIN: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
 					" origin=" + pose + " progress=" + m_TrailGuidance.Progress + " actual_budget_m=" + budget + " forced=false");
 			m_bTrailJoined = true;
-			float nextStation = Math.Min(m_TrailGuidance.Progress + 30.0, endStation - spacing);
-			if (m_fTrailGuideStation - m_TrailGuidance.Progress <= 15.0 && nextStation > m_fTrailGuideStation + 1.0)
+			if (CF_TryGuideArrivalHandoff(waypoint, activity))
+				return;
+			float nextStation = Math.Min(m_TrailGuidance.LocalProgress + 30.0, endStation - spacing);
+			if (m_fTrailGuideStation - m_TrailGuidance.LocalProgress <= 15.0 && nextStation > m_fTrailGuideStation + 1.0)
 			{
 				if (!CF_SetGuideStation(nextStation, "recorded_lookahead"))
 					CF_BlockTrail("recorded_goal_not_forward");
@@ -835,8 +1149,6 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 			CF_BlockTrail("route_state_" + m_TrailGuidance.State);
 			return;
 		}
-		if (CF_TryGuideArrivalHandoff(waypoint, activity))
-			return;
 		CF_StampRearGuideQuery(waypoint, activity);
 		if (m_iTrailLogs < 480 && now >= m_fTrailNextLogMs && m_TrailGuide)
 		{
@@ -845,6 +1157,8 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 			Print("[ConvoyFollower] TRAIL_GUIDE_SAMPLE: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
 				" world_ms=" + now + " route_state=" + m_TrailGuidance.State + " joined=" + m_bTrailJoined +
 				" progress=" + m_TrailGuidance.Progress + " recorded_end=" + endStation + " guide_station=" + m_fTrailGuideStation +
+				" local_progress=" + m_TrailGuidance.LocalProgress + " reverse_proof_serial=" + m_TrailGuidance.ReverseProofSerial +
+				" reverse_station_total=" + m_TrailGuidance.ReverseStationTotal + " reversing=" + m_TrailGuidance.Reversing +
 				" entry_raw=" + raw + " first_segment_m=" + firstLength + " actual_budget_m=" + budget +
 				" measured_displacement_m=" + m_fTrailLastMeasured + " local_turn_cos=" + m_fTrailTurnCos + " arc_factor=" + m_fTrailArcFactor +
 				" arc_gap=" + m_TrailGuidance.ArcGap + " arc_gap_valid=" + m_TrailGuidance.HasArcGap +
@@ -856,15 +1170,22 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	override void EOnFrame(IEntity owner, float timeSlice)
 	{
+		m_bTrailPhysicalQueried = false;
 		CF_RecordTrail();
 		CF_MeasureTrailPose();
+		CF_UpdateRetainedTrailPose();
+		CF_UpdateTrailResume();
 		CF_UpdateTrailGuide();
 		super.EOnFrame(owner, timeSlice);
+		// No reverse proof spans an unowned observation frame. Keep
+		// measured motion pending: invalidation is not permission to discard it.
+		if (m_TrailRoute && !m_bTrailPhysicalQueried) m_TrailRoute.InvalidatePhysicalQuery();
 	}
 
 	override void CF_OnBeforePlayerPossess(IEntity entity)
 	{
 		CF_InvalidateRearGuideQuery();
+		if (entity && (entity == m_Driver || entity == m_Truck)) CF_CancelTrailResume("before_player_possession");
 		if (m_TrailGuide && entity && (entity == m_Driver || entity == m_Truck) && !CF_IsControlBlocked())
 			ClearWaypoints();
 		super.CF_OnBeforePlayerPossess(entity);
@@ -872,6 +1193,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	override void CF_DetachForWorldCleanup()
 	{
+		CF_CancelTrailResume("world_cleanup", false);
 		CF_InvalidateRearGuideQuery();
 		CF_DetachTrailGuide(false);
 		super.CF_DetachForWorldCleanup();
@@ -879,6 +1201,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	override protected void ResetToIdle()
 	{
+		CF_CancelTrailResume("reset_to_idle");
 		CF_InvalidateRearGuideQuery();
 		if (m_TrailGuide)
 			ClearWaypoints();
@@ -892,6 +1215,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 
 	override void OnDelete(IEntity owner)
 	{
+		CF_CancelTrailResume("delete", !CF_ConvoySession.CF_IsWorldCleanup());
 		CF_InvalidateRearGuideQuery();
 		if (CF_ConvoySession.CF_IsWorldCleanup())
 			CF_DetachTrailGuide(false);

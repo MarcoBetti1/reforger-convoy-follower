@@ -144,6 +144,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 	protected string m_sOriginalFollowFailure;
 	protected bool m_bOriginalParkedLeadAdmitted;
 	protected int m_iOriginalParkedLeadLogs;
+	protected bool m_bOriginalParkedLeadRejectLogged;
 
 	bool CF_OriginalPilotSafe(CF_OriginalFollowLease lease)
 	{
@@ -172,29 +173,38 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 
 	// An empty parked owner vehicle is still a valid arrival reference. This
 	// exception changes only first-link target admission, never pilot ownership.
-	protected bool CF_CanAdmitParkedPlayerLead(CF_OriginalFollowLease lease, CarControllerComponent car, BaseCompartmentSlot slot)
+	protected bool CF_CanAdmitParkedPlayerLead(CF_OriginalFollowLease lease, CarControllerComponent car, BaseCompartmentSlot slot, out string rejectReason)
 	{
-		if (!lease || m_Predecessor || !m_Session || !m_Session.IsCurrentLeader(this))
-			return false;
-		if (lease.Session != m_Session || lease.NativeTarget != lease.Predecessor ||
-			lease.Predecessor != CF_GetCachedPlayerVehicle())
-			return false;
+		// Preserve the existing predicate order; report only the first rejection.
+		rejectReason = "";
+		if (!lease) { rejectReason = "lease_missing"; return false; }
+		if (m_Predecessor) { rejectReason = "not_first_link"; return false; }
+		if (!m_Session) { rejectReason = "session_missing"; return false; }
+		if (!m_Session.IsCurrentLeader(this)) { rejectReason = "not_current_leader"; return false; }
+		if (lease.Session != m_Session) { rejectReason = "lease_session_mismatch"; return false; }
+		if (lease.NativeTarget != lease.Predecessor) { rejectReason = "native_target_not_predecessor"; return false; }
+		if (lease.Predecessor != CF_GetCachedPlayerVehicle()) { rejectReason = "cached_player_vehicle_mismatch"; return false; }
 		Vehicle lead = Vehicle.Cast(lease.Predecessor);
-		if (!lead || !car || !slot || car.GetPilotCompartmentSlot() != slot || slot.GetOccupant())
-			return false;
-		if (!car.GetSimulation() || CF_ConvoySession.IsVehicleAssignedToAnotherDriver(lead, this))
-			return false;
+		if (!lead) { rejectReason = "predecessor_not_vehicle"; return false; }
+		if (!car) { rejectReason = "predecessor_car_missing"; return false; }
+		if (!slot) { rejectReason = "pilot_slot_missing"; return false; }
+		if (car.GetPilotCompartmentSlot() != slot) { rejectReason = "pilot_slot_changed"; return false; }
+		if (slot.GetOccupant()) { rejectReason = "pilot_slot_not_empty"; return false; }
+		if (!car.GetSimulation()) { rejectReason = "predecessor_simulation_missing"; return false; }
+		if (CF_ConvoySession.IsVehicleAssignedToAnotherDriver(lead, this)) { rejectReason = "predecessor_reserved_elsewhere"; return false; }
 		ChimeraCharacter owner = ChimeraCharacter.Cast(m_Leader);
-		if (!owner || owner.GetWorld() != lease.OriginalWorld || IsDriverDestroyed(owner))
-			return false;
+		if (!owner) { rejectReason = "owner_missing"; return false; }
+		if (owner.GetWorld() != lease.OriginalWorld) { rejectReason = "owner_world_mismatch"; return false; }
+		if (IsDriverDestroyed(owner)) { rejectReason = "owner_destroyed"; return false; }
 		PlayerManager players = GetGame().GetPlayerManager();
-		if (!players || m_iOrderingPlayerId <= 0 || players.GetPlayerControlledEntity(m_iOrderingPlayerId) != owner)
-			return false;
-		if (CF_ConvoySession.GetForPlayer(owner) != m_Session)
-			return false;
+		if (!players) { rejectReason = "player_manager_missing"; return false; }
+		if (m_iOrderingPlayerId <= 0) { rejectReason = "ordering_player_id_invalid"; return false; }
+		if (players.GetPlayerControlledEntity(m_iOrderingPlayerId) != owner) { rejectReason = "controlled_owner_mismatch"; return false; }
+		if (CF_ConvoySession.GetForPlayer(owner) != m_Session) { rejectReason = "owner_session_mismatch"; return false; }
 		float speed = Math.AbsFloat(car.GetSimulation().GetSpeedKmh());
 		// Positive bounded comparison rejects NaN/infinity as well as motion.
-		return speed >= 0 && speed <= 0.5;
+		if (!(speed >= 0 && speed <= 0.5)) { rejectReason = "speed_invalid_or_above_0_5"; return false; }
+		return true;
 	}
 
 	protected void CF_RecordParkedLeadAdmission(bool admitted)
@@ -263,9 +273,19 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		bool parkedPlayerLead;
 		if (!targetPilot)
 		{
-			parkedPlayerLead = CF_CanAdmitParkedPlayerLead(lease, targetCar, targetSlot);
+			string parkedRejectReason;
+			parkedPlayerLead = CF_CanAdmitParkedPlayerLead(lease, targetCar, targetSlot, parkedRejectReason);
 			if (!parkedPlayerLead)
 			{
+				if (!m_bOriginalParkedLeadRejectLogged)
+				{
+					m_bOriginalParkedLeadRejectLogged = true;
+					float rejectedLeadSpeed = -1;
+					if (targetCar && targetCar.GetSimulation()) rejectedLeadSpeed = Math.AbsFloat(targetCar.GetSimulation().GetSpeedKmh());
+					Print("[ConvoyFollower] ORIGINAL_FOLLOW_PARKED_LEAD_REJECT: unit=" + m_iUnitNumber +
+						" generation=" + m_iOriginalFollowGeneration + " reason=" + parkedRejectReason +
+						" speed_kmh=" + rejectedLeadSpeed + " max_speed_kmh=0.5 entry_pilot_empty=true once_per_controller=true control_writes=false");
+				}
 				reason = "empty_predecessor_not_parked_session_lead";
 				return false;
 			}
@@ -479,7 +499,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 	}
 
 	protected CF_EntityFollowDriverControllerComponent m_RearPacingSuccessor;
-	protected float m_fRearPacingAllowance = -1;
+	protected float m_fRearPacingCap = -1;
 	protected float m_fRearPacingLastMs = -1;
 	protected float m_fRearPacingNextLogMs;
 	protected int m_iRearPacingLogs;
@@ -519,7 +539,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 				" priority_level=2100 arrival_requires_measured_capture=true panel_acquire_max_kmh=2 test_only=true");
 			Print("[ConvoyFollower] ENTITY_REAR_PACING_INIT: driver_id=" + owner.GetID() +
 				" enabled=" + m_bEntityRearPacing + " gap_band_multipliers=1.5,2 reaction_horizon_s=1.5" +
-				" allowance_rate_kmh_per_s=3 sample_dt_max_s=0.5 cruise_writer=existing_controller test_only=true");
+				" head_only=true braking_observation=true cap_down=prompt cap_up_kmh_per_s=3 sample_dt_max_s=0.5 cruise_writer=existing_controller test_only=true");
 		}
 	}
 
@@ -539,12 +559,22 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 	}
 
 	// Fresh original-pilot/selected-order evidence, not a cached speed request.
+	// Pacing may observe a braking participant without granting movement credit
+	// or changing its order. Other callers retain the forward-motion predicate.
 	bool CF_ReadRearPacingParticipant(CF_ConvoySession session, IEntity predecessor, out vector velocity, out float speed,
-		out string reason, out string binding)
+		out string reason, out string binding, bool observeBraking = false, bool observeOwnedArrival = false)
 	{
 		reason = "common_guard";
 		binding = "binding=unavailable";
-		if (m_Session != session || !session || m_iState != CF_FOLLOWING || !CF_IsOrdinaryEntityContext())
+		// Only the head's local cap caller opts in. Captured/Panel Wait is
+		// never a moving participant; ordinary successor reads stay strict.
+		bool ownedArrival;
+		if (observeOwnedArrival && m_iState == CF_ARRIVING)
+		{
+			bool selectedWait;
+			ownedArrival = CF_HasOwnedArrivalPhase(session, m_Truck, selectedWait) && !selectedWait;
+		}
+		if (m_Session != session || !session || (m_iState != CF_FOLLOWING && !ownedArrival) || !CF_IsOrdinaryEntityContext())
 			return false;
 		if (m_LeadVehicle != predecessor || CF_IsInitialDepartureWaiting() || m_bArrivalRoadHold || m_bArrivalTrailHold || m_bEntityFallbackFailed)
 			return false;
@@ -582,26 +612,36 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		reason = "physical_motion";
 		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
 		Physics physics = m_Truck.GetPhysics();
-		if (!car || !car.GetSimulation() || !physics || car.GetSimulation().GetGear() < 2)
+		if (!car || !car.GetSimulation() || !physics)
 			return false;
 		speed = car.GetSimulation().GetSpeedKmh();
-		if (!(speed > 1.5 && speed < 1000))
+		if (!(speed > -1000 && speed < 1000))
+			return false;
+		if (!observeBraking && (car.GetSimulation().GetGear() < 2 || !(speed > 1.5)))
 			return false;
 		velocity = physics.GetVelocity();
 		velocity[1] = 0;
+		float velocitySquared = velocity.LengthSq();
+		if (!(velocitySquared >= 0 && velocitySquared < 1000000))
+			return false;
 		vector facing = m_Truck.GetWorldTransformAxis(2);
 		facing[1] = 0;
 		if (facing.LengthSq() < 0.5)
 			return false;
 		facing.Normalize();
+		float forwardMotion = vector.Dot(velocity, facing);
+		if (!(forwardMotion > -1000 && forwardMotion < 1000))
+			return false;
+		if (observeBraking)
+			return true;
 		// Native speed/forward gear can coexist with backward world motion.
-		return vector.Dot(velocity, facing) > 1.5 / 3.6;
+		return forwardMotion > 1.5 / 3.6;
 	}
 
 	protected float CF_ResetRearPacing(float frontLimit, string reason, string binding = "")
 	{
 		m_RearPacingSuccessor = null;
-		m_fRearPacingAllowance = -1;
+		m_fRearPacingCap = -1;
 		m_fRearPacingLastMs = -1;
 		if (m_bEntityRearPacing && reason != m_sRearPacingReason && m_iRearPacingLogs < 256)
 		{
@@ -617,11 +657,13 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 	{
 		if (!m_bEntityRearPacing)
 			return frontLimit;
+		if (m_Predecessor || !m_Session || !m_Session.IsCurrentLeader(this))
+			return CF_ResetRearPacing(frontLimit, "not_current_head");
 		vector velocity;
 		float speed;
 		string participantReason;
 		string selfBinding;
-		if (!(predecessorSpeed > 1.5) || !CF_ReadRearPacingParticipant(m_Session, target, velocity, speed, participantReason, selfBinding))
+		if (!CF_ReadRearPacingParticipant(m_Session, target, velocity, speed, participantReason, selfBinding, true, true))
 			return CF_ResetRearPacing(frontLimit, "self_not_ordinary_moving_" + participantReason, selfBinding);
 		CF_EntityFollowDriverControllerComponent successor = CF_EntityFollowDriverControllerComponent.Cast(m_Session.CF_GetImmediateActiveSuccessor(this));
 		if (!successor)
@@ -629,12 +671,21 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		vector rearVelocity;
 		float rearSpeed;
 		string rearBinding;
-		if (!successor.CF_ReadRearPacingParticipant(m_Session, m_Truck, rearVelocity, rearSpeed, participantReason, rearBinding))
+		if (!successor.CF_ReadRearPacingParticipant(m_Session, m_Truck, rearVelocity, rearSpeed, participantReason, rearBinding, true))
 			return CF_ResetRearPacing(frontLimit, "successor_not_ordinary_moving_" + participantReason, rearBinding);
 		Vehicle rearTruck = successor.CF_GetAssignedVehicle();
 		Physics targetPhysics = target.GetPhysics();
 		if (!rearTruck || !targetPhysics)
 			return CF_ResetRearPacing(frontLimit, "fresh_physics_unavailable");
+		vector rearFacing = rearTruck.GetWorldTransformAxis(2);
+		rearFacing[1] = 0;
+		if (rearFacing.LengthSq() < 0.5)
+			return CF_ResetRearPacing(frontLimit, "invalid_successor_heading");
+		rearFacing.Normalize();
+		float rearForwardSpeed = vector.Dot(rearVelocity, rearFacing) * 3.6;
+		if (!(rearForwardSpeed > -1000 && rearForwardSpeed < 1000))
+			return CF_ResetRearPacing(frontLimit, "invalid_successor_forward_speed");
+		rearForwardSpeed = Math.Max(0, rearForwardSpeed);
 		vector targetVelocity = targetPhysics.GetVelocity();
 		targetVelocity[1] = 0;
 		vector targetFacing = target.GetWorldTransformAxis(2);
@@ -642,8 +693,32 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		if (targetFacing.LengthSq() < 0.5)
 			return CF_ResetRearPacing(frontLimit, "invalid_predecessor_heading");
 		targetFacing.Normalize();
-		if (!(vector.Dot(targetVelocity, targetFacing) > 1.5 / 3.6))
-			return CF_ResetRearPacing(frontLimit, "predecessor_not_moving_forward");
+		bool movingPredecessor = predecessorSpeed > 1.5 && vector.Dot(targetVelocity, targetFacing) > 1.5 / 3.6;
+		float stopMps = CF_ENTITY_STOP_SPEED_KMH / 3.6;
+		bool stoppedPredecessor = Math.AbsFloat(predecessorSpeed) <= CF_ENTITY_STOP_SPEED_KMH;
+		stoppedPredecessor = stoppedPredecessor && targetVelocity.LengthSq() >= 0 && targetVelocity.LengthSq() <= stopMps * stopMps;
+		if (!movingPredecessor && !stoppedPredecessor)
+			return CF_ResetRearPacing(frontLimit, "predecessor_not_forward_or_stopped");
+		if (stoppedPredecessor)
+		{
+			// Stopping the player's lead does not remove rear pressure while
+			// this head still approaches it. Require the exact healthy native
+			// real-target lease; never extend this to a captured Wait or reverse.
+			CF_OriginalFollowLease lease = m_OriginalFollowLease;
+			if (m_EntityCapturedWait || !lease || lease.Predecessor != target || lease.NativeTarget != target ||
+				!lease.Activity || lease.Activity.Lease != lease)
+				return CF_ResetRearPacing(frontLimit, "stopped_head_lease_unavailable");
+			string leaseReason;
+			if (!lease.Executing(m_Group, leaseReason))
+				return CF_ResetRearPacing(frontLimit, "stopped_head_lease_" + leaseReason);
+			vector ownFacing = m_Truck.GetWorldTransformAxis(2);
+			ownFacing[1] = 0;
+			if (!(ownFacing.LengthSq() >= 0.5 && ownFacing.LengthSq() <= 1.5))
+				return CF_ResetRearPacing(frontLimit, "stopped_head_heading_invalid");
+			ownFacing.Normalize();
+			if (!(vector.Dot(velocity, ownFacing) >= -stopMps))
+				return CF_ResetRearPacing(frontLimit, "stopped_head_reversing");
+		}
 		vector rearLink = m_Truck.GetOrigin() - rearTruck.GetOrigin();
 		rearLink[1] = 0;
 		float rearGap = rearLink.Length();
@@ -661,20 +736,43 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		float movingGap = CF_ConvoySettings.Get().m_fMovingGap;
 		float predictedGap = rearGap + Math.Max(0, opening) * 1.5;
 		float pressure = Math.Clamp((predictedGap - movingGap * 1.5) / (movingGap * 0.5), 0, 1);
-		float boost = Math.Max(0, frontLimit - predecessorSpeed);
-		float desiredAllowance = boost * (1.0 - pressure);
+		// At full pressure cooperate with actual forward tail motion, including
+		// zero during native braking/reverse. This cap never creates a new order.
+		float cooperationLimit = Math.Min(frontLimit, rearForwardSpeed);
+		float desiredCap = frontLimit + (cooperationLimit - frontLimit) * pressure;
 		float now = GetGame().GetWorld().GetWorldTime();
 		if (m_RearPacingSuccessor != successor || m_fRearPacingLastMs < 0)
 		{
 			m_RearPacingSuccessor = successor;
-			m_fRearPacingAllowance = boost;
+			m_fRearPacingCap = desiredCap;
 			m_fRearPacingLastMs = now;
 		}
 		float elapsed = Math.Clamp((now - m_fRearPacingLastMs) / 1000.0, 0, 0.5);
-		float maxChange = 3.0 * elapsed;
-		m_fRearPacingAllowance += Math.Clamp(desiredAllowance - m_fRearPacingAllowance, -maxChange, maxChange);
+		// Tighten immediately. Restore the current shaped cap promptly only
+		// while the larger front gap opens and the rear gap is already closing.
+		string recoveryReason = "steady";
+		if (desiredCap < m_fRearPacingCap)
+		{
+			m_fRearPacingCap = desiredCap;
+			recoveryReason = "tightening";
+		}
+		else if (desiredCap > m_fRearPacingCap)
+		{
+			bool frontNeedsRecovery = frontGap > rearGap && frontGap > movingGap * 2;
+			// closing < 0 means front opening; opening < 0 means rear closing.
+			if (frontNeedsRecovery && closing < 0 && opening < 0)
+			{
+				m_fRearPacingCap = desiredCap;
+				recoveryReason = "front_opening_rear_closing";
+			}
+			else
+			{
+				m_fRearPacingCap = Math.Min(desiredCap, m_fRearPacingCap + 3.0 * elapsed);
+				recoveryReason = "rate_limited";
+			}
+		}
 		m_fRearPacingLastMs = now;
-		float adjusted = Math.Min(frontLimit, predecessorSpeed + m_fRearPacingAllowance);
+		float adjusted = Math.Min(frontLimit, m_fRearPacingCap);
 		if (m_iRearPacingLogs < 256 && (m_sRearPacingReason != "active" || now >= m_fRearPacingNextLogMs))
 		{
 			m_iRearPacingLogs++;
@@ -684,8 +782,9 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			record += " successor_id=" + rearTruck.GetID() + " front_gap_m=" + frontGap + " rear_gap_m=" + rearGap;
 			record += " front_closing_mps=" + closing + " rear_opening_mps=" + opening + " pressure=" + pressure;
 			record += " predecessor_kmh=" + predecessorSpeed + " actual_kmh=" + speed + " successor_kmh=" + rearSpeed;
-			record += " front_limit_kmh=" + frontLimit + " extra_allowance_kmh=" + m_fRearPacingAllowance;
-			record += " policy_request_kmh=" + adjusted + " control_writes=false target_changed=false";
+			record += " front_limit_kmh=" + frontLimit + " successor_forward_kmh=" + rearForwardSpeed + " desired_cap_kmh=" + desiredCap;
+			record += " policy_request_kmh=" + adjusted + " stopped_predecessor_approach=" + stoppedPredecessor + " control_writes=false target_changed=false";
+			record += " recovery_reason=" + recoveryReason;
 			record += " " + rearBinding;
 			Print(record);
 		}
@@ -798,6 +897,27 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			return false;
 		SCR_AIUtilityComponent utility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
 		return utility && utility.GetCurrentBehavior() == m_EntityCapturedWait;
+	}
+
+	// Arrival intent is distinct from measured capture. A following tail may
+	// adopt our healthy real-target approach before our selected Wait exists.
+	bool CF_HasOwnedArrivalPhase(CF_ConvoySession session, IEntity truck, out bool selectedWait)
+	{
+		selectedWait = CF_HasSelectedArrivalWait(session, truck);
+		if (selectedWait) return true;
+		if (!session || session != m_Session || !truck || truck != m_Truck || m_iState != CF_ARRIVING)
+			return false;
+		if (m_bEntityFallbackFailed || m_bOriginalFollowBlocked || m_bArrivalRoadRecoveryBlocked ||
+			!m_bEntityStopAttempted || !m_LeadVehicle || m_EntityStopTarget != m_LeadVehicle)
+			return false;
+		CF_OriginalFollowLease lease = m_OriginalFollowLease;
+		if (!lease || lease.Predecessor != m_LeadVehicle || lease.NativeTarget != m_LeadVehicle ||
+			lease.Distance != CF_ConvoySettings.Get().m_fStoppedGap || !lease.Activity || lease.Activity.Lease != lease)
+			return false;
+		string reason;
+		if (!lease.Executing(m_Group, reason)) return false;
+		float targetSpeed;
+		return CF_EntitySpeed(m_LeadVehicle, targetSpeed) && targetSpeed >= 0 && targetSpeed <= CF_ENTITY_STOP_SPEED_KMH;
 	}
 
 	protected void CF_ReleaseCapturedWait(string reason, bool allowNativeCompletion = true)
@@ -1393,7 +1513,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		return applied;
 	}
 
-	// Callers establish the same ordinary context and stopped predecessor.
+	// Callers establish ordinary context and a stopped/owned-arrival predecessor.
 	// This starts one approach; it grants no still time or capture evidence.
 	protected bool CF_BeginStoppedEntityApproach()
 	{
@@ -1410,6 +1530,26 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			return false;
 		}
 		return true;
+	}
+
+	// Keep this already executing arrival order while the exact immediate
+	// predecessor finishes its own arrival. This predicate never calls itself.
+	protected bool CF_CanRetainArrivalEpisodeDuringTargetMotion()
+	{
+		if (!m_bEntityStopAttempted || !m_LeadVehicle || m_EntityStopTarget != m_LeadVehicle || !m_Session)
+			return false;
+		CF_EntityFollowDriverControllerComponent predecessor = CF_EntityFollowDriverControllerComponent.Cast(m_Predecessor);
+		if (!predecessor || predecessor.CF_GetAssignedVehicle() != m_LeadVehicle ||
+			m_Session.CF_GetImmediateActiveSuccessor(predecessor) != this)
+			return false;
+		CF_OriginalFollowLease lease = m_OriginalFollowLease;
+		if (!lease || lease.Predecessor != m_LeadVehicle || lease.NativeTarget != m_LeadVehicle ||
+			lease.Distance != CF_ConvoySettings.Get().m_fStoppedGap || !lease.Activity || lease.Activity.Lease != lease)
+			return false;
+		string reason;
+		if (!lease.Executing(m_Group, reason)) return false;
+		bool predecessorCaptured;
+		return predecessor.CF_HasOwnedArrivalPhase(m_Session, m_LeadVehicle, predecessorCaptured);
 	}
 
 	override protected void SettleBehindStoppedTarget(float elapsed, float separation)
@@ -1430,6 +1570,9 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		{
 			m_vLastTargetPosition = targetPosition;
 			m_fTargetStillSeconds = 0;
+			m_bEntityStablePoseValid = false;
+			m_fEntityStableSeconds = 0;
+			if (CF_CanRetainArrivalEpisodeDuringTargetMotion()) return;
 			m_bStopSettleIssued = false;
 			CF_ResetEntityStopEpisode();
 			return;
