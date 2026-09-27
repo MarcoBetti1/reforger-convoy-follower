@@ -41,6 +41,11 @@ class CF_ConvoyFollowDriverControllerComponent : CF_TrailGuideDriverControllerCo
 	protected ref CF_ArrivalRecoveryWait m_ArrivalRecoveryWait;
 	protected int m_iArrivalRecoveryEpoch;
 	protected float m_fArrivalRecoveryStartMs;
+	protected vector m_vRecoveryPredecessorAnchor;
+	protected float m_fRecoveryAdmittedGap;
+	protected float m_fRecoveryFinalAdvanceLimit;
+	protected int m_iRecoveryPredecessorStopEpisode;
+	protected IEntity m_RecoveryPredecessorStopTarget;
 	protected bool m_bArrivalRecoveryActive;
 	protected bool m_bArrivalRecoveryTimedOut;
 	protected bool m_bArrivalRecoveryInternalClear;
@@ -90,6 +95,13 @@ class CF_ConvoyFollowDriverControllerComponent : CF_TrailGuideDriverControllerCo
 		m_ArrivalRecoveryPredecessor = predecessor;
 		m_iArrivalRecoveryEpoch = m_iTrailEpoch;
 		m_fArrivalRecoveryStartMs = now;
+		// The predecessor is finishing its existing stopped-gap approach. Pin
+		// this episode and the real poses; no predicted path or capture credit.
+		m_vRecoveryPredecessorAnchor = m_LeadVehicle.GetOrigin();
+		m_fRecoveryAdmittedGap = gap;
+		m_fRecoveryFinalAdvanceLimit = CF_ConvoySettings.Get().m_fMovingGap - CF_ConvoySettings.Get().m_fStoppedGap;
+		m_iRecoveryPredecessorStopEpisode = predecessor.m_iEntityStopEpisode;
+		m_RecoveryPredecessorStopTarget = predecessor.m_EntityStopTarget;
 		m_bArrivalRecoveryActive = true;
 		m_bArrivalRecoveryTimedOut = false;
 		m_bArrivalRecoveryWaitSelected = false;
@@ -145,6 +157,10 @@ class CF_ConvoyFollowDriverControllerComponent : CF_TrailGuideDriverControllerCo
 			" wait_owned=" + (action != null) + " only_owned_wait=true arrival_completed=false");
 		m_ArrivalRecoveryLease = null;
 		m_ArrivalRecoveryPredecessor = null;
+		m_RecoveryPredecessorStopTarget = null;
+		m_iRecoveryPredecessorStopEpisode = 0;
+		m_fRecoveryAdmittedGap = 0;
+		m_fRecoveryFinalAdvanceLimit = 0;
 		m_bArrivalRecoveryTimedOut = false;
 	}
 
@@ -168,13 +184,33 @@ class CF_ConvoyFollowDriverControllerComponent : CF_TrailGuideDriverControllerCo
 			m_ArrivalRecoveryWait.GetActionState() == EAIActionState.FAILED)
 			return false;
 		float gap = vector.Distance(m_Truck.GetOrigin(), m_LeadVehicle.GetOrigin());
-		return gap >= 0 && gap <= 30 && m_ArrivalRecoveryPredecessor.CF_HasSelectedArrivalWait(m_Session, m_LeadVehicle);
+		if (!(gap >= 0) || !m_ArrivalRecoveryPredecessor.CF_HasSelectedArrivalWait(m_Session, m_LeadVehicle)) return false;
+		if (gap <= 30) return true; // Original handoff is unchanged.
+		// A parked recovery follower can fall just outside 30m while its same
+		// predecessor closes from moving gap to stopped gap. Account only for
+		// that measured, bounded displacement after the unchanged <=30 admission.
+		if (m_iRecoveryPredecessorStopEpisode <= 0 || !m_RecoveryPredecessorStopTarget) return false;
+		if (m_ArrivalRecoveryPredecessor.m_iEntityStopEpisode != m_iRecoveryPredecessorStopEpisode ||
+			m_ArrivalRecoveryPredecessor.m_EntityStopTarget != m_RecoveryPredecessorStopTarget) return false;
+		float advance = vector.Distance(m_vRecoveryPredecessorAnchor, m_LeadVehicle.GetOrigin());
+		if (!(advance > 0 && advance <= m_fRecoveryFinalAdvanceLimit)) return false;
+		return gap <= m_fRecoveryAdmittedGap + advance;
 	}
 
 	protected bool CF_FinishArrivalRecovery()
 	{
 		if (!CF_RecoveryHandoffReady()) return false;
 		int oldGeneration = m_ArrivalRecoveryLease.Generation;
+		float handoffGap = vector.Distance(m_Truck.GetOrigin(), m_LeadVehicle.GetOrigin());
+		if (handoffGap > 30)
+		{
+			string measured = "[ConvoyFollower] ARRIVAL_RECOVERY_FINAL_ADVANCE: unit=" + m_iUnitNumber;
+			measured += " admitted_gap_m=" + m_fRecoveryAdmittedGap + " handoff_gap_m=" + handoffGap;
+			measured += " predecessor_displacement_m=" + vector.Distance(m_vRecoveryPredecessorAnchor, m_LeadVehicle.GetOrigin());
+			measured += " max_final_advance_m=" + m_fRecoveryFinalAdvanceLimit + " predecessor_stop_episode=" + m_iRecoveryPredecessorStopEpisode;
+			measured += " selected_arrival_wait=true arrival_completed=false physical_credit=0";
+			Print(measured);
+		}
 		CF_CancelArrivalRecovery("predecessor_selected_arrival_wait");
 		SetState(CF_ARRIVING);
 		// Start this stopped episode at the current predecessor sample. Movement

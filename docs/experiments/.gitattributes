@@ -31,3 +31,7 @@ cooperative-supply-recovery-v1-source.json -text
 natural-recovery-trip-v1-source.patch -text
 
 natural-recovery-trip-v1-source.json -text
+
+natural-retrace-trip-v1-source.patch -text
+
+natural-retrace-trip-v1-source.json -text

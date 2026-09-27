@@ -1,0 +1,294 @@
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c
+index 082002b..b4dcba7 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c
+@@ -272,6 +272,94 @@ class CF_DrivenRouteGeometryProbeComponent : ScriptComponent
+ 		Check("first_vertex_zero_measurement_never_commits", g.State == CF_DrivenRoute.ADVANCE_LIMIT && !g.HasProjectionCorrection && Math.AbsFloat(route.GetProgress() - before) < 0.001);
+ 	}
+ 
++	// The recorder may omit only a completed tiny, unconsumed retrace.
++	// These cases inspect published geometry independently of physical Query credit.
++	protected void PrepareRetrace(CF_TrailGuideRoute route, int key, CF_DrivenRouteGuidance g)
++	{
++		route.Reset(key, vector.Zero);
++		route.Record(key, Vector(5, 0, 0));
++		route.Record(key, Vector(10, 0, 0));
++		route.Query(key, vector.Zero, 1, 0, 1, 1, g);
++	}
++
++	protected bool RetracePublished(CF_TrailGuideRoute route, int count, float end, float progress = 0)
++	{
++		return route.GetPointCount() == count && Near(route.GetRetainedLength(), end) &&
++			Near(route.GetLocalProgress(), progress) && Near(route.GetProgress(), progress);
++	}
++
++	protected void RunRetraceCases()
++	{
++		CF_TrailGuideRoute route = new CF_TrailGuideRoute();
++		CF_DrivenRouteGuidance g = new CF_DrivenRouteGuidance();
++		vector forward = Vector(1, 0, 0);
++		vector point, tangent;
++		string eventReason;
++		bool valid;
++
++		PrepareRetrace(route, 201, g);
++		valid = route.RecordPredecessorPose(201, Vector(9.2, 0, 0), forward, 1000, 0, eventReason);
++		valid = valid && eventReason == "buffer_started" && route.HasPendingRetrace();
++		valid = valid && RetracePublished(route, 3, 10);
++		valid = route.RecordPredecessorPose(201, Vector(10.1, 0, 0), forward, 1200, 0, eventReason) && valid;
++		valid = valid && eventReason == "buffer_discarded" && !route.HasPendingRetrace();
++		valid = valid && RetracePublished(route, 3, 10);
++		valid = route.RecordPredecessorPose(201, Vector(10.8, 0, 0), forward, 1400, 0, eventReason) && valid;
++		valid = valid && RetracePublished(route, 4, 10.8);
++		valid = route.ReadRecorded(10, point, tangent) && valid;
++		Check("retrace_tiny_return_keeps_published_history_and_cursor", valid && vector.Distance(point, Vector(10, 0, 0)) < 0.01);
++
++		PrepareRetrace(route, 202, g);
++		valid = route.RecordPredecessorPose(202, Vector(9.2, 0, 0), forward, 1000, 0, eventReason);
++		valid = route.RecordPredecessorPose(202, Vector(7.8, 0, 0), forward, 1200, 0, eventReason) && valid;
++		valid = valid && eventReason == "buffer_flushed_distance" && !route.HasPendingRetrace();
++		valid = valid && RetracePublished(route, 5, 12.2);
++		valid = route.ReadRecorded(10.8, point, tangent) && valid;
++		valid = valid && vector.Distance(point, Vector(9.2, 0, 0)) < 0.01;
++		valid = route.ReadRecorded(12.2, point, tangent) && valid;
++		valid = valid && vector.Distance(point, Vector(7.8, 0, 0)) < 0.01;
++		route.Query(202, Vector(5, 0, 0), 1, 0, 5, 1, g);
++		route.Query(202, Vector(9, 0, 0), 1, 0, 4, 1, g);
++		float allowed, turnCos, factor;
++		string reason;
++		bool budget = route.PhysicalBudget(1, allowed, turnCos, factor, reason);
++		Check("retrace_sustained_reverse_flushes_and_keeps_turn_guard", valid && !budget && reason == "local_turn_over_90_degrees");
++
++		PrepareRetrace(route, 203, g);
++		valid = route.RecordPredecessorPose(203, Vector(9.2, 0, 0), forward, 1000, 0, eventReason);
++		valid = route.RecordPredecessorPose(203, Vector(8.4, 0, 0), Vector(-1, 0, 0), 1200, 0, eventReason) && valid;
++		valid = valid && eventReason == "buffer_flushed_turn_or_lateral" && !route.HasPendingRetrace();
++		valid = valid && RetracePublished(route, 5, 11.6);
++		valid = route.ReadRecorded(11.6, point, tangent) && valid;
++		Check("retrace_real_turn_preserves_reverse_poses", valid && vector.Distance(point, Vector(8.4, 0, 0)) < 0.01 && tangent[0] < -0.99);
++
++		PrepareRetrace(route, 204, g);
++		valid = route.RecordPredecessorPose(204, Vector(9.2, 0, 0), forward, 1000, 0, eventReason);
++		valid = route.RecordPredecessorPose(204, Vector(9.2, 0, 0), forward, 6001, 0, eventReason) && valid;
++		valid = valid && eventReason == "buffer_flushed_timeout" && !route.HasPendingRetrace();
++		Check("retrace_timeout_publishes_stationary_reverse", valid && RetracePublished(route, 4, 10.8));
++
++		PrepareRetrace(route, 205, g);
++		valid = route.RecordPredecessorPose(205, Vector(9.2, 0, 0), forward, 1000, 0, eventReason);
++		valid = route.RecordPredecessorPose(205, Vector(9.2, 0, 0), forward, 1200, 8, eventReason) && valid;
++		valid = valid && eventReason == "buffer_flushed_frontier_or_suffix" && !route.HasPendingRetrace();
++		valid = valid && RetracePublished(route, 4, 10.8);
++		PrepareRetrace(route, 206, g);
++		valid = route.RecordPredecessorPose(206, Vector(9.2, 0, 0), forward, 1000, 0, eventReason) && valid;
++		route.Query(206, Vector(5, 0, 0), 1, 0, 5, 1, g);
++		route.Query(206, Vector(8, 0, 0), 1, 0, 3, 1, g);
++		valid = route.RecordPredecessorPose(206, Vector(9.2, 0, 0), forward, 1200, 0, eventReason) && valid;
++		valid = valid && eventReason == "buffer_flushed_frontier_or_suffix" && !route.HasPendingRetrace();
++		Check("retrace_guide_and_actual_cursor_frontiers_flush", valid && RetracePublished(route, 4, 10.8, 8));
++
++		PrepareRetrace(route, 207, g);
++		valid = route.RecordPredecessorPose(207, Vector(9.2, 0, 0), forward, 1000, 0, eventReason);
++		bool wrongKey = route.RecordPredecessorPose(208, Vector(10.1, 0, 0), forward, 1200, 0, eventReason);
++		valid = valid && !wrongKey && route.HasPendingRetrace() && RetracePublished(route, 3, 10);
++		route.Reset(208, Vector(100, 0, 0));
++		Check("retrace_wrong_epoch_cannot_discard_and_reset_drops_buffer", valid && !route.HasPendingRetrace() && RetracePublished(route, 1, 0));
++	}
++
+ 	protected void RunCases()
+ 	{
+ 		ref CF_DrivenRoute route = new CF_DrivenRoute();
+@@ -370,6 +458,7 @@ class CF_DrivenRouteGeometryProbeComponent : ScriptComponent
+ 		Check("unconsumed_pruning_reports_history_lost", g.State == CF_DrivenRoute.HISTORY_LOST && !g.HasArcGap && route.GetPointCount() <= CF_DrivenRoute.MAX_POINTS);
+ 
+ 		RunProjectionCases();
++		RunRetraceCases();
+ 		if (m_Passed == m_Total)
+ 			Print("[ConvoyFollower] DRIVEN_ROUTE_RESULT: PASS cases=" + m_Passed);
+ 		else
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+index 34ddbc8..52ef799 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+@@ -434,6 +434,8 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
+ 			CF_FailEntityApproach("trail_guide_" + reason);
+ 	}
+ 
++	protected int m_iTrailRetraceLogs;
++
+ 	protected void CF_RecordTrail()
+ 	{
+ 		if (!m_bTrailGuidePrototype || !Replication.IsServer() || !GetGame() ||
+@@ -462,7 +464,21 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
+ 		if (now < m_fTrailNextRecordMs)
+ 			return;
+ 		m_fTrailNextRecordMs = now + 200;
+-		if (!m_TrailRoute.Record(m_iTrailEpoch, target.GetOrigin()))
++		string retraceEvent;
++		bool recorded = m_TrailRoute.RecordPredecessorPose(m_iTrailEpoch, target.GetOrigin(),
++			target.GetWorldTransformAxis(2), now, m_fTrailGuideStation, retraceEvent);
++		if (!retraceEvent.IsEmpty() && m_iTrailRetraceLogs < 16)
++		{
++			m_iTrailRetraceLogs++;
++			string retraceLog = "[ConvoyFollower] TRAIL_PREDECESSOR_RETRACE: unit=" + m_iUnitNumber;
++			retraceLog += " epoch=" + m_iTrailEpoch + " event=" + retraceEvent + " world_ms=" + now;
++			retraceLog += " predecessor=" + target.GetOrigin() + " guide_station=" + m_fTrailGuideStation;
++			retraceLog += " local_progress=" + m_TrailRoute.GetLocalProgress() + " high_water=" + m_TrailRoute.GetProgress();
++			retraceLog += " pending=" + m_TrailRoute.HasPendingRetrace() + " recorded=" + recorded;
++			retraceLog += " published_history_not_rewritten=true physical_credit=false";
++			Print(retraceLog);
++		}
++		if (!recorded)
+ 			CF_BlockTrail("history_discontinuous_or_lost");
+ 		if (!m_bTrailEntryKnown)
+ 		{
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c
+index 16cc7af..2fee9aa 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c
+@@ -93,6 +93,121 @@ class CF_TrailGuideWaypointState : SCR_AIWaypointState
+ // budget. QueryPhysical also admits a proven, bounded connected local chain.
+ class CF_TrailGuideRoute : CF_DrivenRoute
+ {
++	// Delay only an unconsumed, tiny backwards excursion at the recorded tip.
++	// Committed points/stations never change. Real longer reverse/turns flush.
++	protected ref array<vector> m_RetracePoints = {};
++	protected bool m_RetracePending;
++	protected int m_RetraceKey;
++	protected vector m_RetraceAnchor;
++	protected vector m_RetraceTangent;
++	protected float m_RetraceStation;
++	protected float m_RetraceStartMs;
++	protected float m_RetraceLastMs;
++	protected static const float CF_RETRACE_METERS = 2.0;
++	protected static const float CF_RETRACE_MS = 5000.0;
++	protected static const int CF_RETRACE_POINTS = 16;
++
++	bool HasPendingRetrace() { return m_RetracePending; }
++
++	protected bool RetraceSuffixAvailable(float guideFrontier, vector tangent)
++	{
++		int last = m_Points.Count() - 1;
++		float boundary = m_Stations[last] - CF_RETRACE_METERS;
++		float consumed = Math.Max(m_HighWaterProgress, Math.Max(m_Progress, guideFrontier));
++		if (!m_Joined || consumed >= boundary) return false;
++		// The whole tiny suffix must already be a straight, retained driven line.
++		for (int index = last - 1; index >= 0 && last - index <= 6; index--)
++		{
++			vector leg = m_Points[index + 1] - m_Points[index];
++			leg[1] = 0;
++			if (!(leg.LengthSq() > 0)) return false;
++			leg.Normalize();
++			if (vector.Dot(leg, tangent) < 0.9) return false;
++			vector offset = m_Points[index] - m_Points[last];
++			offset[1] = 0;
++			vector lateral = offset - tangent * vector.Dot(offset, tangent);
++			if (lateral.Length() > MIN_SAMPLE) return false;
++			if (m_Stations[index] <= boundary) return true;
++		}
++		return false;
++	}
++
++	protected bool FlushRetrace(int targetKey, vector pose)
++	{
++		foreach (vector recorded : m_RetracePoints)
++			if (!Record(targetKey, recorded)) return false;
++		m_RetracePoints.Clear();
++		m_RetracePending = false;
++		return Record(targetKey, pose);
++	}
++
++	// Only this caller opts in; ordinary Record and every physical Query stay unchanged.
++	bool RecordPredecessorPose(int targetKey, vector pose, vector forward, float worldMs,
++		float guideFrontier, out string eventReason)
++	{
++		eventReason = "";
++		if (!m_Initialized || targetKey != m_TargetKey || m_HistoryLost || m_Discontinuous) return false;
++		if (!FinitePose(pose) || !FinitePose(forward) || !FiniteValue(worldMs) || !FiniteValue(guideFrontier)) return false;
++		forward[1] = 0;
++		if (!(forward.LengthSq() > 0) || worldMs < 0) return false;
++		forward.Normalize();
++		int last = m_Points.Count() - 1;
++		if (m_RetracePending)
++		{
++			if (targetKey != m_RetraceKey || m_Points[last] != m_RetraceAnchor || m_Stations[last] != m_RetraceStation) return false;
++			if (worldMs < m_RetraceLastMs) return false;
++			m_RetraceLastMs = worldMs;
++			vector offset = pose - m_RetraceAnchor;
++			offset[1] = 0;
++			float along = vector.Dot(offset, m_RetraceTangent);
++			vector lateral = offset - m_RetraceTangent * along;
++			string flush;
++			if (!RetraceSuffixAvailable(guideFrontier, m_RetraceTangent)) flush = "frontier_or_suffix";
++			else if (worldMs - m_RetraceStartMs > CF_RETRACE_MS) flush = "timeout";
++			else if (vector.Dot(forward, m_RetraceTangent) < 0.9 || lateral.Length() > MIN_SAMPLE) flush = "turn_or_lateral";
++			else if (along < 0 && offset.Length() > CF_RETRACE_METERS) flush = "distance";
++			if (!flush.IsEmpty())
++			{
++				eventReason = "buffer_flushed_" + flush;
++				return FlushRetrace(targetKey, pose);
++			}
++			if (along >= 0)
++			{
++				// Actual forward return, with unchanged facing/corridor. No spur
++				// point was published or consumed; no cursor/epoch is advanced.
++				m_RetracePoints.Clear();
++				m_RetracePending = false;
++				eventReason = "buffer_discarded";
++				return Record(targetKey, pose);
++			}
++			if (vector.DistanceXZ(m_RetracePoints[m_RetracePoints.Count() - 1], pose) < MIN_SAMPLE) return true;
++			if (m_RetracePoints.Count() >= CF_RETRACE_POINTS)
++			{
++				eventReason = "buffer_flushed_count";
++				return FlushRetrace(targetKey, pose);
++			}
++			m_RetracePoints.Insert(pose);
++			return true;
++		}
++		if (last < 1 || vector.DistanceXZ(m_Points[last], pose) < MIN_SAMPLE) return Record(targetKey, pose);
++		vector tangent = m_Points[last] - m_Points[last - 1];
++		tangent[1] = 0;
++		if (!(tangent.LengthSq() > 0)) return Record(targetKey, pose);
++		tangent.Normalize();
++		vector delta = pose - m_Points[last];
++		delta[1] = 0;
++		float backward = vector.Dot(delta, tangent);
++		vector lateralDelta = delta - tangent * backward;
++		if (backward >= 0 || delta.Length() > CF_RETRACE_METERS || lateralDelta.Length() > MIN_SAMPLE) return Record(targetKey, pose);
++		if (vector.Dot(forward, tangent) < 0.9 || !RetraceSuffixAvailable(guideFrontier, tangent)) return Record(targetKey, pose);
++		m_RetraceAnchor = m_Points[last]; m_RetraceStation = m_Stations[last];
++		m_RetraceTangent = tangent; m_RetraceKey = targetKey;
++		m_RetraceStartMs = worldMs; m_RetraceLastMs = worldMs;
++		m_RetracePoints.Insert(pose); m_RetracePending = true;
++		eventReason = "buffer_started";
++		return true;
++	}
++
+ 	// Value-only, one-query context. Ordinary Query never arms the hook.
+ 	protected bool m_PhysicalQueryActive;
+ 	protected bool m_PhysicalAllowReverse;
+@@ -296,6 +411,8 @@ class CF_TrailGuideRoute : CF_DrivenRoute
+ 
+ 	override void Reset(int targetKey, vector actualPredecessorPosition)
+ 	{
++		m_RetracePending = false;
++		m_RetracePoints.Clear();
+ 		InvalidatePhysicalQuery();
+ 		super.Reset(targetKey, actualPredecessorPosition);
+ 	}
+diff --git a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks_Layers/default.layer b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks_Layers/default.layer
+index aa98f07..8956816 100644
+--- a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks_Layers/default.layer
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks_Layers/default.layer
+@@ -111,3 +111,11 @@ GenericEntity CF_LoadedTripScenarioSettings {
+   }
+  }
+ }
++
++GenericEntity CF_RetraceRouteGeometry {
++ coords 1260 34.3 2980
++ components {
++  CF_DrivenRouteGeometryProbeComponent "{91E42D7831C044F9}" {
++  }
++ }
++}

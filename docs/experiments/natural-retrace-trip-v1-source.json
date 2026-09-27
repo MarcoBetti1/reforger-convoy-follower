@@ -1,0 +1,76 @@
+{
+  "description": "Four-resource increment: two private recorder product files, six native geometry cases and existing-probe world attachment. Physical query and trip gates unchanged. Apply after the exact natural-recovery-trip-v1 source archive, preserving byte line endings (core.autocrlf=false).",
+  "baseline": {
+    "archive": "natural-recovery-trip-v1-source.patch",
+    "archiveSha256": "0F91B0F8598DAF5C074B78A90E68705233F4ABC43A22DF1AE558C0C9E98A696B",
+    "manifest": "natural-recovery-trip-v1-source.json",
+    "manifestSha256": "2675B4BC08DF2CB27F7DE8E46769C328FDCC68FD4CD71D986D85636B35EF5D29",
+    "sourceManifestSha256": "8620282E347B7D6EB39A1D8FDD92EFA7977ED14B2D18983E5A3F2A5480EB8954",
+    "files": 594
+  },
+  "world": "Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent",
+  "terminalMarker": "NATURAL_RECOVERY_RESULT:",
+  "sourceManifestSha256": "15E9C8F44140EB41264A8B47011FB831DAAF795179FB0623A86FD687A1C5D65E",
+  "sourceFiles": 594,
+  "unchangedFiles": 590,
+  "packSha256": "083875C2BEB6D07E462B47162771D97C16E7AC84F62E5607B092D811879B7600",
+  "files": [
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c",
+      "bytes": 25841,
+      "sha256": "2B07A0260888DA74EB0D194FB13E2731EADA123BD48884F25BBE575DFDD97BF5",
+      "baselineSha256": "B25B932F1CBE1AC0F3C36E2490F586CBDB1E63210557EA9DACEC1B8E6F71BB02"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c",
+      "bytes": 59694,
+      "sha256": "E557682CF817B27902DC9541DD7374C4491351F981EF259AB7B58530C13E0044",
+      "baselineSha256": "23713B0E57634BD09AA989A8F4959B7D76F0B47D54E1191BF8008CE3BFC9F0DE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c",
+      "bytes": 30655,
+      "sha256": "993E2A26A369DF7FB6050D96414FEFE9B44846619E3845CD2D4E7E6A2E833119",
+      "baselineSha256": "82B25F477BEBE824F04CC829D21DE4B5A03ED1FF2FFA3C1526846C97F9787620"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks_Layers/default.layer",
+      "bytes": 3436,
+      "sha256": "01420BBB283856E83A4785F5647787CC6B25F9A00CE77E9C2BFFCBB268B417F7",
+      "baselineSha256": "0C3C102084922A1A5E71A6EC05C2105A788E579EB0D770E0E0EE789DEDD59C86"
+    }
+  ],
+  "patch": {
+    "file": "natural-retrace-trip-v1-source.patch",
+    "bytes": 15130,
+    "sha256": "6F705ADF3213E134E693EE5BEAEA354D5B2D18D2EC08B880D66DEF83DBBCAB16"
+  },
+  "isolatedReplay": {
+    "gitApplyCheck": true,
+    "changedFilesReproduced": 4,
+    "unexpectedPaths": [],
+    "results": [
+      {
+        "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c",
+        "sha256": "2B07A0260888DA74EB0D194FB13E2731EADA123BD48884F25BBE575DFDD97BF5",
+        "matches": true
+      },
+      {
+        "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c",
+        "sha256": "E557682CF817B27902DC9541DD7374C4491351F981EF259AB7B58530C13E0044",
+        "matches": true
+      },
+      {
+        "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c",
+        "sha256": "993E2A26A369DF7FB6050D96414FEFE9B44846619E3845CD2D4E7E6A2E833119",
+        "matches": true
+      },
+      {
+        "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks_Layers/default.layer",
+        "sha256": "01420BBB283856E83A4785F5647787CC6B25F9A00CE77E9C2BFFCBB268B417F7",
+        "matches": true
+      }
+    ]
+  },
+  "runtime": "Closed FAIL: native delivery200 and actual renewed travel, but spacing61.0379m and tail moving-guide16.157m fail unchanged gates. Geometry73 PASS; new live retrace branch unexercised. Existing bounded arrival-recovery handoff executed."
+}
