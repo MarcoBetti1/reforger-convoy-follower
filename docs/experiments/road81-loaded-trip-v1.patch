@@ -1,0 +1,161 @@
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+index c681b58..fbe80b6 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+@@ -16,6 +16,9 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 	protected bool m_bPairExplicitRestartGoal;
+ 	[Attribute(defvalue: "0 0 0", desc: "Explicit onward goal; must resolve natively within 3m and 90-140m ahead of the stopped lead")]
+ 	protected vector m_vPairExplicitRestartGoal;
++	[Attribute(defvalue: "0", params: "0 1 1", desc: "Test-only one-time terrain alignment of the two named storage props before cargo binding; never moves trucks or changes supplies")]
++	protected bool m_bPairGroundAlignStorage;
++	protected bool m_bPairStorageAligned;
+ 	protected ref array<CF_LoadedPairCargoProbeComponent> m_PairCargo = {};
+ 	protected ref array<SCR_ResourceContainer> m_PairContainers = {};
+ 	protected ref array<float> m_PairHeldValues = {1800, 0, 0, 0};
+@@ -148,8 +151,56 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 			" owner_id=" + EntityKey(m_PairOwner) + " cargo_tested=false original_parent_owner=true");
+ 	}
+ 
++	// Course authoring assistance only. Resolve and validate both props before
++	// the one-time Y adjustment; all native cargo discovery/range gates remain.
++	protected bool PreparePairStorage()
++	{
++		if (!m_bPairGroundAlignStorage || m_bPairStorageAligned) return true;
++		if (m_bPairBound || m_iPairPhase != 0 || !m_PairCargo.IsEmpty())
++		{ PairFailure("storage_alignment_after_binding"); return false; }
++		World world = GetGame().GetWorld();
++		array<string> names = {"CF_CargoActionSource", "CF_LoadedTripDestination"};
++		array<IEntity> props = {};
++		array<vector> origins = {};
++		array<vector> aligned = {};
++		foreach (string name : names)
++		{
++			IEntity prop = world.FindEntityByName(name);
++			if (!prop) return false;
++			if (Vehicle.Cast(prop) || !prop.FindComponent(SCR_ResourceComponent))
++			{ PairFailure("storage_alignment_not_resource_prop"); return false; }
++			vector before = prop.GetOrigin();
++			vector after = before;
++			after[1] = world.GetSurfaceY(before[0], before[2]);
++			if (!(after[1] >= -1000 && after[1] <= 10000))
++			{ PairFailure("storage_alignment_invalid_surface"); return false; }
++			if (!(Math.AbsFloat(after[1] - before[1]) <= 5))
++			{ PairFailure("storage_alignment_over_5m"); return false; }
++			props.Insert(prop); origins.Insert(before); aligned.Insert(after);
++		}
++		m_bPairStorageAligned = true;
++		for (int index = 0; index < props.Count(); index++)
++		{
++			props[index].SetOrigin(aligned[index]);
++			Print("[ConvoyFollower] LOADED_PAIR_STORAGE_ALIGNMENT: run_id=" + m_sPacedRun +
++				" name=" + names[index] + " entity_id=" + EntityKey(props[index]) +
++				" before=" + origins[index] + " terrain_aligned=" + props[index].GetOrigin() +
++				" test_only=true once_before_binding=true xz_changed=false truck_pose_writes=false count_writes=false native_eligibility_unproved=true");
++		}
++		Vehicle first = Vehicle.Cast(world.FindEntityByName("CF_SmokeFollower1"));
++		Vehicle second = Vehicle.Cast(world.FindEntityByName("CF_SmokeFollower2"));
++		if (!first || !second) { PairFailure("storage_alignment_original_trucks_missing"); return false; }
++		Print("[ConvoyFollower] LOADED_PAIR_STORAGE_GEOMETRY: run_id=" + m_sPacedRun +
++			" source_to_truck1_m=" + vector.Distance(props[0].GetOrigin(), first.GetOrigin()) +
++			" source_to_truck2_m=" + vector.Distance(props[0].GetOrigin(), second.GetOrigin()) +
++			" source_destination_xz_m=" + vector.DistanceXZ(props[0].GetOrigin(), props[1].GetOrigin()) +
++			" geometry_only=true native_eligibility_unproved=true");
++		return true;
++	}
++
+ 	protected bool BindPairCargo()
+ 	{
++		if (!PreparePairStorage()) return false;
+ 		World world = GetGame().GetWorld();
+ 		if (m_PairCargo.IsEmpty())
+ 		{
+diff --git a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer
+index 1798495..651f5f5 100644
+--- a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer
+@@ -1,22 +1,24 @@
++// Private Road81 course: original surveyed vehicle poses; V5 gameplay unchanged.
++// Storage Y values are authoring seeds, aligned once to native terrain before binding.
+ SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+- coords 1375.06 20.1534 3336.05
++ coords 1298.8 34.9 3018.0
+ }
+ 
+ SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+- coords 1375.06 20.1534 3334.05
++ coords 1299.7 34.9 3018.0
+ }
+ 
+ SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+- coords 1350.99 17.515 3335.1
++ coords 1280.3 34.3 3013.1
+ }
+ 
+ SCR_AIGroup CF_SmokeGroup2 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+- coords 1331.34 15.4287 3335.98
++ coords 1260.9 34.3 3008.1
+ }
+ 
+ Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+- coords 1346.99 17.515 3331.1
+- angles 0 92 0
++ coords 1281.45 34.24 3008.14
++ angles 0 75.43 0
+  components {
+   CF_LoadedPairCargoProbeComponent "{4419A3020DB55397}" {
+    m_iPairUnit 1
+@@ -27,8 +29,8 @@ Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M
+ }
+ 
+ Vehicle CF_SmokeFollower2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+- coords 1327.34 15.4287 3331.98
+- angles 0 92 0
++ coords 1262.09 34.26 3003.13
++ angles 0 76.03 0
+  components {
+   CF_LoadedPairCargoProbeComponent "{9D5285175BBC8AA7}" {
+    m_iPairUnit 2
+@@ -39,18 +41,18 @@ Vehicle CF_SmokeFollower2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M
+ }
+ 
+ Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+- coords 1371.06 20.1534 3330.05
+- angles 0 92 0
++ coords 1300.85 34.92 3013.01
++ angles 0 76.09 0
+  components {
+   CF_SurfaceContactProbeComponent "{460CD1F5A3FB54F5}" {
+   }
+   CF_LoadedPairTripProbeComponent "{18B875DF1AAD56E0}" {
+    m_bStraightReleaseRoadGoal 1
+-   m_vStraightReleaseRoadGoal 1610.5 19.9302 3365.83
+-   m_fPairRestartWalkMeters 45
+-   m_fPairRestartMinRoadWidth 3.5
+-   m_bPairExplicitRestartGoal 1
+-   m_vPairExplicitRestartGoal 1697.17 25.722 3301.33
++   m_vStraightReleaseRoadGoal 1564.43 40.3222 3071.77
++   m_fPairRestartWalkMeters 60
++   m_fPairRestartMinRoadWidth 6
++   m_bPairExplicitRestartGoal 0
++   m_bPairGroundAlignStorage 1
+    m_bPacedAutoExit 1
+    m_fPacedLeadSpeedKmh 20
+    m_iExpectedTrucks 2
+@@ -63,7 +65,7 @@ Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1
+ }
+ 
+ GenericEntity CF_CargoActionSource : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+- coords 1337.305 16.5 3335.54
++ coords 1270.768 34.25 3009.507
+  angles 0 90 0
+  {
+   GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+@@ -83,7 +85,7 @@ GenericEntity CF_CargoActionSource : "{08B059F856BF38EF}Prefabs/Compositions/Slo
+ }
+ 
+ GenericEntity CF_LoadedTripDestination : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+- coords 1592 21.25 3368
++ coords 1546 40 3076
+  angles 0 90 0
+  {
+   GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
