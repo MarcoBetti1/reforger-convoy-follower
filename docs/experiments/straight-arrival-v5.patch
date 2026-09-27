@@ -1,0 +1,244 @@
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
+@@ -459,7 +459,7 @@
+ 	}
+ 
+ 	protected CF_EntityFollowDriverControllerComponent m_RearPacingSuccessor;
+-	protected float m_fRearPacingAllowance = -1;
++	protected float m_fRearPacingCap = -1;
+ 	protected float m_fRearPacingLastMs = -1;
+ 	protected float m_fRearPacingNextLogMs;
+ 	protected int m_iRearPacingLogs;
+@@ -499,7 +499,7 @@
+ 				" priority_level=2100 arrival_requires_measured_capture=true panel_acquire_max_kmh=2 test_only=true");
+ 			Print("[ConvoyFollower] ENTITY_REAR_PACING_INIT: driver_id=" + owner.GetID() +
+ 				" enabled=" + m_bEntityRearPacing + " gap_band_multipliers=1.5,2 reaction_horizon_s=1.5" +
+-				" allowance_rate_kmh_per_s=3 sample_dt_max_s=0.5 cruise_writer=existing_controller test_only=true");
++				" head_only=true braking_observation=true cap_down=prompt cap_up_kmh_per_s=3 sample_dt_max_s=0.5 cruise_writer=existing_controller test_only=true");
+ 		}
+ 	}
+ 
+@@ -519,8 +519,10 @@
+ 	}
+ 
+ 	// Fresh original-pilot/selected-order evidence, not a cached speed request.
++	// Pacing may observe a braking participant without granting movement credit
++	// or changing its order. Other callers retain the forward-motion predicate.
+ 	bool CF_ReadRearPacingParticipant(CF_ConvoySession session, IEntity predecessor, out vector velocity, out float speed,
+-		out string reason, out string binding)
++		out string reason, out string binding, bool observeBraking = false)
+ 	{
+ 		reason = "common_guard";
+ 		binding = "binding=unavailable";
+@@ -562,26 +564,36 @@
+ 		reason = "physical_motion";
+ 		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+ 		Physics physics = m_Truck.GetPhysics();
+-		if (!car || !car.GetSimulation() || !physics || car.GetSimulation().GetGear() < 2)
++		if (!car || !car.GetSimulation() || !physics)
+ 			return false;
+ 		speed = car.GetSimulation().GetSpeedKmh();
+-		if (!(speed > 1.5 && speed < 1000))
++		if (!(speed > -1000 && speed < 1000))
++			return false;
++		if (!observeBraking && (car.GetSimulation().GetGear() < 2 || !(speed > 1.5)))
+ 			return false;
+ 		velocity = physics.GetVelocity();
+ 		velocity[1] = 0;
++		float velocitySquared = velocity.LengthSq();
++		if (!(velocitySquared >= 0 && velocitySquared < 1000000))
++			return false;
+ 		vector facing = m_Truck.GetWorldTransformAxis(2);
+ 		facing[1] = 0;
+ 		if (facing.LengthSq() < 0.5)
+ 			return false;
+ 		facing.Normalize();
++		float forwardMotion = vector.Dot(velocity, facing);
++		if (!(forwardMotion > -1000 && forwardMotion < 1000))
++			return false;
++		if (observeBraking)
++			return true;
+ 		// Native speed/forward gear can coexist with backward world motion.
+-		return vector.Dot(velocity, facing) > 1.5 / 3.6;
++		return forwardMotion > 1.5 / 3.6;
+ 	}
+ 
+ 	protected float CF_ResetRearPacing(float frontLimit, string reason, string binding = "")
+ 	{
+ 		m_RearPacingSuccessor = null;
+-		m_fRearPacingAllowance = -1;
++		m_fRearPacingCap = -1;
+ 		m_fRearPacingLastMs = -1;
+ 		if (m_bEntityRearPacing && reason != m_sRearPacingReason && m_iRearPacingLogs < 256)
+ 		{
+@@ -597,11 +609,13 @@
+ 	{
+ 		if (!m_bEntityRearPacing)
+ 			return frontLimit;
++		if (m_Predecessor || !m_Session || !m_Session.IsCurrentLeader(this))
++			return CF_ResetRearPacing(frontLimit, "not_current_head");
+ 		vector velocity;
+ 		float speed;
+ 		string participantReason;
+ 		string selfBinding;
+-		if (!(predecessorSpeed > 1.5) || !CF_ReadRearPacingParticipant(m_Session, target, velocity, speed, participantReason, selfBinding))
++		if (!(predecessorSpeed > 1.5) || !CF_ReadRearPacingParticipant(m_Session, target, velocity, speed, participantReason, selfBinding, true))
+ 			return CF_ResetRearPacing(frontLimit, "self_not_ordinary_moving_" + participantReason, selfBinding);
+ 		CF_EntityFollowDriverControllerComponent successor = CF_EntityFollowDriverControllerComponent.Cast(m_Session.CF_GetImmediateActiveSuccessor(this));
+ 		if (!successor)
+@@ -609,12 +623,21 @@
+ 		vector rearVelocity;
+ 		float rearSpeed;
+ 		string rearBinding;
+-		if (!successor.CF_ReadRearPacingParticipant(m_Session, m_Truck, rearVelocity, rearSpeed, participantReason, rearBinding))
++		if (!successor.CF_ReadRearPacingParticipant(m_Session, m_Truck, rearVelocity, rearSpeed, participantReason, rearBinding, true))
+ 			return CF_ResetRearPacing(frontLimit, "successor_not_ordinary_moving_" + participantReason, rearBinding);
+ 		Vehicle rearTruck = successor.CF_GetAssignedVehicle();
+ 		Physics targetPhysics = target.GetPhysics();
+ 		if (!rearTruck || !targetPhysics)
+ 			return CF_ResetRearPacing(frontLimit, "fresh_physics_unavailable");
++		vector rearFacing = rearTruck.GetWorldTransformAxis(2);
++		rearFacing[1] = 0;
++		if (rearFacing.LengthSq() < 0.5)
++			return CF_ResetRearPacing(frontLimit, "invalid_successor_heading");
++		rearFacing.Normalize();
++		float rearForwardSpeed = vector.Dot(rearVelocity, rearFacing) * 3.6;
++		if (!(rearForwardSpeed > -1000 && rearForwardSpeed < 1000))
++			return CF_ResetRearPacing(frontLimit, "invalid_successor_forward_speed");
++		rearForwardSpeed = Math.Max(0, rearForwardSpeed);
+ 		vector targetVelocity = targetPhysics.GetVelocity();
+ 		targetVelocity[1] = 0;
+ 		vector targetFacing = target.GetWorldTransformAxis(2);
+@@ -641,20 +664,26 @@
+ 		float movingGap = CF_ConvoySettings.Get().m_fMovingGap;
+ 		float predictedGap = rearGap + Math.Max(0, opening) * 1.5;
+ 		float pressure = Math.Clamp((predictedGap - movingGap * 1.5) / (movingGap * 0.5), 0, 1);
+-		float boost = Math.Max(0, frontLimit - predecessorSpeed);
+-		float desiredAllowance = boost * (1.0 - pressure);
++		// At full pressure cooperate with actual forward tail motion, including
++		// zero during native braking/reverse. This cap never creates a new order.
++		float cooperationLimit = Math.Min(frontLimit, rearForwardSpeed);
++		float desiredCap = frontLimit + (cooperationLimit - frontLimit) * pressure;
+ 		float now = GetGame().GetWorld().GetWorldTime();
+ 		if (m_RearPacingSuccessor != successor || m_fRearPacingLastMs < 0)
+ 		{
+ 			m_RearPacingSuccessor = successor;
+-			m_fRearPacingAllowance = boost;
++			m_fRearPacingCap = desiredCap;
+ 			m_fRearPacingLastMs = now;
+ 		}
+ 		float elapsed = Math.Clamp((now - m_fRearPacingLastMs) / 1000.0, 0, 0.5);
+-		float maxChange = 3.0 * elapsed;
+-		m_fRearPacingAllowance += Math.Clamp(desiredAllowance - m_fRearPacingAllowance, -maxChange, maxChange);
++		// Tighten at the existing cruise update; rate-limit only recovery. A
++		// braking episode must not release and refill the catch-up allowance.
++		if (desiredCap < m_fRearPacingCap)
++			m_fRearPacingCap = desiredCap;
++		else
++			m_fRearPacingCap = Math.Min(desiredCap, m_fRearPacingCap + 3.0 * elapsed);
+ 		m_fRearPacingLastMs = now;
+-		float adjusted = Math.Min(frontLimit, predecessorSpeed + m_fRearPacingAllowance);
++		float adjusted = Math.Min(frontLimit, m_fRearPacingCap);
+ 		if (m_iRearPacingLogs < 256 && (m_sRearPacingReason != "active" || now >= m_fRearPacingNextLogMs))
+ 		{
+ 			m_iRearPacingLogs++;
+@@ -664,7 +693,7 @@
+ 			record += " successor_id=" + rearTruck.GetID() + " front_gap_m=" + frontGap + " rear_gap_m=" + rearGap;
+ 			record += " front_closing_mps=" + closing + " rear_opening_mps=" + opening + " pressure=" + pressure;
+ 			record += " predecessor_kmh=" + predecessorSpeed + " actual_kmh=" + speed + " successor_kmh=" + rearSpeed;
+-			record += " front_limit_kmh=" + frontLimit + " extra_allowance_kmh=" + m_fRearPacingAllowance;
++			record += " front_limit_kmh=" + frontLimit + " successor_forward_kmh=" + rearForwardSpeed + " desired_cap_kmh=" + desiredCap;
+ 			record += " policy_request_kmh=" + adjusted + " control_writes=false target_changed=false";
+ 			record += " " + rearBinding;
+ 			Print(record);
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+@@ -10,6 +10,8 @@
+ 	protected bool m_bPairCommandsOnly;
+ 	[Attribute(defvalue: "70", params: "45 70 1", desc: "Declared native lead restart road walk; physical Resume gates remain 20m and 3 powered intervals per follower")]
+ 	protected float m_fPairRestartWalkMeters;
++	[Attribute(defvalue: "6", params: "3.5 12 0.5", desc: "Declared minimum mapped width for this fixture's restart road; physical gates unchanged")]
++	protected float m_fPairRestartMinRoadWidth;
+ 	protected ref array<CF_LoadedPairCargoProbeComponent> m_PairCargo = {};
+ 	protected ref array<SCR_ResourceContainer> m_PairContainers = {};
+ 	protected ref array<float> m_PairHeldValues = {1800, 0, 0, 0};
+@@ -80,6 +82,7 @@
+ 				" expected=2 command_only=true cargo_tested=false load_each=0 destination_total=0" +
+ 				" baseline_hold_s=180 explicit_hold_s=30 resume_each_m=20 resume_each_powered=3 max_link_m=60" +
+ 				" total_timeout_s=720 command_timeout_s=240 lead_cap_kmh=20 restart_road_walk_m=" + m_fPairRestartWalkMeters +
++				" restart_min_road_width_m=" + m_fPairRestartMinRoadWidth +
+ 				" owner_staging=test_only ordinary_input=false source_count_writes=false follower_control_writes=false production_controller=true");
+ 			return;
+ 		}
+@@ -87,6 +90,7 @@
+ 			" expected=2 load_each=100 destination_total=200 conserved_total=1800 baseline_hold_s=180 explicit_hold_s=30" +
+ 			" resume_each_m=20 resume_each_powered=3 max_link_m=60 total_timeout_s=720 command_timeout_s=240" +
+ 			" restart_road_walk_m=" + m_fPairRestartWalkMeters +
++			" restart_min_road_width_m=" + m_fPairRestartMinRoadWidth +
+ 			" owner_staging=test_only ordinary_input=false source_count_writes=false follower_control_writes=false production_controller=true");
+ 	}
+ 
+@@ -704,30 +708,46 @@
+ 		return access && !access.IsGettingIn() && !access.IsGettingOut();
+ 	}
+ 
++	protected bool RejectCommandExtension(string reason, float width = -1, float roadDistance = -1)
++	{
++		Print("[ConvoyFollower] ORIGINAL_RESUME_SURVEY_REJECT: run_id=" + m_sPacedRun + " reason=" + reason +
++			" width=" + width + " required_width=" + m_fPairRestartMinRoadWidth + " road_distance=" + roadDistance +
++			" recorded_road_walk_m=" + m_fPairRestartWalkMeters + " geometry_only=true");
++		return false;
++	}
++
+ 	protected bool SurveyCommandExtension()
+ 	{
+ 		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+-		if (!aiWorld || !aiWorld.GetRoadNetworkManager()) return false;
++		if (!aiWorld || !aiWorld.GetRoadNetworkManager()) return RejectCommandExtension("road_network_unavailable");
+ 		RoadNetworkManager roads = aiWorld.GetRoadNetworkManager();
+ 		BaseRoad road;
+ 		float roadDistance;
+ 		int roadId = roads.GetClosestRoad(m_Lead.GetOrigin(), road, roadDistance);
+-		if (roadId < 0 || !road || road.GetWidth() < 6 || roadDistance > 5) return false;
++		if (roadId < 0 || !road) return RejectCommandExtension("closest_road_unavailable", -1, roadDistance);
++		float width = road.GetWidth();
++		if (width < m_fPairRestartMinRoadWidth) return RejectCommandExtension("road_width_below_declared_minimum", width, roadDistance);
++		if (roadDistance > 5) return RejectCommandExtension("road_distance_over_5m", width, roadDistance);
+ 		array<vector> points = {};
+ 		road.GetPoints(points);
+ 		vector forward = m_Lead.GetWorldTransformAxis(2);
+ 		vector candidate;
+-		if (!CF_RoadPolyline.TryWalk(points, m_Lead.GetOrigin(), forward, m_fPairRestartWalkMeters, candidate)) return false;
++		if (!CF_RoadPolyline.TryWalk(points, m_Lead.GetOrigin(), forward, m_fPairRestartWalkMeters, candidate))
++			return RejectCommandExtension("forward_road_walk_unavailable", width, roadDistance);
+ 		vector reached;
+-		if (!roads.GetReachableWaypointInRoad(m_Lead.GetOrigin(), candidate, 5, reached) || vector.DistanceXZ(candidate, reached) > 3) return false;
++		if (!roads.GetReachableWaypointInRoad(m_Lead.GetOrigin(), candidate, 5, reached))
++			return RejectCommandExtension("native_reachability_failed", width, roadDistance);
++		if (vector.DistanceXZ(candidate, reached) > 3) return RejectCommandExtension("native_snap_over_3m", width, roadDistance);
+ 		vector delta = reached - m_Lead.GetOrigin();
+ 		float distance = vector.DistanceXZ(reached, m_Lead.GetOrigin());
+-		if (distance < m_fPairRestartWalkMeters - 15 || distance > m_fPairRestartWalkMeters + 15) return false;
+-		if (delta[0] * forward[0] + delta[2] * forward[2] < distance * 0.5) return false;
++		if (distance < m_fPairRestartWalkMeters - 15 || distance > m_fPairRestartWalkMeters + 15)
++			return RejectCommandExtension("resolved_distance_outside_walk_band", width, roadDistance);
++		if (delta[0] * forward[0] + delta[2] * forward[2] < distance * 0.5)
++			return RejectCommandExtension("resolved_goal_not_forward", width, roadDistance);
+ 		m_vRestartGoal = reached;
+ 		m_vRestartAxis = Vector(delta[0] / distance, 0, delta[2] / distance);
+ 		Print("[ConvoyFollower] ORIGINAL_RESUME_SURVEY: run_id=" + m_sPacedRun + " road_id=" + roadId +
+-			" width=" + road.GetWidth() + " road_distance=" + roadDistance + " start=" + m_Lead.GetOrigin() +
++			" width=" + width + " required_width=" + m_fPairRestartMinRoadWidth + " road_distance=" + roadDistance + " start=" + m_Lead.GetOrigin() +
+ 			" goal=" + reached + " axis=" + m_vRestartAxis + " recorded_road_walk_m=" + m_fPairRestartWalkMeters + " geometry_only=true");
+ 		return true;
+ 	}
+--- a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks_Layers/default.layer
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks_Layers/default.layer
+@@ -44,6 +44,7 @@
+    m_bStraightReleaseRoadGoal 1
+    m_vStraightReleaseRoadGoal 1598.08 20.7374 3363.82
+    m_fPairRestartWalkMeters 45
++   m_fPairRestartMinRoadWidth 3.5
+    m_bPacedAutoExit 1
+    m_fPacedLeadSpeedKmh 20
+    m_sPacedWorld "Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent"

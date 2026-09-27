@@ -1,0 +1,113 @@
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
+@@ -676,12 +676,29 @@
+ 			m_fRearPacingLastMs = now;
+ 		}
+ 		float elapsed = Math.Clamp((now - m_fRearPacingLastMs) / 1000.0, 0, 0.5);
+-		// Tighten at the existing cruise update; rate-limit only recovery. A
+-		// braking episode must not release and refill the catch-up allowance.
++		// Tighten immediately. Restore the current shaped cap promptly only
++		// while the larger front gap opens and the rear gap is already closing.
++		string recoveryReason = "steady";
+ 		if (desiredCap < m_fRearPacingCap)
++		{
+ 			m_fRearPacingCap = desiredCap;
+-		else
+-			m_fRearPacingCap = Math.Min(desiredCap, m_fRearPacingCap + 3.0 * elapsed);
++			recoveryReason = "tightening";
++		}
++		else if (desiredCap > m_fRearPacingCap)
++		{
++			bool frontNeedsRecovery = frontGap > rearGap && frontGap > movingGap * 2;
++			// closing < 0 means front opening; opening < 0 means rear closing.
++			if (frontNeedsRecovery && closing < 0 && opening < 0)
++			{
++				m_fRearPacingCap = desiredCap;
++				recoveryReason = "front_opening_rear_closing";
++			}
++			else
++			{
++				m_fRearPacingCap = Math.Min(desiredCap, m_fRearPacingCap + 3.0 * elapsed);
++				recoveryReason = "rate_limited";
++			}
++		}
+ 		m_fRearPacingLastMs = now;
+ 		float adjusted = Math.Min(frontLimit, m_fRearPacingCap);
+ 		if (m_iRearPacingLogs < 256 && (m_sRearPacingReason != "active" || now >= m_fRearPacingNextLogMs))
+@@ -695,6 +712,7 @@
+ 			record += " predecessor_kmh=" + predecessorSpeed + " actual_kmh=" + speed + " successor_kmh=" + rearSpeed;
+ 			record += " front_limit_kmh=" + frontLimit + " successor_forward_kmh=" + rearForwardSpeed + " desired_cap_kmh=" + desiredCap;
+ 			record += " policy_request_kmh=" + adjusted + " control_writes=false target_changed=false";
++			record += " recovery_reason=" + recoveryReason;
+ 			record += " " + rearBinding;
+ 			Print(record);
+ 		}
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+@@ -54,6 +54,8 @@
+ 	protected string m_sTrailBlockReason;
+ 	protected bool m_bTrailResumePending;
+ 	protected bool m_bTrailResumeTimedOut;
++	protected bool m_bTrailResumePosePreempted;
++	protected int m_iTrailResumePoseLogs;
+ 	protected ref CF_InitialDepartureWait m_TrailResumeWait;
+ 	protected CF_ConvoySession m_TrailResumeSession;
+ 	protected IEntity m_TrailResumeOwner;
+@@ -254,6 +256,7 @@
+ 		if (m_TrailResumeWait) m_TrailResumeWait.Retire(allowNativeCompletion && !CF_IsControlBlocked());
+ 		m_TrailResumeWait = null;
+ 		m_bTrailResumePending = false; m_bTrailResumeTimedOut = false;
++		m_bTrailResumePosePreempted = false;
+ 		m_TrailResumeSession = null; m_TrailResumeOwner = null; m_TrailResumePredecessor = null;
+ 		Print("[ConvoyFollower] TRAIL_RESUME_WAIT_RELEASE: unit=" + m_iUnitNumber + " reason=" + reason + " only_owned_wait=true");
+ 	}
+@@ -533,7 +536,19 @@
+ 		if (!ownedContext && CF_TrailResumeContext())
+ 		{
+ 			SCR_AIUtilityComponent waitingUtility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
+-			ownedContext = waitingUtility && waitingUtility.GetCurrentBehavior() == m_TrailResumeWait;
++			// Native avoidance may preempt our still-healthy Wait. Keep observing
++			// the original AI truck; actual departure still requires selected Wait.
++			ownedContext = waitingUtility != null;
++			bool preempted = waitingUtility && waitingUtility.GetCurrentBehavior() != m_TrailResumeWait;
++			if (preempted && !m_bTrailResumePosePreempted && m_iTrailResumePoseLogs < 8)
++			{
++				m_iTrailResumePoseLogs++;
++				Print("[ConvoyFollower] TRAIL_RESUME_POSE: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
++					" world_ms=" + m_TrailWorld.GetWorldTime() + " truck_id=" + m_Truck.GetID() +
++					" predecessor_id=" + m_TrailPredecessor.GetID() + " measured_m=" + m_fTrailMeasuredBudget +
++					" native_execution=false reason=owned_resume_wait_preempted actual_pose_only=true activity_credit=false controls_written=false");
++			}
++			m_bTrailResumePosePreempted = preempted;
+ 		}
+ 		if (!ownedContext) return; // Keep pending measured motion; never grant gap credit.
+ 		CF_QueryTrailPose();
+--- a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer
+@@ -45,6 +45,10 @@
+   CF_SurfaceContactProbeComponent "{460CD1F5A3FB54F5}" {
+   }
+   CF_LoadedPairTripProbeComponent "{18B875DF1AAD56E0}" {
++   m_bStraightReleaseRoadGoal 1
++   m_vStraightReleaseRoadGoal 1610.5 19.9302 3365.83
++   m_fPairRestartWalkMeters 45
++   m_fPairRestartMinRoadWidth 3.5
+    m_bPacedAutoExit 1
+    m_fPacedLeadSpeedKmh 20
+    m_iExpectedTrucks 2
+@@ -77,7 +81,7 @@
+ }
+ 
+ GenericEntity CF_LoadedTripDestination : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+- coords 1667.4 19.8 3360.7
++ coords 1592 21.25 3368
+  angles 0 90 0
+  {
+   GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+@@ -101,4 +105,4 @@
+   CF_SupplyScenarioSettingsComponent "{DDBFCB46BDFB4C6F}" {
+   }
+  }
+-}
+\ No newline at end of file
++}
