@@ -1,0 +1,92 @@
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
+index fc1ce25..e223b61 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
+@@ -542,11 +542,19 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 	// Pacing may observe a braking participant without granting movement credit
+ 	// or changing its order. Other callers retain the forward-motion predicate.
+ 	bool CF_ReadRearPacingParticipant(CF_ConvoySession session, IEntity predecessor, out vector velocity, out float speed,
+-		out string reason, out string binding, bool observeBraking = false)
++		out string reason, out string binding, bool observeBraking = false, bool observeOwnedArrival = false)
+ 	{
+ 		reason = "common_guard";
+ 		binding = "binding=unavailable";
+-		if (m_Session != session || !session || m_iState != CF_FOLLOWING || !CF_IsOrdinaryEntityContext())
++		// Only the head's local cap caller opts in. Captured/Panel Wait is
++		// never a moving participant; ordinary successor reads stay strict.
++		bool ownedArrival;
++		if (observeOwnedArrival && m_iState == CF_ARRIVING)
++		{
++			bool selectedWait;
++			ownedArrival = CF_HasOwnedArrivalPhase(session, m_Truck, selectedWait) && !selectedWait;
++		}
++		if (m_Session != session || !session || (m_iState != CF_FOLLOWING && !ownedArrival) || !CF_IsOrdinaryEntityContext())
+ 			return false;
+ 		if (m_LeadVehicle != predecessor || CF_IsInitialDepartureWaiting() || m_bArrivalRoadHold || m_bArrivalTrailHold || m_bEntityFallbackFailed)
+ 			return false;
+@@ -635,7 +643,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 		float speed;
+ 		string participantReason;
+ 		string selfBinding;
+-		if (!(predecessorSpeed > 1.5) || !CF_ReadRearPacingParticipant(m_Session, target, velocity, speed, participantReason, selfBinding, true))
++		if (!CF_ReadRearPacingParticipant(m_Session, target, velocity, speed, participantReason, selfBinding, true, true))
+ 			return CF_ResetRearPacing(frontLimit, "self_not_ordinary_moving_" + participantReason, selfBinding);
+ 		CF_EntityFollowDriverControllerComponent successor = CF_EntityFollowDriverControllerComponent.Cast(m_Session.CF_GetImmediateActiveSuccessor(this));
+ 		if (!successor)
+@@ -665,8 +673,32 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 		if (targetFacing.LengthSq() < 0.5)
+ 			return CF_ResetRearPacing(frontLimit, "invalid_predecessor_heading");
+ 		targetFacing.Normalize();
+-		if (!(vector.Dot(targetVelocity, targetFacing) > 1.5 / 3.6))
+-			return CF_ResetRearPacing(frontLimit, "predecessor_not_moving_forward");
++		bool movingPredecessor = predecessorSpeed > 1.5 && vector.Dot(targetVelocity, targetFacing) > 1.5 / 3.6;
++		float stopMps = CF_ENTITY_STOP_SPEED_KMH / 3.6;
++		bool stoppedPredecessor = Math.AbsFloat(predecessorSpeed) <= CF_ENTITY_STOP_SPEED_KMH;
++		stoppedPredecessor = stoppedPredecessor && targetVelocity.LengthSq() >= 0 && targetVelocity.LengthSq() <= stopMps * stopMps;
++		if (!movingPredecessor && !stoppedPredecessor)
++			return CF_ResetRearPacing(frontLimit, "predecessor_not_forward_or_stopped");
++		if (stoppedPredecessor)
++		{
++			// Stopping the player's lead does not remove rear pressure while
++			// this head still approaches it. Require the exact healthy native
++			// real-target lease; never extend this to a captured Wait or reverse.
++			CF_OriginalFollowLease lease = m_OriginalFollowLease;
++			if (m_EntityCapturedWait || !lease || lease.Predecessor != target || lease.NativeTarget != target ||
++				!lease.Activity || lease.Activity.Lease != lease)
++				return CF_ResetRearPacing(frontLimit, "stopped_head_lease_unavailable");
++			string leaseReason;
++			if (!lease.Executing(m_Group, leaseReason))
++				return CF_ResetRearPacing(frontLimit, "stopped_head_lease_" + leaseReason);
++			vector ownFacing = m_Truck.GetWorldTransformAxis(2);
++			ownFacing[1] = 0;
++			if (!(ownFacing.LengthSq() >= 0.5 && ownFacing.LengthSq() <= 1.5))
++				return CF_ResetRearPacing(frontLimit, "stopped_head_heading_invalid");
++			ownFacing.Normalize();
++			if (!(vector.Dot(velocity, ownFacing) >= -stopMps))
++				return CF_ResetRearPacing(frontLimit, "stopped_head_reversing");
++		}
+ 		vector rearLink = m_Truck.GetOrigin() - rearTruck.GetOrigin();
+ 		rearLink[1] = 0;
+ 		float rearGap = rearLink.Length();
+@@ -731,7 +763,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 			record += " front_closing_mps=" + closing + " rear_opening_mps=" + opening + " pressure=" + pressure;
+ 			record += " predecessor_kmh=" + predecessorSpeed + " actual_kmh=" + speed + " successor_kmh=" + rearSpeed;
+ 			record += " front_limit_kmh=" + frontLimit + " successor_forward_kmh=" + rearForwardSpeed + " desired_cap_kmh=" + desiredCap;
+-			record += " policy_request_kmh=" + adjusted + " control_writes=false target_changed=false";
++			record += " policy_request_kmh=" + adjusted + " stopped_predecessor_approach=" + stoppedPredecessor + " control_writes=false target_changed=false";
+ 			record += " recovery_reason=" + recoveryReason;
+ 			record += " " + rearBinding;
+ 			Print(record);
+diff --git a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer
+index 651f5f5..cc4fbaf 100644
+--- a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer
+@@ -85,7 +85,7 @@ GenericEntity CF_CargoActionSource : "{08B059F856BF38EF}Prefabs/Compositions/Slo
+ }
+ 
+ GenericEntity CF_LoadedTripDestination : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+- coords 1546 40 3076
++ coords 1539.09 40 3076
+  angles 0 90 0
+  {
+   GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {

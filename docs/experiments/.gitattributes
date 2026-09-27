@@ -1,5 +1,7 @@
 # Preserve the exact bytes of the hashed reproduction artifacts.
 road81-entry-approach-v1.patch -text
+road81-arrival-trip-v1.patch -text
+road81-arrival-trip-v1.patch -text
 reboard-canonical-v1/*.patch -text
 reboard-canonical-v1/*.json -text
 reboard-canonical-v1/*.txt -text
