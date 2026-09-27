@@ -4,7 +4,7 @@ Updated September 26, 2026. **The mod is not release ready.** This page separate
 
 **Execution: active development resumed under the user's subsequent active-goal continuation.** The documentation-only setup turn is complete; implementation and live testing are authorized under the full brief. Preserve all newer code and evidence. The next development priority is a usable supply trip and demonstration, with focused work on failures that interrupt that experience.
 
-**Latest evidence boundary:** [loaded-straight-trip-v1](experiments/loaded-straight-trip-v1.md) is closed with native delivery of **200 supplies**, **180.38 seconds** of stationary arrival and **48.0819 seconds** of real Hold. Overall **FAIL** remains: peak spacing **87.9582 m** and a first-link Resume rejection, `empty_predecessor_not_parked_session_lead`, during test-only owner/native-pilot seat transfer. The rejecting subcondition is not established. Final source/log/video and process closure are verified. Preserve the working addon and all private candidates separately; this result does not establish a complete two-truck trip or a spacing improvement.
+**Latest evidence boundary:** [loaded-straight-trip-v2](experiments/loaded-straight-trip-v2.md) is closed. Native delivery of **200 supplies**, peak links **46.5385 /55.1042 m**, **180.446 seconds** of stationary arrival and **48.0482 seconds** of real Hold passed this run. Overall physical and strict **FAIL** remain: the test-only lead-parking guard failed during the post-Resume seat handoff, before fresh Resume movement. Its exact rejecting term was not logged. Source/log/video and process closure are verified; **9 gameplay /0 post-result /64 shutdown errors** remain. Preserve V1 and the working addon separately; one passing spacing result does not establish repeatability or a complete two-truck trip.
 
 ## Product goal and source checkpoint
 
@@ -237,7 +237,7 @@ Resume was accepted at19:30:03.361. Native vehicle avoidance preempted the tail'
 
 The [independent review](../.cache/client/runs/straight-arrival-stop-resume-v5/independent-review.md), SHA `F50CE926A44929C66418C815F644A262F2AD1526B8AEB5F08799459CA0BB30A1`, verifies 588 sources/three deployments, the exact terminal-prefix snapshot (+149 ms), natural closure and **9 gameplay /0 post-result /64 shutdown errors**. Video duration389.533333 s; only live departure and parked-approach views were inspected. [V5 source archive](experiments/straight-arrival-v5.md) remains separate from canonical source.
 
-### Latest loaded straight trip: delivery works; restart still fails
+### Loaded straight trip V1: delivery works; restart still fails
 
 The existing closed log for `loaded-straight-trip-v1` records four native 100-supply transfers with cancellation checks. Original source / truck one / truck two / destination quantities reached **1800/0/0/0 → 1600/100/100/0 → 1600/0/0/200**. The independent log review found 416 conserved ledger rows. Both followers completed arrival observation for **180.38 s /180 samples** and real Hold for **48.0819 s /48 samples**. This is useful delivery evidence, not a completed round trip.
 
@@ -246,6 +246,16 @@ The first spacing failure occurred before arrival; peak links were **87.9582 /54
 All five configurations and packaging had passed for pack **`5BE37BAE52010EEA457666A70CC07A5B965D5B0E234AAC8515A2C610389F53FF`**. The [final independent review](../.cache/client/runs/loaded-straight-trip-v1/independent-review.md), SHA `5A872B6364F044BB169FE832CCFD36C3116EC6309B9FE69407AD5BDAE594A5FA`, verifies 588 frozen sources, three deployment files and the exact terminal-prefix snapshot captured +110 ms. The full log retains **9 gameplay /0 post-result /62 shutdown errors**. Natural client closure, watcher/recorder completion and a fresh empty process check are confirmed. The silent recording is430.2 s, SHA `841B08E729F708DE93EAB365A85BB8AC21192761C6C15A059E248FD57A2CF84E`; three live views were inspected, not full playback or normal player input. No candidate code has been promoted.
 
 First distinguish the fixture's seat-transfer failure from a normal player exit/reboard fault. Then complete the practical restart and show the whole supply trip, preserving spacing failures and the original acceptance gates. A route-blocked driver can retain membership while still lacking a working Resume path; any proposed recovery needs evidence and is not yet implemented.
+
+### Loaded straight trip V2: delivery and spacing pass; fixture handoff still fails
+
+The private native-pilot-first comparison passed native delivery of **200 supplies**, with **411 conserved ledger samples** and original quantities **1800/0/0/0 → 1600/100/100/0 → 1600/0/0/200**. Original head/tail activities produced **251.034 m /26 powered intervals** and **216.239 m /27 intervals**. Peak links **46.5385 /55.1042 m** passed the unchanged 60 m gate. Both followers completed **180.446 s /180 samples** of arrival and **48.0482 s /48 samples** of real Hold with zero recorded drift, retaining original identities.
+
+Resume was accepted at 20:02:54.032. Native pilot entry was requested first, then owner passenger entry. At 20:02:56.834, `lead_moved_during_owner_setup` failed the fixture's compound parking-ownership / 2 m displacement / 2 km/h speed guard. The individual terms were not logged, so no specific cause is established. V1's parked-lead admission rejection did not recur before terminal, but neither a native-lead restart marker nor fresh per-unit Resume samples occurred. Overall physical and strict results remain **FAIL**; post-result activity does not supply restart credit.
+
+All five configurations and packaging passed for **`4E97FE8D728C13665BB62D2E845F988A25D0F4E8983FF37DCE3FDDA61A7ED8D6`**. The [closed independent review](../.cache/client/runs/loaded-straight-trip-v2/independent-review.md), SHA `B8B6DDF41212A9D46B79493ED1850AF063606C029142F3F3DAF947E737BA2CAA`, verifies 588 frozen sources, three deployments and the exact terminal-prefix snapshot captured +131 ms. **9 gameplay /0 post-result /64 shutdown errors** remain. Natural client closure, watcher/recorder completion and an empty process check are verified. The silent recording is **453.933333 s**, SHA `2C4F5C1EF89F75BAE17F92AF5C080D6D4F741FF63297BEB16EA8E19E57947099`; two live departure/arrival views were inspected, not full playback. No ordinary-input, human-driving or multiplayer claim follows, and no source is promoted.
+
+**Next V3 comparison, source implementation in progress:** permit the owner to use the public Resume command as a passenger in the same cached lead vehicle, preserving authority and eligibility guards. Keep the fixture's real Hold active until the original native pilot and owner passenger are both seated, then issue Resume. Compilation and live behavior are not yet established. Retain the complete cargo, identity, spacing, sustained Hold and powered Resume gates.
 
 ## Preserved failed controls
 
@@ -269,7 +279,7 @@ Earlier route, native-request, explicit-Hold, Resume and input failures remain i
 ## Next usable-trip actions
 
 1. Preserve the demonstrated ordinary-driver baseline; address concrete supply-trip blockers before broadening driving experiments.
-2. Diagnose the latest first-link parked-lead rejection during the test owner's seat transfer. Separate fixture handling from normal player restart and route-block recovery, then validate the smallest useful repair in the complete loaded trip. Preserve per-unit movement/Hold/Resume proof and conservation across all four containers. Keep failed candidates and unchanged spacing gates visible; no automatic tuning loop.
+2. Complete the private V3 source comparison: allow public Resume by the owner passenger of the same cached lead with authority guards preserved, and keep the fixture held until both original lead occupants are seated before commanding Resume. Compile and validate the complete loaded trip; this source work has no live result yet. Preserve per-unit movement/Hold/Resume proof, conservation across all four containers, failed candidates and unchanged spacing gates; no automatic tuning loop.
 3. Resolve ordinary input through a supported, discriminating control; do not repeat unchanged key/click matrices or treat capture as input success.
 4. Complete and record the ordinary Supply Day workflow with retained assignments, useful status and one spokesperson. Extend to two/three followers and realistic interruptions.
 5. Continue the full roadmap: verified unpaved routes, regroup/return, role changes, Soviet and multiplayer coverage, performance/configuration and release polish.

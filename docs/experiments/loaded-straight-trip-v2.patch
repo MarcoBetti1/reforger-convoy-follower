@@ -1,0 +1,117 @@
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
+index dc70d55..fc1ce25 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
+@@ -124,6 +124,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 	protected string m_sOriginalFollowFailure;
+ 	protected bool m_bOriginalParkedLeadAdmitted;
+ 	protected int m_iOriginalParkedLeadLogs;
++	protected bool m_bOriginalParkedLeadRejectLogged;
+ 
+ 	bool CF_OriginalPilotSafe(CF_OriginalFollowLease lease)
+ 	{
+@@ -152,29 +153,38 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 
+ 	// An empty parked owner vehicle is still a valid arrival reference. This
+ 	// exception changes only first-link target admission, never pilot ownership.
+-	protected bool CF_CanAdmitParkedPlayerLead(CF_OriginalFollowLease lease, CarControllerComponent car, BaseCompartmentSlot slot)
+-	{
+-		if (!lease || m_Predecessor || !m_Session || !m_Session.IsCurrentLeader(this))
+-			return false;
+-		if (lease.Session != m_Session || lease.NativeTarget != lease.Predecessor ||
+-			lease.Predecessor != CF_GetCachedPlayerVehicle())
+-			return false;
++	protected bool CF_CanAdmitParkedPlayerLead(CF_OriginalFollowLease lease, CarControllerComponent car, BaseCompartmentSlot slot, out string rejectReason)
++	{
++		// Preserve the existing predicate order; report only the first rejection.
++		rejectReason = "";
++		if (!lease) { rejectReason = "lease_missing"; return false; }
++		if (m_Predecessor) { rejectReason = "not_first_link"; return false; }
++		if (!m_Session) { rejectReason = "session_missing"; return false; }
++		if (!m_Session.IsCurrentLeader(this)) { rejectReason = "not_current_leader"; return false; }
++		if (lease.Session != m_Session) { rejectReason = "lease_session_mismatch"; return false; }
++		if (lease.NativeTarget != lease.Predecessor) { rejectReason = "native_target_not_predecessor"; return false; }
++		if (lease.Predecessor != CF_GetCachedPlayerVehicle()) { rejectReason = "cached_player_vehicle_mismatch"; return false; }
+ 		Vehicle lead = Vehicle.Cast(lease.Predecessor);
+-		if (!lead || !car || !slot || car.GetPilotCompartmentSlot() != slot || slot.GetOccupant())
+-			return false;
+-		if (!car.GetSimulation() || CF_ConvoySession.IsVehicleAssignedToAnotherDriver(lead, this))
+-			return false;
++		if (!lead) { rejectReason = "predecessor_not_vehicle"; return false; }
++		if (!car) { rejectReason = "predecessor_car_missing"; return false; }
++		if (!slot) { rejectReason = "pilot_slot_missing"; return false; }
++		if (car.GetPilotCompartmentSlot() != slot) { rejectReason = "pilot_slot_changed"; return false; }
++		if (slot.GetOccupant()) { rejectReason = "pilot_slot_not_empty"; return false; }
++		if (!car.GetSimulation()) { rejectReason = "predecessor_simulation_missing"; return false; }
++		if (CF_ConvoySession.IsVehicleAssignedToAnotherDriver(lead, this)) { rejectReason = "predecessor_reserved_elsewhere"; return false; }
+ 		ChimeraCharacter owner = ChimeraCharacter.Cast(m_Leader);
+-		if (!owner || owner.GetWorld() != lease.OriginalWorld || IsDriverDestroyed(owner))
+-			return false;
++		if (!owner) { rejectReason = "owner_missing"; return false; }
++		if (owner.GetWorld() != lease.OriginalWorld) { rejectReason = "owner_world_mismatch"; return false; }
++		if (IsDriverDestroyed(owner)) { rejectReason = "owner_destroyed"; return false; }
+ 		PlayerManager players = GetGame().GetPlayerManager();
+-		if (!players || m_iOrderingPlayerId <= 0 || players.GetPlayerControlledEntity(m_iOrderingPlayerId) != owner)
+-			return false;
+-		if (CF_ConvoySession.GetForPlayer(owner) != m_Session)
+-			return false;
++		if (!players) { rejectReason = "player_manager_missing"; return false; }
++		if (m_iOrderingPlayerId <= 0) { rejectReason = "ordering_player_id_invalid"; return false; }
++		if (players.GetPlayerControlledEntity(m_iOrderingPlayerId) != owner) { rejectReason = "controlled_owner_mismatch"; return false; }
++		if (CF_ConvoySession.GetForPlayer(owner) != m_Session) { rejectReason = "owner_session_mismatch"; return false; }
+ 		float speed = Math.AbsFloat(car.GetSimulation().GetSpeedKmh());
+ 		// Positive bounded comparison rejects NaN/infinity as well as motion.
+-		return speed >= 0 && speed <= 0.5;
++		if (!(speed >= 0 && speed <= 0.5)) { rejectReason = "speed_invalid_or_above_0_5"; return false; }
++		return true;
+ 	}
+ 
+ 	protected void CF_RecordParkedLeadAdmission(bool admitted)
+@@ -243,9 +253,19 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 		bool parkedPlayerLead;
+ 		if (!targetPilot)
+ 		{
+-			parkedPlayerLead = CF_CanAdmitParkedPlayerLead(lease, targetCar, targetSlot);
++			string parkedRejectReason;
++			parkedPlayerLead = CF_CanAdmitParkedPlayerLead(lease, targetCar, targetSlot, parkedRejectReason);
+ 			if (!parkedPlayerLead)
+ 			{
++				if (!m_bOriginalParkedLeadRejectLogged)
++				{
++					m_bOriginalParkedLeadRejectLogged = true;
++					float rejectedLeadSpeed = -1;
++					if (targetCar && targetCar.GetSimulation()) rejectedLeadSpeed = Math.AbsFloat(targetCar.GetSimulation().GetSpeedKmh());
++					Print("[ConvoyFollower] ORIGINAL_FOLLOW_PARKED_LEAD_REJECT: unit=" + m_iUnitNumber +
++						" generation=" + m_iOriginalFollowGeneration + " reason=" + parkedRejectReason +
++						" speed_kmh=" + rejectedLeadSpeed + " max_speed_kmh=0.5 entry_pilot_empty=true once_per_controller=true control_writes=false");
++				}
+ 				reason = "empty_predecessor_not_parked_session_lead";
+ 				return false;
+ 			}
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+index ba2b096..835feee 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+@@ -860,13 +860,19 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 		}
+ 		if (m_iSeatStep == 1 && CommandOnFoot(m_PacedOwner))
+ 		{
+-			if (!BoardCommandSeat(m_PacedOwner, false)) { CommandFailure("owner_passenger_entry_rejected"); return false; }
++			if (!BoardCommandSeat(m_Pilot, true)) { CommandFailure("native_pilot_entry_rejected"); return false; }
+ 			m_iSeatStep = 2;
++			Print("[ConvoyFollower] LOADED_PAIR_SEAT_HANDOFF: run_id=" + m_sPacedRun +
++				" stage=native_pilot_entry_requested order=native_pilot_then_owner_passenger parking_retained=" + m_bCommandParking +
++				" follower_writes=false ordinary_input=false");
+ 		}
+-		else if (m_iSeatStep == 2 && CommandSeat(m_PacedOwner, false))
++		else if (m_iSeatStep == 2 && CommandSeat(m_Pilot, true))
+ 		{
+-			if (!BoardCommandSeat(m_Pilot, true)) { CommandFailure("native_pilot_entry_rejected"); return false; }
++			if (!BoardCommandSeat(m_PacedOwner, false)) { CommandFailure("owner_passenger_entry_rejected"); return false; }
+ 			m_iSeatStep = 3;
++			Print("[ConvoyFollower] LOADED_PAIR_SEAT_HANDOFF: run_id=" + m_sPacedRun +
++				" stage=owner_passenger_entry_requested native_pilot_exact=true parking_retained=" + m_bCommandParking +
++				" follower_writes=false ordinary_input=false");
+ 		}
+ 		return m_iSeatStep == 3 && CanControlLead() && OwnerRetained() && EntryReady(m_PacedTrucks[0]);
+ 	}
