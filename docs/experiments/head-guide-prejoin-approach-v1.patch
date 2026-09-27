@@ -1,0 +1,70 @@
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+@@ -738,8 +738,10 @@
+ 	}
+ 
+ 	// A forward offered target does not mean the truck has joined the route.
+-	// This path executes only after the unchanged Query returns APPROACH_START.
+-	protected void CF_OfferPrejoinWindow(vector pose, vector start, vector tangent, float endStation)
++	// Normally the unchanged Query returned APPROACH_START. The entry approach
++	// may also offer this same prefix after the read-only preflight below; it
++	// still cannot query or join until the existing physical entry capture.
++	protected void CF_OfferPrejoinWindow(vector pose, vector start, vector tangent, float endStation, bool beforeEntryCapture = false)
+ 	{
+ 		vector entryOffset = pose - start;
+ 		entryOffset[1] = 0;
+@@ -791,6 +793,7 @@
+ 			line += " station=" + safeStation + " requested_station=" + requestedStation;
+ 			line += " recorded_bound=" + recordedBound + " corridor_limit_m=2 reason=" + reason;
+ 			line += " actual_pose=" + pose + " entry=" + start + " source=recorded_only";
++			line += " before_entry_capture=" + beforeEntryCapture;
+ 			Print(line);
+ 		}
+ 	}
+@@ -830,9 +833,9 @@
+ 		Print(line);
+ 	}
+ 
+-	// The native target remains fixed at entry while steering onto the road.
+-	// Query is deferred until actual near/aligned capture, so no first-segment
+-	// join or later-segment credit can arise from the approach's motion budget.
++	// Native approach starts at entry. An aligned, still-before-entry truck may
++	// use the same bounded recorded prejoin offer; Query remains deferred until
++	// actual near/aligned capture, with no join or station credit from the offer.
+ 	protected bool CF_CaptureEntryApproach(vector pose, float now)
+ 	{
+ 		vector offset = pose - m_vTrailEntry;
+@@ -855,7 +858,32 @@
+ 			CF_BlockTrail(reason);
+ 			return false;
+ 		}
+-		if (!(vector.DistanceXZ(pose, m_vTrailEntry) <= 3 && lateral.Length() <= 2 && facingDot >= 0.9)) return false;
++		bool aligned = lateral.Length() <= 2 && facingDot >= 0.9;
++		if (m_fTrailGuideStation > 0 && !aligned)
++		{ CF_BlockTrail("prejoin_window_alignment_lost"); return false; }
++		if (!(vector.DistanceXZ(pose, m_vTrailEntry) <= 3 && aligned))
++		{
++			// No target change until the existing prejoin corridor admits it. A
++			// denied/unavailable prefix keeps the current native approach intact.
++			if (m_bTrailPrejoinLookahead && aligned && along < 0)
++			{
++				CF_TrailEntryWindowRoute entryRoute = CF_TrailEntryWindowRoute.Cast(m_TrailRoute);
++				vector recordedStart, recordedTangent;
++				float firstLength, endStation, safeStation;
++				string windowReason;
++				if (entryRoute && entryRoute.ReadEntry(recordedStart, recordedTangent, firstLength, endStation))
++				{
++					float requestedStation = Math.Min(30.0, endStation - CF_ConvoySettings.Get().m_fMovingGap);
++					if (requestedStation > m_fTrailGuideStation + 1.0 &&
++						entryRoute.ReadPrejoinWindow(m_iTrailEpoch, m_vTrailEntry, m_vTrailEntryTangent, requestedStation, safeStation, windowReason))
++					{
++						if (safeStation > m_fTrailGuideStation + 1.0)
++							CF_OfferPrejoinWindow(pose, m_vTrailEntry, m_vTrailEntryTangent, endStation, true);
++					}
++				}
++			}
++			return false;
++		}
+ 		m_bTrailEntryApproach = false;
+ 		CF_LogEntryGeometry("physical_entry_capture_query_next", pose, along, lateral.Length(), facingDot);
+ 		return true;

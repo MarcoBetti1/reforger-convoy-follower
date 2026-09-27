@@ -1,4 +1,6 @@
 # Preserve the exact bytes of the hashed reproduction artifacts.
+road81-integrated-trip-v1.patch -text
+head-guide-prejoin-approach-v1.patch -text
 head-guide-road81-v1.patch -text
 road81-entry-approach-v1.patch -text
 road81-arrival-trip-v1.patch -text
