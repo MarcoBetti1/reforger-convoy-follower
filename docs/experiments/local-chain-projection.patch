@@ -1,0 +1,353 @@
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c
+@@ -90,7 +90,7 @@
+ }
+ 
+ // Read-only access to retained actual samples. Ordinary Query keeps its original
+-// budget. QueryPhysical explicitly opts into one adjacent station transfer.
++// budget. QueryPhysical also admits a proven, bounded connected local chain.
+ class CF_TrailGuideRoute : CF_DrivenRoute
+ {
+ 	// Value-only, one-query context. Ordinary Query never arms the hook.
+@@ -112,6 +112,11 @@
+ 	protected vector m_PreviousBehind;
+ 	protected float m_PreviousStationBehind;
+ 	protected bool m_PreviousHasNext;
++	// At most four connected legs, captured only after a successful query.
++	// Absolute point/station identity remains valid across harmless pruning.
++	protected ref array<vector> m_PreviousChainPoints = {};
++	protected ref array<float> m_PreviousChainStations = {};
++	protected static const int CF_LOCAL_CHAIN_LEGS = 4;
+ 
+ 	protected bool FiniteValue(float value)
+ 	{
+@@ -152,6 +157,13 @@
+ 		{
+ 			m_PreviousNext = m_Points[m_Segment + 2];
+ 			m_PreviousStationNext = m_Stations[m_Segment + 2];
++		}
++		m_PreviousChainPoints.Clear();
++		m_PreviousChainStations.Clear();
++		for (int local = 0; local <= CF_LOCAL_CHAIN_LEGS && m_Segment + local < m_Points.Count(); local++)
++		{
++			m_PreviousChainPoints.Insert(m_Points[m_Segment + local]);
++			m_PreviousChainStations.Insert(m_Stations[m_Segment + local]);
+ 		}
+ 		m_PreviousPhysicalQuery = true;
+ 	}
+@@ -329,7 +341,9 @@
+ 				return false;
+ 			}
+ 		}
+-		if (!PhysicalBudget(measured, allowed, turnCos, factor, reason))
++		bool budgetReady = PhysicalBudget(measured, allowed, turnCos, factor, reason);
++		bool densePhysicalStep = !budgetReady && reason == "measured_step_spans_multiple_vertices";
++		if (!budgetReady && !densePhysicalStep)
+ 		{
+ 			m_PreviousPhysicalQuery = false;
+ 			result.State = ADVANCE_LIMIT;
+@@ -347,8 +361,23 @@
+ 		bool hadPrevious = m_PreviousPhysicalQuery;
+ 		vector priorPose = m_PreviousPose;
+ 		vector priorStart = m_PreviousA;
+-		// Deliberately bypass the ordinary-Query override, which disarms context.
+-		super.Query(targetKey, pose, lookAhead, spacing, allowed, maxCrossTrack, result);
++		bool queryReady = true;
++		if (densePhysicalStep)
++		{
++			// The single-corner budget has no derivation across dense samples.
++			// Admit only the same bounded local-chain proof, never raw inflation.
++			result.State = ADVANCE_LIMIT;
++			queryReady = TryLocalChainProjection(targetKey, pose, lookAhead, spacing, maxCrossTrack, allowed, result, true);
++			if (queryReady) reason = "";
++		}
++		else
++		{
++			// Bypass ordinary Query's override, which disarms physical context.
++			super.Query(targetKey, pose, lookAhead, spacing, allowed, maxCrossTrack, result);
++			// The ordinary failure commits nothing. Dense local samples can
++			// require more than one adjacent leg for the corridor projection.
++			TryLocalChainProjection(targetKey, pose, lookAhead, spacing, maxCrossTrack, allowed, result);
++		}
+ 		result.HasPreviousPhysicalQuery = hadPrevious;
+ 		result.PreviousPhysicalPose = priorPose;
+ 		result.PreviousIncomingStart = priorStart;
+@@ -361,6 +390,115 @@
+ 		{
+ 			RememberPhysicalQuery(targetKey, pose);
+ 		}
++		return queryReady;
++	}
++
++	protected bool TryLocalChainProjection(int targetKey, vector pose, float lookAhead,
++		float spacing, float maxCrossTrack, float allowed, CF_DrivenRouteGuidance result, bool densePhysicalStep = false)
++	{
++		if (result.State != ADVANCE_LIMIT) return false;
++		if (!m_Initialized || m_HistoryLost || m_Discontinuous) return false;
++		if (lookAhead <= 0 || spacing < 0 || maxCrossTrack <= 0) return false;
++		if (!densePhysicalStep)
++		{
++			if (!result.HasAdvanceDiagnostic || !result.DiagnosticNextSegment) return false;
++			if (result.DiagnosticPriorSegment != m_Segment || result.DiagnosticSegment <= m_Segment) return false;
++		}
++		if (!m_PhysicalQueryActive || !HasLocalPhysicalContext(targetKey)) return false;
++		// The unchanged physical budget must reach the first vertex. This is
++		// not an exemption for unjoined, stale, or underreported physical motion.
++		float firstVertex = m_Stations[m_Segment + 1];
++		if (firstVertex > m_Progress + allowed + 0.001) return false;
++		vector delta = pose - m_PreviousPose;
++		delta[1] = 0;
++		float chord = delta.Length();
++		if (!FiniteValue(chord) || chord <= 0 || m_PhysicalMeasured <= 0) return false;
++		if (chord > m_PhysicalMeasured + 0.001) return false;
++
++		ref array<vector> tangents = {};
++		float turnChordSum = 0;
++		vector projected;
++		float candidate = m_Progress;
++		float crossTrack;
++		int finalSegment = -1;
++		for (int local = 0; local < CF_LOCAL_CHAIN_LEGS; local++)
++		{
++			int segment = m_Segment + local;
++			if (segment + 1 >= m_Points.Count() || local + 1 >= m_PreviousChainPoints.Count()) return false;
++			if (m_PreviousChainPoints[local] != m_Points[segment]) return false;
++			if (m_PreviousChainPoints[local + 1] != m_Points[segment + 1]) return false;
++			if (m_PreviousChainStations[local] != m_Stations[segment]) return false;
++			if (m_PreviousChainStations[local + 1] != m_Stations[segment + 1]) return false;
++			vector a = m_Points[segment];
++			vector b = m_Points[segment + 1];
++			float length = m_Stations[segment + 1] - m_Stations[segment];
++			if (!FinitePose(a) || !FinitePose(b) || !FiniteValue(length) || length <= 0) return false;
++			// All additional dense legs fit within one existing corridor radius
++			// of recorded arc. A nearby but distant history branch is not searched.
++			if (local > 0 && m_Stations[segment + 1] - firstVertex > maxCrossTrack) return false;
++			vector tangent = b - a;
++			tangent[1] = 0;
++			tangent.Normalize();
++			if (vector.Dot(tangent, delta) <= 0) return false;
++			if (local > 0)
++			{
++				float turn = Math.Clamp(vector.Dot(tangents[local - 1], tangent), -1, 1);
++				if (turn < 0) return false;
++				turnChordSum += Math.Sqrt(2.0 - 2.0 * turn);
++				// Sum of unit-tangent chord lengths <= sqrt(2) bounds total
++				// absolute turning to <= 90 degrees, including alternating bends.
++				if (turnChordSum > Math.Sqrt(2.0)) return false;
++			}
++			tangents.Insert(tangent);
++			float raw = vector.Dot(pose - a, tangent) / length;
++			if (!FiniteValue(raw) || raw < 0) return false;
++			projected = a + (b - a) * Math.Clamp(raw, 0, 1);
++			crossTrack = vector.DistanceXZ(pose, projected);
++			if (!FiniteValue(crossTrack) || crossTrack > maxCrossTrack) return false;
++			// Walk every endpoint plane in order. Never inspect a better-looking
++			// later leg when this connected leg still has an interior projection.
++			if (raw >= 1) continue;
++			if (local < 2) return false; // existing single-corner proof owns these
++			candidate = m_Stations[segment] + raw * length;
++			finalSegment = segment;
++			break;
++		}
++		if (finalSegment < 0 || candidate <= m_Progress) return false;
++		vector axis = tangents[0] + tangents[tangents.Count() - 1];
++		if (axis.LengthSq() <= 0) return false;
++		axis.Normalize();
++		float minimumDot = 1;
++		foreach (vector direction : tangents)
++			minimumDot = Math.Min(minimumDot, vector.Dot(axis, direction));
++		if (!FiniteValue(minimumDot) || minimumDot < Math.Sqrt(0.5)) return false;
++		float oldLength = m_Stations[m_Segment + 1] - m_Stations[m_Segment];
++		vector oldCursor = m_Points[m_Segment] + (m_Points[m_Segment + 1] - m_Points[m_Segment]) *
++			((m_Progress - m_Stations[m_Segment]) / oldLength);
++		vector oldResidual = m_PreviousPose - oldCursor;
++		vector newResidual = pose - projected;
++		oldResidual[1] = 0;
++		newResidual[1] = 0;
++		if (oldResidual.Length() > maxCrossTrack) return false;
++		float signedMotion = vector.Dot(axis, delta);
++		float correction = -vector.Dot(axis, newResidual - oldResidual) / minimumDot;
++		float advance = candidate - m_Progress;
++		float physicalBound = m_PhysicalMeasured / minimumDot;
++		if (!FiniteValue(signedMotion) || !FiniteValue(correction) || signedMotion <= 0) return false;
++		if (!FiniteValue(advance) || !FiniteValue(physicalBound)) return false;
++		if (advance > signedMotion / minimumDot + correction + 0.001) return false;
++		if (advance > physicalBound + correction + 0.001) return false;
++		// c*arc <= dot(axis, C1-C0) = dot(axis, Q-P-r1+r0).
++		// This admits a branch-bound coordinate, never extra physical travel.
++		m_Segment = finalSegment;
++		m_Progress = candidate;
++		ClearGuidance(result);
++		FillGuidance(lookAhead, spacing, result);
++		result.CrossTrack = crossTrack;
++		result.HasProjectionCorrection = true;
++		result.ProjectionPhysicalBound = physicalBound;
++		result.ProjectionSignedCorrection = correction;
++		result.ProjectionCandidateAdvance = advance;
++		m_PreviousPhysicalQuery = false;
+ 		return true;
+ 	}
+ 
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c
+@@ -8,6 +8,14 @@
+ class CF_DrivenRouteGeometryReadback : CF_TrailGuideRoute
+ {
+ 	int ObservedSegment() { return m_Segment; }
++	string LocalChainSnapshot()
++	{
++		string snapshot = " prior_valid=" + m_PreviousPhysicalQuery + " prior_station=" + m_PreviousProgress;
++		snapshot += " snapshot_points=" + m_PreviousChainPoints.Count() + " recorded_points=" + m_Points.Count();
++		for (int i = 0; i < 5 && m_Segment + i < m_Points.Count(); i++)
++			snapshot += " point_" + i + "=" + m_Points[m_Segment + i] + " station_" + i + "=" + m_Stations[m_Segment + i];
++		return snapshot;
++	}
+ }
+ 
+ class CF_DrivenRouteGeometryProbeComponent : ScriptComponent
+@@ -470,6 +478,137 @@
+ 		// The pose is closest to the first segment, but the only accepted
+ 		// projection is current segment3's start, never station0.5 or segment0.
+ 		Check("reverse_short_segments_clamp_without_older_segment_credit", endpointOnly && route.ObservedSegment() == 3);
++	}
++
++	// V4's logged local fragment, translated to the failed segment's A.
++	// The log rounds world coordinates; the prior X chord is reconstructed,
++	// not a claim to recover the original engine float bits or full history.
++	protected vector PrepareLocalChainWitness(CF_TrailGuideRoute route, int key,
++		CF_DrivenRouteGuidance g, bool missingLast = false, bool hairpin = false, bool longLast = false)
++	{
++		route.Reset(key, Vector(-0.54, 0, -0.21));
++		route.Record(key, vector.Zero);
++		route.Record(key, Vector(0.499755859, 0, -0.045898438));
++		if (!missingLast)
++		{
++			vector end = Vector(1.31, 0, -0.13);
++			if (hairpin) end = Vector(-0.3, 0, -0.2);
++			if (longLast) end = Vector(6, 0, -0.6);
++			route.Record(key, end);
++		}
++		vector prior = Vector(1.03528 - 0.0599613, 0, -2.56421);
++		Physical(route, key, prior, 2, g);
++		return prior;
++	}
++
++	protected void RunLocalChainCases()
++	{
++		float halfDistance = vector.DistanceXZ(vector.Zero, Vector(0.5, 0, 0));
++		float robustDistance = vector.DistanceXZ(vector.Zero, Vector(0.51, 0, 0));
++		string distanceReadback = "[ConvoyFollower] LOCAL_CHAIN_DISTANCE_READBACK: half_distance=" + halfDistance;
++		distanceReadback += " half_below_min=" + (halfDistance < CF_DrivenRoute.MIN_SAMPLE);
++		distanceReadback += " robust_distance=" + robustDistance + " robust_below_min=" + (robustDistance < CF_DrivenRoute.MIN_SAMPLE);
++		Print(distanceReadback);
++		ref CF_DrivenRouteGeometryReadback route = new CF_DrivenRouteGeometryReadback();
++		ref CF_DrivenRouteGuidance g = new CF_DrivenRouteGuidance();
++		vector query = Vector(1.03528, 0, -2.56421);
++		vector prior = PrepareLocalChainWitness(route, 301, g);
++		float before = route.GetLocalProgress();
++		bool seed = g.State == CF_DrivenRoute.TRACKING && route.ObservedSegment() == 0;
++		route.Query(301, query, 0.3, 0, 0.0617, 5, g);
++		Check("local_chain_default_still_rejects_dense_fragment", seed && g.State == CF_DrivenRoute.ADVANCE_LIMIT && Near(route.GetLocalProgress(), before));
++
++		PrepareLocalChainWitness(route, 302, g);
++		bool accepted = Physical(route, 302, query, 0.0599613, g);
++		bool projected = accepted && g.State == CF_DrivenRoute.TRACKING && g.HasProjectionCorrection;
++		bool branch = route.ObservedSegment() == 2 && g.LocalProgress > 1.8 && g.LocalProgress < 1.9;
++		bool evidence = g.ReverseProofSerial == 0 && !g.Reversing && Near(g.Progress, g.LocalProgress);
++		Check("local_chain_v4_dense_fragment_coordinate_only", projected && branch && evidence && g.ProjectionSignedCorrection > 1);
++
++		PrepareLocalChainWitness(route, 303, g);
++		before = route.GetLocalProgress();
++		Physical(route, 303, query, 0, g);
++		Check("local_chain_zero_motion_cannot_advance", g.State == CF_DrivenRoute.ADVANCE_LIMIT && Near(route.GetLocalProgress(), before) && !g.HasProjectionCorrection);
++		Physical(route, 303, query, 0.0599613, g);
++		Check("local_chain_failed_query_cannot_seed_retry", g.State == CF_DrivenRoute.ADVANCE_LIMIT && Near(route.GetLocalProgress(), before) && !g.HasProjectionCorrection);
++
++		PrepareLocalChainWitness(route, 304, g);
++		before = route.GetLocalProgress();
++		Physical(route, 304, query, 0.03, g);
++		Check("local_chain_underreported_chord_rejected", g.State == CF_DrivenRoute.ADVANCE_LIMIT && Near(route.GetLocalProgress(), before) && !g.HasProjectionCorrection);
++		PrepareLocalChainWitness(route, 305, g);
++		before = route.GetLocalProgress();
++		Physical(route, 305, query + Vector(10, 0, 0), 0.0599613, g);
++		Check("local_chain_teleport_cannot_reacquire", Near(route.GetLocalProgress(), before) && !g.HasProjectionCorrection && !g.HasArcGap);
++
++		PrepareLocalChainWitness(route, 306, g, false, true);
++		before = route.GetLocalProgress();
++		Physical(route, 306, query, 0.0599613, g);
++		Check("local_chain_hairpin_not_searched", g.State == CF_DrivenRoute.ADVANCE_LIMIT && Near(route.GetLocalProgress(), before) && !g.HasProjectionCorrection);
++		PrepareLocalChainWitness(route, 307, g, true);
++		before = route.GetLocalProgress();
++		route.Record(307, Vector(1.31, 0, -0.13));
++		Physical(route, 307, query, 0.0599613, g);
++		Check("local_chain_new_leg_cannot_retrofit_snapshot", g.State == CF_DrivenRoute.ADVANCE_LIMIT && Near(route.GetLocalProgress(), before) && !g.HasProjectionCorrection);
++
++		route.Reset(308, Vector(-1, 0, 0));
++		route.Record(308, vector.Zero);
++		for (int point = 1; point <= 5; point++)
++		{
++			float shortStation = point;
++			shortStation = shortStation * 0.51;
++			route.Record(308, Vector(0, 0, shortStation));
++		}
++		prior = Vector(-0.01, 0, 2.18);
++		Physical(route, 308, prior, 2, g);
++		before = route.GetLocalProgress();
++		vector beyondWindow = Vector(0.01, 0, 2.2);
++		Physical(route, 308, beyondWindow, vector.DistanceXZ(prior, beyondWindow), g);
++		Check("local_chain_four_leg_inspection_limit", g.State == CF_DrivenRoute.ADVANCE_LIMIT && Near(route.GetLocalProgress(), before) && !g.HasProjectionCorrection);
++		PrepareLocalChainWitness(route, 309, g, false, false, true);
++		before = route.GetLocalProgress();
++		Physical(route, 309, query, 0.0599613, g);
++		Check("local_chain_recorded_arc_window_is_bounded", g.State == CF_DrivenRoute.ADVANCE_LIMIT && Near(route.GetLocalProgress(), before) && !g.HasProjectionCorrection);
++
++		route.Reset(310, vector.Zero);
++		route.Record(310, Vector(1, 0, 0));
++		for (int sample = 1; sample <= 5; sample++)
++		{
++			float denseStation = sample;
++			denseStation = denseStation * 0.51 + 1.0;
++			route.Record(310, Vector(denseStation, 0, 0));
++		}
++		float denseAllowed, denseTurn, denseFactor;
++		string denseReason;
++		accepted = route.QueryPhysical(310, Vector(0.9, 0, 0), 0.9, 0.3, 0, 5, denseAllowed, denseTurn, denseFactor, denseReason, g);
++		PrintDenseResult("seed", route, accepted, g, denseAllowed, denseTurn, denseFactor, denseReason);
++		accepted = route.QueryPhysical(310, Vector(2.2, 0, 0), 1.3, 0.3, 0, 5, denseAllowed, denseTurn, denseFactor, denseReason, g);
++		PrintDenseResult("step", route, accepted, g, denseAllowed, denseTurn, denseFactor, denseReason);
++		bool denseStep = accepted && g.State == CF_DrivenRoute.TRACKING && route.ObservedSegment() == 3;
++		Check("local_chain_measured_dense_centerline_step", denseStep && Near(g.LocalProgress, 2.2) && Near(g.ProjectionSignedCorrection, 0));
++		route.Reset(311, vector.Zero);
++		route.Record(311, Vector(1, 0, 0));
++		for (int extra = 1; extra <= 5; extra++)
++		{
++			float extraStation = extra;
++			extraStation = extraStation * 0.51 + 1.0;
++			route.Record(311, Vector(extraStation, 0, 0));
++		}
++		Physical(route, 311, Vector(0.9, 0, 0), 0.9, g);
++		accepted = Physical(route, 311, Vector(3.2, 0, 0), 2.3, g);
++		Check("local_chain_measured_step_exceeding_window_rejected", !accepted && Near(route.GetLocalProgress(), 0.9) && !g.HasProjectionCorrection);
++	}
++
++	protected void PrintDenseResult(string phase, CF_DrivenRouteGeometryReadback route, bool accepted,
++		CF_DrivenRouteGuidance g, float allowed, float turn, float factor, string reason)
++	{
++		string line = "[ConvoyFollower] LOCAL_CHAIN_NATIVE_READBACK: phase=" + phase + " accepted=" + accepted;
++		line += " state=" + g.State + " local=" + g.LocalProgress + " actual_local=" + route.GetLocalProgress();
++		line += " high_water=" + g.Progress + " segment=" + route.ObservedSegment();
++		line += " allowed=" + allowed + " turn=" + turn + " factor=" + factor + " reason=" + reason;
++		line += " corrected=" + g.HasProjectionCorrection + " signed_correction=" + g.ProjectionSignedCorrection;
++		line += " candidate_advance=" + g.ProjectionCandidateAdvance + route.LocalChainSnapshot();
++		Print(line);
+ 	}
+ 
+ 	protected void RunCases()
+@@ -573,6 +712,7 @@
+ 		RunReverseCases();
+ 		RunClampedStartCases();
+ 		RunEndpointRetreatCases();
++		RunLocalChainCases();
+ 		if (m_Passed == m_Total)
+ 			Print("[ConvoyFollower] DRIVEN_ROUTE_RESULT: PASS cases=" + m_Passed);
+ 		else
