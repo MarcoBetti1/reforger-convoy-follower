@@ -1,0 +1,98 @@
+{
+  "description": "Six fixture-resource increment; no product changes. Apply after the exact cooperative-supply-recovery-v1 source archive, preserving byte line endings (core.autocrlf=false).",
+  "baseline": {
+    "archive": "cooperative-supply-recovery-v1-source.patch",
+    "archiveSha256": "E55F252FF38FB540CC574B4BD15CEC3B6412AAD51FECDCBEFE2D29673D7CCF92",
+    "manifest": "cooperative-supply-recovery-v1-source.json",
+    "manifestSha256": "A93195EBCC7E2A786993DCC7B581CA5DD1A2654368463EB705D7D01B7FEADF48",
+    "sourceManifestSha256": "9181D1E87975D5B23C50633096EC9F8AF210C8DD9E36A21DD58A47F0574F0F79",
+    "files": 590
+  },
+  "world": "Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent",
+  "terminalMarker": "NATURAL_RECOVERY_RESULT:",
+  "sourceManifestSha256": "8620282E347B7D6EB39A1D8FDD92EFA7977ED14B2D18983E5A3F2A5480EB8954",
+  "sourceFiles": 594,
+  "unchangedFiles": 588,
+  "packSha256": "EA4BE53E9841133E2EEA5A200CAABB717A003B22A5881861A50CC117F0068A8F",
+  "files": [
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c",
+      "bytes": 61213,
+      "sha256": "5F43A9EBBEA786F65FB78E3D7C47AB15A5DCF76698BA33A3512A508B444383D1",
+      "baselineSha256": "4CEF34CDA4433C83C900BD2D8C029D41349BA04CF4AC3532BDFAC289229F2702"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_NaturalRecoveryTripProbeComponent.c",
+      "bytes": 17515,
+      "sha256": "15653414C4BE3F10CE5FA2C51C801D5762A8B65AE75B644AC519765421622C5C",
+      "baselineSha256": null
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c",
+      "bytes": 21720,
+      "sha256": "0DC7E52B7101D66A96F22E338E776B4C8EB9D23CC418C5AE585BF43F1FF02804",
+      "baselineSha256": "32AE1DFF3F50E1E106C201AE06AAB7336BBA16962A6144A1336712FB38EC8B49"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks_Layers/default.layer",
+      "bytes": 3279,
+      "sha256": "0C3C102084922A1A5E71A6EC05C2105A788E579EB0D770E0E0EE789DEDD59C86",
+      "baselineSha256": null
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent",
+      "bytes": 76,
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C",
+      "baselineSha256": null
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent.meta",
+      "bytes": 205,
+      "sha256": "03BDCDC349F29C4239BF9C584C4155C9FD2BADFF7C97719DD5DE0B6031DAAD68",
+      "baselineSha256": null
+    }
+  ],
+  "patch": {
+    "file": "natural-recovery-trip-v1-source.patch",
+    "bytes": 28199,
+    "sha256": "0F91B0F8598DAF5C074B78A90E68705233F4ABC43A22DF1AE558C0C9E98A696B"
+  },
+  "isolatedReplay": {
+    "gitApplyCheck": true,
+    "changedFilesReproduced": 6,
+    "unexpectedPaths": [],
+    "results": [
+      {
+        "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c",
+        "sha256": "5F43A9EBBEA786F65FB78E3D7C47AB15A5DCF76698BA33A3512A508B444383D1",
+        "matches": true
+      },
+      {
+        "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_NaturalRecoveryTripProbeComponent.c",
+        "sha256": "15653414C4BE3F10CE5FA2C51C801D5762A8B65AE75B644AC519765421622C5C",
+        "matches": true
+      },
+      {
+        "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c",
+        "sha256": "0DC7E52B7101D66A96F22E338E776B4C8EB9D23CC418C5AE585BF43F1FF02804",
+        "matches": true
+      },
+      {
+        "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks_Layers/default.layer",
+        "sha256": "0C3C102084922A1A5E71A6EC05C2105A788E579EB0D770E0E0EE789DEDD59C86",
+        "matches": true
+      },
+      {
+        "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent",
+        "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C",
+        "matches": true
+      },
+      {
+        "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent.meta",
+        "sha256": "03BDCDC349F29C4239BF9C584C4155C9FD2BADFF7C97719DD5DE0B6031DAAD68",
+        "matches": true
+      }
+    ]
+  },
+  "runtime": "Closed FAIL: recovered native delivery200; final tail departure route guard failed. The original natural native order failure remains retained."
+}

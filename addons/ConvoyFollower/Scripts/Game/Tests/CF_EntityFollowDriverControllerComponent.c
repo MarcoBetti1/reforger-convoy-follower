@@ -1246,6 +1246,27 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		return true;
 	}
 
+	// Active request failure guidance only; retained failure history is not a warning.
+	override string CF_GetPanelStateLabel()
+	{
+		if (!m_bOriginalFollowGraph || !m_bOriginalFollowBlocked)
+			return super.CF_GetPanelStateLabel();
+		if (m_sOriginalFollowFailure.IndexOf("guard_or_request_failure_admitted_move_3_handler_") != 0)
+			return super.CF_GetPanelStateLabel();
+		// Keep ownership, boarding and genuine route/recovery failures authoritative.
+		if (m_bControlBoardingTimedOut || CF_IsControlBlocked() || m_bPanelHoldReboardBlocked)
+			return super.CF_GetPanelStateLabel();
+		if (CF_HasPersistentFollowFailure() || m_bEntityPanelWaitFailed || !CF_IsBoarded())
+			return super.CF_GetPanelStateLabel();
+		if (m_bOriginalFollowResetPending || m_bDeferredControlDismiss)
+			return super.CF_GetPanelStateLabel();
+		if (CF_IsPanelHeld()) return "held: Resume retries order";
+		if (m_bPanelHoldRequested) return super.CF_GetPanelStateLabel();
+		if (m_iState == CF_FOLLOWING || m_iState == CF_ARRIVING)
+			return "order failed: Hold, then Resume";
+		return super.CF_GetPanelStateLabel();
+	}
+
 	override string CF_GetResumeFailureReason()
 	{
 		if (m_bOriginalFollowGraph && m_bOriginalFollowBlocked)

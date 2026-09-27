@@ -1,0 +1,548 @@
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+index 3724e0c..c843a1f 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+@@ -116,8 +116,7 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 			" preparatory_survey=true positions_changed=false controls_changed=false cargo_changed=false");
+ 		m_PairResumeEvidence.Insert(new CF_OriginalTailGuideEvidence());
+ 		m_PairResumeEvidence.Insert(new CF_OriginalTailGuideEvidence());
+-		string expectedWorld = "Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks.ent";
+-		if (m_bPairCommandsOnly) expectedWorld = "Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent";
++		string expectedWorld = PairCourseWorld();
+ 		if (m_iExpectedTrucks != 2 || m_fPacedLeadSpeedKmh != 20 || m_sPacedWorld != expectedWorld)
+ 			NoteFailure("fixture", "loaded_pair_contract_mismatch");
+ 		if (m_bPairCooperativeLead)
+@@ -125,6 +124,7 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 				" ceiling_kmh=" + m_fPacedLeadSpeedKmh + " clear=configured ease=follower_forward_minus_2 wait=0 release_kmh_per_s=3" +
+ 				" immediate_decrease=true stale=retain_previous_cap startup_cap=0 max_advice_age_ms=2500 missing_timeout_s=90" +
+ 				" constant_speed_claim=false follower_controls_changed=false advice_is_permission=false");
++		if (!PairUsesBaselineArrival()) return;
+ 		if (m_bPairCommandsOnly)
+ 		{
+ 			Print("[ConvoyFollower] LOADED_PAIR_INIT: run_id=" + m_sPacedRun +
+@@ -145,6 +145,14 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 			" owner_staging=test_only ordinary_input=false source_count_writes=false follower_control_writes=false production_controller=true");
+ 	}
+ 
++	// Default-preserving seams for the distinct explicit-failure recovery course.
++	protected string PairCourseWorld()
++	{
++		if (m_bPairCommandsOnly) return "Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent";
++		return "Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks.ent";
++	}
++	protected bool PairUsesBaselineArrival() { return true; }
++
+ 	// Advice changes this fixture's existing native lead cap only. It never
+ 	// grants follower/command readiness, route evidence or movement credit.
+ 	override protected float PacedLeadCapKmh()
+@@ -486,6 +494,11 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 		return CF_ConvoyFollowDriverControllerComponent.Cast(m_PacedTrucks[unit].Driver);
+ 	}
+ 
++	protected bool PairControllerFailed(int unit, CF_ConvoyFollowDriverControllerComponent driver)
++	{
++		return driver.CF_HasEntityFallbackFailure();
++	}
++
+ 	protected bool CommandIdentities()
+ 	{
+ 		if (!PacedWorldAlive() || m_PacedTrucks.Count() != 3 || m_iExpectedTrucks != 2 || m_Player != m_PairOwner || m_PacedOwner != m_PairOwner ||
+@@ -497,7 +510,7 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 		{
+ 			CF_ConvoyFollowDriverControllerComponent driver = PairDriver(unit);
+ 			if (!IdentityRetained(unit, true) || !driver || driver.Type().ToString() != "CF_ConvoyFollowDriverControllerComponent" ||
+-				!driver.CF_TestOrdinaryRoleReady(unit > 1) || driver.CF_HasEntityFallbackFailure()) return false;
++				!driver.CF_TestOrdinaryRoleReady(unit > 1) || PairControllerFailed(unit, driver)) return false;
+ 			if (!m_bPairCommandsOnly && m_PacedTrucks[unit].Truck != m_PairCargo[unit - 1].PairTruck()) return false;
+ 			if (unit == 2 && m_MixedUnits[1].ObservedEpoch > 0)
+ 			{
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_NaturalRecoveryTripProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_NaturalRecoveryTripProbeComponent.c
+new file mode 100644
+index 0000000..4f922e5
+--- /dev/null
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_NaturalRecoveryTripProbeComponent.c
+@@ -0,0 +1,315 @@
++// Private full-supply fixture: one scripted owner response to a REAL failed
++// original native move. No failure injection, controller writes or new pilot.
++class CF_NaturalRecoveryReadback
++{
++	CF_DrivenRoute Route;
++	CF_OriginalFollowLease Lease;
++	CF_EntityFollowWaypoint Waypoint;
++	IEntity Predecessor;
++	int Epoch;
++	int Generation;
++	bool Joined;
++	bool OriginalBlocked;
++	bool BlockApplied;
++	bool ActiveFallback;
++	bool TrailBlocked;
++	bool ArrivalRecovery;
++	string Failure;
++}
++
++// Observation only. The retained reference is never made executable again.
++modded class CF_ConvoyFollowDriverControllerComponent
++{
++	void CF_TestReadNaturalRecovery(CF_NaturalRecoveryReadback read)
++	{
++		if (!read) return;
++		read.Route = m_TrailRoute; read.Lease = m_OriginalFollowLease;
++		read.Waypoint = CF_EntityFollowWaypoint.Cast(m_Waypoint);
++		read.Predecessor = m_TrailPredecessor; read.Epoch = m_iTrailEpoch;
++		read.Generation = m_iOriginalFollowGeneration; read.Joined = m_bTrailJoined;
++		read.OriginalBlocked = m_bOriginalFollowBlocked; read.BlockApplied = m_bOriginalFollowBlockApplied;
++		read.ActiveFallback = CF_HasActiveEntityFallbackFailure(); read.TrailBlocked = m_bTrailBlocked;
++		read.ArrivalRecovery = m_bArrivalRecoveryActive; read.Failure = m_sOriginalFollowFailure;
++	}
++}
++
++class CF_NaturalRecoveryTripProbeComponentClass : CF_LoadedPairTripProbeComponentClass {}
++
++class CF_NaturalRecoveryTripProbeComponent : CF_LoadedPairTripProbeComponent
++{
++	protected ref CF_OriginalFollowLease m_NaturalLease;
++	protected ref CF_OriginalFollowActivity m_NaturalActivity;
++	protected CF_DrivenRoute m_NaturalRoute;
++	protected int m_iNaturalEpoch;
++	protected int m_iNaturalGeneration;
++	protected int m_iNaturalHandler;
++	protected float m_fNaturalWitnessMs = -1;
++	protected int m_iNaturalCount;
++	protected int m_iNaturalStage; // 0 normal; 1 retirement; 2 stop; 3 settle Hold; 4 Hold; 5 continuing trip
++	protected string m_sNaturalReason;
++	protected vector m_vNaturalGoal;
++	protected vector m_vNaturalResumeTail;
++	protected float m_fNaturalHeldSeconds;
++	protected int m_iNaturalHeldSamples;
++	protected bool m_bNaturalHoldAccepted;
++	protected bool m_bNaturalResumeAccepted;
++	protected bool m_bNaturalRetired;
++	protected bool m_bNaturalResult;
++	protected int m_iNaturalMovementLogs;
++
++	override protected string PairCourseWorld()
++	{
++		return "Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent";
++	}
++
++	override void OnPostInit(IEntity owner)
++	{
++		super.OnPostInit(owner);
++		if (!Replication.IsServer()) return;
++		if (m_bPairCommandsOnly || !m_bPairCooperativeLead || !m_bPairGroundAlignStorage)
++			PairFailure("natural_recovery_fixture_contract");
++		Print("[ConvoyFollower] NATURAL_RECOVERY_INIT: maximum_owner_responses=1 failure_injection=false" +
++			" failure_kind=admitted_native_move_3 original_destination_preserved=true recovery_hold_s=30 recovery_drift_m=2" +
++			" total_timeout_s=720 phase_timeout_s=90 recovery_timeout_s=240 cargo_total=1800 delivery=200" +
++			" arrival_s=180 final_resume_each_m=20 final_resume_each_powered=3 max_link_m=60 ordinary_input=false");
++	}
++
++	protected CF_NaturalRecoveryReadback NaturalRead()
++	{
++		CF_NaturalRecoveryReadback read = new CF_NaturalRecoveryReadback();
++		if (PairDriver(2)) PairDriver(2).CF_TestReadNaturalRecovery(read);
++		return read;
++	}
++
++	// Pin an actual selected/executing, joined native order before retirement.
++	protected void PinNaturalWitness(float now)
++	{
++		if (m_iNaturalCount != 0 || m_iPairPhase != 1 || !m_bPacedStarted || m_bPacedObserving) return;
++		if (!CommandIdentities() || !m_sPendingRouteResult.IsEmpty()) return;
++		CF_NaturalRecoveryReadback read = NaturalRead();
++		if (!read.Joined || !read.Route || read.Epoch <= 0 || read.TrailBlocked || read.ArrivalRecovery) return;
++		CF_OriginalFollowLease lease = read.Lease;
++		string reason;
++		if (!lease || !lease.Activity || !lease.Executing(m_PacedTrucks[2].Group, reason)) return;
++		if (lease.NativeTarget != PairDriver(2).CF_GetTrailGuideEntity() || lease.Predecessor != m_PacedTrucks[1].Truck) return;
++		if (read.OriginalBlocked || read.ActiveFallback || PairDriver(1).CF_HasPanelHoldRequest()) return;
++		if (!PairDriver(1).CF_IsMovementActive()) return;
++		Physics physics = m_PacedTrucks[1].Truck.GetPhysics();
++		if (!physics || !(3.6 * vector.Dot(physics.GetVelocity(), m_PacedTrucks[1].Truck.GetWorldTransformAxis(2)) > 1.5)) return;
++		AIGroupMovementComponent movement = AIGroupMovementComponent.Cast(m_PacedTrucks[2].Group.GetMovementComponent());
++		if (!movement) return;
++		int handler = movement.GetAgentMoveHandlerId(lease.Agent);
++		if (handler <= AIGroupMovementComponent.DEFAULT_HANDLER_ID) return;
++		m_NaturalLease = lease; m_NaturalActivity = lease.Activity; m_NaturalRoute = read.Route;
++		m_iNaturalEpoch = read.Epoch; m_iNaturalGeneration = lease.Generation; m_iNaturalHandler = handler;
++		m_fNaturalWitnessMs = now;
++	}
++
++	protected bool NaturalHistory(CF_NaturalRecoveryReadback read)
++	{
++		if (m_iNaturalCount != 1 || !read || !m_NaturalLease || !m_NaturalActivity) return false;
++		if (!m_NaturalLease.Failed || !m_NaturalLease.Revoked || m_NaturalLease.ArrivalRecoveryOwned) return false;
++		if (m_NaturalLease.Activity != m_NaturalActivity || m_NaturalLease.Controller != PairDriver(2)) return false;
++		if (m_NaturalLease.Session != m_PacedSession || m_NaturalLease.Generation != m_iNaturalGeneration) return false;
++		if (m_NaturalLease.Driver != m_PacedTrucks[2].Pilot || m_NaturalLease.Truck != m_PacedTrucks[2].Truck) return false;
++		if (m_NaturalLease.Group != m_PacedTrucks[2].Group || m_NaturalLease.Predecessor != m_PacedTrucks[1].Truck) return false;
++		if (m_NaturalLease.OriginalWorld != GetGame().GetWorld() || read.TrailBlocked || read.ArrivalRecovery) return false;
++		if (!read.Route || read.Route != m_NaturalRoute || read.Route.GetPointCount() < 2 || !read.Joined) return false;
++		if (read.Epoch != m_iNaturalEpoch || read.Predecessor != m_PacedTrucks[1].Truck) return false;
++		// Ordinary healthy retirement may revoke a later approach; a second
++		// failed lease is never recoverable by this one-response fixture.
++		if (read.Lease && read.Lease != m_NaturalLease && read.Lease.Failed) return false;
++		return true;
++	}
++
++	override protected bool PairControllerFailed(int unit, CF_ConvoyFollowDriverControllerComponent driver)
++	{
++		if (unit != 2 || m_iNaturalCount == 0) return super.PairControllerFailed(unit, driver);
++		CF_NaturalRecoveryReadback read = NaturalRead();
++		if (!NaturalHistory(read)) return true;
++		if (m_iNaturalStage < 5)
++			return !read.OriginalBlocked || !read.ActiveFallback || read.Failure != m_sNaturalReason;
++		return read.OriginalBlocked || read.ActiveFallback;
++	}
++
++	override protected bool MixedControllerFailed(int unit, CF_EntityFollowDriverControllerComponent driver)
++	{
++		if (unit != 2 || m_iNaturalCount == 0) return super.MixedControllerFailed(unit, driver);
++		return m_iNaturalStage != 5 || PairControllerFailed(unit, PairDriver(unit));
++	}
++
++	protected bool AdmitNaturalFailure(float now)
++	{
++		if (m_iNaturalCount != 0 || m_iPairPhase != 1 || m_bPacedObserving || !m_bPacedStarted) return false;
++		if (!m_NaturalLease || !m_NaturalLease.Failed || !m_NaturalLease.Revoked || m_NaturalLease.ArrivalRecoveryOwned) return false;
++		if (m_fNaturalWitnessMs < 0 || now - m_fNaturalWitnessMs > 1500 || now < m_fNaturalWitnessMs) return false;
++		CF_NaturalRecoveryReadback read = NaturalRead();
++		string expected = "guard_or_request_failure_admitted_move_3_handler_" + m_iNaturalHandler;
++		if (!read.OriginalBlocked || !read.ActiveFallback || read.Failure != expected) return false;
++		if (read.Generation != m_iNaturalGeneration || !m_sPendingRouteResult.IsEmpty()) return false;
++		m_iNaturalCount = 1; m_iNaturalStage = 1; m_sNaturalReason = expected;
++		if (!NaturalHistory(read) || !CommandIdentities()) { PairFailure("natural_failure_binding_changed"); return true; }
++		// Preserve the raw overall FAIL. Only this named, exact failed attempt
++		// may continue toward a separately reported recovered workflow.
++		m_bPacedFailed = true;
++		if (m_sFirstFailure.IsEmpty()) m_sFirstFailure = "natural_original_order:" + expected;
++		Print("[ConvoyFollower] PACED_FAILURE: run_id=" + m_sPacedRun + " scope=natural_original_order reason=" + expected + " recovery_response_pending=true");
++		m_vNaturalGoal = m_vRoadGoal; m_fPairCommandMs = now; SetPairPhase(20);
++		// Stop interval continuity, preserving separately earned best-attempt proof.
++		for (int index = 0; index < 2; index++) m_MixedUnits[index].PreviousEligible = false;
++		string line = "[ConvoyFollower] NATURAL_RECOVERY_FAILURE: count=1 unit=2 reason=" + expected;
++		line += " generation=" + m_iNaturalGeneration + " sequence=" + m_NaturalActivity.CF_GetSequence();
++		line += " activity=" + m_NaturalActivity.ToString() + " epoch=" + m_iNaturalEpoch + " handler=" + m_iNaturalHandler;
++		line += " witness_age_ms=" + (now - m_fNaturalWitnessMs) + " original_goal=" + m_vNaturalGoal;
++		line += " failed_attempt_retained=true failure_injection=false clean_first_attempt=false";
++		Print(line);
++		return true;
++	}
++
++	override void EOnPostFrame(IEntity owner, float timeSlice)
++	{
++		if (PacedWorldAlive() && !m_bPacedTerminal)
++		{
++			float now = GetGame().GetWorld().GetWorldTime();
++			if (m_iNaturalCount == 0) { AdmitNaturalFailure(now); if (!m_bPacedTerminal) PinNaturalWitness(now); }
++			else if (!NaturalHistory(NaturalRead())) PairFailure("natural_recovery_retained_history_or_second_failure");
++		}
++		// Inherited exact ledger, physical Hold, assignment and spacing checks run.
++		super.EOnPostFrame(owner, timeSlice);
++	}
++
++	protected bool ContinueOriginalGoal()
++	{
++		if (!CommandIdentities() || !CanControlLead() || !OwnerRetained() || !EntryReady(m_PacedTrucks[0])) return false;
++		if (!LeadWaitSelected() || m_PilotWaypoint || vector.Distance(m_vNaturalGoal, m_vRoadGoal) > 0.001) return false;
++		// Never extend the route to manufacture departure distance.
++		// The unchanged baseline marks its goal reached at 14 m.
++		if (m_bRoadGoalReached || !(vector.Distance(m_Lead.GetOrigin(), m_vNaturalGoal) > 14)) return false;
++		Resource prefab = Resource.Load("{750A8D1695BD6998}Prefabs/AI/Waypoints/AIWaypoint_Move.et");
++		if (!prefab.IsValid()) return false;
++		EntitySpawnParams params = EntitySpawnParams();
++		params.TransformMode = ETransformMode.WORLD; params.Transform[3] = m_vNaturalGoal;
++		SCR_AIWaypoint waypoint = SCR_AIWaypoint.Cast(GetGame().SpawnEntityPrefabLocal(prefab, null, params));
++		if (!waypoint) return false;
++		if (!m_PacedCruise.Request(m_Pilot, m_Lead, 0, "natural_recovery_original_goal"))
++		{ SCR_EntityHelper.DeleteEntityAndChildren(waypoint); return false; }
++		m_vTransferOrigin = m_Lead.GetOrigin(); m_bCommandParking = true;
++		m_PacedWait.Complete(); m_PacedWait = null;
++		m_bPacedHoldingLead = false; m_bPacedOwnBrake = false;
++		waypoint.SetPriorityLevel(SCR_AIActionBase.PRIORITY_LEVEL_GAMEMASTER);
++		waypoint.SetCompletionRadius(5);
++		m_PilotWaypoint = waypoint; m_PilotGroup.AddWaypoint(waypoint);
++		ReleaseCommandParking("natural_recovery_same_delivery_goal");
++		Print("[ConvoyFollower] NATURAL_RECOVERY_CONTINUE: lead=" + m_Lead.GetOrigin() + " goal=" + m_vNaturalGoal +
++			" original_destination=true route_extension=false original_cargo=true lead_cap_kmh=0 fresh_advice_required=true");
++		return true;
++	}
++
++	protected void ResetRecoveryHoldScratch()
++	{
++		m_bPairHoldMeasure = false; m_bPairHoldAccepted = false; m_bPairResumeAccepted = false;
++		m_fHoldBeginMs = 0; m_fHoldCompletedSeconds = 0; m_fHoldLastSampleMs = 0;
++		m_iHoldSamples = 0; m_iHoldStable = 0; m_HoldOrigins.Clear();
++		for (int index = 0; index < 2; index++) { m_HoldDrifts[index] = 0; m_HoldSpeeds[index] = 0; }
++	}
++
++	override protected void Poll()
++	{
++		if (!PacedWorldAlive() || m_bPacedTerminal) return;
++		float now = GetGame().GetWorld().GetWorldTime();
++		if (m_iNaturalCount == 0) AdmitNaturalFailure(now);
++		if (m_bPacedTerminal) return;
++		if (m_iNaturalStage == 0 || m_iNaturalStage == 5)
++		{
++			if (m_iNaturalStage == 5 && !CommandIdentities()) { PairFailure("natural_recovery_current_identity_or_failure"); return; }
++			super.Poll();
++			if (!m_bPacedTerminal && m_iNaturalStage == 0) PinNaturalWitness(now);
++			if (!m_bPacedTerminal && m_iNaturalStage == 5 && m_iPairPhase == 1 && m_iNaturalMovementLogs < 90)
++			{
++				m_iNaturalMovementLogs++;
++				CF_OriginalTailGuideEvidence evidence = m_MixedUnits[1];
++				string line = "[ConvoyFollower] NATURAL_RECOVERY_TRAVEL: tail=" + m_PacedTrucks[2].Truck.GetOrigin();
++				line += " displacement_m=" + vector.DistanceXZ(m_vNaturalResumeTail, m_PacedTrucks[2].Truck.GetOrigin());
++				line += " sequence=" + evidence.ActivitySequence + " progress_m=" + evidence.Progress + " powered=" + evidence.PoweredSamples;
++				line += " epoch=" + evidence.ObservedEpoch + " observing_arrival=" + m_bPacedObserving + " old_failure_retained=true";
++				Print(line);
++			}
++			return;
++		}
++		if (PacedSeconds() > 720 || now - m_fPairCommandMs > 240000 || now - m_fPairPhaseMs > 90000)
++		{ PairFailure("natural_recovery_phase_or_total_timeout"); return; }
++		if (m_bPairNonSpacingFailure || !CommandIdentities() || !CheckPairLedger())
++		{ PairFailure("natural_recovery_identity_cargo_or_unexpected_failure"); return; }
++		if (!UpdateCooperativeLead(now)) return;
++		m_iPacedTick++; MeasurePeaks(); MeasurePairHold(); LogPairHold(now);
++		if (m_bPacedTerminal) return;
++		CF_NaturalRecoveryReadback read = NaturalRead();
++		if (m_iNaturalStage == 1)
++		{
++			if (now - m_fPairPhaseMs > 10000) { PairFailure("natural_failed_slot_not_retired_10s"); return; }
++			if (!read.BlockApplied || read.Lease || read.Waypoint || PairDriver(2).CF_GetTrailGuideEntity()) return;
++			m_bNaturalRetired = true; HoldLeadAtRoadGoal(); m_iNaturalStage = 2; SetPairPhase(21);
++		}
++		else if (m_iNaturalStage == 2)
++		{
++			if (!LeadWaitSelected() || CommandSpeed(m_Lead) > 2 || !CommandSeat(m_PacedOwner, false)) return;
++			m_bNaturalHoldAccepted = CF_ConvoySession.CF_PanelHold(m_PacedOwner);
++			Print("[ConvoyFollower] NATURAL_RECOVERY_HOLD: accepted=" + m_bNaturalHoldAccepted + " public_server_command=true");
++			if (!m_bNaturalHoldAccepted) { PairFailure("natural_recovery_hold_rejected"); return; }
++			m_iNaturalStage = 3; SetPairPhase(22);
++		}
++		else if (m_iNaturalStage == 3)
++		{
++			if (PairHeld() && CommandSpeed(m_PacedTrucks[1].Truck) <= 2 && CommandSpeed(m_PacedTrucks[2].Truck) <= 2) m_iHoldStable++;
++			else m_iHoldStable = 0;
++			if (m_iHoldStable < 3) return;
++			m_HoldOrigins.Insert(m_PacedTrucks[1].Truck.GetOrigin()); m_HoldOrigins.Insert(m_PacedTrucks[2].Truck.GetOrigin());
++			m_fHoldBeginMs = now; m_fHoldLastSampleMs = now; m_bPairHoldMeasure = true;
++			m_iNaturalStage = 4; SetPairPhase(23);
++		}
++		else if (m_iNaturalStage == 4)
++		{
++			if (now - m_fHoldBeginMs < 30000 || m_iHoldSamples < 30) return;
++			if (!LeadWaitSelected() || !CanControlLead() || !CommandSeat(m_PacedOwner, false))
++			{ PairFailure("natural_recovery_lead_or_owner_lost"); return; }
++			if (m_bRoadGoalReached || !(vector.Distance(m_Lead.GetOrigin(), m_vNaturalGoal) > 14))
++			{ PairFailure("natural_recovery_original_goal_already_in_arrival_range"); return; }
++			m_fNaturalHeldSeconds = (now - m_fHoldBeginMs) / 1000; m_iNaturalHeldSamples = m_iHoldSamples;
++			m_bNaturalResumeAccepted = CF_ConvoySession.CF_PanelResume(m_PacedOwner);
++			Print("[ConvoyFollower] NATURAL_RECOVERY_RESUME: accepted=" + m_bNaturalResumeAccepted + " held_s=" + m_fNaturalHeldSeconds +
++				" samples=" + m_iNaturalHeldSamples + " old_lease_failed=" + m_NaturalLease.Failed + " public_server_command=true");
++			if (!m_bNaturalResumeAccepted) { PairFailure("natural_recovery_resume_rejected"); return; }
++			m_bPairHoldMeasure = false; m_iNaturalStage = 5;
++			if (!ContinueOriginalGoal()) { PairFailure("natural_recovery_original_goal_restart_unavailable"); return; }
++			m_vNaturalResumeTail = m_PacedTrucks[2].Truck.GetOrigin();
++			// Parent samples were paused during recovery. Reanchor only interval
++			// endpoints: no unobserved movement may inherit today's throttle.
++			foreach (CF_PacedRoadTruckSample sample : m_PacedTrucks)
++			{
++				sample.LastPosition = sample.Truck.GetOrigin();
++				sample.LastForward = sample.Truck.GetWorldTransformAxis(2);
++			}
++			ResetRecoveryHoldScratch(); SetPairPhase(1);
++		}
++	}
++
++	override protected void EndPaced()
++	{
++		if (m_bPacedTerminal) return;
++		super.EndPaced();
++		if (!m_bPacedTerminal || m_bNaturalResult) return;
++		m_bNaturalResult = true;
++		bool recovered = m_bPairComplete && m_iNaturalCount == 1 && m_iNaturalStage == 5;
++		recovered = recovered && m_bNaturalRetired && m_bNaturalHoldAccepted && m_bNaturalResumeAccepted;
++		CF_NaturalRecoveryReadback read = NaturalRead();
++		recovered = recovered && m_fNaturalHeldSeconds >= 30 && m_iNaturalHeldSamples >= 30 && NaturalHistory(read);
++		recovered = recovered && read.Generation > m_iNaturalGeneration && !read.OriginalBlocked && !read.ActiveFallback;
++		string result = "[ConvoyFollower] NATURAL_RECOVERY_RESULT: workflow_complete=" + m_bPairComplete;
++		result += " workflow_recovered=" + recovered + " overall_pass=" + (m_bPairComplete && !m_bPacedFailed);
++		result += " natural_failure_count=" + m_iNaturalCount + " native_failure_retained=" + (m_NaturalLease && m_NaturalLease.Failed);
++		result += " clean_first_attempt=" + (m_iNaturalCount == 0 && m_bPairComplete && !m_bPacedFailed);
++		result += " recovery_hold_s=" + m_fNaturalHeldSeconds + " recovery_hold_samples=" + m_iNaturalHeldSamples;
++		result += " cargo_tested=true original_delivery_goal=true final_resume_gates_unchanged=true ordinary_input=false";
++		Print(result);
++	}
++}
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
+index d68e55f..3b01173 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
+@@ -167,6 +167,12 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 		return m_MixedUnits[unit - 1];
+ 	}
+ 
++	// Historical failure remains the default verdict for existing courses.
++	protected bool MixedControllerFailed(int unit, CF_EntityFollowDriverControllerComponent driver)
++	{
++		return driver.CF_HasEntityFallbackFailure();
++	}
++
+ 	protected void ObserveMixedUnit(int unit)
+ 	{
+ 		CF_OriginalTailGuideEvidence evidence = MixedEvidence(unit);
+@@ -197,7 +203,7 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 		}
+ 		CF_EntityFollowDriverControllerComponent driver = CF_EntityFollowDriverControllerComponent.Cast(sample.Driver);
+ 		CF_TrailGuideDriverControllerComponent tail = MixedTail(sample.Driver, unit);
+-		if (!driver || !driver.CF_IsEntityFollowPrototypeEnabled() || driver.CF_HasEntityFallbackFailure())
++		if (!driver || !driver.CF_IsEntityFollowPrototypeEnabled() || MixedControllerFailed(unit, driver))
+ 		{
+ 			MixedFailure("private_controller_missing_or_failed", unit);
+ 			return;
+diff --git a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent
+new file mode 100644
+index 0000000..0cfbe3c
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent
+@@ -0,0 +1,3 @@
++SubScene {
++ Parent "{77C41EA429B6AC35}worlds/GameMaster/GM_Arland.ent"
++}
+diff --git a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent.meta b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent.meta
+new file mode 100644
+index 0000000..5bb74a0
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent.meta
+@@ -0,0 +1,9 @@
++MetaFileClass {
++ Name "{7D91A860CBF2403E}Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent"
++ Configurations {
++  ENTResourceClass PC {
++  }
++  ENTResourceClass HEADLESS : PC {
++  }
++ }
++}
+diff --git a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks_Layers/default.layer b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks_Layers/default.layer
+new file mode 100644
+index 0000000..aa98f07
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks_Layers/default.layer
+@@ -0,0 +1,113 @@
++// Private Road81 course: original surveyed vehicle poses; V5 gameplay unchanged.
++// Storage Y values are authoring seeds, aligned once to native terrain before binding.
++SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
++ coords 1298.8 34.9 3018.0
++}
++
++SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1299.7 34.9 3018.0
++}
++
++SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1280.3 34.3 3013.1
++}
++
++SCR_AIGroup CF_SmokeGroup2 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1260.9 34.3 3008.1
++}
++
++Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1281.45 34.24 3008.14
++ angles 0 75.43 0
++ components {
++  CF_LoadedPairCargoProbeComponent "{4419A3020DB55397}" {
++   m_iPairUnit 1
++  }
++  CF_SurfaceContactProbeComponent "{5C2509942C342A7B}" {
++  }
++ }
++}
++
++Vehicle CF_SmokeFollower2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1262.09 34.26 3003.13
++ angles 0 76.03 0
++ components {
++  CF_LoadedPairCargoProbeComponent "{9D5285175BBC8AA7}" {
++   m_iPairUnit 2
++  }
++  CF_SurfaceContactProbeComponent "{4BC300EDBBDC7105}" {
++  }
++ }
++}
++
++Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1300.85 34.92 3013.01
++ angles 0 76.09 0
++ components {
++  CF_SurfaceContactProbeComponent "{460CD1F5A3FB54F5}" {
++  }
++  CF_NaturalRecoveryTripProbeComponent "{18B875DF1AAD56E0}" {
++   m_bStraightReleaseRoadGoal 1
++   m_vStraightReleaseRoadGoal 1564.43 40.3222 3071.77
++   m_fPairRestartWalkMeters 60
++   m_fPairRestartMinRoadWidth 6
++   m_bPairExplicitRestartGoal 0
++   m_bPairGroundAlignStorage 1
++   m_bPacedAutoExit 1
++   m_fPacedLeadSpeedKmh 20
++   m_bPairCooperativeLead 1
++   m_iExpectedTrucks 2
++   m_sPacedWorld "Worlds/Tests/ConvoyFollower_Arland_NaturalRecoverySupplyTrip_2Trucks.ent"
++  }
++  CF_ConvoyFilmCameraComponent "{3EA52B8474846FFE}" {
++   m_iExpectedTrucks 2
++  }
++ }
++}
++
++GenericEntity CF_CargoActionSource : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
++ coords 1270.768 34.25 3009.507
++ angles 0 90 0
++ {
++  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
++   coords 0 0 0
++   components {
++    SCR_ResourceComponent "{5D247A59598D71AE}" {
++     m_aContainers {
++      SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
++       m_fResourceValueCurrent 1800
++       m_fResourceValueMax 3000
++      }
++     }
++    }
++   }
++  }
++ }
++}
++
++GenericEntity CF_LoadedTripDestination : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
++ coords 1539.09 40 3076
++ angles 0 90 0
++ {
++  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
++   coords 0 0 0
++   components {
++    SCR_ResourceComponent "{5D247A59598D71AE}" {
++     m_aContainers {
++      SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
++       m_fResourceValueCurrent 0
++       m_fResourceValueMax 3000
++      }
++     }
++    }
++   }
++  }
++ }
++}
++
++GenericEntity CF_LoadedTripScenarioSettings {
++ components {
++  CF_SupplyScenarioSettingsComponent "{DDBFCB46BDFB4C6F}" {
++  }
++ }
++}
