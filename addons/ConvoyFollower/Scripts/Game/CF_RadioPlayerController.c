@@ -10,6 +10,7 @@ class CF_RadioEvent
 	static const int LOST = 6;
 	static const int REJOINED = 7;
 	static const int UNDER_FIRE = 8;
+	static const int COHESION = 9; // Existing range-warning audio, separately cancellable advice.
 }
 
 // These are control failures, not claims that a vehicle was hit or stuck.
@@ -192,6 +193,8 @@ modded class SCR_PlayerController
 		float repeatMs = 0.0;
 		if (routine)
 			repeatMs = settings.m_fRoutineRepeatSeconds * 1000.0;
+		else if (eventId == CF_RadioEvent.COHESION)
+			repeatMs = settings.m_fCohesionCooldownSeconds * 1000.0;
 		else if (eventId == CF_RadioEvent.FAR_WARNING || eventId == CF_RadioEvent.REJOINED)
 			repeatMs = settings.m_fExceptionRepeatSeconds * 1000.0;
 		for (int i = 0; i < m_CFSentRadioEvents.Count(); i++)
@@ -423,6 +426,7 @@ modded class SCR_PlayerController
 	// This method is filled by tools/render_convoy_generated_mapping.py.
 	protected bool CF_GetGeneratedRadioClip(int eventId, int unitNumber, int variant, out string resourceName, out int delayMs)
 	{
+		if (eventId == CF_RadioEvent.COHESION) eventId = CF_RadioEvent.FAR_WARNING;
 		resourceName = string.Empty;
 		delayMs = 250;
 		// BEGIN GENERATED RADIO MAPPING
@@ -828,6 +832,7 @@ modded class SCR_PlayerController
 
 	protected bool CF_GetRadioClip(int eventId, int unitNumber, out string resourceName, out int delayMs)
 	{
+		if (eventId == CF_RadioEvent.COHESION) eventId = CF_RadioEvent.FAR_WARNING;
 		resourceName = string.Empty;
 		delayMs = 250;
 		// These GUIDs and measured durations come from docs/convoy-leader-assets.json.

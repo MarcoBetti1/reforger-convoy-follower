@@ -1,3 +1,20 @@
+// A copied server observation, never a speed command or route target.
+// Level: 0 = spacing assessed, 1 = ease up, 2 = wait safely. A false read
+// means NOT ASSESSED; callers must not treat it as permission to accelerate.
+class CF_ConvoyCohesionAdvice
+{
+	int Level;
+	int UnitIdentity;
+	float GapMeters;
+	float OpeningMps;
+	float FollowerForwardKmh;
+	float LeadForwardKmh;
+	bool LeadMoving;
+	float ProjectedGapMeters;
+	float SampleTimeMs;
+	string Text;
+}
+
 // Evidence for one accepted Resume. Entity references and roster position bind
 // later observations to the assignments that actually received the command.
 class CF_PanelResumeMember
@@ -112,6 +129,13 @@ class CF_ConvoySession
 	protected Vehicle m_PanelReboardTruck;
 	protected int m_iPanelReboardIdentity;
 
+	protected ref CF_ConvoyCohesionAdvice m_CohesionAdvice;
+	protected string m_sCohesionBinding;
+	protected int m_iCohesionCandidate;
+	protected float m_fCohesionCandidateSinceMs = -1;
+	protected float m_fCohesionLastRadioMs = -1;
+	protected bool m_bCohesionRadioPending;
+
 	static bool CF_IsWorldCleanup()
 	{
 		return s_bWorldCleanup;
@@ -152,6 +176,8 @@ class CF_ConvoySession
 	protected void ShutdownForWorldCleanup()
 	{
 		m_bSessionClosed = true;
+		m_CohesionAdvice = null;
+		m_sCohesionBinding = string.Empty;
 		CancelScheduledPolls();
 		CF_ClearPanelResumeTracking();
 		CF_ClearPanelReboardTracking();
@@ -303,6 +329,163 @@ class CF_ConvoySession
 			!session.m_UnloadHead && candidate && candidate.CanAssign(user);
 	}
 
+	protected void CF_CancelCohesionRadio()
+	{
+		if (m_bCohesionRadioPending)
+		{
+			SCR_PlayerController controller = GetOrderingController();
+			if (controller) controller.CF_DiscardQueuedConvoyRadioEvent(CF_RadioEvent.COHESION);
+			m_bCohesionRadioPending = false;
+		}
+	}
+
+	protected void CF_ClearCohesionAdvice()
+	{
+		m_CohesionAdvice = null;
+		m_sCohesionBinding = string.Empty;
+		m_iCohesionCandidate = 0;
+		m_fCohesionCandidateSinceMs = -1;
+		CF_CancelCohesionRadio();
+	}
+
+	// Read the actual ordered chain, not everybody's distance to the player.
+	// A single unavailable/intentional-stop member makes the whole assessment
+	// unavailable, rather than silently declaring a shorter chain cohesive.
+	protected bool CF_MeasureCohesion(out string binding, out CF_ConvoyCohesionAdvice sample)
+	{
+		binding = string.Empty;
+		sample = null;
+		if (!Replication.IsServer() || s_bWorldCleanup || m_bSessionClosed || !GetGame() || !GetGame().GetWorld()) return false;
+		if (!CF_ConvoySettings.Get().m_bCohesionAdviceEnabled || m_aUnits.IsEmpty() || m_PendingDriver || m_UnloadHead) return false;
+		if (m_bUnloadAnchorLock || m_bForwardOutboundHoldActive || m_bReturnPending || m_iUnloadPhase != CF_UNLOAD_NONE) return false;
+		if (m_bUnloadReleaseBlocked || !m_aReturnQueue.IsEmpty() || !m_aForwardWait.IsEmpty() || !m_aStrandedUnits.IsEmpty()) return false;
+		Vehicle lead = GetOwnerResumeVehicle(m_OrderingPlayer);
+		if (!lead || !lead.GetPhysics()) return false;
+		vector leadVelocity = lead.GetPhysics().GetVelocity();
+		leadVelocity[1] = 0;
+		float leadSpeed = leadVelocity.Length();
+		if (!(leadSpeed >= 0 && leadSpeed < 1000)) return false;
+		vector leadFacing = lead.GetWorldTransformAxis(2);
+		leadFacing[1] = 0;
+		if (!(leadFacing.LengthSq() >= 0.5 && leadFacing.LengthSq() <= 1.5)) return false;
+		leadFacing.Normalize();
+		float leadForwardKmh = 3.6 * vector.Dot(leadVelocity, leadFacing);
+		if (!(leadForwardKmh >= -1.5 && leadForwardKmh < 1000)) return false;
+		CF_ConvoyCohesionAdvice fresh = new CF_ConvoyCohesionAdvice();
+		fresh.SampleTimeMs = GetGame().GetWorld().GetWorldTime();
+		fresh.LeadForwardKmh = leadForwardKmh;
+		fresh.LeadMoving = leadForwardKmh > 1.5;
+		binding = "" + m_OrderingPlayer.GetID() + ":" + lead.GetID();
+		IEntity target = lead;
+		CF_DriverControllerComponent predecessor;
+		foreach (CF_DriverControllerComponent unit : m_aUnits)
+		{
+			float gap;
+			float opening;
+			float forwardKmh;
+			if (!unit || !unit.CF_ReadCohesionLink(this, m_OrderingPlayer, predecessor, target, gap, opening, forwardKmh)) return false;
+			int identity = GetIdentityNumber(unit);
+			if (identity <= 0) return false;
+			float projected = gap + Math.Max(0, opening) * CF_ConvoySettings.Get().m_fCohesionLookAheadSeconds;
+			if (!(projected >= gap && projected < 20000)) return false;
+			if (fresh.UnitIdentity == 0 || projected > fresh.ProjectedGapMeters)
+			{
+				fresh.UnitIdentity = identity;
+				fresh.GapMeters = gap;
+				fresh.OpeningMps = opening;
+				fresh.FollowerForwardKmh = forwardKmh;
+				fresh.ProjectedGapMeters = projected;
+			}
+			binding += ":" + unit.CF_GetDriverEntity().GetID() + ":" + unit.CF_GetAssignedVehicle().GetID();
+			target = unit.CF_GetAssignedVehicle();
+			predecessor = unit;
+		}
+		sample = fresh;
+		return true;
+	}
+
+	protected void CF_UpdateCohesionAdvice()
+	{
+		string binding;
+		CF_ConvoyCohesionAdvice sample;
+		if (!CF_MeasureCohesion(binding, sample))
+		{
+			CF_ClearCohesionAdvice();
+			return;
+		}
+		float now = sample.SampleTimeMs;
+		if (m_CohesionAdvice && (binding != m_sCohesionBinding || now < m_CohesionAdvice.SampleTimeMs || now - m_CohesionAdvice.SampleTimeMs > 2500))
+			CF_ClearCohesionAdvice();
+		CF_ConvoySettings settings = CF_ConvoySettings.Get();
+		int level = 0;
+		if (m_CohesionAdvice) level = m_CohesionAdvice.Level;
+		int wanted = 0;
+		if (sample.ProjectedGapMeters >= settings.m_fCohesionWaitDistance) wanted = 2;
+		else if (sample.ProjectedGapMeters >= settings.m_fCohesionEaseDistance) wanted = 1;
+		else if (level > 0 && sample.ProjectedGapMeters > settings.m_fCohesionClearDistance) wanted = 1;
+		if (wanted != m_iCohesionCandidate || m_fCohesionCandidateSinceMs < 0)
+		{
+			m_iCohesionCandidate = wanted;
+			m_fCohesionCandidateSinceMs = now;
+		}
+		if (wanted != level && now - m_fCohesionCandidateSinceMs >= 2000) level = wanted;
+		sample.Level = level;
+		sample.Text = "Pace: assessed - keep convoy in sight";
+		string pace = "Unit " + sample.UnitIdentity + ": " + Math.Round(sample.FollowerForwardKmh) + " km/h";
+		if (level == 1) sample.Text = pace + " - ease up";
+		if (level == 2) sample.Text = pace + " - wait safely";
+		if (!sample.LeadMoving)
+		{
+			// A cooperative stop remains measurable, so the same pressure
+			// episode can clear. This is spacing feedback, not order readiness.
+			sample.Text = "Stopped: convoy closing up";
+			if (sample.ProjectedGapMeters <= settings.m_fCohesionClearDistance)
+				sample.Text = "Stopped: convoy spacing together";
+		}
+		m_CohesionAdvice = sample;
+		m_sCohesionBinding = binding;
+		SCR_PlayerController controller = GetOrderingController();
+		if (level == 0 || !sample.LeadMoving) CF_CancelCohesionRadio();
+		bool radioDue = m_fCohesionLastRadioMs < 0 || now - m_fCohesionLastRadioMs >= settings.m_fCohesionCooldownSeconds * 1000;
+		if (level > 0 && sample.LeadMoving && controller && radioDue)
+		{
+			// One spokesperson and one whole-chain call. Existing range audio
+			// fits both advice levels; precise current advice stays in the panel.
+			controller.CF_DiscardQueuedConvoyRadioEvent(CF_RadioEvent.FAR_WARNING);
+			controller.CF_SendConvoyRadioCall(CF_RadioEvent.COHESION, 0);
+			m_fCohesionLastRadioMs = now;
+			m_bCohesionRadioPending = true;
+			Print("[ConvoyFollower] COHESION_ADVICE: unit=" + sample.UnitIdentity + " level=" + level + " gap_m=" + sample.GapMeters);
+		}
+	}
+
+	// Same computed observation for the panel and a future explicit cooperative
+	// fixture. This getter copies values; it neither advances timers nor radios.
+	static bool CF_ReadOwnerCohesionAdvice(IEntity user, out CF_ConvoyCohesionAdvice advice)
+	{
+		advice = null;
+		if (!Replication.IsServer() || !GetGame() || !GetGame().GetWorld()) return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session || user != session.m_OrderingPlayer || !session.m_CohesionAdvice) return false;
+		float age = GetGame().GetWorld().GetWorldTime() - session.m_CohesionAdvice.SampleTimeMs;
+		if (!(age >= 0 && age <= 2500)) return false;
+		string binding;
+		CF_ConvoyCohesionAdvice current;
+		if (!session.CF_MeasureCohesion(binding, current) || binding != session.m_sCohesionBinding) return false;
+		advice = new CF_ConvoyCohesionAdvice();
+		advice.Level = session.m_CohesionAdvice.Level;
+		advice.UnitIdentity = session.m_CohesionAdvice.UnitIdentity;
+		advice.GapMeters = session.m_CohesionAdvice.GapMeters;
+		advice.OpeningMps = session.m_CohesionAdvice.OpeningMps;
+		advice.FollowerForwardKmh = session.m_CohesionAdvice.FollowerForwardKmh;
+		advice.LeadForwardKmh = session.m_CohesionAdvice.LeadForwardKmh;
+		advice.LeadMoving = session.m_CohesionAdvice.LeadMoving;
+		advice.ProjectedGapMeters = session.m_CohesionAdvice.ProjectedGapMeters;
+		advice.SampleTimeMs = session.m_CohesionAdvice.SampleTimeMs;
+		advice.Text = session.m_CohesionAdvice.Text;
+		return true;
+	}
+
 	protected static string CF_GetPanelTruckLabel(CF_DriverControllerComponent unit, int identity)
 	{
 		if (!unit || !unit.CF_GetAssignedVehicle())
@@ -322,6 +505,9 @@ class CF_ConvoySession
 		CF_ConvoySession session = GetForPlayer(user);
 		if (!session)
 			return string.Empty;
+		CF_ConvoyCohesionAdvice advice;
+		string paceText = "Pace: not assessed";
+		if (CF_ReadOwnerCohesionAdvice(user, advice)) paceText = advice.Text;
 		string rows = string.Empty;
 		for (int i = 0; i < session.m_aUnits.Count(); i++)
 		{
@@ -336,6 +522,14 @@ class CF_ConvoySession
 			if (reboardReason.IsEmpty()) reboardReason = "ready";
 			string row = "" + identity + "|" + (i + 1) + "|" + CF_GetPanelTruckLabel(unit, identity) + "|" +
 				unit.CF_GetPanelStateLabel() + "|" + target + "|" + reboardReason;
+			string gapText = "gap --";
+			if (advice)
+			{
+				IEntity preceding = unit.CF_GetDiagnosticTargetVehicle();
+				float gap = vector.DistanceXZ(preceding.GetOrigin(), unit.CF_GetAssignedVehicle().GetOrigin());
+				gapText = "" + Math.Round(gap) + " m gap";
+			}
+			row += "|" + gapText + "|" + paceText;
 			if (!rows.IsEmpty())
 				rows += ";";
 			rows += row;
@@ -425,6 +619,7 @@ class CF_ConvoySession
 		}
 		// All members passed validation above. Save intent now, before any
 		// truck finishes approaching, so later rechain/recovery cannot lose it.
+		session.CF_ClearCohesionAdvice();
 		session.CF_EndPanelResume("cancelled: superseded by Hold");
 		foreach (CF_DriverControllerComponent requested : session.m_aUnits)
 			requested.CF_RequestPanelHold();
@@ -2095,6 +2290,7 @@ class CF_ConvoySession
 		if (!GetOrderingController() || !owner ||
 			(ownerDamage && ownerDamage.IsDestroyed()))
 		{
+			CF_ClearCohesionAdvice();
 			m_iOwnerMissingPolls++;
 			if (m_iOwnerMissingPolls >= 15)
 			{
@@ -2105,6 +2301,7 @@ class CF_ConvoySession
 			return;
 		}
 		m_iOwnerMissingPolls = 0;
+		CF_UpdateCohesionAdvice();
 
 		Vehicle ownerVehicle = GetOwnerPilotedVehicle();
 		if (m_iPanelOrder != CF_PANEL_ORDER_NONE)
@@ -2350,6 +2547,7 @@ class CF_ConvoySession
 		if (!candidate || m_PendingDriver)
 			return false;
 
+		CF_ClearCohesionAdvice();
 		m_PendingDriver = candidate;
 		m_iPendingOperation = operation;
 		m_LeaderBeingReplaced = null;
@@ -2437,6 +2635,7 @@ class CF_ConvoySession
 	{
 		if (m_bSessionClosed || !Replication.IsServer() || !driver)
 			return;
+		CF_ClearCohesionAdvice();
 		if (FindUnit(driver) >= 0)
 			CF_EndPanelResume("blocked: an original driver became unavailable");
 		if (driver == m_UnloadHead)
@@ -2504,6 +2703,9 @@ class CF_ConvoySession
 			return;
 
 		int index = FindUnit(driver);
+		if (index >= 0 && eventId == CF_RadioEvent.HOLDING) CF_CancelCohesionRadio();
+		if (index >= 0 && (eventId == CF_RadioEvent.LOST || eventId == CF_RadioEvent.STUCK))
+			CF_ClearCohesionAdvice();
 		// Record controller failures independently of radio settings/listeners.
 		if (index >= 0 && (eventId == CF_RadioEvent.LOST || eventId == CF_RadioEvent.STUCK))
 			CF_EndPanelResume("blocked: a driver reported lost or stalled movement");
@@ -2526,6 +2728,9 @@ class CF_ConvoySession
 			return;
 		}
 
+		CF_ConvoyCohesionAdvice advice;
+		if (eventId == CF_RadioEvent.FAR_WARNING && CF_ReadOwnerCohesionAdvice(m_OrderingPlayer, advice) && advice.Level > 0)
+			return; // The current whole-chain advice already reports this episode.
 		if (index == 0)
 		{
 			// Unit One is the only audible speaker. These clips use plural
@@ -2749,6 +2954,7 @@ class CF_ConvoySession
 
 	protected void RewireTargets()
 	{
+		CF_ClearCohesionAdvice();
 		CF_EndPanelReboard("blocked: convoy assignments or order changed during reboard");
 		if (m_iPanelOrder == CF_PANEL_ORDER_RESUME && !CF_PanelResumeRosterMatches())
 			CF_EndPanelResume("cancelled: convoy assignments or order changed");
@@ -2832,6 +3038,8 @@ class CF_ConvoySession
 		CF_EndPanelReboard("blocked: convoy session ended during reboard");
 		CF_EndPanelResume("cancelled: convoy session ended");
 		m_bSessionClosed = true;
+		m_CohesionAdvice = null;
+		m_sCohesionBinding = string.Empty;
 		CancelScheduledPolls();
 		m_UnloadHead = null;
 		m_iUnloadPhase = CF_UNLOAD_NONE;

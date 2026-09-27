@@ -30,6 +30,7 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 	protected Widget m_ReboardButton;
 	protected TextWidget m_Feedback;
 	protected string m_sOrderFeedback;
+	protected string m_sPaceFeedback = "Pace not assessed";
 
 	void CF_ConvoyMapPanel(SCR_PlayerController controller)
 	{
@@ -67,14 +68,14 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 		m_SelectedLabel = MakeLabel(workspace, "Selected: all units", 158, 56, 238, 29, 15);
 		for (int i = 0; i < 5; i++)
 		{
-			Widget rowButton = MakeButton(workspace, "CF_Row_" + i, "", 18, 94 + i * 48, 380, 46);
+			Widget rowButton = MakeButton(workspace, "CF_Row_" + i, "", 18, 94 + i * 44, 380, 42);
 			m_RowButtons.Insert(rowButton);
 			m_UnitIds.Insert(0);
 			m_ReboardReasons.Insert("select an active convoy member");
-			TextWidget row = MakeLabel(workspace, "", 18, 94 + i * 48, 380, 46, 15);
+			TextWidget row = MakeLabel(workspace, "", 18, 94 + i * 44, 380, 42, 14);
 			m_Rows.Insert(row);
 		}
-		m_Feedback = MakeLabel(workspace, "Loading convoy state from server...", 18, 342, 380, 62, 14);
+		m_Feedback = MakeLabel(workspace, "Loading convoy state from server...", 18, 318, 380, 86, 14);
 		MakeButton(workspace, "CF_Follow", "RESUME ALL", 18, 410, 184, 44);
 		MakeButton(workspace, "CF_Hold", "HOLD ALL SEATED", 210, 410, 184, 44);
 		m_WaitAheadButton = MakeButton(workspace, "CF_WaitAhead", "PULL AHEAD AND WAIT", 18, 464, 184, 44);
@@ -155,11 +156,11 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 		for (int i = 0; i < 5; i++)
 		{
 			if (m_UnitIds.Count() > i && m_UnitIds[i] == m_iSelectedIdentity && m_iSelectedIdentity > 0)
-				AddRect(18, 94 + i * 48, 380, 46, Color.FromRGBA(61, 102, 92, 255));
+				AddRect(18, 94 + i * 44, 380, 42, Color.FromRGBA(61, 102, 92, 255));
 			else
-				AddRect(18, 94 + i * 48, 380, 46, Color.FromRGBA(37, 52, 56, 255));
+				AddRect(18, 94 + i * 44, 380, 42, Color.FromRGBA(37, 52, 56, 255));
 		}
-		AddRect(18, 338, 380, 66, Color.FromRGBA(36, 54, 58, 255));
+		AddRect(18, 316, 380, 88, Color.FromRGBA(36, 54, 58, 255));
 		AddRect(18, 410, 184, 44, Color.FromRGBA(58, 84, 78, 255));
 		AddRect(210, 410, 184, 44, Color.FromRGBA(58, 84, 78, 255));
 		AddRect(18, 464, 184, 44, Color.FromRGBA(54, 69, 73, 255));
@@ -173,6 +174,7 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 
 	void SetRoster(string snapshot)
 	{
+		m_sPaceFeedback = "Pace not assessed";
 		ref array<string> rows = {};
 		if (!snapshot.IsEmpty())
 			snapshot.Split(";", rows, false);
@@ -192,8 +194,10 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 					if (fields.Count() >= 6) m_ReboardReasons[i] = fields[5];
 					if (m_UnitIds[i] == m_iSelectedIdentity)
 						selectedStillPresent = true;
-					m_Rows[i].SetText("Unit " + fields[0] + "  |  position " + fields[1] + "  |  " + fields[2] +
-						"\n" + fields[3] + "  |  target: " + fields[4]);
+					string detail = fields[3] + " | to " + fields[4];
+					if (fields.Count() >= 7) detail += " | " + fields[6];
+					if (i == 0 && fields.Count() >= 8) m_sPaceFeedback = fields[7];
+					m_Rows[i].SetText("Unit " + fields[0] + " | position " + fields[1] + " | " + fields[2] + "\n" + detail);
 				}
 				else
 				{
@@ -264,7 +268,7 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 		if (!m_Feedback) return;
 		string reason = SelectedReboardReason();
 		if (reason == "ready") reason = "ready to retry the original driver seat";
-		m_Feedback.SetText(m_sOrderFeedback + "\nReboard: " + reason);
+		m_Feedback.SetText(m_sPaceFeedback + "\n" + m_sOrderFeedback + "\nReboard: " + reason);
 	}
 
 	void SetFeedback(string message)
@@ -292,6 +296,7 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 		m_ReboardButton = null;
 		m_Feedback = null;
 		m_sOrderFeedback = string.Empty;
+		m_sPaceFeedback = "Pace not assessed";
 	}
 
 	bool IsOpen()

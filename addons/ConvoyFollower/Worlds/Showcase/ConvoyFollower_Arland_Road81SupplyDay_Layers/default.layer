@@ -1,0 +1,78 @@
+// Ordinary Road81 supply scene. Vehicle poses match the frozen native-trip course.
+// Storage Y values are the observed terrain-aligned heights, authored here without runtime assistance.
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 1298.8 34.9 3018.0
+ m_Info SCR_UIInfo "{56B4CC4ECACA2C37}" {
+  Name "Convoy Road81 supply staging - daylight"
+ }
+}
+
+SCR_AIGroup CF_Road81DriverGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1280.3 34.3 3013.1
+}
+
+SCR_AIGroup CF_Road81DriverGroup2 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 1260.9 34.3 3008.1
+}
+
+Vehicle CF_Road81SupplyTruck1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1281.45 34.24 3008.14
+ angles 0 75.43 0
+}
+
+Vehicle CF_Road81SupplyTruck2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1262.09 34.26 3003.13
+ angles 0 76.03 0
+}
+
+Vehicle CF_Road81PlayerTruck : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 1300.85 34.92 3013.01
+ angles 0 76.09 0
+}
+
+GenericEntity CF_Road81SupplySource : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+ coords 1270.768 34.0899 3009.507
+ angles 0 90 0
+ {
+  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+   coords 0 0 0
+   components {
+    SCR_ResourceComponent "{5D247A59598D71AE}" {
+     m_aContainers {
+      SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
+       m_fResourceValueCurrent 1800
+       m_fResourceValueMax 3000
+      }
+     }
+    }
+   }
+  }
+ }
+}
+
+GenericEntity CF_Road81SupplyDestination : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+ coords 1539.09 38.2897 3076
+ angles 0 90 0
+ {
+  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+   coords 0 0 0
+   components {
+    SCR_ResourceComponent "{5D247A59598D71AE}" {
+     m_aContainers {
+      SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
+       m_fResourceValueCurrent 0
+       m_fResourceValueMax 3000
+      }
+     }
+    }
+   }
+  }
+ }
+}
+
+GenericEntity CF_Road81ScenarioSettings {
+ components {
+  CF_SupplyScenarioSettingsComponent "{F923C0C0A8DA434A}" {
+  }
+ }
+}

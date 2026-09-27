@@ -88,6 +88,14 @@ The player's first two WAV recordings were processed into radio-style clips unde
 
 There is no driver-facing voice toggle. The packaged `Configs/CF_ConvoySettings.conf` keeps the player's recorded voice at `m_iVoicePack 0`; pack 1 adds generated alternate phrasings. Server owners can set `m_bVoiceEnabled` and `m_iVoicePack` in `$profile:ConvoyFollowerSettings.json` and restart without rebuilding the addon. Addon authors can also change the packaged defaults. The same settings control routine call chance, routine spacing, repeated routine phrases, and repeated range/rejoined status. Stuck, lost, and under-fire reports are not dropped by the server debounce; incoming exceptions remove stale queued routine chatter before playback. The F5 capture verifies two generated calls, while repeat spacing, exception priority, and server-wide voice-off still need an in-game audio pass.
 
+## Spacing advice settings
+
+Early leader warnings and panel gaps help the player keep the line together. Default advice is to ease at **40 m**, wait safely at **50 m**, and clear the warning below **30 m**. A three-second projection accounts for a growing gap; changes must persist for two seconds and spoken warnings have a 30-second cooldown. At an ordinary stationary stop, gaps remain visible without new warning speech. Explicit Hold and conflicting maneuvers suspend assessment.
+
+Server owners can set `m_bCohesionAdviceEnabled`, `m_fCohesionEaseDistance`, `m_fCohesionWaitDistance`, `m_fCohesionClearDistance`, `m_fCohesionLookAheadSeconds` and `m_fCohesionCooldownSeconds` in `$profile:ConvoyFollowerSettings.json`, then restart. See the [example settings](../../docs/convoy-server-settings.example.json). Numeric values are bounded and ordered relative to existing gap/range settings. `m_bVoiceEnabled` still controls audio; muting it leaves panel advice available.
+
+This advice is integrated and has partial live travel/panel evidence. It does not drive the lead, guarantee a safe speed, or establish reliable full-trip following. Current validation records the incomplete cooperative tests. The prepared [Road81 Supply Day scene](../../docs/convoy-road81-supply-day.md) supports an ordinary player test.
+
 ## Asset structure
 
 Game Master has US and Soviet **Convoy Driver** groups. The US group contains a crew AI character with an M9; the Soviet group uses Soviet crew gear and a PM. Spawn a group card, not a character prefab directly: the behavior uses the driver's parent `SCR_AIGroup` to assign boarding and follow waypoints. The Soviet card and interaction have passed Workbench validation and packing, but still need a live smoke test.

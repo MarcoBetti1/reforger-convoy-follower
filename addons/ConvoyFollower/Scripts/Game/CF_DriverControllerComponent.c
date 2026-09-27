@@ -1222,6 +1222,60 @@ class CF_DriverControllerComponent : ScriptComponent
 		return GetTargetVehicle(false);
 	}
 
+	// Read-only advice context. Being assigned alone is insufficient: exclude
+	// explicit Hold, seat work, recovery, and a changed real predecessor.
+	bool CF_ReadCohesionLink(CF_ConvoySession session, IEntity owner,
+		CF_DriverControllerComponent predecessor, IEntity target, out float gap, out float opening, out float forwardKmh)
+	{
+		gap = 0;
+		opening = 0;
+		forwardKmh = 0;
+		if (!Replication.IsServer() || !GetGame() || !GetGame().GetWorld() || CF_ConvoySession.CF_IsWorldCleanup()) return false;
+		if (!session || m_Session != session || m_Leader != owner || m_Predecessor != predecessor) return false;
+		if (session.GetUnitNumber(this) <= 0 || !CF_IsOwnedBy(owner) || CF_IsControlBlocked()) return false;
+		if (m_bPanelHoldRequested || CF_HasPersistentFollowFailure() || m_bOrderInversionLogged || m_iStuckRetries > 0) return false;
+		if (m_bControlBoardingTimedOut) return false;
+		// Waiting (including a Resume timeout) can still be measured. This
+		// does not declare the command ready or authorize departure/retry.
+		bool departure = IsWaitingForLead();
+		bool arrival = m_iState == CF_ARRIVING;
+		if (m_iState != CF_FOLLOWING && !departure && !arrival) return false;
+		if (m_bArrivalRoadRecoveryActive || m_bArrivalRoadRecoveryBlocked || m_bUnloadSequenceHold) return false;
+		if (!m_Truck || !target || GetTargetVehicle(false) != target || target == m_Truck) return false;
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		World world = GetGame().GetWorld();
+		if (!driver || GetOwner() != driver || driver.GetWorld() != world || m_Truck.GetWorld() != world || target.GetWorld() != world) return false;
+		if (IsDriverDestroyed(driver) || !driver.GetCharacterController() || driver.GetCharacterController().IsUnconscious()) return false;
+		AIControlComponent control = driver.GetAIControlComponent();
+		AIAgent agent;
+		if (control) agent = control.GetAIAgent();
+		if (!agent || agent.GetControlledEntity() != driver) return false;
+		SCR_DamageManagerComponent damage = SCR_DamageManagerComponent.GetDamageManager(m_Truck);
+		if (damage && damage.IsDestroyed()) return false;
+		CompartmentAccessComponent access = driver.GetCompartmentAccessComponent();
+		if (!access || access.IsGettingIn() || access.IsGettingOut() || access.GetVehicleIn(driver) != m_Truck) return false;
+		BaseCompartmentSlot slot = access.GetCompartment();
+		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+		if (!slot || !slot.IsPiloting() || slot.GetOccupant() != driver || !car || car.GetPilotCompartmentSlot() != slot) return false;
+		Physics ownPhysics = m_Truck.GetPhysics();
+		Physics frontPhysics = target.GetPhysics();
+		if (!ownPhysics || !frontPhysics) return false;
+		vector link = target.GetOrigin() - m_Truck.GetOrigin();
+		link[1] = 0;
+		gap = link.Length();
+		if (!(gap > 0.1 && gap < 10000)) return false;
+		link.Normalize();
+		vector velocity = ownPhysics.GetVelocity();
+		vector facing = m_Truck.GetWorldTransformAxis(2);
+		facing[1] = 0;
+		if (!(facing.LengthSq() >= 0.5 && facing.LengthSq() <= 1.5)) return false;
+		facing.Normalize();
+		forwardKmh = 3.6 * vector.Dot(velocity, facing);
+		opening = vector.Dot(frontPhysics.GetVelocity() - velocity, link);
+		if (!(forwardKmh > -1000 && forwardKmh < 1000)) return false;
+		return opening > -1000 && opening < 1000;
+	}
+
 	bool CF_IsBoarded()
 	{
 		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
