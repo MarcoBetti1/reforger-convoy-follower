@@ -1,0 +1,70 @@
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c
+@@ -219,11 +219,9 @@
+ 		result.CrossTrack = crossTrack;
+ 		reason = "reverse_physical_context_unavailable";
+ 		if (!HasLocalPhysicalContext(targetKey)) return -1;
+-		if (raw < 0 && segment == m_Segment)
+-		{
+-			reason = "reverse_previous_segment_unavailable_or_step_spans_vertices";
+-			return -1;
+-		}
++		// Without a selected previous segment, a negative raw projection is
++		// clamped to this retained segment's start. The remaining physical and
++		// corridor proof may admit that endpoint, never an earlier segment.
+ 		if (segment < m_Segment)
+ 		{
+ 			reason = "reverse_previous_history_changed";
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c
+@@ -2,6 +2,12 @@
+ // This does not issue convoy orders, drive vehicles, or require a road network.
+ class CF_DrivenRouteGeometryProbeComponentClass : ScriptComponentClass
+ {
++}
++
++// Inert native-test readback only; no route mutation or production caller.
++class CF_DrivenRouteGeometryReadback : CF_TrailGuideRoute
++{
++	int ObservedSegment() { return m_Segment; }
+ }
+ 
+ class CF_DrivenRouteGeometryProbeComponent : ScriptComponent
+@@ -443,6 +449,27 @@
+ 		bool realRetreat = accepted && ReverseSnapshot(g, 9.99, 10, 1, 0.01, true);
+ 		realRetreat = realRetreat && g.LocalProgress < g.Progress;
+ 		Check("clamped_start_real_reverse_accepts_longitudinal_residual", realRetreat && g.ReverseStationTotal > 0);
++	}
++
++	protected void RunEndpointRetreatCases()
++	{
++		ref CF_DrivenRouteGeometryReadback route = new CF_DrivenRouteGeometryReadback();
++		ref CF_DrivenRouteGuidance g = new CF_DrivenRouteGuidance();
++		PrepareClampedStart(route, 216, g);
++		ReversePhysical(route, 216, Vector(11, 0, 0.02), 0.02, g);
++		bool accepted = ReversePhysical(route, 216, Vector(11, 0, -0.01), 0.03, g);
++		bool endpointOnly = accepted && ReverseSnapshot(g, 10, 10.02, 1, 0.02, true);
++		Check("reverse_to_current_start_preserves_segment", endpointOnly && route.ObservedSegment() == 1 && g.LocalProgress < g.Progress);
++
++		route.Reset(217, vector.Zero);
++		for (int point = 1; point <= 4; point++) route.Record(217, Vector(point, 0, 0));
++		ReversePhysical(route, 217, Vector(0.5, 0, 0), 0.5, g);
++		for (int step = 1; step <= 3; step++) ReversePhysical(route, 217, Vector(step + 0.5, 0, 0), 1, g);
++		accepted = ReversePhysical(route, 217, Vector(0.5, 0, 0), 3, g);
++		endpointOnly = accepted && ReverseSnapshot(g, 3, 3.5, 1, 0.5, true);
++		// The pose is closest to the first segment, but the only accepted
++		// projection is current segment3's start, never station0.5 or segment0.
++		Check("reverse_short_segments_clamp_without_older_segment_credit", endpointOnly && route.ObservedSegment() == 3);
+ 	}
+ 
+ 	protected void RunCases()
+@@ -545,6 +572,7 @@
+ 		RunProjectionCases();
+ 		RunReverseCases();
+ 		RunClampedStartCases();
++		RunEndpointRetreatCases();
+ 		if (m_Passed == m_Total)
+ 			Print("[ConvoyFollower] DRIVEN_ROUTE_RESULT: PASS cases=" + m_Passed);
+ 		else
