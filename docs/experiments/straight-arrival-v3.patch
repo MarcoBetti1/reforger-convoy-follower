@@ -1,0 +1,46 @@
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+@@ -48,6 +48,8 @@
+ 	protected bool m_bTrailBlocked;
+ 	protected int m_iTrailLogs;
+ 	protected int m_iTrailQueryFailureLogs;
++	protected int m_iRetainedPoseLeaseLogs;
++	protected int m_iRetainedPoseLoggedGeneration;
+ 	protected int m_iTrailResumeRejectLogs;
+ 	protected string m_sTrailBlockReason;
+ 	protected bool m_bTrailResumePending;
+@@ -492,7 +494,24 @@
+ 		string reason;
+ 		if (lease && CF_IsOrdinaryEntityContext() && lease.Predecessor == m_TrailPredecessor &&
+ 			lease.NativeTarget == m_TrailPredecessor && lease.Waypoint == CF_GetEntityFollowWaypoint())
+-			ownedContext = lease.Executing(m_Group, reason);
++		{
++			// Keep actual-pose observation continuous while the same owned direct
++			// arrival waits for native selection. This does not authorize execution.
++			if (!lease.Revoked && !lease.Failed && lease.BindingUnchanged() && CF_CheckOriginalFollowLease(lease, reason))
++				ownedContext = lease.Waypoint.GetEntity() == m_TrailPredecessor;
++			if (ownedContext && lease.Activity && (lease.Activity.GetActionState() == EAIActionState.COMPLETED ||
++				lease.Activity.GetActionState() == EAIActionState.FAILED)) ownedContext = false;
++			if (ownedContext && m_iRetainedPoseLeaseLogs < 8 && m_iRetainedPoseLoggedGeneration != lease.Generation &&
++				!lease.Executing(m_Group, reason))
++			{
++				m_iRetainedPoseLeaseLogs++;
++				m_iRetainedPoseLoggedGeneration = lease.Generation;
++				Print("[ConvoyFollower] TRAIL_RETAINED_POSE_LEASE: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
++					" generation=" + lease.Generation + " native_execution=false reason=" + reason +
++					" waypoint_id=" + lease.Waypoint.GetID() + " predecessor_id=" + m_TrailPredecessor.GetID() +
++					" actual_pose_only=true controls_written=false activity_credit=false");
++			}
++		}
+ 		if (!ownedContext && m_EntityCapturedWait &&
+ 			m_EntityCapturedWait.GetActionState() != EAIActionState.COMPLETED &&
+ 			m_EntityCapturedWait.GetActionState() != EAIActionState.FAILED &&
+@@ -1034,7 +1053,7 @@
+ 		CF_UpdateTrailResume();
+ 		CF_UpdateTrailGuide();
+ 		super.EOnFrame(owner, timeSlice);
+-		// No reverse proof spans an unselected/unowned observation frame. Keep
++		// No reverse proof spans an unowned observation frame. Keep
+ 		// measured motion pending: invalidation is not permission to discard it.
+ 		if (m_TrailRoute && !m_bTrailPhysicalQueried) m_TrailRoute.InvalidatePhysicalQuery();
+ 	}
