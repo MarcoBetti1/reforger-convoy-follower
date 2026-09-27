@@ -1,18 +1,18 @@
 # Roadmap
 
-**Current execution status — September 26, 2026: active development under the saved goal and latest user direction.** Earlier setup-only turns are complete. Preserve newer work and completed evidence; the latest user instruction controls scope.
+**Current execution status — September 26, 2026: development resumed.** The documentation-only setup turn is complete. The user's subsequent active-goal continuation authorizes implementation and live testing under the full brief. Preserve earlier development and evidence.
 
 ## Current product direction — September 26, 2026
 
 The full [Convoy Follower development brief](convoy-development-brief.md) supersedes the bounded overnight direction and the original harness plan below. Use [the adaptive product roadmap](convoy-development-reset.md) for milestone sequencing, [the current validation record](convoy-validation-current.md) for observed results, and [the navigation plan](convoy-navigation-release-plan.md) for driving experiments and release gates.
 
-The complete brief is saved unchanged and reconciled with the existing roadmap. The setup turn is complete and the subsequently updated goal is active. Preserve source changes and evidence beyond the older pause checkpoint.
+The complete brief is saved unchanged and reconciled with the existing roadmap. Its older restart commits describe historical context; preserve source changes and evidence beyond that checkpoint. The latest emphasis on a useful, demonstrable mod determines the resumed development priority.
 
 ## Current development boundary
 
 The tested ordinary controller is integrated into US/USSR driver prefabs. US one- and two-follower travel and sustained arrival passed at a declared 20 km/h lead pace. Preserve the completed one-follower load/transport/Hold/delivery of 100 supplies/powered Resume baseline. The two-loaded-truck case now also delivered **200 supplies** to a distinct destination, retained both assignments, completed **180.313 s arrival** and **48.1325 s explicit Hold** with zero measured drift. Its overall result remains **FAIL**: Unit Two peaked at **81.625 m** against the 60 m spacing gate, then production Resume failed with `measured_step_spans_multiple_vertices` before fresh movement. Nine gameplay and 64 shutdown errors remain. See [current validation](convoy-validation-current.md) for exact results and failed controls.
 
-The two-truck regression resources are canonical. The private candidate now preserves route observation through the owned final approach and Hold, waits for a usable departure gap, and handles bounded reverse movement. Its remaining practical check is the two-truck stop/Hold/Resume course, followed by the existing loaded trip. Candidate results and the next concrete comparison are tracked in [current validation](convoy-validation-current.md); private candidates are not release checkpoints. Normal player input, a complete two-truck powered restart, Soviet behavior and multiplayer remain unproved.
+The two-truck regression resources are canonical. Later private straight-course candidates completed sustained arrival and real Hold. The latest loaded comparison delivered 200 supplies, but still failed spacing and Resume during the fixture's lead-seat handoff. Preserve those newer results alongside the earlier run above. [Current validation](convoy-validation-current.md) owns exact candidate outcomes and the next diagnosis; private candidates are not release checkpoints. Normal player input, a complete two-truck powered restart, Soviet behavior and multiplayer remain unproved.
 
 ### Immediate playable milestone
 

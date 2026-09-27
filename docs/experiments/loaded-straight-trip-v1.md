@@ -1,6 +1,6 @@
 # Loaded straight trip v1 — combined two-truck supply comparison
 
-September 26, 2026. **Private candidate; physical result pending. Not a release candidate.** This [three-file increment](loaded-straight-trip-v1.patch) applies after [straight-arrival v5](straight-arrival-v5.md). It preserves earlier source/evidence and leaves the canonical addon unchanged.
+September 26, 2026. **Private candidate; physical result FAIL. Not a release candidate.** This [three-file increment](loaded-straight-trip-v1.patch) applies after [straight-arrival v5](straight-arrival-v5.md). It preserves earlier source/evidence and leaves the canonical addon unchanged. The closed run is summarized below.
 
 ## Product intent and changes
 
@@ -16,7 +16,9 @@ This is a combined product-loop comparison, so it cannot isolate the contributio
 
 All five script configurations and packaging passed. Package SHA-256: `5BE37BAE52010EEA457666A70CC07A5B965D5B0E234AAC8515A2C610389F53FF`; 588-file frozen source manifest: `33F28DE4B3CF602F818066499E62E254BF9FC11F422B73DCD6E8B757C602F75F`. The preserved acceptance gates require powered travel, both peak links ≤60 m, arrival for 180 s with ≤2 m drift, real Hold ≥30 s and fresh Resume ≥20 m / three powered intervals per original follower. Route geometry and the existing 100 native cases are unchanged.
 
-Recruitment, owner-seat staging and native lead/server commands are test assistance. Ordinary keyboard/mouse control and multiplayer remain unproved. V5's arrival and Hold success, spacing failure and incomplete Resume remain visible in its separate archive; this candidate has no physical verdict yet.
+The subsequent existing log verifies native delivery of 200 supplies with the required conserved ledger, 180.38 s of stationary arrival and 48.0819 s of real Hold. It still fails spacing (peak links87.9582 /54.1588 m) and Resume. During test-only owner/native-pilot seat transfer, the first link's parked-lead admission changes from true to false, rejecting `empty_predecessor_not_parked_session_lead` before fresh powered restart. The precise rejecting subcondition is unproved. This run does not establish a spacing improvement or successful two-truck restart.
+
+The [final independent review](../../.cache/client/runs/loaded-straight-trip-v1/independent-review.md) retains 9 gameplay /0 post-result /62 shutdown errors. Natural client closure, watcher/recorder completion and an empty process check are confirmed. The silent video is430.2 s; three live views were inspected, not full playback. See [current validation](../convoy-validation-current.md) for hashes and exact source verification. Recruitment, owner-seat staging and native lead/server commands are test assistance; ordinary keyboard/mouse control and multiplayer remain unproved. V5's separate result remains unchanged.
 
 ## Apply and complete source mapping
 
