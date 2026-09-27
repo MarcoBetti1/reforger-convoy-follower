@@ -2,6 +2,8 @@
 
 **Development build; release gates remain open.** Read the [current validation checkpoint](../../docs/convoy-validation-current.md) for the latest pack and live results. Use the [short feature courses](../../docs/convoy-feature-courses.md) to isolate faults; retain the full Arland/Everon routes for final integration. Earlier observations below are preserved as history, not current-build certification.
 
+Start with the [short player guide](../../docs/convoy-player-guide.md) for recruitment, native supplies, Hold/Resume and recovery controls.
+
 ## Start with a short supply trip
 
 Choose **Convoy Follower - Arland Supply Day**, or open its world from the repository root:
