@@ -1,0 +1,58 @@
+{
+  "status": "experimental source archive; no fixture promotion",
+  "baselineArchive": {
+    "manifest": "docs/experiments/sampled-head-supply-integration-v3.json",
+    "manifestSha256": "B65DB3C21A49DE06436084FEDC26BA101716D8D31E30F23CD074F6A760F36793",
+    "patch": "docs/experiments/sampled-head-supply-integration-v3.patch",
+    "patchSha256": "A52BC86B5DB9985CA4D329DEFEE996596BF866D75634C0BD586812CC6583FEAB",
+    "sourceManifestSha256": "04B12ECF280999053ECCF15286D37CE9A87D42D121251A6FA6FAB4EEAE259792",
+    "representation": "Apply to the exact V3 archive output; preserve raw bytes with core.autocrlf=false."
+  },
+  "candidateRun": ".cache/client/runs/sampled-head-supply-integration-v4",
+  "sourceManifestSha256": "39D979CCA60092479AB4D7239DB362261920B7386A62AAF667DF744CEE6B1E4E",
+  "packSha256": "04EB75881CA3DD32DEB7471F713D3EF30C100EFB6E6FC29DD775E7AE3EF5B93D",
+  "patch": {
+    "file": "docs/experiments/sampled-head-supply-integration-v4.patch",
+    "bytes": 13114,
+    "sha256": "509E3AB69066E1451BF64C310BEC146326290C7859861896EEC0F9437F1348BA"
+  },
+  "changedResources": [
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c",
+      "baseline": {
+        "bytes": 53432,
+        "sha256": "2E98318CE1640F0FC5C85282691864183FF019C0292A3B4441BCCA6AF835D05F"
+      },
+      "target": {
+        "bytes": 56902,
+        "sha256": "A6637E50F03E463366CCC0A6077ABEDF6D7D5CED282CEDD45666F7802EBABAF5"
+      }
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c",
+      "baseline": {
+        "bytes": 23634,
+        "sha256": "373B57BB428AE23B86D9BD610C956F76D207B8CA78A0DF062AC74FBBEB8D23C0"
+      },
+      "target": {
+        "bytes": 28656,
+        "sha256": "BDEAFFD9CEB997F00B2E1C7CB1B935A2D7FBADE8F6A9F5A4268801BA6F9CB125"
+      }
+    }
+  ],
+  "verification": {
+    "method": "git -c core.autocrlf=false apply --check --binary, then apply in isolated exact V3 frozen-source copy; SHA-256 every resource against V4",
+    "checkedResources": 587,
+    "exactChangedResources": [
+      "addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c",
+      "addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c"
+    ],
+    "matchedTargets": 2,
+    "unchangedResources": 585,
+    "checkExitCode": 0,
+    "applyExitCode": 0,
+    "noCanonicalEdits": true,
+    "noBuildOrLaunch": true
+  },
+  "limits": "Two fixture replacements include passive production-method instrumentation. Direct-arrival qualification was unexercised in V4; raw spacing and strict failures remain. This is not a promoted fixture or a release pass."
+}

@@ -15,3 +15,5 @@ direct-head-proxy-v1.patch -text
 direct-head-sampled-proxy-v1.patch -text
 sampled-head-supply-integration-v3.patch -text
 sampled-head-supply-integration-v3.json -text
+sampled-head-supply-integration-v4.patch -text
+sampled-head-supply-integration-v4.json -text

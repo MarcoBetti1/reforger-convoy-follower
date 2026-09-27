@@ -1,0 +1,206 @@
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+index 20cf99f..cc6f198 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+@@ -58,6 +58,7 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 	protected ref array<int> m_BaselineSequences = {0, 0};
+ 	protected ref array<int> m_ResumeSequences = {0, 0};
+ 	protected ref array<bool> m_ResumeQualified = {false, false};
++	protected bool m_bResumeTailArrivalAccepted;
+ 	protected ref array<string> m_ResumeActivityKeys = {"", ""};
+ 	protected ref array<string> m_ResumeWaypointKeys = {"", ""};
+ 	protected ref array<ref CF_OriginalTailGuideEvidence> m_PairResumeEvidence = {};
+@@ -111,6 +112,30 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 		return super.MixedEvidence(unit);
+ 	}
+ 
++	// Only this Resume leg may count the actual, observed guide-to-real10 event.
++	// A prior qualified guide leg needs no replacement proof; its credit stays
++	// subject to the existing current-order/Wait health checks.
++	protected bool ResumeArrivalTransitionMatches(CF_OriginalFollowActivity activity)
++	{
++		if (m_iPairPhase != 8 || !activity || !m_PacedSession) return false;
++		CF_TrailGuideDriverControllerComponent tail = CF_TrailGuideDriverControllerComponent.Cast(PairDriver(2));
++		if (!tail) return false;
++		CF_TestGuideArrivalHandoff observed = tail.CF_TestReadGuideArrivalHandoff(activity);
++		if (!observed || observed.Epoch != m_PairResumeEvidence[1].ObservedEpoch) return false;
++		if (observed.PredecessorKey != EntityKey(m_PacedTrucks[1].Truck)) return false;
++		if (activity.CF_GetSequence() <= m_BaselineSequences[1]) return false;
++		if (m_bResumeTailArrivalAccepted)
++			return activity.CF_GetSequence() == m_ResumeSequences[1] && activity.ToString() == m_ResumeActivityKeys[1] && observed.WaypointKey == m_ResumeWaypointKeys[1];
++		if (m_ResumeQualified[1] || m_ResumeSequences[1] <= m_BaselineSequences[1]) return false;
++		if (activity.CF_GetSequence() <= m_ResumeSequences[1]) return false;
++		return observed.PriorSequence == m_ResumeSequences[1] && observed.PriorActivityKey == m_ResumeActivityKeys[1] && observed.PriorWaypointKey == m_ResumeWaypointKeys[1];
++	}
++
++	override protected bool MixedAllowsArrivalProgress(int unit, CF_OriginalFollowActivity activity)
++	{
++		return unit == 2 && ResumeArrivalTransitionMatches(activity);
++	}
++
+ 	override protected void LogPacedSamples()
+ 	{
+ 		super.LogPacedSamples();
+@@ -751,6 +776,32 @@ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ 			CF_OriginalTailGuideEvidence evidence = m_PairResumeEvidence[unit - 1];
+ 			ObserveMixedUnit(unit);
+ 			if (m_bMixedFatal || m_bPairNonSpacingFailure) { PairFailure("resume_mixed_observer_failure"); return; }
++			bool changedLeg = evidence.ActivitySequence != m_ResumeSequences[unit - 1] ||
++				evidence.ActivityKey != m_ResumeActivityKeys[unit - 1] || evidence.WaypointKey != m_ResumeWaypointKeys[unit - 1];
++			bool checkTailChange = unit == 2 && evidence.ActivitySequence > 0 && m_ResumeSequences[1] > 0;
++			checkTailChange = checkTailChange && changedLeg && (!m_ResumeQualified[1] || m_bResumeTailArrivalAccepted);
++			if (checkTailChange)
++			{
++				CF_EntityFollowWaypoint arrivalWaypoint = PairDriver(2).CF_GetEntityFollowWaypoint();
++				CF_OriginalFollowActivity arrivalActivity;
++				if (arrivalWaypoint) arrivalActivity = CF_OriginalFollowActivity.Cast(arrivalWaypoint.CF_GetActivity());
++				if (m_bResumeTailArrivalAccepted || !ResumeArrivalTransitionMatches(arrivalActivity))
++				{ PairFailure("resume_activity_replaced_unit_2"); return; }
++				string legLine = "[ConvoyFollower] LOADED_PAIR_RESUME_NEW_LEG: run_id=" + m_sPacedRun;
++				legLine += " unit=2 prior_sequence=" + m_ResumeSequences[1] + " sequence=" + evidence.ActivitySequence;
++				legLine += " discarded_best_m=" + evidence.BestProgress + " discarded_powered=" + evidence.BestPoweredSamples;
++				legLine += " reason=observed_guide_arrival_handoff pooled_credit=false required_m=20 required_powered=3";
++				Print(legLine);
++				m_bResumeTailArrivalAccepted = true;
++				m_ResumeQualified[1] = false;
++				m_ResumeSequences[1] = evidence.ActivitySequence;
++				m_ResumeActivityKeys[1] = evidence.ActivityKey; m_ResumeWaypointKeys[1] = evidence.WaypointKey;
++				evidence.Progress = 0; evidence.PoweredSamples = 0;
++				evidence.BestProgress = 0; evidence.BestPoweredSamples = 0; evidence.BestSequence = 0;
++				evidence.BestActivityKey = ""; evidence.BestWaypointKey = "";
++				// ObserveMixedUnit has already replaced the interval endpoint with this
++				// exact current sample. Nothing before this new leg can earn credit.
++			}
+ 			if (evidence.PreviousEligible)
+ 			{
+ 				if (evidence.ActivitySequence <= m_BaselineSequences[unit - 1]) { PairFailure("resume_not_fresh_unit_" + unit); return; }
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
+index 1bffa53..80caea0 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
+@@ -1,5 +1,80 @@
+ // Private observation only. No method below changes route history/cursor,
+ // native requests, physics or controls. The inherited guide policy is intact.
++// Test-only scalar receipt of the actual production handoff. This wrapper
++// calls the inherited method once and never changes its result or lifecycle.
++class CF_TestGuideArrivalHandoff
++{
++	int Epoch;
++	int PriorSequence;
++	int PriorGeneration;
++	int Generation;
++	int StopEpisode;
++	string PriorActivityKey;
++	string PriorWaypointKey;
++	string PriorGuideKey;
++	string WaypointKey;
++	string PredecessorKey;
++}
++
++modded class CF_TrailGuideDriverControllerComponent
++{
++	protected ref CF_TestGuideArrivalHandoff m_TestGuideArrivalHandoff;
++
++	override protected bool CF_TryGuideArrivalHandoff(CF_EntityFollowWaypoint waypoint, CF_EntityFollowActivity activity)
++	{
++		CF_TestGuideArrivalHandoff observed;
++		CF_OriginalFollowLease prior = m_OriginalFollowLease;
++		if (waypoint && activity && prior && m_TrailGuide && m_TrailPredecessor && m_bTrailJoined)
++		{
++			if (prior.Activity == activity && prior.Waypoint == waypoint && prior.NativeTarget == m_TrailGuide)
++			{
++				observed = new CF_TestGuideArrivalHandoff();
++				observed.Epoch = m_iTrailEpoch; observed.PriorSequence = activity.CF_GetSequence();
++				observed.PriorGeneration = prior.Generation; observed.StopEpisode = m_iEntityStopEpisode + 1;
++				observed.PriorActivityKey = activity.ToString(); observed.PriorWaypointKey = waypoint.GetID().ToString();
++				observed.PriorGuideKey = m_TrailGuide.GetID().ToString();
++				observed.PredecessorKey = m_TrailPredecessor.GetID().ToString();
++			}
++		}
++		bool handled = super.CF_TryGuideArrivalHandoff(waypoint, activity);
++		if (!handled || !observed) return handled;
++		CF_OriginalFollowLease next = m_OriginalFollowLease;
++		if (!next || next.Revoked || next.Failed || m_TrailGuide || m_bTrailGuideActive) return handled;
++		if (!next.Waypoint || next.Generation != observed.PriorGeneration + 1 || m_iTrailEpoch != observed.Epoch) return handled;
++		if (!m_bEntityStopAttempted || m_iEntityStopEpisode != observed.StopEpisode || m_iEntityStopReplacements != 1) return handled;
++		if (next.Predecessor != m_TrailPredecessor || next.NativeTarget != m_TrailPredecessor) return handled;
++		if (m_EntityStopTarget != m_TrailPredecessor || next.Distance != CF_ConvoySettings.Get().m_fStoppedGap) return handled;
++		string reason;
++		if (!next.BindingUnchanged() || !CF_CheckOriginalFollowLease(next, reason)) return handled;
++		observed.Generation = next.Generation; observed.WaypointKey = next.Waypoint.GetID().ToString();
++		m_TestGuideArrivalHandoff = observed;
++		string line = "[ConvoyFollower] TEST_GUIDE_ARRIVAL_HANDOFF: unit=" + m_iUnitNumber;
++		line += " epoch=" + observed.Epoch + " prior_sequence=" + observed.PriorSequence;
++		line += " prior_generation=" + observed.PriorGeneration + " generation=" + observed.Generation;
++		line += " prior_waypoint=" + observed.PriorWaypointKey + " prior_guide=" + observed.PriorGuideKey;
++		line += " waypoint=" + observed.WaypointKey + " predecessor=" + observed.PredecessorKey;
++		line += " stop_episode=" + observed.StopEpisode + " passive_observation=true movement_credit=false";
++		Print(line);
++		return handled;
++	}
++
++	CF_TestGuideArrivalHandoff CF_TestReadGuideArrivalHandoff(CF_OriginalFollowActivity activity)
++	{
++		CF_TestGuideArrivalHandoff observed = m_TestGuideArrivalHandoff;
++		if (!observed || !activity || !activity.Lease || activity.Lease != m_OriginalFollowLease) return null;
++		if (m_TrailGuide || m_bTrailGuideActive || m_bTrailBlocked || !m_bTrailJoined) return null;
++		if (m_iTrailEpoch != observed.Epoch || m_iEntityStopEpisode != observed.StopEpisode || !m_bEntityStopAttempted) return null;
++		if (m_EntityStopTarget != m_TrailPredecessor || activity.Lease.Predecessor != m_TrailPredecessor) return null;
++		if (!m_TrailPredecessor || m_TrailPredecessor.GetID().ToString() != observed.PredecessorKey) return null;
++		if (activity.Lease.Generation != observed.Generation || activity.Lease.NativeTarget != m_TrailPredecessor) return null;
++		if (!activity.Lease.Waypoint || activity.Lease.Waypoint.GetID().ToString() != observed.WaypointKey) return null;
++		if (activity.Lease.Distance != CF_ConvoySettings.Get().m_fStoppedGap) return null;
++		string reason;
++		if (!activity.Lease.Executing(m_Group, reason)) return null;
++		return observed;
++	}
++}
++
+ class CF_OriginalTailGuideReadback
+ {
+ 	bool HasHistory;
+@@ -55,6 +130,7 @@ class CF_OriginalTailGuideEvidence
+ 	bool Failed;
+ 	bool AssignmentEstablished;
+ 	bool PreviousEligible;
++	bool ArrivalProgressEligible;
+ 	int ActivitySequence;
+ 	string ActivityKey;
+ 	string WaypointKey;
+@@ -150,6 +226,10 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 
+ 	protected bool MixedExpectsProxy(int unit) { return false; }
+ 
++	// Baseline remains moving-only. The command fixture may admit a separately
++	// proved final approach; exact ownership and formation remain common.
++	protected bool MixedAllowsArrivalProgress(int unit, CF_OriginalFollowActivity activity) { return false; }
++
+ 	protected bool MixedModesMatch(int unit, CF_EntityFollowDriverControllerComponent driver, CF_TrailGuideDriverControllerComponent tail)
+ 	{
+ 		return !((unit == 1 && CF_TrailGuideDriverControllerComponent.Cast(driver)) || (unit > 1 && !tail));
+@@ -336,8 +416,15 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 				MixedFailure("exact_captured_wait_lost_or_replaced", unit);
+ 			else { evidence.WaitKey = waitKey; evidence.WaitSamples++; }
+ 		}
+-		bool eligible = m_bPacedStarted && exact && exactFormation && movingMode;
+-		if (unit > 1) eligible = eligible && routeBound && guideTarget && route.Joined && route.HasArcGap && route.RouteState == CF_DrivenRoute.TRACKING;
++		bool arrivalProgress = stoppedMode && !guide && exact && MixedAllowsArrivalProgress(unit, original);
++		bool eligible = m_bPacedStarted && exact && exactFormation && (movingMode || arrivalProgress);
++		if (unit > 1)
++		{
++			bool guideTracking = guideTarget && route.RouteState == CF_DrivenRoute.TRACKING;
++			bool arrivalTracking = arrivalProgress && (route.RouteState == CF_DrivenRoute.TRACKING || route.RouteState == CF_DrivenRoute.SPACING_HOLD);
++			eligible = eligible && routeBound && route.Joined && route.HasArcGap && (guideTracking || arrivalTracking);
++		}
++		evidence.ArrivalProgressEligible = arrivalProgress && eligible;
+ 		float now = GetGame().GetWorld().GetWorldTime();
+ 		vector position = sample.Truck.GetOrigin();
+ 		vector forward = sample.Truck.GetWorldTransformAxis(2);
+@@ -419,6 +506,7 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 		line += " live=" + live + " exact=" + exact + " lease_reason=" + leaseReason + " active_actions=" + activeActions;
+ 		line += " desired_distance=" + distance + " moving_mode=" + movingMode + " stopped_mode=" + stoppedMode + " exact_formation=" + exactFormation;
+ 		line += " eligible=" + eligible + " consecutive=" + consecutive + " signed_step_m=" + signedStep + " powered=" + powered;
++		line += " resume_arrival_progress=" + evidence.ArrivalProgressEligible;
+ 		line += " origin=" + position + " progress_m=" + evidence.Progress + " powered_samples=" + evidence.PoweredSamples;
+ 		line += " route_history=" + route.HasHistory + " route_points=" + route.Points + " route_joined=" + route.Joined + " route_epoch=" + route.Epoch;
+ 		line += " route_bound=" + routeBound + " observed_epoch=" + evidence.ObservedEpoch + " route_predecessor_id=" + EntityKey(routePredecessor);
