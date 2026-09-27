@@ -1,0 +1,202 @@
+{
+  "baselineCommit": "e8aad814e651e69d84aa6f848e028e93f99e362c",
+  "baselineRepresentation": "Raw Git blob bytes; use a checkout/export with core.autocrlf=false. Windows working-tree hashes are supplied separately; they are not the patch input.",
+  "candidateRun": ".cache/client/runs/sampled-head-supply-integration-v3",
+  "sourceFiles": 587,
+  "sourceManifestSha256": "04B12ECF280999053ECCF15286D37CE9A87D42D121251A6FA6FAB4EEAE259792",
+  "patch": {
+    "file": "docs/experiments/sampled-head-supply-integration-v3.patch",
+    "bytes": 336406,
+    "sha256": "A52BC86B5DB9985CA4D329DEFEE996596BF866D75634C0BD586812CC6583FEAB"
+  },
+  "changedResources": [
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/CF_DirectFollowProxy.et",
+      "change": "added",
+      "baselineGitBlob": null,
+      "baselineWindowsCheckout": null,
+      "target": {
+        "bytes": 54,
+        "sha256": "CE958CDABBB73167AD8DF69145B7E7E572EB5E14B59A98BA0F4586621EE30140"
+      }
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/CF_DirectFollowProxy.et.meta",
+      "change": "added",
+      "baselineGitBlob": null,
+      "baselineWindowsCheckout": null,
+      "target": {
+        "bytes": 192,
+        "sha256": "2F05176993913403ACE31192119D08B21B04C8B4549305C6AB7B810A3C89EA98"
+      }
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_ConvoyFollowDriverControllerComponent.c",
+      "change": "modified",
+      "baselineGitBlob": {
+        "bytes": 25165,
+        "sha256": "DB1255D5B23C611A8A0BD13292F558DC34134046449206C6BCB4DE7D5A5A0284"
+      },
+      "baselineWindowsCheckout": {
+        "bytes": 25165,
+        "sha256": "DB1255D5B23C611A8A0BD13292F558DC34134046449206C6BCB4DE7D5A5A0284"
+      },
+      "target": {
+        "bytes": 26042,
+        "sha256": "A66C4A495C2FB86A207C4B174EB33D97E26A394981A17C810FAD53E90220798D"
+      }
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ConvoyFilmCameraComponent.c",
+      "change": "modified",
+      "baselineGitBlob": {
+        "bytes": 6557,
+        "sha256": "3959426B8E7804BC60451BB1D621F9322B575991B2AA7ACB879A0760A08ADADF"
+      },
+      "baselineWindowsCheckout": {
+        "bytes": 6557,
+        "sha256": "3959426B8E7804BC60451BB1D621F9322B575991B2AA7ACB879A0760A08ADADF"
+      },
+      "target": {
+        "bytes": 6558,
+        "sha256": "5F604C372AC4406B95711A1CD6D0559939E6171587642B3BAF1709EECFBC564B"
+      }
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c",
+      "change": "modified",
+      "baselineGitBlob": {
+        "bytes": 76659,
+        "sha256": "3A16D6C5675120CA9983E53BBAB5ADD6E2078A1BB850266DB6AEF00DD9A95088"
+      },
+      "baselineWindowsCheckout": {
+        "bytes": 76659,
+        "sha256": "3A16D6C5675120CA9983E53BBAB5ADD6E2078A1BB850266DB6AEF00DD9A95088"
+      },
+      "target": {
+        "bytes": 88188,
+        "sha256": "EA1D23F36D3E40531D34D93FC0CFB9144E5FC49CAB110B6F166B588D96455BA3"
+      }
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowWaypoint.c",
+      "change": "modified",
+      "baselineGitBlob": {
+        "bytes": 3921,
+        "sha256": "75B340A02F4C4BA8C9B1468B8CCBE35DC11BD6F538D24C92518939B2083AD8DF"
+      },
+      "baselineWindowsCheckout": {
+        "bytes": 3921,
+        "sha256": "75B340A02F4C4BA8C9B1468B8CCBE35DC11BD6F538D24C92518939B2083AD8DF"
+      },
+      "target": {
+        "bytes": 5237,
+        "sha256": "85072ADAA8D005B4C03E256458E52104D1FFB4866BF3FEF556C65EA23F3E8395"
+      }
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c",
+      "change": "modified",
+      "baselineGitBlob": {
+        "bytes": 38745,
+        "sha256": "2AF50353CCD9BE10ADF285E28F6171B72579D9F04174DC3A8F956701E2F1706D"
+      },
+      "baselineWindowsCheckout": {
+        "bytes": 38745,
+        "sha256": "2AF50353CCD9BE10ADF285E28F6171B72579D9F04174DC3A8F956701E2F1706D"
+      },
+      "target": {
+        "bytes": 53432,
+        "sha256": "2E98318CE1640F0FC5C85282691864183FF019C0292A3B4441BCCA6AF835D05F"
+      }
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_OrdinaryMixedRoadProbeComponent.c",
+      "change": "modified",
+      "baselineGitBlob": {
+        "bytes": 7526,
+        "sha256": "4AF411927A62413F7AE706CA98E8B2DCCBAB18FD3A8ED391991AE0AE87A57594"
+      },
+      "baselineWindowsCheckout": {
+        "bytes": 7526,
+        "sha256": "4AF411927A62413F7AE706CA98E8B2DCCBAB18FD3A8ED391991AE0AE87A57594"
+      },
+      "target": {
+        "bytes": 8290,
+        "sha256": "0758A43A19DBB1F427FBA80A3E3B5F3BC3ADD0A8FA1312E38114D049DFD12D74"
+      }
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c",
+      "change": "modified",
+      "baselineGitBlob": {
+        "bytes": 19101,
+        "sha256": "BF1C2BA6ABF1D05217657D6671BB70716B390235EC0646FCABB348889DC3195D"
+      },
+      "baselineWindowsCheckout": {
+        "bytes": 19101,
+        "sha256": "BF1C2BA6ABF1D05217657D6671BB70716B390235EC0646FCABB348889DC3195D"
+      },
+      "target": {
+        "bytes": 23634,
+        "sha256": "373B57BB428AE23B86D9BD610C956F76D207B8CA78A0DF062AC74FBBEB8D23C0"
+      }
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_SmokeProbeComponent.c",
+      "change": "modified",
+      "baselineGitBlob": {
+        "bytes": 39097,
+        "sha256": "B6F963C6D146BA0283C7D316E93962577E731C6C99690087D64697CEF4A0E532"
+      },
+      "baselineWindowsCheckout": {
+        "bytes": 39097,
+        "sha256": "B6F963C6D146BA0283C7D316E93962577E731C6C99690087D64697CEF4A0E532"
+      },
+      "target": {
+        "bytes": 39273,
+        "sha256": "BC0F8F5B9DA545E4C15E72D9EA97CD344B3B0FAC2D7BE64588B9C27E736E445E"
+      }
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c",
+      "change": "modified",
+      "baselineGitBlob": {
+        "bytes": 55190,
+        "sha256": "A698C2D256DDAEF3195B7F02EA22DDC52BC7C32C661DC342749B2812D7E7B02E"
+      },
+      "baselineWindowsCheckout": {
+        "bytes": 55190,
+        "sha256": "A698C2D256DDAEF3195B7F02EA22DDC52BC7C32C661DC342749B2812D7E7B02E"
+      },
+      "target": {
+        "bytes": 58950,
+        "sha256": "CB477EA9339C79DE1E496D81482F448FC60841F4FDEDCE8D2D4BFB46FE395B55"
+      }
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer",
+      "change": "modified",
+      "baselineGitBlob": {
+        "bytes": 2865,
+        "sha256": "85B54962BA1BD2DBA85ACFF065E97FB62430B99DB1EE2CEAD9068B651B0FF9C6"
+      },
+      "baselineWindowsCheckout": {
+        "bytes": 2867,
+        "sha256": "4D9B27AC6930D2B1111334DB8A7DC6A989B4E00AA13C3C7E28BF6B7A17AD8D97"
+      },
+      "target": {
+        "bytes": 3237,
+        "sha256": "C2E2F4974F7EC109B84BE6343DFAC926FC098EB26BE5220BD57838A91B5392BC"
+      }
+    }
+  ],
+  "verification": {
+    "exactChangedResources": 12,
+    "matched": 12,
+    "method": "git -c core.autocrlf=false apply --binary -p3 --directory=<raw-Git-blob-addon-copy> <patch>; compare raw SHA-256 for every changed resource",
+    "noCanonicalEdits": true,
+    "noBuildOrLaunch": true
+  },
+  "limits": "Replays declared source overlays only. resourceDatabase.rdb is build-generated and excluded; packaging must regenerate it. This archive makes no live physical acceptance claim."
+}

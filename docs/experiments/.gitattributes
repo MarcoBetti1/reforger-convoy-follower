@@ -13,3 +13,5 @@ direct-head-native5-v1.patch -text
 direct-head-proxy-v1.patch -text
 
 direct-head-sampled-proxy-v1.patch -text
+sampled-head-supply-integration-v3.patch -text
+sampled-head-supply-integration-v3.json -text
