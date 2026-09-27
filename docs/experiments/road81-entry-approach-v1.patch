@@ -1,0 +1,155 @@
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+index 054ac23..8751f68 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+@@ -40,6 +40,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
+ 	protected vector m_vTrailEntryTangent;
+ 	protected float m_fTrailEntryLength;
+ 	protected bool m_bTrailEntryKnown;
++	protected bool m_bTrailEntryApproach;
+ 	protected bool m_bTrailGuideActive;
+ 	protected bool m_bTrailPoseInterrupted;
+ 	protected bool m_bTrailFollowerPose;
+@@ -399,6 +400,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
+ 		m_bTrailFollowerPose = false;
+ 		m_fTrailMeasuredBudget = 0;
+ 		m_bTrailEntryKnown = false;
++		m_bTrailEntryApproach = false;
+ 		m_bTrailPoseInterrupted = false;
+ 		m_bTrailJoined = false;
+ 		m_bTrailBlocked = false;
+@@ -652,6 +654,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
+ 			return;
+ 		m_TrailGuide = null;
+ 		m_bTrailGuideActive = false;
++		m_bTrailEntryApproach = false;
+ 		guide.CF_Revoke();
+ 		Print("[ConvoyFollower] TRAIL_GUIDE_RELEASE: unit=" + m_iUnitNumber + " guide_id=" + guide.GetID() +
+ 			" epoch=" + m_iTrailEpoch + " delete_owned=" + deleteOwned + " vehicle_transform_written=false");
+@@ -773,6 +776,72 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
+ 		}
+ 	}
+ 
++	// Qualifies a short native approach to the exact original recorded point.
++	// Road resolution grants no route station, join, clearance or driving proof.
++	protected bool CF_QualifyEntryApproach(vector pose, vector entry, out string reason)
++	{
++		reason = "entry_road_network_unavailable";
++		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
++		if (!aiWorld || !aiWorld.GetRoadNetworkManager()) return false;
++		RoadNetworkManager roads = aiWorld.GetRoadNetworkManager();
++		BaseRoad fromRoad, entryRoad;
++		float fromDistance, entryDistance;
++		reason = "entry_approach_not_near_road";
++		if (roads.GetClosestRoad(pose, fromRoad, fromDistance) < 0 || !fromRoad) return false;
++		if (!(fromDistance >= 0 && fromDistance <= 5)) return false;
++		if (roads.GetClosestRoad(entry, entryRoad, entryDistance) < 0 || !entryRoad) return false;
++		if (!(entryDistance >= 0 && entryDistance <= 5)) return false;
++		vector reached;
++		reason = "entry_native_reachability_failed";
++		if (!roads.GetReachableWaypointInRoad(pose, entry, 5, reached)) return false;
++		reason = "entry_native_snap_over_3m";
++		if (!(vector.DistanceXZ(reached, entry) <= 3)) return false;
++		reason = "native_original_entry_approach";
++		return true;
++	}
++
++	protected void CF_LogEntryGeometry(string reason, vector pose, float along, float lateral, float facingDot)
++	{
++		string line = "[ConvoyFollower] TRAIL_ENTRY_GEOMETRY: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch;
++		line += " world_ms=" + m_TrailWorld.GetWorldTime() + " reason=" + reason + " pose=" + pose;
++		line += " entry=" + m_vTrailEntry + " tangent=" + m_vTrailEntryTangent + " first_length_m=" + m_fTrailEntryLength;
++		line += " along_m=" + along + " lateral_m=" + lateral + " facing_dot=" + facingDot;
++		line += " distance_to_entry_m=" + vector.DistanceXZ(pose, m_vTrailEntry) + " joined=" + m_bTrailJoined;
++		line += " lateral_limit_m=2 facing_min=0.9 capture_near_m=3 approach_bound_m=30 forced_join=false";
++		Print(line);
++	}
++
++	// The native target remains fixed at entry while steering onto the road.
++	// Query is deferred until actual near/aligned capture, so no first-segment
++	// join or later-segment credit can arise from the approach's motion budget.
++	protected bool CF_CaptureEntryApproach(vector pose, float now)
++	{
++		vector offset = pose - m_vTrailEntry;
++		float along = vector.Dot(offset, m_vTrailEntryTangent);
++		vector lateral = offset - m_vTrailEntryTangent * along;
++		lateral[1] = 0;
++		vector facing = m_Truck.GetWorldTransformAxis(2);
++		facing[1] = 0;
++		if (!(facing.LengthSq() >= 0.5 && facing.LengthSq() <= 1.5))
++		{ CF_BlockTrail("entry_approach_facing_invalid"); return false; }
++		facing.Normalize();
++		float facingDot = vector.Dot(facing, m_vTrailEntryTangent);
++		string reason;
++		if (!(vector.DistanceXZ(pose, m_vTrailEntry) <= 30)) reason = "entry_approach_left_30m_bound";
++		else if (along > m_fTrailEntryLength) reason = "missed_original_entry_segment";
++		else if (now - m_fTrailGuideIssuedMs > 30000) reason = "entry_acquisition_timeout";
++		if (reason != string.Empty)
++		{
++			CF_LogEntryGeometry(reason, pose, along, lateral.Length(), facingDot);
++			CF_BlockTrail(reason);
++			return false;
++		}
++		if (!(vector.DistanceXZ(pose, m_vTrailEntry) <= 3 && lateral.Length() <= 2 && facingDot >= 0.9)) return false;
++		m_bTrailEntryApproach = false;
++		CF_LogEntryGeometry("physical_entry_capture_query_next", pose, along, lateral.Length(), facingDot);
++		return true;
++	}
++
+ 	protected bool CF_CreateTrailGuide()
+ 	{
+ 		if (m_bTrailBlocked)
+@@ -804,12 +873,34 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
+ 		lateral[1] = 0;
+ 		vector facing = m_Truck.GetWorldTransformAxis(2);
+ 		facing[1] = 0;
+-		facing.Normalize();
+-		if (!m_bTrailJoined && (along > firstLength || lateral.Length() > 2.0 || vector.Dot(facing, tangent) < 0.9))
++		if (!(facing.LengthSq() >= 0.5 && facing.LengthSq() <= 1.5))
+ 		{
+-			CF_BlockTrail("unsupported_initial_entry_geometry");
++			CF_LogEntryGeometry("entry_facing_invalid", m_Truck.GetOrigin(), along, lateral.Length(), -2);
++			CF_BlockTrail("entry_facing_invalid");
+ 			return true;
+ 		}
++		facing.Normalize();
++		bool entryApproach;
++		if (!m_bTrailJoined)
++		{
++			float facingDot = vector.Dot(facing, tangent);
++			string entryReason = "aligned_original_entry";
++			bool entryRejected;
++			if (!(along >= -100000 && along <= 100000) || !(lateral.Length() >= 0 && lateral.Length() <= 100000))
++			{ entryReason = "entry_pose_invalid"; entryRejected = true; }
++			else if (!(along <= firstLength)) { entryReason = "missed_original_entry_segment"; entryRejected = true; }
++			else if (lateral.Length() > 2.0 || facingDot < 0.9)
++			{
++				vector planarOffset = offset;
++				planarOffset[1] = 0;
++				entryReason = "entry_approach_not_near_or_forward";
++				if (!(planarOffset.Length() <= 30 && vector.Dot(planarOffset, facing) < -1)) entryRejected = true;
++				else if (!CF_QualifyEntryApproach(m_Truck.GetOrigin(), start, entryReason)) entryRejected = true;
++				else entryApproach = true;
++			}
++			CF_LogEntryGeometry(entryReason, m_Truck.GetOrigin(), along, lateral.Length(), facingDot);
++			if (entryRejected) { CF_BlockTrail(entryReason); return true; }
++		}
+ 		float initialStation;
+ 		if (m_bTrailJoined)
+ 		{
+@@ -869,6 +960,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
+ 		m_fWaypointSeconds = 0;
+ 		m_fTrailGuideStation = initialStation;
+ 		m_bTrailGuideActive = true;
++		m_bTrailEntryApproach = entryApproach;
+ 		m_fTrailGuideIssuedMs = m_TrailWorld.GetWorldTime();
+ 		CF_BindOriginalFollow(waypoint);
+ 		m_Group.AddWaypoint(waypoint);
+@@ -990,6 +1082,7 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
+ 		if (!activity || !utility || utility.GetCurrentAction() != activity || m_Group.GetCurrentWaypoint() != waypoint)
+ 			return; // Never advance a guide on unselected or unrelated activity evidence.
+ 		vector pose = m_Truck.GetOrigin();
++		if (m_bTrailEntryApproach && !CF_CaptureEntryApproach(pose, now)) return;
+ 		float budget = CF_QueryTrailPose();
+ 		if (m_bTrailBlocked)
+ 			return;

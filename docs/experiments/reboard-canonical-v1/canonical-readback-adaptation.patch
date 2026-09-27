@@ -1,0 +1,12 @@
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+@@ -858,9 +858,6 @@
+ 			resumedTail.ObservedEpoch = baselineTail.ObservedEpoch;
+ 			resumedTail.SawJoined = baselineTail.SawJoined;
+ 			resumedTail.LastRouteProgress = baselineTail.LastRouteProgress;
+-			resumedTail.LastRouteLocalProgress = baselineTail.LastRouteLocalProgress;
+-			resumedTail.LastRouteReverseProofSerial = baselineTail.LastRouteReverseProofSerial;
+-			resumedTail.LastRouteReverseStationTotal = baselineTail.LastRouteReverseStationTotal;
+ 			resumedTail.LastRecordedEnd = baselineTail.LastRecordedEnd;
+ 			m_fPairCommandMs = GetGame().GetWorld().GetWorldTime();
+ 			if (!SurveyCommandExtension()) { PairFailure("restart_road_extension_unavailable"); return; }

@@ -4,6 +4,8 @@ Convoy Follower adds US and Soviet **Convoy Driver** AI groups that a player can
 
 For the first supply trip, use the [short Supply Day workflow](convoy-supply-showcase.md). Its map-panel **HOLD ALL SEATED** and **RESUME ALL** keep assignments during unloading. Rear **Resume after pull-off** handles a separate pull-off maneuver. See [current validation](convoy-validation-current.md) for current-build evidence; the dated live observations below describe earlier previews.
 
+**REBOARD SELECTED** adds recovery when an explicitly held driver has exhausted automatic reboarding. It retries the original free driver seat, retains Hold and leaves other trucks held. It does not dismiss, reassign or automatically resume the convoy. The panel shows the selected driver's eligibility reason. See the [recovery instructions and validation limits](convoy-supply-showcase.md#recover-a-held-driver-without-recruiting-again).
+
 ## Add it to a scenario
 
 1. Add **Convoy Follower** as a dependency of your scenario project in Workbench's Resource Manager project options. Make sure the dependency is available in the Workbench launcher when opening the scenario. See Bohemia's [mod project setup](https://community.bistudio.com/wiki/Arma_Reforger%3AMod_Project_Setup) and [project dependency options](https://community.bistudio.com/wiki/Arma_Reforger%3AResource_Manager%3A_Options).

@@ -1,0 +1,753 @@
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c
+@@ -1,3 +1,34 @@
++// Private fixture readback only: no state, counter, waypoint or control writes.
++class CF_PairReboardReadback
++{
++	int Attempts;
++	int Exits;
++	float StateSeconds;
++	bool Selected;
++	SCR_BoardingEntityWaypoint Waypoint;
++	bool WaypointInGroup;
++}
++
++modded class CF_DriverControllerComponent
++{
++	void CF_TestReadSelectedReboard(CF_PairReboardReadback sample)
++	{
++		sample.Attempts = m_iReboardAttempts;
++		sample.Exits = m_iStationaryUnexpectedExits;
++		sample.StateSeconds = m_fStateSeconds;
++		sample.Selected = m_bPanelSelectedReboard;
++		sample.Waypoint = SCR_BoardingEntityWaypoint.Cast(m_Waypoint);
++		array<AIWaypoint> waypoints = {};
++		if (m_Group) m_Group.GetWaypoints(waypoints);
++		sample.WaypointInGroup = sample.Waypoint && waypoints.Contains(sample.Waypoint);
++	}
++}
++
++modded class CF_ConvoySession
++{
++	int CF_TestReboardIdentity(CF_DriverControllerComponent driver) { return GetIdentityNumber(driver); }
++}
++
+ class CF_LoadedPairTripProbeComponentClass : CF_OrdinaryMixedRoadProbeComponentClass
+ {
+ }
+@@ -6,6 +37,31 @@
+ // Baseline mixed driving/Wait evidence stays separate from fresh Resume evidence.
+ class CF_LoadedPairTripProbeComponent : CF_OrdinaryMixedRoadProbeComponent
+ {
++	[Attribute(defvalue: "0", params: "0 1 1", desc: "Assisted retained-Hold reboard after native delivery; ends held without Resume")]
++	protected bool m_bPairReboardExercise;
++	[Attribute(defvalue: "0", params: "0 1 1", desc: "Stationary native setup, Hold and Reboard only; no travel/cargo/arrival/Resume claim")]
++	protected bool m_bPairHeldReboardOnly;
++	protected int m_iReboardExerciseStep;
++	protected int m_iReboardExerciseExits;
++	protected int m_iReboardAutomaticCompleted;
++	protected int m_iReboardSelectedIdentity;
++	protected bool m_bReboardSawFoot;
++	protected bool m_bReboardSawExecuting;
++	protected bool m_bReboardDuplicateChecked;
++	protected bool m_bReboardTransitionLogged;
++	protected bool m_bReboardExerciseComplete;
++	protected float m_fReboardStepMs;
++	protected float m_fReboardCompleteMs;
++	[Attribute(defvalue: "0", params: "0 1 1", desc: "Test-only stop/Hold/Resume course; no cargo transfer or cargo proof")]
++	protected bool m_bPairCommandsOnly;
++	[Attribute(defvalue: "70", params: "45 70 1", desc: "Declared native lead restart road walk; physical Resume gates remain 20m and 3 powered intervals per follower")]
++	protected float m_fPairRestartWalkMeters;
++	[Attribute(defvalue: "6", params: "3.5 12 0.5", desc: "Declared minimum mapped width for this fixture's restart road; physical gates unchanged")]
++	protected float m_fPairRestartMinRoadWidth;
++	[Attribute(defvalue: "0", params: "0 1 1", desc: "Test-only explicit onward restart goal; legacy road walk remains the default")]
++	protected bool m_bPairExplicitRestartGoal;
++	[Attribute(defvalue: "0 0 0", desc: "Explicit onward goal; must resolve natively within 3m and 90-140m ahead of the stopped lead")]
++	protected vector m_vPairExplicitRestartGoal;
+ 	protected ref array<CF_LoadedPairCargoProbeComponent> m_PairCargo = {};
+ 	protected ref array<SCR_ResourceContainer> m_PairContainers = {};
+ 	protected ref array<float> m_PairHeldValues = {1800, 0, 0, 0};
+@@ -23,7 +79,7 @@
+ 	protected bool m_bPairEnding;
+ 	protected bool m_bPairResultLogged;
+ 	protected bool m_bPairPostFailure;
+-	protected int m_iPairPhase; // 0 load, 1 baseline, 2 owner seat, 3 Hold settling, 4 Hold, 5 unload, 6 return, 7 native seat, 8 Resume
++	protected int m_iPairPhase; // 0 load, 1 baseline, 2 owner seat, 3 Hold settling, 4 Hold, 5 unload, 6 return, 7 native seat, 8 Resume, 9 assisted reboard
+ 	protected int m_iNextCargo = 1;
+ 	protected int m_iActiveCargo;
+ 	protected bool m_bActiveLoading;
+@@ -38,6 +94,7 @@
+ 	protected bool m_bPairHoldMeasure;
+ 	protected bool m_bPairHoldAccepted;
+ 	protected bool m_bPairResumeAccepted;
++	protected bool m_bPairResumeNegativeChecked;
+ 	protected ref array<vector> m_HoldOrigins = {};
+ 	protected ref array<float> m_HoldDrifts = {0, 0};
+ 	protected ref array<float> m_HoldSpeeds = {0, 0};
+@@ -61,14 +118,45 @@
+ 	{
+ 		super.OnPostInit(owner);
+ 		if (!Replication.IsServer()) return;
++		if (m_bPairReboardExercise)
++			Print("[ConvoyFollower] REBOARD_PAIR_INIT: selected_unit=1 native_exits=3 automatic_returns=2" +
++				" recovery_timeout_s=150 seated_final_s=5 cargo_and_baseline_gates=unchanged" +
++				" assisted_exit=true counter_or_state_writes=false resume_tested=false ordinary_input=false");
++		Print("[ConvoyFollower] STRAIGHT_CARGO_TERRAIN: world=" + GetGame().GetWorldFile() +
++			" x=1592 z=3368 surface_y=" + GetGame().GetWorld().GetSurfaceY(1592, 3368) +
++			" preparatory_survey=true positions_changed=false controls_changed=false cargo_changed=false");
+ 		m_PairResumeEvidence.Insert(new CF_OriginalTailGuideEvidence());
+ 		m_PairResumeEvidence.Insert(new CF_OriginalTailGuideEvidence());
+-		if (m_iExpectedTrucks != 2 || m_fPacedLeadSpeedKmh != 20 ||
+-			m_sPacedWorld != "Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks.ent")
++		string expectedWorld = "Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks.ent";
++		if (m_bPairCommandsOnly) expectedWorld = "Worlds/Tests/ConvoyFollower_Arland_OpenRoad_StopHoldResume_2Trucks.ent";
++		if (m_bPairHeldReboardOnly) expectedWorld = "Worlds/Tests/ConvoyFollower_Arland_HeldReboard_2Trucks.ent";
++		if (m_iExpectedTrucks != 2 || m_fPacedLeadSpeedKmh != 20 || m_sPacedWorld != expectedWorld)
+ 			NoteFailure("fixture", "loaded_pair_contract_mismatch");
++		if (m_bPairHeldReboardOnly)
++		{
++			if (!m_bPairCommandsOnly || !m_bPairReboardExercise) NoteFailure("fixture", "held_reboard_mode_mismatch");
++			Print("[ConvoyFollower] HELD_REBOARD_INIT: world=" + m_sPacedWorld + " run_id=" + m_sPacedRun +
++				" expected=2 hold_s=30 exits=3 automatic_returns=2 final_hold_s=5 total_timeout_s=300" +
++				" cargo_tested=false travel_tested=false arrival_tested=false resume_tested=false ordinary_input=false");
++			return;
++		}
++		if (m_bPairCommandsOnly)
++		{
++			Print("[ConvoyFollower] LOADED_PAIR_INIT: run_id=" + m_sPacedRun +
++				" expected=2 command_only=true cargo_tested=false load_each=0 destination_total=0" +
++				" baseline_hold_s=180 explicit_hold_s=30 resume_each_m=20 resume_each_powered=3 max_link_m=60" +
++				" total_timeout_s=720 command_timeout_s=240 lead_cap_kmh=20 configured_restart_road_walk_m=" + m_fPairRestartWalkMeters +
++				" explicit_restart_goal_enabled=" + m_bPairExplicitRestartGoal +
++				" restart_min_road_width_m=" + m_fPairRestartMinRoadWidth +
++				" owner_staging=test_only ordinary_input=false source_count_writes=false follower_control_writes=false production_controller=true");
++			return;
++		}
+ 		Print("[ConvoyFollower] LOADED_PAIR_INIT: run_id=" + m_sPacedRun +
+ 			" expected=2 load_each=100 destination_total=200 conserved_total=1800 baseline_hold_s=180 explicit_hold_s=30" +
+ 			" resume_each_m=20 resume_each_powered=3 max_link_m=60 total_timeout_s=720 command_timeout_s=240" +
++			" configured_restart_road_walk_m=" + m_fPairRestartWalkMeters +
++			" explicit_restart_goal_enabled=" + m_bPairExplicitRestartGoal +
++			" restart_min_road_width_m=" + m_fPairRestartMinRoadWidth +
+ 			" owner_staging=test_only ordinary_input=false source_count_writes=false follower_control_writes=false production_controller=true");
+ 	}
+ 
+@@ -106,6 +194,18 @@
+ 	}
+ 
+ 	protected void CommandFailure(string reason) { PairFailure(reason); }
++
++	// Command-only setup reuses the parent native pilot/passenger owner. Pin that
++	// exact owner at the same original-truck binding seam; never create a second.
++	override protected void BindOriginals()
++	{
++		super.BindOriginals();
++		if (!m_bPairCommandsOnly || m_bPairBound || !m_PacedOwner || m_PacedTrucks.Count() != 3) return;
++		m_PairOwner = m_PacedOwner;
++		m_bPairBound = true;
++		Print("[ConvoyFollower] LOADED_PAIR_COMMAND_ONLY_BIND: run_id=" + m_sPacedRun +
++			" owner_id=" + EntityKey(m_PairOwner) + " cargo_tested=false original_parent_owner=true");
++	}
+ 
+ 	protected bool BindPairCargo()
+ 	{
+@@ -208,6 +308,8 @@
+ 
+ 	protected bool CheckPairLedger(bool log = false)
+ 	{
++		// No cargo workers or containers exist in the separately named command course.
++		if (m_bPairCommandsOnly) return true;
+ 		float source, cargo1, cargo2, destination;
+ 		if (!ReadPairLedger(source, cargo1, cargo2, destination)) { PairFailure("original_container_action_or_owner_binding_lost"); return false; }
+ 		array<float> values = {source, cargo1, cargo2, destination};
+@@ -293,14 +395,15 @@
+ 		for (int unit = 1; unit <= 2; unit++)
+ 		{
+ 			CF_ConvoyFollowDriverControllerComponent driver = PairDriver(unit);
+-			if (!IdentityRetained(unit, true) || !driver || driver.Type().ToString() != "CF_ConvoyFollowDriverControllerComponent" ||
+-				!driver.CF_TestOrdinaryRoleReady(unit > 1) || driver.CF_HasEntityFallbackFailure() ||
+-				m_PacedTrucks[unit].Truck != m_PairCargo[unit - 1].PairTruck()) return false;
++			bool requireSeat = !(m_bPairReboardExercise && m_iPairPhase == 9 && unit == 1);
++			if (!IdentityRetained(unit, requireSeat) || !driver || driver.Type().ToString() != "CF_ConvoyFollowDriverControllerComponent" ||
++				!driver.CF_TestOrdinaryRoleReady(unit > 1) || driver.CF_HasEntityFallbackFailure()) return false;
++			if (!m_bPairCommandsOnly && m_PacedTrucks[unit].Truck != m_PairCargo[unit - 1].PairTruck()) return false;
+ 			if (unit == 2 && m_MixedUnits[1].ObservedEpoch > 0)
+ 			{
+ 				CF_OriginalTailGuideReadback route = new CF_OriginalTailGuideReadback();
+ 				ReadMixedTail(driver, route);
+-				if (!route.HasHistory || route.Epoch != m_MixedUnits[1].ObservedEpoch || !route.Joined ||
++				if (!route.HasHistory || route.Epoch != m_MixedUnits[1].ObservedEpoch || (!m_bPairHeldReboardOnly && !route.Joined) ||
+ 					driver.CF_GetTrailRealPredecessor() != m_PacedTrucks[1].Truck) return false;
+ 			}
+ 		}
+@@ -368,11 +471,26 @@
+ 			if (!CommandIdentities()) { PairFailure("command_original_identity_or_session_lost"); return; }
+ 			if (m_bCommandParking)
+ 			{
+-				if (!CanCommandPark() || vector.DistanceXZ(m_Lead.GetOrigin(), m_vTransferOrigin) > 2 || CommandSpeed(m_Lead) > 2)
+-				{ PairFailure("lead_moved_during_owner_setup"); return; }
++				bool parkingContext = CanCommandPark();
++				float parkingDrift = vector.DistanceXZ(m_Lead.GetOrigin(), m_vTransferOrigin);
++				float parkingSpeed = CommandSpeed(m_Lead);
++				if (!parkingContext || parkingDrift > 2 || parkingSpeed > 2)
++				{
++					string parkingReason = "parking_ownership_or_identity";
++					if (parkingContext)
++					{
++						parkingReason = "speed_above_2";
++						if (parkingDrift > 2) parkingReason = "drift_above_2";
++					}
++					Print("[ConvoyFollower] LOADED_PAIR_PARK_REJECT: run_id=" + m_sPacedRun + " phase=" + m_iPairPhase +
++						" seat_step=" + m_iSeatStep + " reason=" + parkingReason + " parking_context=" + parkingContext +
++						" speed_kmh=" + parkingSpeed + " drift_m=" + parkingDrift + " speed_limit_kmh=2 drift_limit_m=2");
++					PairFailure("lead_moved_during_owner_setup"); return;
++				}
+ 				ApplyCommandParking();
+ 			}
+ 			MeasurePairHold();
++			if (m_bPairReboardExercise && m_iPairPhase == 9) MeasureReboardExercise();
+ 			if (m_bPacedTerminal) return;
+ 		}
+ 		if (m_iActiveCargo > 0)
+@@ -383,15 +501,51 @@
+ 		}
+ 	}
+ 
++	// Intercept the existing completed-entry barrier before StartAIDrive.
++	// No positive lead request, follower command or route proof is fabricated.
++	override protected bool StartBarrier()
++	{
++		if (!m_bPairHeldReboardOnly) return super.StartBarrier();
++		if (!CommandIdentities() || !OwnerRetained()) return false;
++		for (int unit = 0; unit <= 2; unit++)
++			if (!IdentityRetained(unit, true) || !EntryReady(m_PacedTrucks[unit])) return false;
++		if (!m_PacedCruise) m_PacedCruise = new CF_NativeCruiseControl();
++		if (!m_bPacedHoldingLead)
++		{
++			if (SCR_BoardingEntityWaypoint.Cast(m_PilotWaypoint)) m_PilotWaypoint = null;
++			HoldLeadAtRoadGoal(); // Existing separate native pilot's own zero-speed Wait.
++			return false;
++		}
++		if (!LeadWaitSelected() || CommandSpeed(m_Lead) > 2) return false;
++		m_fPairCommandMs = GetGame().GetWorld().GetWorldTime();
++		SetPairPhase(2);
++		BeginCommandSeatTransfer(true); // Existing owner-pilot preparation for real Hold.
++		Print("[ConvoyFollower] HELD_REBOARD_SETUP: run_id=" + m_sPacedRun +
++			" departure_suppressed=true original_chain=true native_entry_complete=true cargo_tested=false travel_tested=false");
++		return false; // Never release the inherited movement course.
++	}
++
+ 	override protected void Poll()
+ 	{
+ 		if (!PacedWorldAlive() || m_bPacedTerminal) return;
+ 		float now = GetGame().GetWorld().GetWorldTime();
++		if (m_bPairHeldReboardOnly && PacedSeconds() > 300) { PairFailure("held_reboard_total_timeout"); return; }
++		float phaseLimitMs = 90000;
++		if (m_bPairReboardExercise && m_iPairPhase == 9) phaseLimitMs = 150000;
+ 		if (PacedSeconds() > 720 || (m_iPairPhase == 0 && PacedSeconds() > 90) ||
+-			(m_iPairPhase >= 2 && (now - m_fPairCommandMs > 240000 || now - m_fPairPhaseMs > 90000)))
++			(m_iPairPhase >= 2 && (now - m_fPairCommandMs > 240000 || now - m_fPairPhaseMs > phaseLimitMs)))
+ 		{ PairFailure("pair_phase_or_total_timeout"); return; }
+ 		if (m_bPairNonSpacingFailure) { m_bPairEnding = true; EndPaced(); return; }
+-		if (!m_bPairBound && !BindPairCargo()) return;
++		if (m_bPairCommandsOnly)
++		{
++			if (m_iPairPhase == 0)
++			{
++				SetPairPhase(1);
++				Print("[ConvoyFollower] LOADED_PAIR_CARGO_SKIPPED: run_id=" + m_sPacedRun +
++					" phase=departure cargo_tested=false native_actions_dispatched=false");
++			}
++		}
++		else if (!m_bPairBound && !BindPairCargo()) return;
+ 		if (m_bPacedTerminal || !CheckPairLedger()) return;
+ 		if (m_iPairPhase == 0)
+ 		{
+@@ -441,6 +595,14 @@
+ 		else if (m_iPairPhase == 4)
+ 		{
+ 			if (now - m_fHoldBeginMs < 30000 || m_iHoldSamples < 30) return;
++			if (m_bPairHeldReboardOnly) { BeginReboardExercise(now); return; }
++			if (m_bPairCommandsOnly)
++			{
++				Print("[ConvoyFollower] LOADED_PAIR_CARGO_SKIPPED: run_id=" + m_sPacedRun +
++					" phase=arrival cargo_tested=false native_actions_dispatched=false");
++				SetPairPhase(6); // Complete the native-pilot handoff while both followers remain held.
++				return;
++			}
+ 			if (!CommandSeat(m_PacedOwner, true) || !ExitCommandSeat(m_PacedOwner)) { PairFailure("owner_exit_for_native_unload_failed"); return; }
+ 			m_iNextCargo = 1;
+ 			SetPairPhase(5);
+@@ -448,6 +610,21 @@
+ 		else if (m_iPairPhase == 5)
+ 		{
+ 			if (!CommandOnFoot(m_PacedOwner)) return;
++			if (!m_bPairResumeNegativeChecked)
++			{
++				if (!PairHeld()) { PairFailure("resume_negative_checks_require_both_held"); return; }
++				bool onFootAccepted = CF_ConvoySession.CF_PanelResume(m_PacedOwner);
++				bool onFootHeld = PairHeld();
++				Print("[ConvoyFollower] LOADED_PAIR_RESUME_NEGATIVE: run_id=" + m_sPacedRun +
++					" case=owner_on_foot accepted=" + onFootAccepted + " both_held_and_identities=" + onFootHeld + " multiplayer_claim=false");
++				if (onFootAccepted || !onFootHeld) { PairFailure("on_foot_resume_not_safely_rejected"); return; }
++				bool unownedAccepted = CF_ConvoySession.CF_PanelResume(m_Pilot);
++				bool unownedHeld = PairHeld();
++				Print("[ConvoyFollower] LOADED_PAIR_RESUME_NEGATIVE: run_id=" + m_sPacedRun +
++					" case=unowned_ai accepted=" + unownedAccepted + " both_held_and_identities=" + unownedHeld + " multiplayer_claim=false");
++				if (unownedAccepted || !unownedHeld) { PairFailure("unowned_resume_not_safely_rejected"); return; }
++				m_bPairResumeNegativeChecked = true;
++			}
+ 			if (m_iActiveCargo > 0) { CommitCargo(); return; }
+ 			if (m_iNextCargo <= 2) { BeginCargo(m_iNextCargo, false); return; }
+ 			if (!m_PairCargo[0].PairDelivered() || !m_PairCargo[1].PairDelivered() || m_PairHeldValues[0] != 1600 || m_PairHeldValues[1] != 0 || m_PairHeldValues[2] != 0 || m_PairHeldValues[3] != 200)
+@@ -459,25 +636,180 @@
+ 		{
+ 			if (now - m_fPairPhaseMs > 30000) { PairFailure("owner_return_timeout"); return; }
+ 			if (!CommandSeat(m_PacedOwner, true)) return;
++			if (!PairHeld()) { PairFailure("both_hold_intents_lost_before_seat_handoff"); return; }
++			if (m_bPairReboardExercise) { BeginReboardExercise(now); return; }
++			Print("[ConvoyFollower] LOADED_PAIR_SEAT_HANDOFF: run_id=" + m_sPacedRun +
++				" stage=begin_while_held both_held=true hold_measurement_retained=" + m_bPairHoldMeasure +
++				" follower_writes=false ordinary_input=false");
++			SetPairPhase(7);
++			BeginCommandSeatTransfer(false);
++		}
++		else if (m_iPairPhase == 7)
++		{
++			if (now - m_fPairPhaseMs > 30000) { PairFailure("native_pilot_return_timeout"); return; }
++			if (!PollCommandSeatTransfer(false)) return;
++			if (!PairHeld()) { PairFailure("both_hold_intents_lost_before_passenger_resume"); return; }
+ 			m_fHoldCompletedSeconds = (now - m_fHoldBeginMs) / 1000;
+-			Print("[ConvoyFollower] LOADED_PAIR_HOLD_COMPLETE: run_id=" + m_sPacedRun + " held_s=" + m_fHoldCompletedSeconds + " samples=" + m_iHoldSamples + " both_held=true delivery=200");
++			int delivered = 200;
++			if (m_bPairCommandsOnly) delivered = 0;
++			Print("[ConvoyFollower] LOADED_PAIR_HOLD_COMPLETE: run_id=" + m_sPacedRun + " held_s=" + m_fHoldCompletedSeconds +
++				" samples=" + m_iHoldSamples + " both_held=true delivery=" + delivered + " cargo_tested=" + !m_bPairCommandsOnly);
+ 			m_bPairResumeAccepted = CF_ConvoySession.CF_PanelResume(m_PacedOwner);
+-			Print("[ConvoyFollower] LOADED_PAIR_COMMAND: command=Resume accepted=" + m_bPairResumeAccepted + " run_id=" + m_sPacedRun + " completion_claim=false");
++			Print("[ConvoyFollower] LOADED_PAIR_COMMAND: command=Resume accepted=" + m_bPairResumeAccepted + " run_id=" + m_sPacedRun +
++				" owner_passenger=true native_pilot_exact=true handoff_while_held=true completion_claim=false");
+ 			if (!m_bPairResumeAccepted || PairDriver(1).CF_HasPanelHoldRequest() || PairDriver(2).CF_HasPanelHoldRequest())
+ 			{ PairFailure("both_resume_requests_not_accepted"); return; }
+ 			m_bPairHoldMeasure = false;
+-			SetPairPhase(7);
+-			BeginCommandSeatTransfer(false);
+-		}
+-		else if (m_iPairPhase == 7)
+-		{
+-			if (now - m_fPairPhaseMs > 30000) { PairFailure("native_pilot_return_timeout"); return; }
+-			if (!PollCommandSeatTransfer(false)) return;
+ 			if (!StartPairRestart()) { PairFailure("native_lead_restart_failed"); return; }
+ 			SetPairPhase(8);
+ 		}
+ 		else if (m_iPairPhase == 8)
+ 			SamplePairRestart();
++		else if (m_bPairReboardExercise && m_iPairPhase == 9)
++			PollReboardExercise(now);
++	}
++
++	protected void BeginReboardExercise(float now)
++	{
++		if ((!m_bPairHeldReboardOnly && m_bPairCommandsOnly) || m_iActiveCargo > 0 || !CheckPairLedger(true))
++		{ PairFailure("reboard_requires_completed_native_delivery"); return; }
++		m_fHoldCompletedSeconds = (now - m_fHoldBeginMs) / 1000;
++		if (m_fHoldCompletedSeconds < 30 || m_iHoldSamples < 30 || !PairHeld())
++		{ PairFailure("reboard_requires_completed_real_hold"); return; }
++		m_iReboardSelectedIdentity = m_PacedSession.CF_TestReboardIdentity(PairDriver(1));
++		if (m_iReboardSelectedIdentity <= 0) { PairFailure("reboard_stable_identity_missing"); return; }
++		m_bPairHoldMeasure = false; // End the scored seated Hold before assisted exit.
++		SetPairPhase(9);
++		Print("[ConvoyFollower] REBOARD_PAIR_BEGIN: run_id=" + m_sPacedRun + " hold_s=" + m_fHoldCompletedSeconds +
++			" hold_samples=" + m_iHoldSamples + " cargo_tested=" + !m_bPairCommandsOnly +
++			" selected_identity=" + m_iReboardSelectedIdentity + " original_assignments=true resume_issued=false");
++	}
++
++	protected void MeasureReboardExercise()
++	{
++		if (!CommandIdentities() || !PairDriver(1).CF_HasPanelHoldRequest() || !PairDriver(2).CF_HasPanelHoldRequest() || !PairDriver(2).CF_IsPanelHeld())
++		{ PairFailure("reboard_original_assignments_or_hold_lost"); return; }
++		if (m_PacedSession.CF_TestReboardIdentity(PairDriver(1)) != m_iReboardSelectedIdentity)
++		{ PairFailure("reboard_selected_identity_changed"); return; }
++		for (int unit = 1; unit <= 2; unit++)
++		{
++			float drift = vector.DistanceXZ(m_PacedTrucks[unit].Truck.GetOrigin(), m_HoldOrigins[unit - 1]);
++			float speed = CommandSpeed(m_PacedTrucks[unit].Truck);
++			if (!(drift >= 0 && drift <= 2 && speed >= 0 && speed <= 2))
++			{ PairFailure("reboard_stationary_limit_unit_" + unit); return; }
++		}
++		ChimeraCharacter actor = m_PacedTrucks[1].Pilot;
++		if (actor.IsInVehicle())
++		{
++			bool originalSeat = ExactPilot(m_PacedTrucks[1], false);
++			if (!m_bReboardTransitionLogged && !ExactPilot(m_PacedTrucks[1]))
++			{
++				m_bReboardTransitionLogged = true;
++				CompartmentAccessComponent access = actor.GetCompartmentAccessComponent();
++				CarControllerComponent car = CarControllerComponent.Cast(m_PacedTrucks[1].Truck.FindComponent(CarControllerComponent));
++				BaseCompartmentSlot slot;
++				if (access) slot = access.GetCompartment();
++				Print("[ConvoyFollower] REBOARD_PAIR_ENTRY_TRANSITION: run_id=" + m_sPacedRun +
++					" exit=" + m_iReboardExerciseExits + " original_vehicle=" + (access && access.GetVehicleIn(actor) == m_PacedTrucks[1].Truck) +
++					" original_pilot_slot=" + (slot && car && slot == car.GetPilotCompartmentSlot()) +
++					" original_occupant=" + (slot && slot.GetOccupant() == actor) +
++					" getting_in=" + (access && access.IsGettingIn()) + " getting_out=" + (access && access.IsGettingOut()) +
++					" exact_original_seat=" + originalSeat + " completion_credited=false");
++			}
++			if (!originalSeat) { PairFailure("reboard_wrong_seat_or_vehicle"); return; }
++		}
++		if (m_iReboardExerciseStep == 1 && CommandOnFoot(actor)) m_bReboardSawFoot = true;
++	}
++
++	protected void PollReboardExercise(float now)
++	{
++		MeasureReboardExercise();
++		if (m_bPacedTerminal) return;
++		CF_ConvoyFollowDriverControllerComponent driver = PairDriver(1);
++		CF_PairReboardReadback before = new CF_PairReboardReadback();
++		driver.CF_TestReadSelectedReboard(before);
++		string state = CF_ConvoySession.CF_GetOwnerPanelOrderState(m_PacedOwner);
++		Print("[ConvoyFollower] REBOARD_PAIR_SAMPLE: seconds=" + PacedSeconds() + " step=" + m_iReboardExerciseStep +
++			" exits=" + m_iReboardExerciseExits + " production_exits=" + before.Exits + " attempts=" + before.Attempts +
++			" seated=" + driver.CF_IsBoarded() + " held=" + driver.CF_IsPanelHeld() + " hold_requested=" + driver.CF_HasPanelHoldRequest() +
++			" blocked=" + driver.CF_IsPanelHoldReboardBlocked() + " waypoint=" + EntityKey(before.Waypoint) + " state=" + state);
++		if (m_iReboardExerciseStep == 0)
++		{
++			if (!PairHeld() || !EntryReady(m_PacedTrucks[1])) { PairFailure("reboard_exit_not_stably_held"); return; }
++			CompartmentAccessComponent access = m_PacedTrucks[1].Pilot.GetCompartmentAccessComponent();
++			if (!access || access.GetVehicleIn(m_PacedTrucks[1].Pilot) != m_PacedTrucks[1].Truck ||
++				!access.GetOutVehicle(EGetOutType.TELEPORT, -1, ECloseDoorAfterActions.CLOSE_DOOR, true, true))
++			{ PairFailure("reboard_native_exit_rejected"); return; }
++			m_iReboardExerciseExits++;
++			m_bReboardSawFoot = CommandOnFoot(m_PacedTrucks[1].Pilot);
++			m_iReboardExerciseStep = 1;
++			m_fReboardStepMs = now;
++			Print("[ConvoyFollower] REBOARD_PAIR_EXIT: number=" + m_iReboardExerciseExits + " native_GetOut=true counters_written=false");
++			return;
++		}
++		if (m_iReboardExerciseStep == 1)
++		{
++			if (now - m_fReboardStepMs > 45000) { PairFailure("reboard_automatic_return_or_latch_timeout"); return; }
++			if (!m_bReboardSawFoot) return;
++			if (m_iReboardExerciseExits < 3)
++			{
++				if (driver.CF_IsPanelHoldReboardBlocked()) { PairFailure("reboard_automatic_attempt_failed"); return; }
++				if (!PairHeld() || !EntryReady(m_PacedTrucks[1])) return;
++				m_iReboardAutomaticCompleted++;
++				m_iReboardExerciseStep = 0;
++				Print("[ConvoyFollower] REBOARD_PAIR_AUTOMATIC_RETURN: count=" + m_iReboardAutomaticCompleted + " original_seat=true hold_retained=true");
++				return;
++			}
++			if (!driver.CF_IsPanelHoldReboardBlocked() || !CommandOnFoot(m_PacedTrucks[1].Pilot)) return;
++			if (before.Exits != 3 || m_iReboardAutomaticCompleted != 2 || driver.CF_GetPanelStateLabel().IndexOf("repeated unexpected exits") < 0)
++			{ PairFailure("reboard_wrong_production_block"); return; }
++			bool accepted = CF_ConvoySession.CF_PanelReboardSelected(m_PacedOwner, m_iReboardSelectedIdentity);
++			CF_PairReboardReadback started = new CF_PairReboardReadback();
++			driver.CF_TestReadSelectedReboard(started);
++			if (!accepted || !started.Selected || started.Attempts != 1 || !started.Waypoint || !started.WaypointInGroup)
++			{ PairFailure("reboard_selected_native_order_not_started"); return; }
++			if (started.Waypoint.GetEntity() != m_PacedTrucks[1].Truck || before.Waypoint == started.Waypoint)
++			{ PairFailure("reboard_selected_original_target_or_fresh_waypoint_missing"); return; }
++			m_iReboardExerciseStep = 2;
++			m_fReboardStepMs = now;
++			Print("[ConvoyFollower] REBOARD_PAIR_SELECTED: accepted=true original_native_target=true fresh_waypoint=" + EntityKey(started.Waypoint));
++			return;
++		}
++		if (m_iReboardExerciseStep == 2)
++		{
++			// The deliberately rejected duplicate may briefly occupy the footer;
++			// the active session poll restores its executing/completed command state.
++			if ((state.IndexOf("blocked:") == 0 && !before.Selected) || driver.CF_IsPanelHoldReboardBlocked())
++			{ PairFailure("reboard_selected_blocked"); return; }
++			if (state.IndexOf("executing: Unit " + m_iReboardSelectedIdentity + " boarding original truck") == 0)
++			{
++				m_bReboardSawExecuting = true;
++				if (!m_bReboardDuplicateChecked)
++				{
++					bool duplicate = CF_ConvoySession.CF_PanelReboardSelected(m_PacedOwner, m_iReboardSelectedIdentity);
++					CF_PairReboardReadback after = new CF_PairReboardReadback();
++					driver.CF_TestReadSelectedReboard(after);
++					bool unchanged = before.Attempts == after.Attempts && before.StateSeconds == after.StateSeconds && before.Waypoint == after.Waypoint;
++					if (duplicate || !unchanged || !after.Selected) { PairFailure("reboard_duplicate_reset_attempt"); return; }
++					m_bReboardDuplicateChecked = true;
++					Print("[ConvoyFollower] REBOARD_PAIR_DUPLICATE: accepted=false attempts_clock_waypoint_unchanged=true");
++				}
++			}
++			string completed = "completed: Unit " + m_iReboardSelectedIdentity + " seated in original truck; Hold retained";
++			if (state != completed) return;
++			if (!m_bReboardSawExecuting || !m_bReboardDuplicateChecked || !PairHeld() || !EntryReady(m_PacedTrucks[1]))
++			{ PairFailure("reboard_completion_evidence_missing"); return; }
++			m_iReboardExerciseStep = 3;
++			m_fReboardCompleteMs = now;
++			return;
++		}
++		if (!PairHeld() || !EntryReady(m_PacedTrucks[1]) || m_bPairResumeAccepted)
++		{ PairFailure("reboard_did_not_remain_held"); return; }
++		if (now - m_fReboardCompleteMs < 5000) return;
++		m_bReboardExerciseComplete = true;
++		m_bPairComplete = true;
++		m_bPairEnding = true;
++		EndPaced();
+ 	}
+ 
+ 	protected bool BaselineComplete()
+@@ -494,6 +826,23 @@
+ 	override protected void EndPaced()
+ 	{
+ 		if (m_bPacedTerminal) return;
++		if (m_bPairHeldReboardOnly)
++		{
++			if (!m_bPairComplete || !m_bReboardExerciseComplete) NoteFailure("held_reboard", "incomplete_native_held_reboard");
++			m_bPairEnding = true;
++			m_bPacedTerminal = true;
++			m_bFinished = true;
++			Print("[ConvoyFollower] HELD_REBOARD_RESULT: run_id=" + m_sPacedRun + " pass=" + (!m_bPacedFailed && m_bReboardExerciseComplete) +
++				" recovery_complete=" + m_bReboardExerciseComplete + " hold_accepted=" + m_bPairHoldAccepted +
++				" hold_s=" + m_fHoldCompletedSeconds + " hold_samples=" + m_iHoldSamples +
++				" exits=" + m_iReboardExerciseExits + " automatic_returns=" + m_iReboardAutomaticCompleted +
++				" executing_observed=" + m_bReboardSawExecuting + " duplicate_unchanged=" + m_bReboardDuplicateChecked +
++				" final_held_s_required=5 peak_gap_m=" + m_fPacedPeakGap + " first_failure=" + m_sFirstFailure +
++				" cargo_tested=false travel_tested=false arrival_tested=false resume_tested=false assisted_exit=true ordinary_input=false");
++			GetGame().GetCallqueue().Remove(Poll);
++			SchedulePacedExit();
++			return; // Distinct stationary contract; do not print a movement/180s PASS.
++		}
+ 		if (!m_bPairEnding && m_iPairPhase == 1 && BaselineComplete())
+ 		{
+ 			Print("[ConvoyFollower] LOADED_PAIR_BASELINE_COMPLETE: run_id=" + m_sPacedRun + " observed_s=" +
+@@ -518,16 +867,32 @@
+ 		}
+ 		m_bPairEnding = true;
+ 		foreach (CF_LoadedPairCargoProbeComponent worker : m_PairCargo) worker.StopPairAction("terminal");
+-		if (!m_bPairComplete) NoteFailure("loaded_pair", "incomplete_native_delivery_hold_or_restart");
+-		ReleaseCommandParking("terminal");
++		if (!m_bPairComplete)
++		{
++			if (m_bPairReboardExercise) NoteFailure("loaded_pair", "incomplete_native_held_reboard");
++			else if (m_bPairCommandsOnly) NoteFailure("loaded_pair", "incomplete_native_hold_or_restart");
++			else NoteFailure("loaded_pair", "incomplete_native_delivery_hold_or_restart");
++		}
++		if (!m_bPairReboardExercise) ReleaseCommandParking("terminal");
+ 		super.EndPaced();
++		if (m_bPairReboardExercise && !m_bPairResultLogged)
++		{
++			m_bPairResultLogged = true;
++			Print("[ConvoyFollower] REBOARD_PAIR_RESULT: run_id=" + m_sPacedRun + " pass=" + (m_bReboardExerciseComplete && !m_bPacedFailed) +
++				" recovery_complete=" + m_bReboardExerciseComplete + " exits=" + m_iReboardExerciseExits + " automatic_returns=" + m_iReboardAutomaticCompleted +
++				" executing_observed=" + m_bReboardSawExecuting + " duplicate_unchanged=" + m_bReboardDuplicateChecked +
++				" hold_s_before_recovery=" + m_fHoldCompletedSeconds + " peak_gap_m=" + m_fPacedPeakGap + " spacing_failed=" + m_bPacedSpacingFailed +
++				" cargo_tested=" + !m_bPairCommandsOnly + " resume_tested=false assisted_exit=true ordinary_input=false");
++			return;
++		}
+ 		if (!m_bPairResultLogged)
+ 		{
+ 			m_bPairResultLogged = true;
+ 			Print("[ConvoyFollower] LOADED_PAIR_RESULT: run_id=" + m_sPacedRun + " pass=" + (m_bPairComplete && !m_bPacedFailed) +
+ 				" pair_complete=" + m_bPairComplete + " hold_accepted=" + m_bPairHoldAccepted + " resume_accepted=" + m_bPairResumeAccepted +
+ 				" hold_s=" + m_fHoldCompletedSeconds + " hold_samples=" + m_iHoldSamples + " peak_gap_m=" + m_fPacedPeakGap +
+-				" spacing_failed=" + m_bPacedSpacingFailed + " ordinary_input=false owner_staging=test_only");
++				" spacing_failed=" + m_bPacedSpacingFailed + " command_only=" + m_bPairCommandsOnly +
++				" cargo_tested=" + !m_bPairCommandsOnly + " ordinary_input=false owner_staging=test_only");
+ 		}
+ 	}
+ 
+@@ -617,9 +982,9 @@
+ 		if (!m_bPacedHoldingLead && vector.DistanceXZ(position, m_vRestartGoal) <= 8) HoldLeadAtRoadGoal();
+ 	}
+ 
+-	// Proven lead-only parking and native seat operations are copied verbatim
+-	// below from CF_OriginalFollowResumeProbeComponent; the survey walks 70 m
+-	// to give the second follower room to establish its fresh 20 m segment.
++	// Lead-only parking and native seat operations retain the original fixture
++	// gates. The survey defaults to a road walk; an explicit onward goal is
++	// opt-in and does not establish route clearance, grade or physical movement.
+ 	protected float CommandSpeed(Vehicle truck)
+ 	{
+ 		CarControllerComponent car;
+@@ -644,30 +1009,78 @@
+ 		return access && !access.IsGettingIn() && !access.IsGettingOut();
+ 	}
+ 
++	protected bool RejectCommandExtension(string reason, float width = -1, float roadDistance = -1)
++	{
++		string goalContract = " recorded_road_walk_m=" + m_fPairRestartWalkMeters;
++		if (m_bPairExplicitRestartGoal)
++			goalContract = " explicit_onward_goal=" + m_vPairExplicitRestartGoal + " road_walk_attempted=false route_grade_known=false clearance_known=false";
++		Print("[ConvoyFollower] ORIGINAL_RESUME_SURVEY_REJECT: run_id=" + m_sPacedRun + " reason=" + reason +
++			" width=" + width + " required_width=" + m_fPairRestartMinRoadWidth + " road_distance=" + roadDistance +
++			goalContract + " geometry_only=true");
++		return false;
++	}
++
+ 	protected bool SurveyCommandExtension()
+ 	{
+ 		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+-		if (!aiWorld || !aiWorld.GetRoadNetworkManager()) return false;
++		if (!aiWorld || !aiWorld.GetRoadNetworkManager()) return RejectCommandExtension("road_network_unavailable");
+ 		RoadNetworkManager roads = aiWorld.GetRoadNetworkManager();
+ 		BaseRoad road;
+ 		float roadDistance;
+ 		int roadId = roads.GetClosestRoad(m_Lead.GetOrigin(), road, roadDistance);
+-		if (roadId < 0 || !road || road.GetWidth() < 6 || roadDistance > 5) return false;
+-		array<vector> points = {};
+-		road.GetPoints(points);
++		if (roadId < 0 || !road) return RejectCommandExtension("closest_road_unavailable", -1, roadDistance);
++		float width = road.GetWidth();
++		if (width < m_fPairRestartMinRoadWidth) return RejectCommandExtension("road_width_below_declared_minimum", width, roadDistance);
++		if (roadDistance > 5) return RejectCommandExtension("road_distance_over_5m", width, roadDistance);
+ 		vector forward = m_Lead.GetWorldTransformAxis(2);
+ 		vector candidate;
+-		if (!CF_RoadPolyline.TryWalk(points, m_Lead.GetOrigin(), forward, 70, candidate)) return false;
++		if (m_bPairExplicitRestartGoal)
++		{
++			candidate = m_vPairExplicitRestartGoal;
++			if (candidate == vector.Zero) return RejectCommandExtension("explicit_goal_missing", width, roadDistance);
++			// Positive bounded checks reject nonfinite authored components too.
++			for (int coordinate = 0; coordinate < 3; coordinate++)
++				if (!(candidate[coordinate] >= -100000 && candidate[coordinate] <= 100000))
++					return RejectCommandExtension("explicit_goal_invalid", width, roadDistance);
++			float requestedDistance = vector.DistanceXZ(candidate, m_Lead.GetOrigin());
++			if (!(requestedDistance >= 90 && requestedDistance <= 140))
++				return RejectCommandExtension("explicit_goal_outside_90_140m", width, roadDistance);
++		}
++		else
++		{
++			array<vector> points = {};
++			road.GetPoints(points);
++			if (!CF_RoadPolyline.TryWalk(points, m_Lead.GetOrigin(), forward, m_fPairRestartWalkMeters, candidate))
++				return RejectCommandExtension("forward_road_walk_unavailable", width, roadDistance);
++		}
+ 		vector reached;
+-		if (!roads.GetReachableWaypointInRoad(m_Lead.GetOrigin(), candidate, 5, reached) || vector.DistanceXZ(candidate, reached) > 3) return false;
++		if (!roads.GetReachableWaypointInRoad(m_Lead.GetOrigin(), candidate, 5, reached))
++			return RejectCommandExtension("native_reachability_failed", width, roadDistance);
++		if (vector.DistanceXZ(candidate, reached) > 3) return RejectCommandExtension("native_snap_over_3m", width, roadDistance);
+ 		vector delta = reached - m_Lead.GetOrigin();
+ 		float distance = vector.DistanceXZ(reached, m_Lead.GetOrigin());
+-		if (distance < 55 || distance > 85 || delta[0] * forward[0] + delta[2] * forward[2] < distance * 0.5) return false;
++		if (m_bPairExplicitRestartGoal)
++		{
++			if (!(distance >= 90 && distance <= 140))
++				return RejectCommandExtension("resolved_explicit_distance_outside_90_140m", width, roadDistance);
++		}
++		else if (distance < m_fPairRestartWalkMeters - 15 || distance > m_fPairRestartWalkMeters + 15)
++			return RejectCommandExtension("resolved_distance_outside_walk_band", width, roadDistance);
++		if (delta[0] * forward[0] + delta[2] * forward[2] < distance * 0.5)
++			return RejectCommandExtension("resolved_goal_not_forward", width, roadDistance);
+ 		m_vRestartGoal = reached;
+ 		m_vRestartAxis = Vector(delta[0] / distance, 0, delta[2] / distance);
++		if (m_bPairExplicitRestartGoal)
++		{
++			Print("[ConvoyFollower] ORIGINAL_RESUME_SURVEY: run_id=" + m_sPacedRun + " road_id=" + roadId +
++				" width=" + width + " required_width=" + m_fPairRestartMinRoadWidth + " road_distance=" + roadDistance + " start=" + m_Lead.GetOrigin() +
++				" explicit_onward_goal=" + candidate + " goal=" + reached + " chord_m=" + distance + " endpoint_height_delta_m=" + delta[1] +
++				" axis=" + m_vRestartAxis + " road_walk_attempted=false route_grade_known=false clearance_known=false geometry_only=true");
++			return true;
++		}
+ 		Print("[ConvoyFollower] ORIGINAL_RESUME_SURVEY: run_id=" + m_sPacedRun + " road_id=" + roadId +
+-			" width=" + road.GetWidth() + " road_distance=" + roadDistance + " start=" + m_Lead.GetOrigin() +
+-			" goal=" + reached + " axis=" + m_vRestartAxis + " recorded_road_walk_m=70 geometry_only=true");
++			" width=" + width + " required_width=" + m_fPairRestartMinRoadWidth + " road_distance=" + roadDistance + " start=" + m_Lead.GetOrigin() +
++			" goal=" + reached + " axis=" + m_vRestartAxis + " recorded_road_walk_m=" + m_fPairRestartWalkMeters + " geometry_only=true");
+ 		return true;
+ 	}
+ 
+@@ -779,13 +1192,19 @@
+ 		}
+ 		if (m_iSeatStep == 1 && CommandOnFoot(m_PacedOwner))
+ 		{
++			if (!BoardCommandSeat(m_Pilot, true)) { CommandFailure("native_pilot_entry_rejected"); return false; }
++			m_iSeatStep = 2;
++			Print("[ConvoyFollower] LOADED_PAIR_SEAT_HANDOFF: run_id=" + m_sPacedRun +
++				" stage=native_pilot_entry_requested order=native_pilot_then_owner_passenger parking_retained=" + m_bCommandParking +
++				" follower_writes=false ordinary_input=false");
++		}
++		else if (m_iSeatStep == 2 && CommandSeat(m_Pilot, true))
++		{
+ 			if (!BoardCommandSeat(m_PacedOwner, false)) { CommandFailure("owner_passenger_entry_rejected"); return false; }
+-			m_iSeatStep = 2;
+-		}
+-		else if (m_iSeatStep == 2 && CommandSeat(m_PacedOwner, false))
+-		{
+-			if (!BoardCommandSeat(m_Pilot, true)) { CommandFailure("native_pilot_entry_rejected"); return false; }
+ 			m_iSeatStep = 3;
++			Print("[ConvoyFollower] LOADED_PAIR_SEAT_HANDOFF: run_id=" + m_sPacedRun +
++				" stage=owner_passenger_entry_requested native_pilot_exact=true parking_retained=" + m_bCommandParking +
++				" follower_writes=false ordinary_input=false");
+ 		}
+ 		return m_iSeatStep == 3 && CanControlLead() && OwnerRetained() && EntryReady(m_PacedTrucks[0]);
+ 	}
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_HeldReboard_2Trucks.ent
+@@ -0,0 +1,3 @@
++SubScene {
++ Parent "{77C41EA429B6AC35}worlds/GameMaster/GM_Arland.ent"
++}
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_HeldReboard_2Trucks.ent.meta
+@@ -0,0 +1,9 @@
++MetaFileClass {
++ Name "{7069BCC7F13648F6}Worlds/Tests/ConvoyFollower_Arland_HeldReboard_2Trucks.ent"
++ Configurations {
++  ENTResourceClass PC {
++  }
++  ENTResourceClass HEADLESS : PC {
++  }
++ }
++}
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_HeldReboard_2Trucks_Layers/default.layer
+@@ -0,0 +1,54 @@
++SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
++ coords 1375.06 20.1534 3336.05
++}
++
++SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1375.06 20.1534 3334.05
++}
++
++SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1350.99 17.515 3335.1
++}
++
++SCR_AIGroup CF_SmokeGroup2 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1331.34 15.4287 3335.98
++}
++
++Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1346.99 17.515 3331.1
++ angles 0 92 0
++ components {
++  CF_SurfaceContactProbeComponent "{3B928B64BFA04B1F}" {
++  }
++ }
++}
++
++Vehicle CF_SmokeFollower2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1327.34 15.4287 3331.98
++ angles 0 92 0
++ components {
++  CF_SurfaceContactProbeComponent "{48E379B58FB24C82}" {
++  }
++ }
++}
++
++Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1371.06 20.1534 3330.05
++ angles 0 92 0
++ components {
++  CF_SurfaceContactProbeComponent "{E14ED0401D554192}" {
++  }
++  CF_LoadedPairTripProbeComponent "{0715C99958F04212}" {
++   m_iExpectedTrucks 2
++   m_bPairCommandsOnly 1
++   m_bPairReboardExercise 1
++   m_bPairHeldReboardOnly 1
++   m_bPacedAutoExit 1
++   m_fPacedLeadSpeedKmh 20
++   m_sPacedWorld "Worlds/Tests/ConvoyFollower_Arland_HeldReboard_2Trucks.ent"
++  }
++  CF_ConvoyFilmCameraComponent "{50D24C680C71446E}" {
++   m_iExpectedTrucks 2
++  }
++ }
++}

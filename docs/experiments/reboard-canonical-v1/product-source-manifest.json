@@ -1,0 +1,52 @@
+{
+  "status": "private canonical integration candidate; not built or run",
+  "baselineCommit": "93f22bda004df1d32a2355ff5408c0d7d68188af",
+  "canonicalAddonUnmodified": true,
+  "source": "source",
+  "productFiles": 5,
+  "files": [
+    {
+      "file": "Scripts/Game/CF_ConvoyMapPanel.c",
+      "category": "product",
+      "baselineSha256": "6A1F3EDFEB77D1F9A5C2B7830484AA55E5CFA7051570BA72AF5D596F84489C53",
+      "sha256": "9652CB23769B57F8D172CA834691E817F23DF02DB50D982F6BB8F8B91F170B55",
+      "bytes": 15237
+    },
+    {
+      "file": "Scripts/Game/CF_ConvoySession.c",
+      "category": "product",
+      "baselineSha256": "C87816547191185B98468B6690EE6483C85FA128FC0CC82DDF76B4DAB43C9485",
+      "sha256": "C9399B5D90D7205F3AF8F04C23C4488DD125ECE4AFE0045A12362988C8062C4E",
+      "bytes": 102461
+    },
+    {
+      "file": "Scripts/Game/CF_DriverControllerComponent.c",
+      "category": "product",
+      "baselineSha256": "42D0CB1083502CC8E9A98E67F43E5CE287F7DCE6973A665A2B39C61BC9FB81DA",
+      "sha256": "E9013E475818463E1E871DBEE5BCA0D00EB5D70C208A39CBE6C8A586D4297858",
+      "bytes": 213260
+    },
+    {
+      "file": "Scripts/Game/CF_RadioPlayerController.c",
+      "category": "product",
+      "baselineSha256": "8331EF836955E53A0DB10E3B9A267B22E5E8D1228DEFCD9592769C9A623AA12C",
+      "sha256": "87A4EB2617916BFC010EE9454A81A27312D4816F36E1B70668339EDF3999316A",
+      "bytes": 39022
+    },
+    {
+      "file": "Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c",
+      "category": "product",
+      "baselineSha256": "FF145531DE932B8DC04C24CBF8A65765A69B5C77454EABA63777B95CA887879A",
+      "sha256": "4B2C97261A1D46B8C2A647422EE5D640DC27027EFFC020FFD05E9715695EF379",
+      "bytes": 69954
+    }
+  ],
+  "sourcePatch": {
+    "file": "review/product.patch",
+    "sha256": "E6B670FEA29DB87435A2D594FDFF49A280A30877CF1E7B1B33BE5DDB31FFA57D",
+    "applyCheck": {
+      "exitCode": 0,
+      "against": "current canonical addon"
+    }
+  }
+}

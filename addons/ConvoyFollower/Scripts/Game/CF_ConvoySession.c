@@ -29,6 +29,7 @@ class CF_ConvoySession
 	protected static const int CF_PANEL_ORDER_HOLD = 1;
 	protected static const int CF_PANEL_ORDER_RESUME = 2;
 	protected static const int CF_PANEL_ORDER_DISMOUNT = 3;
+	protected static const int CF_PANEL_ORDER_REBOARD = 4;
 	protected static const float CF_PANEL_HOLD_TIMEOUT_MS = 90000.0;
 	protected static const int CF_UNLOAD_NONE = 0;
 	protected static const int CF_UNLOAD_SHIFTING = 1;
@@ -106,6 +107,10 @@ class CF_ConvoySession
 	protected ref array<ref CF_PanelResumeMember> m_aPanelResumeMembers = {};
 	protected IEntity m_PanelResumeLead;
 	protected float m_fPanelResumeSampleMs;
+	protected CF_DriverControllerComponent m_PanelReboardDriver;
+	protected IEntity m_PanelReboardEntity;
+	protected Vehicle m_PanelReboardTruck;
+	protected int m_iPanelReboardIdentity;
 
 	static bool CF_IsWorldCleanup()
 	{
@@ -149,6 +154,7 @@ class CF_ConvoySession
 		m_bSessionClosed = true;
 		CancelScheduledPolls();
 		CF_ClearPanelResumeTracking();
+		CF_ClearPanelReboardTracking();
 		// Repeated references are harmless: driver detachment is idempotent.
 		foreach (CF_DriverControllerComponent active : m_aUnits)
 		{
@@ -326,8 +332,10 @@ class CF_ConvoySession
 			string target = "owner";
 			if (i > 0)
 				target = "Unit " + session.GetIdentityNumber(session.m_aUnits[i - 1]);
+			string reboardReason = session.CF_GetSelectedReboardReason(user, unit);
+			if (reboardReason.IsEmpty()) reboardReason = "ready";
 			string row = "" + identity + "|" + (i + 1) + "|" + CF_GetPanelTruckLabel(unit, identity) + "|" +
-				unit.CF_GetPanelStateLabel() + "|" + target;
+				unit.CF_GetPanelStateLabel() + "|" + target + "|" + reboardReason;
 			if (!rows.IsEmpty())
 				rows += ";";
 			rows += row;
@@ -367,6 +375,7 @@ class CF_ConvoySession
 
 	protected bool CF_CanUsePanelOrders()
 	{
+		if (m_iPanelOrder == CF_PANEL_ORDER_REBOARD) return false;
 		return !m_bSessionClosed && !m_PendingDriver && !m_UnloadHead &&
 			m_iUnloadPhase == CF_UNLOAD_NONE && !m_bUnloadAnchorLock &&
 			!m_bUnloadReleaseBlocked && !m_bReturnPending &&
@@ -495,6 +504,121 @@ class CF_ConvoySession
 		return false;
 	}
 
+	protected string CF_GetSelectedReboardReason(IEntity user, CF_DriverControllerComponent driver)
+	{
+		if (!Replication.IsServer() || s_bWorldCleanup || m_bSessionClosed || user != m_OrderingPlayer)
+			return "original owner session unavailable";
+		if (!CF_CanUsePanelOrders() || m_iPanelOrder != CF_PANEL_ORDER_NONE)
+			return "finish the active convoy order first";
+		if (!driver || FindUnit(driver) < 0)
+			return "select an active convoy member";
+		foreach (CF_DriverControllerComponent other : m_aUnits)
+		{
+			if (other != driver && (!other || !other.CF_IsPanelHeld()))
+				return "hold the other convoy drivers first";
+		}
+		return driver.CF_GetPanelReboardReason(user);
+	}
+
+	static bool CF_PanelReboardSelected(IEntity user, int unitIdentity)
+	{
+		if (!Replication.IsServer()) return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session) return false;
+		CF_DriverControllerComponent selected;
+		foreach (CF_DriverControllerComponent unit : session.m_aUnits)
+			if (unit && unitIdentity > 0 && session.GetIdentityNumber(unit) == unitIdentity) selected = unit;
+		string reason = session.CF_GetSelectedReboardReason(user, selected);
+		if (!reason.IsEmpty())
+		{
+			session.m_sPanelOrderState = "blocked: " + reason;
+			return false;
+		}
+		if (!selected.CF_PanelReboardAssignedTruck(user))
+		{
+			session.m_sPanelOrderState = "blocked: " + selected.CF_GetPanelStateLabel();
+			return false;
+		}
+		session.m_PanelReboardDriver = selected;
+		session.m_PanelReboardEntity = selected.CF_GetDriverEntity();
+		session.m_PanelReboardTruck = selected.CF_GetAssignedVehicle();
+		session.m_iPanelReboardIdentity = unitIdentity;
+		session.m_iPanelOrder = CF_PANEL_ORDER_REBOARD;
+		CF_ConvoySettings settings = CF_ConvoySettings.Get();
+		float timeoutSeconds = settings.m_fReboardRetrySeconds * settings.m_iReboardMaxAttempts + 30.0;
+		session.m_fPanelOrderDeadlineMs = GetGame().GetWorld().GetWorldTime() + timeoutSeconds * 1000.0;
+		session.CF_SetPanelReboardState("accepted: Unit " + unitIdentity + " reboard requested; Hold retained");
+		session.ScheduleUnloadPoll();
+		return true;
+	}
+
+	protected void CF_ClearPanelReboardTracking()
+	{
+		m_PanelReboardDriver = null;
+		m_PanelReboardEntity = null;
+		m_PanelReboardTruck = null;
+		m_iPanelReboardIdentity = 0;
+	}
+
+	protected void CF_SetPanelReboardState(string state)
+	{
+		if (m_sPanelOrderState == state) return;
+		m_sPanelOrderState = state;
+		Print("[ConvoyFollower] PANEL_REBOARD_STATE: " + state);
+	}
+
+	protected void CF_EndPanelReboard(string state)
+	{
+		if (m_iPanelOrder != CF_PANEL_ORDER_REBOARD) return;
+		// End only this accepted attempt, never a replacement assignment. The
+		// driver defers native waypoint removal while another control owner acts.
+		if (m_PanelReboardDriver && m_PanelReboardEntity && m_PanelReboardTruck)
+		{
+			bool sameDriver = m_PanelReboardDriver.CF_GetDriverEntity() == m_PanelReboardEntity;
+			bool sameTruck = m_PanelReboardDriver.CF_GetAssignedVehicle() == m_PanelReboardTruck;
+			if (sameDriver && sameTruck && m_PanelReboardDriver.CF_GetOrderingPlayerId() == m_iOrderingPlayerId)
+				m_PanelReboardDriver.CF_StopPanelSelectedReboard(state);
+		}
+		CF_SetPanelReboardState(state);
+		m_iPanelOrder = CF_PANEL_ORDER_NONE;
+		CF_ClearPanelReboardTracking();
+	}
+
+	protected void CF_UpdatePanelReboard()
+	{
+		CF_DriverControllerComponent driver = m_PanelReboardDriver;
+		if (!driver || FindUnit(driver) < 0 || GetIdentityNumber(driver) != m_iPanelReboardIdentity)
+		{
+			CF_EndPanelReboard("blocked: selected convoy membership changed");
+			return;
+		}
+		if (!m_PanelReboardEntity || !m_PanelReboardTruck || driver.CF_GetDriverEntity() != m_PanelReboardEntity ||
+			driver.CF_GetAssignedVehicle() != m_PanelReboardTruck || driver.CF_GetOrderingPlayerId() != m_iOrderingPlayerId)
+		{
+			CF_EndPanelReboard("blocked: original driver or truck assignment changed");
+			return;
+		}
+		string failure = driver.CF_GetPanelSelectedReboardFailure();
+		if (GetForPlayer(m_OrderingPlayer) != this)
+			failure = "original owner is no longer controlled";
+		if (!failure.IsEmpty())
+		{
+			CF_EndPanelReboard("blocked: Unit " + m_iPanelReboardIdentity + " " + failure);
+			return;
+		}
+		if (driver.CF_IsPanelHeld() && driver.CF_IsPanelVehicleSlow(2.0))
+		{
+			CF_EndPanelReboard("completed: Unit " + m_iPanelReboardIdentity + " seated in original truck; Hold retained");
+			return;
+		}
+		if (GetGame().GetWorld().GetWorldTime() >= m_fPanelOrderDeadlineMs)
+		{
+			CF_EndPanelReboard("blocked: selected reboard timed out; assignment and Hold retained");
+			return;
+		}
+		CF_SetPanelReboardState("executing: Unit " + m_iPanelReboardIdentity + " boarding original truck; Hold retained");
+	}
+
 	static string CF_GetOwnerPanelOrderState(IEntity user)
 	{
 		if (!Replication.IsServer())
@@ -555,6 +679,8 @@ class CF_ConvoySession
 		}
 		else if (m_iPanelOrder == CF_PANEL_ORDER_RESUME)
 			CF_UpdatePanelResume();
+		else if (m_iPanelOrder == CF_PANEL_ORDER_REBOARD)
+			CF_UpdatePanelReboard();
 	}
 
 	protected void CF_ClearPanelResumeTracking()
@@ -1981,7 +2107,7 @@ class CF_ConvoySession
 		m_iOwnerMissingPolls = 0;
 
 		Vehicle ownerVehicle = GetOwnerPilotedVehicle();
-		if (m_iPanelOrder == CF_PANEL_ORDER_HOLD || m_iPanelOrder == CF_PANEL_ORDER_RESUME)
+		if (m_iPanelOrder != CF_PANEL_ORDER_NONE)
 			CF_UpdatePanelOrderState();
 		PollOrdinaryOrderRecovery(ownerVehicle);
 		if (m_aReturnQueue.IsEmpty() && !m_bUnloadAnchorLock && !m_UnloadHead && ownerVehicle &&
@@ -2623,6 +2749,7 @@ class CF_ConvoySession
 
 	protected void RewireTargets()
 	{
+		CF_EndPanelReboard("blocked: convoy assignments or order changed during reboard");
 		if (m_iPanelOrder == CF_PANEL_ORDER_RESUME && !CF_PanelResumeRosterMatches())
 			CF_EndPanelResume("cancelled: convoy assignments or order changed");
 		CF_DriverControllerComponent predecessor;
@@ -2702,6 +2829,7 @@ class CF_ConvoySession
 
 	protected void CloseSession()
 	{
+		CF_EndPanelReboard("blocked: convoy session ended during reboard");
 		CF_EndPanelResume("cancelled: convoy session ended");
 		m_bSessionClosed = true;
 		CancelScheduledPolls();

@@ -18,6 +18,8 @@ Owner-passenger Resume in the same established lead vehicle and the ordinary Sup
 
 ### Immediate playable milestone
 
+The selected-driver recovery increment is now integrated after a focused physical pass: a held driver can retry boarding the same truck without releasing the convoy or losing membership. The complete curved-road supply comparison also reached sustained arrival and delivered the first load, but failed spacing and second-truck unloading reach. The immediate next comparison retains following coordination during arrival and fixes the fixture's destination placement, then attempts the complete supply trip and restart. See [current validation](convoy-validation-current.md) for precise packages and boundaries; earlier failed attempts above remain historical evidence.
+
 The latest user direction is to zoom out and deliver a working mod that can be shown in use. Concentrate the next iteration on **recruit/assign → load → travel → stop/Hold → unload → Resume**, with the original trucks and membership preserved. Record that complete journey, state which interactions are automated, and carry demonstrated improvements into ordinary gameplay.
 
 Prioritize a smaller fix when it blocks that journey. Use the established fixtures to diagnose it, then return to the full trip; avoid extending diagnostic machinery or adding optional polish without a specific product benefit. Preserve the harder junction and three-follower failures as regression requirements. A successful straight-road demonstration is progress toward those requirements, not a replacement for them.

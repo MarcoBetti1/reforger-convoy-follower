@@ -1,0 +1,137 @@
+{
+  "status": "private canonical fixture overlay; compile/live unrun",
+  "productManifest": "../source-manifest.json",
+  "productManifestSha256": "D1913964350C528D1F111ADCEFF4B3DA88AF8C6951DA9EBADC2C19C5FCFAF004",
+  "world": "Worlds/Tests/ConvoyFollower_Arland_HeldReboard_2Trucks.ent",
+  "worldGuid": "7069BCC7F13648F6",
+  "terminalMarker": "HELD_REBOARD_RESULT:",
+  "fixtureFiles": 4,
+  "files": [
+    {
+      "file": "Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c",
+      "category": "fixture",
+      "baselineSha256": "2AF50353CCD9BE10ADF285E28F6171B72579D9F04174DC3A8F956701E2F1706D",
+      "frozenHeldV3Sha256": "25339063417CF65E1F6A93E5836BE0AF03799D9A0A24949F0AB3A7EEDF02BF12",
+      "sha256": "C48997C722CA0524707315D907E91ECED9B3762172DC25A91882D7C8F7B7FD67",
+      "bytes": 62969
+    },
+    {
+      "file": "Worlds/Tests/ConvoyFollower_Arland_HeldReboard_2Trucks.ent",
+      "category": "fixture",
+      "baselineSha256": null,
+      "frozenHeldV2Sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8",
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8",
+      "bytes": 73
+    },
+    {
+      "file": "Worlds/Tests/ConvoyFollower_Arland_HeldReboard_2Trucks.ent.meta",
+      "category": "fixture",
+      "baselineSha256": null,
+      "frozenHeldV2Sha256": "469333504F55BB99A15886B5561B5410BD3FA29EA0C68D1ADE40E4274DEC61F3",
+      "sha256": "469333504F55BB99A15886B5561B5410BD3FA29EA0C68D1ADE40E4274DEC61F3",
+      "bytes": 191
+    },
+    {
+      "file": "Worlds/Tests/ConvoyFollower_Arland_HeldReboard_2Trucks_Layers/default.layer",
+      "category": "fixture",
+      "baselineSha256": null,
+      "frozenHeldV2Sha256": "436EF75BCB7935DD8AB11C21191B0EA95B0E6B580493F56BFDE9B058D73EF282",
+      "sha256": "436EF75BCB7935DD8AB11C21191B0EA95B0E6B580493F56BFDE9B058D73EF282",
+      "bytes": 1528
+    }
+  ],
+  "unchangedCanonicalDependencies": [
+    {
+      "file": "Scripts/Game/Tests/CF_PacedRoadProbeComponent.c",
+      "sha256": "9F11C27E54A917177E27FE7C1FF899222E585DFD452AF41E753F1868413A8450",
+      "bytes": 39398
+    },
+    {
+      "file": "Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c",
+      "sha256": "BF1C2BA6ABF1D05217657D6671BB70716B390235EC0646FCABB348889DC3195D",
+      "bytes": 19101
+    },
+    {
+      "file": "Scripts/Game/Tests/CF_OrdinaryMixedRoadProbeComponent.c",
+      "sha256": "4AF411927A62413F7AE706CA98E8B2DCCBAB18FD3A8ED391991AE0AE87A57594",
+      "bytes": 7526
+    },
+    {
+      "file": "Scripts/Game/Tests/CF_OriginalFollowResumeProbeComponent.c",
+      "sha256": "B6DB9922C48995D044E48E24C8E389AB570333EE8BF935543BFF77FEA882B204",
+      "bytes": 27387
+    },
+    {
+      "file": "Scripts/Game/Tests/CF_LoadedPairCargoProbeComponent.c",
+      "sha256": "693C2C509E93ADF26C39F12D70415F1D567C77AA3A9E2B73D7123DA6A1E0A15E",
+      "bytes": 10376
+    },
+    {
+      "file": "Scripts/Game/Tests/CF_NativeCargoActionProbeComponent.c",
+      "sha256": "494C297BC1D8EE17E1B92CE83422A2146A61DCD867840893CDD412645838F11C",
+      "bytes": 27758
+    },
+    {
+      "file": "Scripts/Game/CF_NativeCruiseControl.c",
+      "sha256": "0F26790097A0302C7E69655706C31F20AC75FBBB105B83B5A77BEDAE4944D162",
+      "bytes": 7053
+    },
+    {
+      "file": "Scripts/Game/Tests/CF_ConvoyFilmCameraComponent.c",
+      "sha256": "3959426B8E7804BC60451BB1D621F9322B575991B2AA7ACB879A0760A08ADADF",
+      "bytes": 6557
+    },
+    {
+      "file": "Scripts/Game/Tests/CF_SurfaceContactProbeComponent.c",
+      "sha256": "E3274557C7BA86617FB71A58E15497B85049DD37DE07F0D6DBA01C1A6104662F",
+      "bytes": 2307
+    },
+    {
+      "file": "Scripts/Game/CF_ConvoyFollowDriverControllerComponent.c",
+      "sha256": "FCC739AE1C33195FC697484CB77DCAD307238F31ECC8032BDBD6228820C6796E",
+      "bytes": 24927
+    },
+    {
+      "file": "Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c",
+      "sha256": "A989A2B213F1C42DE4C26A3D82282333A2BBD30E949E5BC71E414EF5D547C25E",
+      "bytes": 37021
+    },
+    {
+      "file": "Scripts/Game/CF_DrivenRoute.c",
+      "sha256": "A255B4FE7096A51779AD2AF53997D530E10B55BA539170A85249A9B43822FF15",
+      "bytes": 11494
+    },
+    {
+      "file": "Scripts/Game/Tests/CF_TrailGuideEntity.c",
+      "sha256": "DA5483AB9932631DB4BCE7FDF16419BA7E57780001665E0A62979BED7CFEE69E",
+      "bytes": 11842
+    },
+    {
+      "file": "Prefabs/Groups/Group_CF_Driver.et",
+      "sha256": "CB1ED859CC92D82433CB4DD4B796E019F545D0D9538BB3C26B5A73DA5625F867",
+      "bytes": 429
+    },
+    {
+      "file": "Prefabs/Characters/Character_CF_Driver.et",
+      "sha256": "F372C84F75DAEC9DA2E18EBA3A407F0E5EF342DE919DDD73420B29C808616CD8",
+      "bytes": 2719
+    },
+    {
+      "file": "Prefabs/Characters/Character_CF_Driver_USSR.et",
+      "sha256": "F013C78B7F5CF2B3EA9F15A11BC307C6513DAAB0CC35D6DC1CB4D7809D68A48E",
+      "bytes": 2728
+    }
+  ],
+  "patchChecks": [
+    {
+      "patch": "review/fixture.patch",
+      "sha256": "96B54C6C43DC53E1ABF5DD6F40DC36B7519C5EC05FA4CD28E9CE0D87F01F91EF",
+      "applyCheckExitCode": 0
+    },
+    {
+      "patch": "review/canonical-readback-adaptation.patch",
+      "sha256": "840887F650530C342EE93201A7435D200CF3717887F8103DDA0E036989EA8CBB",
+      "applyCheckExitCode": 0
+    }
+  ]
+}

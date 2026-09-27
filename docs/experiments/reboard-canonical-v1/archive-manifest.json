@@ -1,0 +1,45 @@
+{
+  "purpose": "Exact nonexecuting source reproduction archive; not canonical addon integration",
+  "files": [
+    {
+      "file": "product.patch",
+      "bytes": 27848,
+      "sha256": "E6B670FEA29DB87435A2D594FDFF49A280A30877CF1E7B1B33BE5DDB31FFA57D"
+    },
+    {
+      "file": "product-source-manifest.json",
+      "bytes": 2013,
+      "sha256": "D1913964350C528D1F111ADCEFF4B3DA88AF8C6951DA9EBADC2C19C5FCFAF004"
+    },
+    {
+      "file": "fixture.patch",
+      "bytes": 40189,
+      "sha256": "96B54C6C43DC53E1ABF5DD6F40DC36B7519C5EC05FA4CD28E9CE0D87F01F91EF"
+    },
+    {
+      "file": "canonical-readback-adaptation.patch",
+      "bytes": 840,
+      "sha256": "840887F650530C342EE93201A7435D200CF3717887F8103DDA0E036989EA8CBB"
+    },
+    {
+      "file": "fixture-source-manifest.json",
+      "bytes": 5361,
+      "sha256": "0138FC5FCDB079152AFD434B9AE3A3CE44DB9F612998CC9F66D7D322E8E5BFB7"
+    },
+    {
+      "file": "world.ent.txt",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "world.ent.meta.txt",
+      "bytes": 191,
+      "sha256": "469333504F55BB99A15886B5561B5410BD3FA29EA0C68D1ADE40E4274DEC61F3"
+    },
+    {
+      "file": "default.layer.txt",
+      "bytes": 1528,
+      "sha256": "436EF75BCB7935DD8AB11C21191B0EA95B0E6B580493F56BFDE9B058D73EF282"
+    }
+  ]
+}

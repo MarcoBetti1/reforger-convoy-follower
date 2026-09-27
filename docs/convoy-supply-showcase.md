@@ -26,6 +26,14 @@ After one follower works, repeat with two: load both, then recruit front to back
 
 For a later three-truck attempt, manually stage the still-unassigned third truck near the source, load it, then recruit it in chain order. Its original position is about 36.7 m from storage. Three-follower delivery and advanced maneuvers remain separate validation cases.
 
+## Recover a held driver without recruiting again
+
+If a driver unexpectedly leaves their truck during an explicit Hold, the controller first attempts a bounded automatic reboard. If that recovery stops, keep the other trucks held, open the convoy map panel, select the affected unit and choose **REBOARD SELECTED**. This command becomes available only for an eligible blocked driver on foot with their original, stationary truck's driver seat free. The panel explains why it is unavailable otherwise.
+
+Wait for **completed: Unit … seated in original truck; Hold retained**. Accepted or executing means the driver is still working on the order. Repeated requests do not restart an active attempt. A completed reboard preserves membership, the assigned truck and Hold; use **RESUME ALL** separately when ready. This is recovery for an unexpected exit, not a temporary dismount command or a way to choose a different truck.
+
+The [focused recovery comparison](experiments/reboard-canonical-v1.md) physically verified two automatic returns, the selected retry, duplicate rejection and the original-seat held result. It issued the real server command from a fixture; opening/clicking the new button through normal input and multiplayer behavior still need verification.
+
 ## Placement and test boundary
 
 The road and vehicle coordinates reuse the existing OpenRoad course. The storage stacks sit beside the lane at approximately `(1337, 3336)` and `(1542, 3346)` in XZ. The revised source midpoint loaded both trucks in the separate scripted loaded-trip fixture. Supply Day's live terrain clearance, native queues and ordinary interactions remain unverified; the native resource search is separate from the player's rear interaction reach. The unchanged destination placement is also provisional.

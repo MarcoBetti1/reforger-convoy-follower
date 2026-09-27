@@ -4,6 +4,7 @@
 class CF_EntityCapturedWait : SCR_AIWaitBehavior
 {
 	protected CF_EntityFollowDriverControllerComponent m_CaptureController;
+	protected CF_EntityFollowDriverControllerComponent m_CaptureControllerIdentity;
 	protected ChimeraCharacter m_CaptureDriver;
 	protected Vehicle m_CaptureTruck;
 	protected SCR_AIGroup m_CaptureGroup;
@@ -14,6 +15,7 @@ class CF_EntityCapturedWait : SCR_AIWaitBehavior
 	protected bool m_bCapturePanelHold;
 	protected bool m_bCaptureBound;
 	protected bool m_bCaptureLease;
+	protected bool m_bCapturePilotDeparture;
 
 	void CF_EntityCapturedWait(SCR_AIUtilityComponent utility, SCR_AIActivityBase groupActivity)
 	{
@@ -25,6 +27,7 @@ class CF_EntityCapturedWait : SCR_AIWaitBehavior
 		if (m_bCaptureBound) return;
 		m_bCaptureBound = true;
 		m_CaptureController = controller;
+		m_CaptureControllerIdentity = controller;
 		m_CaptureDriver = driver;
 		m_CaptureTruck = truck;
 		m_CaptureGroup = group;
@@ -38,11 +41,20 @@ class CF_EntityCapturedWait : SCR_AIWaitBehavior
 	}
 
 	bool IsPanelHold() { return m_bCapturePanelHold; }
+	bool WasPilotDeparture() { return m_bCapturePilotDeparture; }
 
 	bool HasOriginalBinding(CF_EntityFollowDriverControllerComponent controller, ChimeraCharacter driver, Vehicle truck,
 		SCR_AIGroup group, CF_ConvoySession session, IEntity owner, int ownerId)
 	{
-		return m_bCaptureLease && m_CaptureController == controller && m_CaptureDriver == driver &&
+		return m_bCaptureLease && HasImmutableBinding(controller, driver, truck, group, session, owner, ownerId);
+	}
+
+	// Retirement evidence only. This never authorizes a Wait or movement.
+	// CustomEvaluate may already have revoked the lease after the same exit.
+	bool HasImmutableBinding(CF_EntityFollowDriverControllerComponent controller, ChimeraCharacter driver, Vehicle truck,
+		SCR_AIGroup group, CF_ConvoySession session, IEntity owner, int ownerId)
+	{
+		return m_bCaptureBound && GetGame() && m_CaptureControllerIdentity == controller && m_CaptureDriver == driver &&
 			m_CaptureTruck == truck && m_CaptureGroup == group && m_CaptureSession == session &&
 			m_CaptureOwner == owner && m_iCaptureOwnerId == ownerId && m_CaptureWorld == GetGame().GetWorld();
 	}
@@ -84,6 +96,14 @@ class CF_EntityCapturedWait : SCR_AIWaitBehavior
 			return 0;
 		if (GetActionState() == EAIActionState.COMPLETED || GetActionState() == EAIActionState.FAILED)
 			return 0;
+		if (m_bCaptureLease && m_CaptureController &&
+			m_CaptureController.CF_CanRetirePanelWaitForPilotDeparture(this))
+		{
+			m_bCapturePilotDeparture = true;
+			Retire(false);
+			Complete(); // Unparented Wait only; never cancel the native seat action.
+			return 0;
+		}
 		if (!m_bCaptureLease || !HasOriginalPilot() || !m_CaptureController ||
 			!m_CaptureController.CF_HasCapturedWaitLease(this, m_CaptureDriver, m_CaptureTruck, m_CaptureGroup))
 		{
@@ -852,6 +872,44 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			" target_id=" + targetId + " priority_level=2100 group_activity=null control_writes=false");
 	}
 
+	// Seat departure ends our Wait ownership. The base controller retains
+	// Hold/assignment and owns reboarding; this predicate issues no order.
+	bool CF_CanRetirePanelWaitForPilotDeparture(CF_EntityCapturedWait action)
+	{
+		if (!action || action != m_EntityCapturedWait || !action.IsPanelHold() || !CF_IsPanelWaitContext()) return false;
+		if (!Replication.IsServer() || !GetGame() || CF_ConvoySession.CF_IsWorldCleanup() || CF_IsControlBlocked()) return false;
+		World world = GetGame().GetWorld();
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		if (!world || !driver || GetOwner() != driver || !m_Truck || !m_Group || !m_Session || !m_Leader) return false;
+		if (!action.HasImmutableBinding(this, driver, m_Truck, m_Group, m_Session, m_Leader, m_iOrderingPlayerId)) return false;
+		if (driver.GetWorld() != world || m_Truck.GetWorld() != world || m_Group.GetWorld() != world || m_Leader.GetWorld() != world) return false;
+		if (m_Waypoint || m_OriginalFollowLease || m_bDeferredWaypointClear || m_bDeferredControlDismiss || m_bOriginalFollowResetPending) return false;
+		if (m_Session.GetUnitNumber(this) <= 0 || CF_ConvoySession.GetForPlayer(m_Leader) != m_Session ||
+			m_Session.GetOrderingPlayerId() != m_iOrderingPlayerId || CF_ConvoySession.IsVehicleAssignedToAnotherDriver(m_Truck, this)) return false;
+		PlayerManager players = GetGame().GetPlayerManager();
+		if (!players || m_iOrderingPlayerId <= 0 || players.GetPlayerControlledEntity(m_iOrderingPlayerId) != m_Leader) return false;
+		ChimeraCharacter owner = ChimeraCharacter.Cast(m_Leader);
+		if (!owner || IsDriverDestroyed(owner) || IsDriverDestroyed(driver) || IsAssignedTruckDestroyed()) return false;
+		CharacterControllerComponent character = driver.GetCharacterController();
+		CompartmentAccessComponent access = driver.GetCompartmentAccessComponent();
+		AIControlComponent control = driver.GetAIControlComponent();
+		AIAgent agent;
+		if (control) agent = control.GetAIAgent();
+		if (!character || character.IsUnconscious() || !access || access.IsGettingIn() || !agent) return false;
+		if (agent.GetControlledEntity() != driver || agent.GetParentGroup() != m_Group || m_Group.GetAgentsCount() != 1) return false;
+		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+		if (!car || !car.GetPilotCompartmentSlot()) return false;
+		IEntity occupant = car.GetPilotCompartmentSlot().GetOccupant();
+		if (occupant && occupant != driver) return false;
+		array<AIWaypoint> waypoints = {};
+		m_Group.GetWaypoints(waypoints);
+		if (!waypoints.IsEmpty()) return false;
+		if (!driver.IsInVehicle()) return true;
+		BaseCompartmentSlot slot = access.GetCompartment();
+		return access.IsGettingOut() && access.GetVehicleIn(driver) == m_Truck &&
+			slot && slot == car.GetPilotCompartmentSlot() && slot.GetOccupant() == driver;
+	}
+
 	protected void CF_ObserveCapturedWait()
 	{
 		if (!m_EntityCapturedWait)
@@ -865,6 +923,14 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			return;
 		}
 		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		bool terminalWait = m_EntityCapturedWait.GetActionState() == EAIActionState.COMPLETED ||
+			m_EntityCapturedWait.GetActionState() == EAIActionState.FAILED;
+		if ((!terminalWait || m_EntityCapturedWait.WasPilotDeparture()) &&
+			CF_CanRetirePanelWaitForPilotDeparture(m_EntityCapturedWait))
+		{
+			CF_ReleaseCapturedWait("panel_original_pilot_departure", false);
+			return; // No failure reset or capture credit; base reboarding owns the exit.
+		}
 		if (!CF_HasCapturedWaitLease(m_EntityCapturedWait, driver, m_Truck, m_Group))
 		{
 			if (panelHold) CF_CapturedWaitFailed("panel_lease_lost", true);

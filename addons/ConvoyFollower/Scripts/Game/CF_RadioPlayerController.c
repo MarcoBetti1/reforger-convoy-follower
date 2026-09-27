@@ -112,6 +112,8 @@ modded class SCR_PlayerController
 			accepted = CF_ConvoySession.CF_PanelResumeForwardLine(user);
 		else if (command == CF_ConvoyPanelOrder.CANCEL_UNLOAD)
 			accepted = CF_ConvoySession.CF_PanelCancelUnload(user);
+		else if (command == CF_ConvoyPanelOrder.REBOARD_SELECTED)
+			accepted = CF_ConvoySession.CF_PanelReboardSelected(user, unitIdentity);
 		if (!accepted)
 			Print("[ConvoyFollower] PANEL_ORDER_BLOCKED: " + command + " unit " + unitIdentity);
 		else

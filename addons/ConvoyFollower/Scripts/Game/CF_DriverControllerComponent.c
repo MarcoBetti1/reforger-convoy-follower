@@ -156,6 +156,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	[RplProp()]
 	protected bool m_bPanelHoldRequested;
 	protected bool m_bPanelHoldReboardBlocked;
+	protected bool m_bPanelSelectedReboard;
 	protected string m_sPanelHoldReboardFailure;
 	protected string m_sBoardingHandoverDiagnostic;
 	protected float m_fPollAccumulator;
@@ -1400,10 +1401,109 @@ class CF_DriverControllerComponent : ScriptComponent
 		return m_bPanelHoldReboardBlocked;
 	}
 
+	// Read-only admission shared by the selected order and each of its native
+	// boarding retries. A retry keeps the original assignment and Hold intent.
+	protected string CF_GetSelectedReboardContextReason(IEntity user)
+	{
+		if (!Replication.IsServer() || CF_ConvoySession.CF_IsWorldCleanup() || !GetGame())
+			return "server session unavailable";
+		World world = GetGame().GetWorld();
+		if (!world || !user || !m_Session || user != m_Leader)
+			return "original owner unavailable";
+		if (CF_ConvoySession.GetForPlayer(user) != m_Session || m_Session.GetUnitNumber(this) <= 0)
+			return "not an active member of this convoy";
+		PlayerManager players = GetGame().GetPlayerManager();
+		if (!players || m_iOrderingPlayerId <= 0 || players.GetPlayerControlledEntity(m_iOrderingPlayerId) != user)
+			return "original owner is not controlled";
+		if (user.GetWorld() != world || CF_IsControlBlocked())
+			return "player control or world changed";
+		ChimeraCharacter owner = ChimeraCharacter.Cast(user);
+		if (!owner || IsDriverDestroyed(owner))
+			return "original owner unavailable";
+		if (!m_bPanelHoldRequested || m_iState != CF_REBOARDING)
+			return "requires retained Hold after a driver exit";
+		if (!m_Driver || GetOwner() != m_Driver || !m_Truck || !m_Group)
+			return "original driver or truck unavailable";
+		if (m_Driver.GetWorld() != world || m_Truck.GetWorld() != world || m_Group.GetWorld() != world)
+			return "assignment world changed";
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		if (!driver || IsDriverDestroyed(driver) || IsAssignedTruckDestroyed())
+			return "driver or assigned truck destroyed";
+		CharacterControllerComponent character = driver.GetCharacterController();
+		CompartmentAccessComponent access = driver.GetCompartmentAccessComponent();
+		if (!character || character.IsUnconscious() || !access)
+			return "driver cannot board";
+		if (driver.IsInVehicle() || access.IsGettingIn() || access.IsGettingOut())
+			return "driver must be on foot and clear of a seat transfer";
+		AIControlComponent control = driver.GetAIControlComponent();
+		AIAgent agent;
+		if (control) agent = control.GetAIAgent();
+		if (!agent || agent.GetControlledEntity() != m_Driver || agent.GetParentGroup() != m_Group)
+			return "original AI group unavailable";
+		if (m_Group.GetAgentsCount() != 1 || CF_ConvoySession.IsVehicleAssignedToAnotherDriver(m_Truck, this))
+			return "assigned truck or group is reserved elsewhere";
+		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+		if (!car || !car.GetSimulation() || !car.GetPilotCompartmentSlot())
+			return "assigned driver seat unavailable";
+		if (car.GetPilotCompartmentSlot().GetOccupant())
+			return "clear the assigned driver seat first";
+		float speed = Math.AbsFloat(car.GetSimulation().GetSpeedKmh());
+		if (!(speed >= 0 && speed <= 2))
+			return "stop the assigned truck first";
+		return string.Empty;
+	}
+
+	string CF_GetPanelReboardReason(IEntity user)
+	{
+		if (!m_bPanelHoldReboardBlocked)
+		{
+			if (m_bPanelSelectedReboard) return "boarding already in progress";
+			if (CF_IsPanelHeld()) return "already seated; use Resume when ready";
+			return "available for a blocked held driver on foot";
+		}
+		return CF_GetSelectedReboardContextReason(user);
+	}
+
+	bool CF_PanelReboardAssignedTruck(IEntity user)
+	{
+		if (!CF_GetPanelReboardReason(user).IsEmpty()) return false;
+		m_bPanelHoldReboardBlocked = false;
+		m_sPanelHoldReboardFailure = string.Empty;
+		m_bPanelSelectedReboard = true;
+		m_iReboardAttempts = 0;
+		m_fStateSeconds = 0;
+		if (!TryReboardAssignedTruck())
+		{
+			if (!m_bPanelHoldReboardBlocked) CF_BlockPanelHoldReboard("boarding order unavailable");
+			return false;
+		}
+		Print("[ConvoyFollower] PANEL_REBOARD_SELECTED: Unit " + m_iUnitNumber + " retrying original driver seat; Hold retained");
+		return true;
+	}
+
+	// Session tracking observes the native retry outcome; it cannot turn a
+	// boarding request into completion or release the retained Hold.
+	string CF_GetPanelSelectedReboardFailure()
+	{
+		if (m_bControlBoardingTimedOut || CF_IsControlBlocked() || m_bPanelHoldReboardBlocked)
+			return CF_GetPanelStateLabel();
+		if (!m_bPanelHoldRequested) return "retained Hold was cancelled";
+		if (!m_bPanelSelectedReboard && !CF_IsPanelHeld()) return "selected boarding attempt ended";
+		return string.Empty;
+	}
+
+	void CF_StopPanelSelectedReboard(string reason)
+	{
+		if (!Replication.IsServer() || CF_ConvoySession.CF_IsWorldCleanup()) return;
+		if (!m_bPanelSelectedReboard || !m_bPanelHoldRequested || m_iState != CF_REBOARDING) return;
+		CF_BlockPanelHoldReboard(reason);
+	}
+
 	protected void CF_SetPanelHoldRequested(bool requested)
 	{
 		if (!requested)
 		{
+			m_bPanelSelectedReboard = false;
 			m_bPanelHoldReboardBlocked = false;
 			m_sPanelHoldReboardFailure = string.Empty;
 		}
@@ -3602,6 +3702,15 @@ class CF_DriverControllerComponent : ScriptComponent
 	{
 		if (CF_IsControlBlocked() || !m_Truck || !m_Group)
 			return false;
+		if (m_bPanelSelectedReboard)
+		{
+			string reason = CF_GetSelectedReboardContextReason(m_Leader);
+			if (!reason.IsEmpty())
+			{
+				CF_BlockPanelHoldReboard(reason);
+				return false;
+			}
+		}
 
 		Resource prefab = Resource.Load(CF_BOARD_WAYPOINT);
 		if (!prefab.IsValid())
@@ -3691,6 +3800,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		// End only our boarding waypoint. Do not issue a new movement or
 		// eviction order, discard the reservation, or retry indefinitely.
 		ClearWaypoints();
+		m_bPanelSelectedReboard = false;
 		m_bPanelHoldReboardBlocked = true;
 		m_sPanelHoldReboardFailure = reason;
 		m_iUnloadReboardState = 0;
@@ -4751,6 +4861,7 @@ class CF_DriverControllerComponent : ScriptComponent
 				m_fStateSeconds = 0;
 				if (m_bPanelHoldRequested)
 				{
+					m_bPanelSelectedReboard = false;
 					m_bPanelHoldReboardBlocked = false;
 					m_sPanelHoldReboardFailure = string.Empty;
 					m_iUnloadReboardState = 0;
@@ -4826,7 +4937,9 @@ class CF_DriverControllerComponent : ScriptComponent
 				if (!TryReboardAssignedTruck())
 				{
 					if (m_bPanelHoldRequested)
-						CF_BlockPanelHoldReboard("reboard retries exhausted");
+					{
+						if (!m_bPanelHoldReboardBlocked) CF_BlockPanelHoldReboard("reboard retries exhausted");
+					}
 					else
 					{
 						Print("[ConvoyFollower] REBOARD_TERMINAL: Unit " + m_iUnitNumber + " could not regain driver seat; convoy rewiring");
@@ -5716,6 +5829,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_iState = CF_IDLE;
 		m_bPanelHoldRequested = false;
 		m_bPanelHoldReboardBlocked = false;
+		m_bPanelSelectedReboard = false;
 		m_sPanelHoldReboardFailure = string.Empty;
 		m_bOwnVehicleBrake = false;
 		m_BrakeDriver = null;

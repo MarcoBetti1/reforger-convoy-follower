@@ -7,6 +7,7 @@ class CF_ConvoyPanelOrder
 	static const int PULL_REAR = 4;
 	static const int RESUME_AHEAD_LINE = 5;
 	static const int CANCEL_UNLOAD = 6;
+	static const int REBOARD_SELECTED = 7;
 }
 
 class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
@@ -20,12 +21,15 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 	protected ref array<Widget> m_Buttons = {};
 	protected int m_iClickTraceCount;
 	protected ref array<int> m_UnitIds = {};
+	protected ref array<string> m_ReboardReasons = {};
 	protected int m_iSelectedIdentity;
 	protected TextWidget m_SelectedLabel;
 	protected Widget m_WaitAheadButton;
 	protected Widget m_PullRearButton;
 	protected Widget m_ResumeAheadButton;
+	protected Widget m_ReboardButton;
 	protected TextWidget m_Feedback;
+	protected string m_sOrderFeedback;
 
 	void CF_ConvoyMapPanel(SCR_PlayerController controller)
 	{
@@ -66,15 +70,17 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 			Widget rowButton = MakeButton(workspace, "CF_Row_" + i, "", 18, 94 + i * 48, 380, 46);
 			m_RowButtons.Insert(rowButton);
 			m_UnitIds.Insert(0);
+			m_ReboardReasons.Insert("select an active convoy member");
 			TextWidget row = MakeLabel(workspace, "", 18, 94 + i * 48, 380, 46, 15);
 			m_Rows.Insert(row);
 		}
-		m_Feedback = MakeLabel(workspace, "Loading convoy state from server...", 18, 342, 380, 47, 15);
+		m_Feedback = MakeLabel(workspace, "Loading convoy state from server...", 18, 342, 380, 62, 14);
 		MakeButton(workspace, "CF_Follow", "RESUME ALL", 18, 410, 184, 44);
 		MakeButton(workspace, "CF_Hold", "HOLD ALL SEATED", 210, 410, 184, 44);
 		m_WaitAheadButton = MakeButton(workspace, "CF_WaitAhead", "PULL AHEAD AND WAIT", 18, 464, 184, 44);
 		m_PullRearButton = MakeButton(workspace, "CF_PullRear", "PULL OFF / REGROUP", 210, 464, 184, 44);
-		m_ResumeAheadButton = MakeButton(workspace, "CF_ResumeAhead", "RESUME AHEAD LINE AFTER PASSING", 18, 518, 376, 42);
+		m_ResumeAheadButton = MakeButton(workspace, "CF_ResumeAhead", "RESUME AHEAD\nAFTER PASSING", 18, 518, 184, 42);
+		m_ReboardButton = MakeButton(workspace, "CF_Reboard", "REBOARD SELECTED", 210, 518, 184, 42);
 		MakeButton(workspace, "CF_CancelUnload", "CANCEL UNLOAD / RESUME OUTBOUND", 18, 570, 376, 42);
 		MakeButton(workspace, "CF_Close", "CLOSE MAP", 274, 12, 120, 38);
 		UpdateSelection();
@@ -158,7 +164,8 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 		AddRect(210, 410, 184, 44, Color.FromRGBA(58, 84, 78, 255));
 		AddRect(18, 464, 184, 44, Color.FromRGBA(54, 69, 73, 255));
 		AddRect(210, 464, 184, 44, Color.FromRGBA(54, 69, 73, 255));
-		AddRect(18, 518, 376, 42, Color.FromRGBA(54, 69, 73, 255));
+		AddRect(18, 518, 184, 42, Color.FromRGBA(54, 69, 73, 255));
+		AddRect(210, 518, 184, 42, Color.FromRGBA(54, 69, 73, 255));
 		AddRect(18, 570, 376, 42, Color.FromRGBA(54, 69, 73, 255));
 		AddRect(274, 12, 120, 38, Color.FromRGBA(54, 69, 73, 255));
 		m_Backdrop.SetDrawCommands(m_DrawCommands);
@@ -172,6 +179,7 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 		bool selectedStillPresent = m_iSelectedIdentity == 0;
 		for (int i = 0; i < m_Rows.Count(); i++)
 		{
+			m_ReboardReasons[i] = "select an active held driver with a blocked reboard";
 			if (!m_Rows[i])
 				continue;
 			if (i < rows.Count())
@@ -181,6 +189,7 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 				if (fields.Count() >= 5)
 				{
 					m_UnitIds[i] = fields[0].ToInt();
+					if (fields.Count() >= 6) m_ReboardReasons[i] = fields[5];
 					if (m_UnitIds[i] == m_iSelectedIdentity)
 						selectedStillPresent = true;
 					m_Rows[i].SetText("Unit " + fields[0] + "  |  position " + fields[1] + "  |  " + fields[2] +
@@ -236,13 +245,32 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 			m_WaitAheadButton.SetEnabled(m_iSelectedIdentity > 0);
 		if (m_PullRearButton)
 			m_PullRearButton.SetEnabled(m_iSelectedIdentity > 0);
+		if (m_ReboardButton)
+			m_ReboardButton.SetEnabled(SelectedReboardReason() == "ready");
+		UpdateFeedback();
 		PaintBackground();
+	}
+
+	protected string SelectedReboardReason()
+	{
+		if (m_iSelectedIdentity <= 0) return "select a held driver to retry boarding";
+		for (int i = 0; i < m_UnitIds.Count(); i++)
+			if (m_UnitIds[i] == m_iSelectedIdentity) return m_ReboardReasons[i];
+		return "selected member is unavailable";
+	}
+
+	protected void UpdateFeedback()
+	{
+		if (!m_Feedback) return;
+		string reason = SelectedReboardReason();
+		if (reason == "ready") reason = "ready to retry the original driver seat";
+		m_Feedback.SetText(m_sOrderFeedback + "\nReboard: " + reason);
 	}
 
 	void SetFeedback(string message)
 	{
-		if (m_Feedback)
-			m_Feedback.SetText(message);
+		m_sOrderFeedback = message;
+		UpdateFeedback();
 	}
 
 	void Close()
@@ -256,11 +284,14 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 		m_RowButtons.Clear();
 		m_Buttons.Clear();
 		m_UnitIds.Clear();
+		m_ReboardReasons.Clear();
 		m_SelectedLabel = null;
 		m_WaitAheadButton = null;
 		m_PullRearButton = null;
 		m_ResumeAheadButton = null;
+		m_ReboardButton = null;
 		m_Feedback = null;
+		m_sOrderFeedback = string.Empty;
 	}
 
 	bool IsOpen()
@@ -371,6 +402,11 @@ class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
 			command = CF_ConvoyPanelOrder.RESUME_AHEAD_LINE;
 		else if (name == "CF_CancelUnload")
 			command = CF_ConvoyPanelOrder.CANCEL_UNLOAD;
+		else if (name == "CF_Reboard")
+		{
+			command = CF_ConvoyPanelOrder.REBOARD_SELECTED;
+			targetIdentity = m_iSelectedIdentity;
+		}
 		else
 			return false;
 		SetFeedback("Order sent. Waiting for server...");
