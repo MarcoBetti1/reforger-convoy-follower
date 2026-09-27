@@ -1,0 +1,79 @@
+{
+  "baseline": "Byte-exact cooperative-cohesion-trip-v2 source archive",
+  "baselineArchive": "docs/experiments/cooperative-cohesion-trip-v2-source.patch",
+  "baselineArchiveSha256": "25FC47D08C8B22C1E7EC15D07A2D5C9C10A05C7318E8E8561F81C3AAF99C3E7C",
+  "baselineManifest": "docs/experiments/cooperative-cohesion-trip-v2-source.json",
+  "baselineSourceManifestSha256": "4D3B747F6F6781ECDF6CB9DEB95FD06F8AE465B1684C673661F63658CBCE4E0F",
+  "scope": "Incremental reproduction only: three tested retry/passenger-Hold product files, README, and five ordinary Road81 resources. The seven cooperative supply fixture resources and private arrival19B controller are unchanged from the prerequisite archive. No synthetic failure injection.",
+  "files": [
+    {
+      "file": "addons/ConvoyFollower/Missions/ConvoyFollower_Arland_Road81SupplyDay.conf",
+      "baselineSha256": null,
+      "sha256": "E03377819D89394BD409D85B9E224A92AB9DBFEC153240B693923DE4C32E72E8",
+      "bytes": 841
+    },
+    {
+      "file": "addons/ConvoyFollower/Missions/ConvoyFollower_Arland_Road81SupplyDay.conf.meta",
+      "baselineSha256": null,
+      "sha256": "00678EDCF04C1C2532935241A350DEDBFCDE43BDAA8106230541E0A473FB563E",
+      "bytes": 186
+    },
+    {
+      "file": "addons/ConvoyFollower/README.md",
+      "baselineSha256": "331C7C0ECA75BAB68B6FA2FC42060C40BAD12246FD7D493863ADFC1A3FD03749",
+      "sha256": "3AA7F25EEB0F8318D3FEDEA79A76D7183068E01AC0B3E76989D9BEA2A3AED08A",
+      "bytes": 26030
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_ConvoySession.c",
+      "baselineSha256": "F90702DF36181236EB21DBCF022AB9B822325B90321E6536796A9E2DD45DB53C",
+      "sha256": "3AAD13DF6DE481A419B29B9788342A5F7EB32D97D532C40CAED584E9DCEE7414",
+      "bytes": 111869
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c",
+      "baselineSha256": "3A16D6C5675120CA9983E53BBAB5ADD6E2078A1BB850266DB6AEF00DD9A95088",
+      "sha256": "547CB5267A790A9646430AED19A66AE0F2E38C09918321ABC688F962F428FDB2",
+      "bytes": 78207
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c",
+      "baselineSha256": "7D3F37FF7007CDE46DDF982804BE1A3964C326BACCA57E39BA08C8F66D0D0C64",
+      "sha256": "23713B0E57634BD09AA989A8F4959B7D76F0B47D54E1191BF8008CE3BFC9F0DE",
+      "bytes": 58813
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay_Layers/default.layer",
+      "baselineSha256": null,
+      "sha256": "5C3F623C6D7A1AAE374CC12547478A2406CFC2C02B35F0374D61A7A8F647B58D",
+      "bytes": 2362
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay.ent",
+      "baselineSha256": null,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8",
+      "bytes": 73
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay.ent.meta",
+      "baselineSha256": null,
+      "sha256": "E9B52468E5F3675A7544A8836B803D430A91C7459586E472675FFCDCA14D7CA7",
+      "bytes": 190
+    }
+  ],
+  "patch": {
+    "file": "docs/experiments/cooperative-supply-recovery-v1-source.patch",
+    "bytes": 17333,
+    "sha256": "E55F252FF38FB540CC574B4BD15CEC3B6412AAD51FECDCBEFE2D29673D7CCF92"
+  },
+  "world": "Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks.ent",
+  "sourceFiles": 590,
+  "unchangedFiles": 581,
+  "sourceManifestSha256": "9181D1E87975D5B23C50633096EC9F8AF210C8DD9E36A21DD58A47F0574F0F79",
+  "packSha256": "82753824BCF978D1E3030EB206A646C22BC73B0910FD281B8B53D93D02E0568C",
+  "verification": {
+    "isolatedApplyCheck": true,
+    "byteExactReconstructedFiles": 590
+  },
+  "result": "Closed FAIL; no full supply-loop completion or product promotion is implied by this archive."
+}

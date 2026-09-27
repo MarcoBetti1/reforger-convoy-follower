@@ -26,9 +26,11 @@ The panel appears with the normal map for the active convoy owner, seated or on 
 
 | Control | Meaning and conditions |
 | --- | --- |
-| **HOLD ALL SEATED** | Applies to the whole active convoy, preserving assignments. Stop the lead first; drivers must be seated and no conflicting maneuver may be active. The owner can also order Hold on foot within 25 m of the established stopped lead. Wait for completion before unloading. |
+| **HOLD ALL SEATED** | Applies to the whole active convoy, preserving assignments. Stop the lead first; drivers must be seated and no conflicting maneuver may be active. The owner may ride in a settled passenger seat of the established lead, or order Hold on foot within 25 m of that stopped lead. Wait for completion before unloading. |
 | **RESUME ALL** | Applies to the whole held convoy. The original owner must be fully seated in the same established lead; on foot, another vehicle or a seat transition is rejected. All assigned drivers must be seated and able to resume, with no conflicting maneuver. |
 | **REBOARD SELECTED** | Select an affected row after an unexpected driver exit during explicit Hold and after automatic recovery becomes blocked. Requires the original, usable truck to be stopped with its driver seat free, the driver on foot and under AI control, and the other members held. The panel shows the eligibility reason. Wait for **completed: Unit … seated in original truck; Hold retained**; then issue Resume separately. Duplicate requests do not restart an active attempt. |
+
+If a seated driver reports a failed movement order, stop your lead and request **HOLD ALL SEATED**. Once all trucks are holding, **RESUME ALL** can retry an eligible failed order without recruiting the driver again. Wait for actual movement and the panel result. A blocked route or damaged vehicle may still need attention; repeated clicks do not restart an order already executing. This command recovery passed a controlled failure test; recovery during a complete delivery is still being checked.
 | **Stand down** | An interaction on the owned driver that dismisses them and releases the truck assignment; remaining members reconnect. This is not temporary dismount or a way to retain that driver's place. |
 | **CLOSE MAP** | Closes the native map and panel. The complete ordinary opening/clicking/restored-driving-input loop remains a validation requirement. |
 

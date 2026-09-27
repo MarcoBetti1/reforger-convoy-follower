@@ -23,3 +23,7 @@ cooperative-cohesion-trip-v2-source.json -text
 explicit-retry-2truck-v2-source.patch -text
 
 explicit-retry-2truck-v2-source.json -text
+
+cooperative-supply-recovery-v1-source.patch -text
+
+cooperative-supply-recovery-v1-source.json -text

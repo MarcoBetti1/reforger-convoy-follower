@@ -1,0 +1,353 @@
+diff --git a/addons/ConvoyFollower/Missions/ConvoyFollower_Arland_Road81SupplyDay.conf b/addons/ConvoyFollower/Missions/ConvoyFollower_Arland_Road81SupplyDay.conf
+new file mode 100644
+index 0000000..bbbe622
+--- /dev/null
++++ b/addons/ConvoyFollower/Missions/ConvoyFollower_Arland_Road81SupplyDay.conf
+@@ -0,0 +1,18 @@
++SCR_MissionHeader {
++ World "{0AFABD742A934A80}Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay.ent"
++ SystemsConfig "{8DDC2A311929D52F}Configs/Systems/GameMasterSystems.conf"
++ m_sName "Convoy Follower - Road81 Supply Day"
++ m_sAuthor "Convoy Follower"
++ m_sDescription "Load the two ordinary convoy trucks at the staging stack, recruit their drivers front to back, and lead them east along the road to the empty storage stack. Hold before unloading; return to your original lead to Resume. Start with one follower if preferred."
++ m_sGameMode "#AR-Scenario_GameMode_GameMaster"
++ m_iPlayerCount 1
++ m_bShowInScenarioMenu 1
++ m_bOverrideScenarioTimeAndWeather 1
++ m_iStartingHours 12
++ m_iStartingMinutes 0
++ m_bRandomStartingDaytime 0
++ m_fDayTimeAcceleration 1
++ m_fNightTimeAcceleration 1
++ m_bRandomStartingWeather 0
++ m_bRandomWeatherChanges 0
++}
+diff --git a/addons/ConvoyFollower/Missions/ConvoyFollower_Arland_Road81SupplyDay.conf.meta b/addons/ConvoyFollower/Missions/ConvoyFollower_Arland_Road81SupplyDay.conf.meta
+new file mode 100644
+index 0000000..1d12c75
+--- /dev/null
++++ b/addons/ConvoyFollower/Missions/ConvoyFollower_Arland_Road81SupplyDay.conf.meta
+@@ -0,0 +1,9 @@
++MetaFileClass {
++ Name "{5A1767104C2840CF}Missions/ConvoyFollower_Arland_Road81SupplyDay.conf"
++ Configurations {
++  CONFResourceClass PC {
++  }
++  CONFResourceClass HEADLESS : PC {
++  }
++ }
++}
+diff --git a/addons/ConvoyFollower/README.md b/addons/ConvoyFollower/README.md
+index 43aaa00..357f065 100644
+--- a/addons/ConvoyFollower/README.md
++++ b/addons/ConvoyFollower/README.md
+@@ -88,6 +88,14 @@ The player's first two WAV recordings were processed into radio-style clips unde
+ 
+ There is no driver-facing voice toggle. The packaged `Configs/CF_ConvoySettings.conf` keeps the player's recorded voice at `m_iVoicePack 0`; pack 1 adds generated alternate phrasings. Server owners can set `m_bVoiceEnabled` and `m_iVoicePack` in `$profile:ConvoyFollowerSettings.json` and restart without rebuilding the addon. Addon authors can also change the packaged defaults. The same settings control routine call chance, routine spacing, repeated routine phrases, and repeated range/rejoined status. Stuck, lost, and under-fire reports are not dropped by the server debounce; incoming exceptions remove stale queued routine chatter before playback. The F5 capture verifies two generated calls, while repeat spacing, exception priority, and server-wide voice-off still need an in-game audio pass.
+ 
++## Spacing advice settings
++
++Early leader warnings and panel gaps help the player keep the line together. Default advice is to ease at **40 m**, wait safely at **50 m**, and clear the warning below **30 m**. A three-second projection accounts for a growing gap; changes must persist for two seconds and spoken warnings have a 30-second cooldown. At an ordinary stationary stop, gaps remain visible without new warning speech. Explicit Hold and conflicting maneuvers suspend assessment.
++
++Server owners can set `m_bCohesionAdviceEnabled`, `m_fCohesionEaseDistance`, `m_fCohesionWaitDistance`, `m_fCohesionClearDistance`, `m_fCohesionLookAheadSeconds` and `m_fCohesionCooldownSeconds` in `$profile:ConvoyFollowerSettings.json`, then restart. See the [example settings](../../docs/convoy-server-settings.example.json). Numeric values are bounded and ordered relative to existing gap/range settings. `m_bVoiceEnabled` still controls audio; muting it leaves panel advice available.
++
++This advice is integrated and has partial live travel/panel evidence. It does not drive the lead, guarantee a safe speed, or establish reliable full-trip following. Current validation records the incomplete cooperative tests. The prepared [Road81 Supply Day scene](../../docs/convoy-road81-supply-day.md) supports an ordinary player test.
++
+ ## Asset structure
+ 
+ Game Master has US and Soviet **Convoy Driver** groups. The US group contains a crew AI character with an M9; the Soviet group uses Soviet crew gear and a PM. Spawn a group card, not a character prefab directly: the behavior uses the driver's parent `SCR_AIGroup` to assign boarding and follow waypoints. The Soviet card and interaction have passed Workbench validation and packing, but still need a live smoke test.
+diff --git a/addons/ConvoyFollower/Scripts/Game/CF_ConvoySession.c b/addons/ConvoyFollower/Scripts/Game/CF_ConvoySession.c
+index 2d6d4a1..cb88de9 100644
+--- a/addons/ConvoyFollower/Scripts/Game/CF_ConvoySession.c
++++ b/addons/ConvoyFollower/Scripts/Game/CF_ConvoySession.c
+@@ -595,6 +595,9 @@ class CF_ConvoySession
+ 			return false;
+ 		}
+ 		Vehicle ownerVehicle = session.GetOwnerPilotedVehicle();
++		// A settled passenger in the same established lead may also order Hold.
++		// Reuse Resume's exact owner/session/seat/vehicle admission.
++		if (!ownerVehicle) ownerVehicle = session.GetOwnerResumeVehicle(user);
+ 		// The owner may step out of a parked lead truck to unload or give the
+ 		// order. The last observed lead remains valid only while it is nearby.
+ 		if (!ownerVehicle && session.m_OriginalLeadVehicle &&
+@@ -1974,8 +1977,8 @@ class CF_ConvoySession
+ 		GetGame().GetCallqueue().CallLater(PollUnloadSequence, CF_UNLOAD_POLL_MS, false);
+ 	}
+ 
+-	// Resume alone accepts the owner in any settled seat of the established
+-	// lead. Other maneuvers retain their existing pilot-only admission.
++	// Read-only established-lead seat admission for Hold, Resume and cohesion.
++	// Other maneuvers retain their existing pilot-only admission.
+ 	protected Vehicle GetOwnerResumeVehicle(IEntity user)
+ 	{
+ 		if (!Replication.IsServer() || s_bWorldCleanup || m_bSessionClosed || !GetGame())
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
+index aaf26a0..2187a4e 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
+@@ -514,6 +514,8 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 	protected int m_iEntityRetainLogs;
+ 	protected float m_fNextEntityRetainLogMs;
+ 	protected bool m_bEntityFallbackFailed;
++	// Historical evidence remains sticky after an explicit owned-order retry.
++	protected bool m_bEntityFallbackFailedEver;
+ 	protected IEntity m_EntityStopTarget;
+ 	protected bool m_bEntityStopAttempted;
+ 	protected int m_iEntityStopEpisode;
+@@ -1251,52 +1253,79 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 		return super.CF_GetResumeFailureReason();
+ 	}
+ 
+-	override bool CF_PanelResume()
++	// Explicit command preflight only: retire our exact old slot and acknowledge
++	// its active failure. The caller still owns Wait release/state/departure.
++	protected bool CF_PrepareOriginalFollowResume(out bool retry, out int previousGeneration)
+ 	{
+-		if (!Replication.IsServer() || !CF_CanPanelResume())
++		retry = false;
++		previousGeneration = m_iOriginalFollowGeneration;
++		if (!m_bOriginalFollowGraph) return true;
++		string reason;
++		if (!CF_OriginalResumePilotReady(reason))
++		{
++			Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=" + reason);
+ 			return false;
+-		bool retry = false;
+-		int previousGeneration = m_iOriginalFollowGeneration;
+-		if (m_bOriginalFollowGraph)
++		}
++		if (CF_HasPersistentFollowFailure() || m_bEntityPanelWaitFailed)
+ 		{
+-			string reason;
+-			if (!CF_OriginalResumePilotReady(reason))
++			Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=unrelated_persistent_or_panel_wait_failure");
++			return false;
++		}
++		bool originalFailure = m_bOriginalFollowBlocked;
++		// Revocation/timeout alone does not attribute a fallback to this order.
++		if (m_bEntityFallbackFailed && !originalFailure)
++		{
++			Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=unattributed_entity_fallback_failure");
++			return false;
++		}
++		retry = originalFailure || m_bOriginalRetireTimedOut;
++		if (m_OriginalFollowLease && m_OriginalFollowLease.Revoked) retry = true;
++		if (!retry) return true;
++		string previousReason = m_sOriginalFollowFailure;
++		if (m_OriginalFollowLease)
++		{
++			if (!CF_OriginalCanRetire(m_OriginalFollowLease))
+ 			{
+-				Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=" + reason);
++				Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=old_slot_not_safe_to_retire");
+ 				return false;
+ 			}
+-			retry = m_bOriginalFollowBlocked || m_bOriginalRetireTimedOut;
+-			if (m_OriginalFollowLease && m_OriginalFollowLease.Revoked)
+-				retry = true;
+-			if (retry)
+-			{
+-				// Do not replace or fail a seat order. A timed-out revoked slot
+-				// is retried only here, after this explicit server command.
+-				if (m_OriginalFollowLease)
+-				{
+-					if (!CF_OriginalCanRetire(m_OriginalFollowLease))
+-					{
+-						Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=old_slot_not_safe_to_retire");
+-						return false;
+-					}
+-					ClearWaypoints();
+-				}
+-				if (m_Waypoint || m_OriginalFollowLease)
+-				{
+-					Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=old_order_slot_remains");
+-					return false;
+-				}
+-				m_bOriginalFollowBlocked = false;
+-				m_bOriginalFollowBlockApplied = false;
+-				m_bOriginalRetireTimedOut = false;
+-				m_fOriginalRetireStartMs = -1;
+-				m_sOriginalFollowFailure = string.Empty;
+-				// Base Resume otherwise treats FOLLOWING/ARRIVING as an active
+-				// order and skips StartFollowing. Preserve explicit Hold intent
+-				// until the base command releases it and creates a fresh order.
+-				SetState(CF_WAITING_FOR_PREDECESSOR);
+-				// m_bEntityFallbackFailed deliberately retains historical evidence.
+-			}
++			ClearWaypoints();
++		}
++		if (m_Waypoint || m_OriginalFollowLease)
++		{
++			Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=old_order_slot_remains");
++			return false;
++		}
++		if (originalFailure)
++		{
++			m_bEntityFallbackFailedEver = m_bEntityFallbackFailedEver || m_bEntityFallbackFailed;
++			m_bEntityFallbackFailed = false;
++		}
++		m_bOriginalFollowBlocked = false;
++		m_bOriginalFollowBlockApplied = false;
++		m_bOriginalRetireTimedOut = false;
++		m_fOriginalRetireStartMs = -1;
++		m_sOriginalFollowFailure = string.Empty;
++		string line = "[ConvoyFollower] ORIGINAL_FOLLOW_RETRY_PREPARED: unit=" + m_iUnitNumber;
++		line += " previous_generation=" + previousGeneration + " previous_reason=" + previousReason;
++		line += " original_failure=" + originalFailure + " historical_failure=" + CF_HasEntityFallbackFailure();
++		line += " exact_old_slot_retired=true new_order=false movement_claim=false";
++		Print(line);
++		return true;
++	}
++
++	override bool CF_PanelResume()
++	{
++		if (!Replication.IsServer() || !CF_CanPanelResume())
++			return false;
++		bool retry;
++		int previousGeneration;
++		if (!CF_PrepareOriginalFollowResume(retry, previousGeneration)) return false;
++		if (retry)
++		{
++			// Base Resume otherwise treats FOLLOWING/ARRIVING as still active.
++			// Keep explicit Hold intent until the base command releases it.
++			SetState(CF_WAITING_FOR_PREDECESSOR);
+ 		}
+ 		CF_ReleaseCapturedWait("panel_resume");
+ 		CF_ResetRearPacing(-1, "panel_resume");
+@@ -1316,6 +1345,12 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 	}
+ 
+ 	bool CF_HasEntityFallbackFailure()
++	{
++		return m_bEntityFallbackFailed || m_bEntityFallbackFailedEver;
++	}
++
++	// Current health only; the historical getter above never loses a failure.
++	bool CF_HasActiveEntityFallbackFailure()
+ 	{
+ 		return m_bEntityFallbackFailed;
+ 	}
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+index cb0aaf4..34ddbc8 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+@@ -299,6 +299,11 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
+ 			!TryGetVehicleFacing(m_TrailPredecessor, m_vTrailResumeForward)) return false;
+ 		SCR_AIUtilityComponent utility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
+ 		if (!utility || utility.GetCurrentBehavior() != m_EntityCapturedWait) return false;
++		// Use the same explicit original-order retry after full held-route admission.
++		// This neither releases the selected Wait nor changes the retained epoch.
++		bool retry;
++		int previousGeneration;
++		if (!CF_PrepareOriginalFollowResume(retry, previousGeneration)) return false;
+ 		m_TrailResumeSession = m_Session; m_TrailResumeOwner = m_Leader;
+ 		m_TrailResumePredecessor = m_TrailPredecessor; m_iTrailResumeEpoch = m_iTrailEpoch;
+ 		m_vTrailResumeAnchor = m_TrailPredecessor.GetOrigin(); m_fTrailResumeBeginMs = m_TrailWorld.GetWorldTime();
+diff --git a/addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay.ent b/addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay.ent
+new file mode 100644
+index 0000000..abfd218
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay.ent
+@@ -0,0 +1,3 @@
++SubScene {
++ Parent "{77C41EA429B6AC35}worlds/GameMaster/GM_Arland.ent"
++}
+diff --git a/addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay.ent.meta b/addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay.ent.meta
+new file mode 100644
+index 0000000..07f6646
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay.ent.meta
+@@ -0,0 +1,9 @@
++MetaFileClass {
++ Name "{0AFABD742A934A80}Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay.ent"
++ Configurations {
++  ENTResourceClass PC {
++  }
++  ENTResourceClass HEADLESS : PC {
++  }
++ }
++}
+diff --git a/addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay_Layers/default.layer b/addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay_Layers/default.layer
+new file mode 100644
+index 0000000..856831e
+--- /dev/null
++++ b/addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay_Layers/default.layer
+@@ -0,0 +1,78 @@
++// Ordinary Road81 supply scene. Vehicle poses match the frozen native-trip course.
++// Storage Y values are the observed terrain-aligned heights, authored here without runtime assistance.
++SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
++ coords 1298.8 34.9 3018.0
++ m_Info SCR_UIInfo "{56B4CC4ECACA2C37}" {
++  Name "Convoy Road81 supply staging - daylight"
++ }
++}
++
++SCR_AIGroup CF_Road81DriverGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1280.3 34.3 3013.1
++}
++
++SCR_AIGroup CF_Road81DriverGroup2 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
++ coords 1260.9 34.3 3008.1
++}
++
++Vehicle CF_Road81SupplyTruck1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1281.45 34.24 3008.14
++ angles 0 75.43 0
++}
++
++Vehicle CF_Road81SupplyTruck2 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1262.09 34.26 3003.13
++ angles 0 76.03 0
++}
++
++Vehicle CF_Road81PlayerTruck : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
++ coords 1300.85 34.92 3013.01
++ angles 0 76.09 0
++}
++
++GenericEntity CF_Road81SupplySource : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
++ coords 1270.768 34.0899 3009.507
++ angles 0 90 0
++ {
++  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
++   coords 0 0 0
++   components {
++    SCR_ResourceComponent "{5D247A59598D71AE}" {
++     m_aContainers {
++      SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
++       m_fResourceValueCurrent 1800
++       m_fResourceValueMax 3000
++      }
++     }
++    }
++   }
++  }
++ }
++}
++
++GenericEntity CF_Road81SupplyDestination : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
++ coords 1539.09 38.2897 3076
++ angles 0 90 0
++ {
++  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
++   coords 0 0 0
++   components {
++    SCR_ResourceComponent "{5D247A59598D71AE}" {
++     m_aContainers {
++      SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
++       m_fResourceValueCurrent 0
++       m_fResourceValueMax 3000
++      }
++     }
++    }
++   }
++  }
++ }
++}
++
++GenericEntity CF_Road81ScenarioSettings {
++ components {
++  CF_SupplyScenarioSettingsComponent "{F923C0C0A8DA434A}" {
++  }
++ }
++}
