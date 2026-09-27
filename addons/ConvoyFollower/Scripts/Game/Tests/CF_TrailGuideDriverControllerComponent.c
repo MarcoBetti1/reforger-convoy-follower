@@ -51,6 +51,8 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 	protected int m_iTrailQueryFailureLogs;
 	protected int m_iRetainedPoseLeaseLogs;
 	protected int m_iRetainedPoseLoggedGeneration;
+	protected int m_iPendingGuidePoseLogs;
+	protected int m_iPendingGuidePoseLoggedGeneration;
 	protected int m_iTrailResumeRejectLogs;
 	protected string m_sTrailBlockReason;
 	protected bool m_bTrailResumePending;
@@ -1080,7 +1082,41 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		}
 		SCR_AIGroupUtilityComponent utility = SCR_AIGroupUtilityComponent.Cast(m_Group.FindComponent(SCR_AIGroupUtilityComponent));
 		if (!activity || !utility || utility.GetCurrentAction() != activity || m_Group.GetCurrentWaypoint() != waypoint)
-			return; // Never advance a guide on unselected or unrelated activity evidence.
+		{
+			// A joined Resume guide can await native selection while the original
+			// seated truck still settles. Keep only its actual-pose history current;
+			// selection remains mandatory below for guide advancement and receipts.
+			if (!utility || !m_bTrailJoined || !m_TrailRoute || !m_TrailGuidance) return;
+			if (!m_bTrailFollowerPose || m_bTrailPoseInterrupted) return;
+			CF_OriginalFollowLease pendingLease = m_OriginalFollowLease;
+			if (!pendingLease || pendingLease.Revoked || pendingLease.Failed) return;
+			if (pendingLease.Waypoint != waypoint || pendingLease.NativeTarget != m_TrailGuide) return;
+			if (pendingLease.Predecessor != m_TrailPredecessor || pendingLease.Activity != activity) return;
+			string pendingReason;
+			if (!pendingLease.BindingUnchanged() || !CF_CheckOriginalFollowLease(pendingLease, pendingReason)) return;
+			CF_QueryTrailPose();
+			if (m_bTrailBlocked) return;
+			if (!m_TrailGuidance.HasArcGap ||
+				(m_TrailGuidance.State != CF_DrivenRoute.TRACKING && m_TrailGuidance.State != CF_DrivenRoute.SPACING_HOLD))
+			{
+				CF_BlockTrail("pending_guide_route_state_" + m_TrailGuidance.State);
+				return;
+			}
+			if (m_iPendingGuidePoseLogs < 8 && m_iPendingGuidePoseLoggedGeneration != pendingLease.Generation)
+			{
+				m_iPendingGuidePoseLogs++;
+				m_iPendingGuidePoseLoggedGeneration = pendingLease.Generation;
+				string pendingLine = "[ConvoyFollower] TRAIL_PENDING_GUIDE_POSE: unit=" + m_iUnitNumber;
+				pendingLine += " epoch=" + m_iTrailEpoch + " generation=" + pendingLease.Generation;
+				pendingLine += " world_ms=" + now + " guide_id=" + m_TrailGuide.GetID();
+				pendingLine += " waypoint_id=" + waypoint.GetID() + " predecessor_id=" + m_TrailPredecessor.GetID();
+				pendingLine += " measured_m=" + m_fTrailLastMeasured + " local_progress=" + m_TrailGuidance.LocalProgress;
+				pendingLine += " native_execution=false reason=owned_guide_selection_pending actual_pose_only=true";
+				pendingLine += " guide_advanced=false activity_credit=false controls_written=false";
+				Print(pendingLine);
+			}
+			return;
+		}
 		vector pose = m_Truck.GetOrigin();
 		if (m_bTrailEntryApproach && !CF_CaptureEntryApproach(pose, now)) return;
 		float budget = CF_QueryTrailPose();
