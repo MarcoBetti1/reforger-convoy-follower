@@ -11,3 +11,5 @@ reboard-canonical-v1/*.txt -text
 direct-head-native5-v1.patch -text
 
 direct-head-proxy-v1.patch -text
+
+direct-head-sampled-proxy-v1.patch -text

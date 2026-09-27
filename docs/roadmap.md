@@ -1,8 +1,8 @@
 # Roadmap
 
-**Current execution status — September 26, 2026: development resumed.** The documentation-only setup turn is complete. The user's subsequent active-goal continuation authorizes implementation and live testing under the full brief. Preserve earlier development and evidence.
+**Current execution status — September 27, 2026: active development.** The documentation-only setup turn is complete. The user's subsequent active-goal continuation authorizes implementation and live testing under the full brief. Preserve earlier development and evidence.
 
-## Current product direction — September 26, 2026
+## Current product direction — September 27, 2026
 
 The full [Convoy Follower development brief](convoy-development-brief.md) supersedes the bounded overnight direction and the original harness plan below. Use [the adaptive product roadmap](convoy-development-reset.md) for milestone sequencing, [the current validation record](convoy-validation-current.md) for observed results, and [the navigation plan](convoy-navigation-release-plan.md) for driving experiments and release gates.
 
@@ -22,7 +22,11 @@ The [matched one-follower Road81 comparison](experiments/head-guide-road81-v1.md
 
 The [native precision comparison](experiments/direct-head-native5-v1.md) is closed: 5 m still failed at **118.396 m** and barely changed sustained speed (**11.16 to 11.33 km/h**). The [continuous-position proxy comparison](experiments/direct-head-proxy-v1.md) also failed at **125.481 m**, with sustained speed **11.29 km/h** and **180.23 s zero-drift arrival**. Its all-five validation/packaging, 598 sources/three deployments and natural closure are verified; **9/0/64** errors remain. Both candidates remain unpromoted; neither resolved the direct head's sustained lag.
 
-Next is **one private 15 m sampled-predecessor target comparison**, staged and uncompiled/unrun. It keeps each actual sampled transform until the predecessor moves 15 m, testing held endpoints and target lag while preserving native distance 20 m, cruise, real-predecessor ownership and every physical gate. This cadence hypothesis is unproved. Cohesion and normal player controls remain the immediate product gaps; the complete automated supply loop and shown demo remain useful completed milestones.
+The [15 m held-target / native20 comparison](experiments/direct-head-sampled-proxy-v1.md) now shows useful improvement: matched-window speed **15.90 versus 11.29 km/h** and peak **79.1669 versus 125.481 m**. It retains **251.197 m /35 powered follower intervals** and **180.413 s /180 zero-drift arrival samples**, with 598 sources/three deployments verified and natural closure. It still fails the unchanged 60 m gate and retains **9/0/64** errors. This single run remains private; cargo and explicit Hold/Resume under this policy are unproved.
+
+The [held15 + native5 interaction](experiments/direct-head-sampled-native5-v1.md) is closed: speed improved to **17.55 versus 15.90 km/h**, but **66.1315 m** peak spacing still fails. Original follower progress was **259.4206 m /31 powered intervals**, with **180.346 s /180 zero-drift arrival samples** and **9/0/62** errors. All-five validation/packaging, 598 sources/three deployments and natural closure are verified. The candidate remains private; this travel/arrival comparison proves no cargo or explicit Hold/Resume under its policy.
+
+**Stop isolated parameter tuning; return to the complete useful trip.** Next is one private integrated 200-supply loop on the current nine gameplay/Reboard files, adding sampled-head proxy/waypoint behavior and its two assets, the six established Road81 fixture overlays and minimal observer adaptation. Preserve the tail's predecessor guide/epoch, assignments, native cargo conservation and every spacing, arrival, Hold and fresh Resume gate. The candidate passed all-five validation/packaging and the integrated run is live on package `F683F18D…704B0300`; no result or promotion yet. The demonstrated automated journey and shown demo remain milestones; cohesion and normal player controls remain open.
 
 Return useful findings to the integrated supply workflow. The completed loop has a rendered and delivered [90-second development demo](../.cache/test-videos/road81-integrated-trip-v1-demo.mp4), with sampled contact-sheet/end-card review. Its raw recording has five sampled views, not full playback. Keep spacing failures and automation limits visible. The per-member qualification correction is live-proved but remains a private fixture.
 

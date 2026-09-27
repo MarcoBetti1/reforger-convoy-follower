@@ -4,7 +4,9 @@ Addon source, recorded radio assets, repeatable gameplay tests, and development 
 
 ## Current focus
 
-The [addon](addons/ConvoyFollower/README.md) is under active release testing. Autonomous one-, two-, and three-truck road runs and video capture exist, but repeatability, offroad behavior, and the complete unload/pass/return loop remain under test. Start with the [map-maker quickstart](docs/convoy-mapmaker-quickstart.md), the [short feature courses](docs/convoy-feature-courses.md), or the [full driving tests](docs/convoy-automated-smoke.md). The [navigation plan](docs/convoy-navigation-release-plan.md) explains the internal driving module and release gates.
+The immediate milestone is a useful supply trip: **recruit → load → follow → Hold → unload → Resume**, keeping the same drivers and trucks. An automated two-truck trip has delivered 200 supplies and resumed driving, with a recorded demonstration. Following gaps and ordinary player input still need work; this is a development build.
+
+Start with the [short player guide](docs/convoy-player-guide.md) or [map-maker quickstart](docs/convoy-mapmaker-quickstart.md). The [current validation record](docs/convoy-validation-current.md) distinguishes observed results from remaining release requirements. Developers can use the [focused courses](docs/convoy-feature-courses.md), [driving tests](docs/convoy-automated-smoke.md), and [navigation plan](docs/convoy-navigation-release-plan.md).
 
 The reusable **Reforger Agent Harness** has its own independent public repository: [MarcoBetti1/reforger-agent-harness](https://github.com/MarcoBetti1/reforger-agent-harness). The local tools retained here run this mod's tests. General launchers, Workbench automation, and reusable machine-operation lessons are maintained in the harness repository; convoy behavior, scenes, audio, and acceptance evidence belong here.
 

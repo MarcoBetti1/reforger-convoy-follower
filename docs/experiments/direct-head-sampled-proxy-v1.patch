@@ -1,0 +1,158 @@
+diff --git a/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c b/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
+index 5d7f05e..60fc95f 100644
+--- a/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
++++ b/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
+@@ -106,17 +106,33 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ {
+ 	[Attribute(defvalue: "0", desc: "Private persistent entity-follow comparison; never a production default")]
+ 	protected bool m_bEntityFollowPrototype;
+-	[Attribute(defvalue: "0", desc: "Private direct20 comparison: exact current-predecessor nonphysical proxy; no route guidance")]
++	[Attribute(defvalue: "0", desc: "Private direct20 comparison: 15 m sampled-predecessor nonphysical proxy; no route guidance")]
+ 	protected bool m_bDirectHeadProxy;
+ 	protected CF_DirectFollowProxyEntity m_DirectProxy;
+ 	protected float m_fDirectProxyUpdatedMs = -1;
+ 	protected vector m_vDirectProxySourceOrigin;
++	protected vector m_vDirectProxySourceRight;
++	protected vector m_vDirectProxySourceUp;
++	protected vector m_vDirectProxySourceForward;
++	protected int m_iDirectProxyRefreshes;
+ 	protected static const ResourceName CF_DIRECT_PROXY = "{D3C9DA7A6F864ECD}Prefabs/Tests/CF_DirectFollowProxy.et";
+ 
+ 	bool CF_IsDirectHeadProxy() { return m_bDirectHeadProxy; }
+ 	CF_DirectFollowProxyEntity CF_GetDirectProxy() { return m_DirectProxy; }
+ 	float CF_GetDirectProxyUpdatedMs() { return m_fDirectProxyUpdatedMs; }
+ 	vector CF_GetDirectProxySourceOrigin() { return m_vDirectProxySourceOrigin; }
++	int CF_GetDirectProxyRefreshes() { return m_iDirectProxyRefreshes; }
++	// Readback against the captured REAL transform, not the now-moving lead.
++	float CF_GetDirectProxyCaptureError()
++	{
++		if (!m_DirectProxy || m_fDirectProxyUpdatedMs < 0) return -1;
++		vector transform[4];
++		m_DirectProxy.GetTransform(transform);
++		float error = vector.Distance(transform[3], m_vDirectProxySourceOrigin);
++		error = Math.Max(error, vector.Distance(transform[0], m_vDirectProxySourceRight));
++		error = Math.Max(error, vector.Distance(transform[1], m_vDirectProxySourceUp));
++		return Math.Max(error, vector.Distance(transform[2], m_vDirectProxySourceForward));
++	}
+ 
+ 	// Separate native target only. The sealed lease still owns the original
+ 	// real predecessor, pilot, truck, group, session and waypoint.
+@@ -155,12 +171,32 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 		// No native order, history, prediction or control write. If context is
+ 		// invalid, freeze it; the existing exact lease observer handles failure.
+ 		if (!CF_CheckOriginalFollowLease(m_OriginalFollowLease, reason)) return;
++		// Validate the exact lease on EVERY frame. Refresh only after 15 m of
++		// real displacement from the last captured origin; no prediction or route.
++		float displacement = vector.Distance(m_LeadVehicle.GetOrigin(), m_vDirectProxySourceOrigin);
++		if (displacement < 15.0) return;
++		float previousUpdatedMs = m_fDirectProxyUpdatedMs;
++		vector previousSourceOrigin = m_vDirectProxySourceOrigin;
+ 		vector transform[4];
+ 		m_LeadVehicle.GetTransform(transform);
+ 		m_DirectProxy.SetTransform(transform);
+ 		m_DirectProxy.Update();
+ 		m_vDirectProxySourceOrigin = transform[3];
++		m_vDirectProxySourceRight = transform[0];
++		m_vDirectProxySourceUp = transform[1];
++		m_vDirectProxySourceForward = transform[2];
+ 		m_fDirectProxyUpdatedMs = GetGame().GetWorld().GetWorldTime();
++		m_iDirectProxyRefreshes++;
++		if (m_iDirectProxyRefreshes <= 16)
++		{
++			string refresh = "[ConvoyFollower] DIRECT_PROXY_REFRESH: unit=" + m_iUnitNumber;
++			refresh += " proxy_id=" + m_DirectProxy.GetID() + " predecessor_id=" + m_LeadVehicle.GetID();
++			refresh += " generation=" + m_iOriginalFollowGeneration + " refresh=" + m_iDirectProxyRefreshes;
++			refresh += " elapsed_ms=" + (m_fDirectProxyUpdatedMs - previousUpdatedMs) + " displacement_m=" + displacement;
++			refresh += " old_source_origin=" + previousSourceOrigin + " source_origin=" + m_vDirectProxySourceOrigin;
++			refresh += " captured_transform_error=" + CF_GetDirectProxyCaptureError() + " refresh_distance_m=15 route_guidance=false";
++			Print(refresh);
++		}
+ 	}
+ 	[Attribute(defvalue: "0", desc: "Private comparison: owned native Wait only after measured stopped-entity arrival capture")]
+ 	protected bool m_bEntityCapturedWait;
+@@ -572,7 +608,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 		{
+ 			Print("[ConvoyFollower] DIRECT_PROXY_INIT: driver_id=" + owner.GetID() +
+ 				" enabled=" + m_bDirectHeadProxy + " native_distance_m=20 physical_moving_gap_m=20 stopped_distance_m=10" +
+-				" transform_basis=current_actual_predecessor route_guidance=false cruise_policy_unchanged=true");
++				" transform_basis=sampled_actual_predecessor refresh_distance_m=15 route_guidance=false cruise_policy_unchanged=true");
+ 			Print("[ConvoyFollower] ORIGINAL_FOLLOW_INIT: driver_id=" + owner.GetID() +
+ 				" enabled=" + m_bOriginalFollowGraph + " graph_guid=976835B5116F4BC5" +
+ 				" native_planning=false native_failure_policy=blocked_no_seat_order test_only=true");
+@@ -1449,6 +1485,10 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 			}
+ 			nativeTarget = m_DirectProxy;
+ 			m_vDirectProxySourceOrigin = params.Transform[3];
++			m_vDirectProxySourceRight = params.Transform[0];
++			m_vDirectProxySourceUp = params.Transform[1];
++			m_vDirectProxySourceForward = params.Transform[2];
++			m_iDirectProxyRefreshes = 0;
+ 			m_fDirectProxyUpdatedMs = GetGame().GetWorld().GetWorldTime();
+ 		}
+ 		waypoint.SetEntity(nativeTarget);
+@@ -1472,7 +1512,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 			Print("[ConvoyFollower] DIRECT_PROXY_CREATED: unit=" + m_iUnitNumber + " generation=" + m_iOriginalFollowGeneration +
+ 				" proxy_id=" + m_DirectProxy.GetID() + " predecessor_id=" + m_LeadVehicle.GetID() + " waypoint_id=" + waypoint.GetID() +
+ 				" origin=" + m_DirectProxy.GetOrigin() + " forward=" + m_DirectProxy.GetWorldTransformAxis(2) +
+-				" desired_distance=" + desiredDistance + " physical_moving_gap_m=20 route_guidance=false obstacle_removal=false");
++				" desired_distance=" + desiredDistance + " physical_moving_gap_m=20 route_guidance=false obstacle_removal=false refresh_distance_m=15");
+ 		}
+ 		m_Group.AddWaypoint(waypoint);
+ 		string created = "[ConvoyFollower] ENTITY_FOLLOW_CREATED: unit=" + m_iUnitNumber;
+@@ -1481,7 +1521,9 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 		created += " reason=" + reason + " stop_episode=" + m_iEntityStopEpisode;
+ 		created += " stop_replacements=" + m_iEntityStopReplacements;
+ 		created += " native_target_id=" + nativeTarget.GetID() + " proxy=" + (nativeTarget == m_DirectProxy);
+-		created += " target_basis=current_predecessor_transform autocomplete=false test_only=true";
++		if (nativeTarget == m_DirectProxy) created += " target_basis=sampled_actual_predecessor_transform refresh_distance_m=15";
++		else created += " target_basis=current_predecessor_transform";
++		created += " autocomplete=false test_only=true";
+ 		created += " captured_wait_enabled=" + m_bEntityCapturedWait;
+ 		created += " rear_pacing_enabled=" + m_bEntityRearPacing;
+ 		Print(created);
+diff --git a/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c b/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
+index 4fcfe56..e323a79 100644
+--- a/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
++++ b/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
+@@ -128,7 +128,7 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 			MixedFailure("comparison_requires_unchanged_20_10_gaps", 0);
+ 		string headMode = "direct_original";
+ 		if (m_bHeadRoad81Comparison && m_bHeadRoad81Guide) headMode = "recorded_player_trail_original";
+-		if (m_bHeadRoad81Proxy) headMode = "current_predecessor_proxy_original";
++		if (m_bHeadRoad81Proxy) headMode = "sampled_predecessor_proxy_original";
+ 		Print("[ConvoyFollower] MIXED_FOLLOW_INIT: run_id=" + m_sPacedRun + " world=" + m_sPacedWorld +
+ 			" expected=" + m_iExpectedTrucks + " unit1=" + headMode + " unit2=recorded_guide_original" +
+ 			" moving_distance_m=20 guide_capture_m=1 recorded_standoff_m=20 stopped_distance_m=10" +
+@@ -328,6 +328,13 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 		CF_DirectFollowProxyEntity proxy = driver.CF_GetDirectProxy();
+ 		bool proxyTarget = m_bHeadRoad81Proxy && proxy && target == proxy && proxy.CF_GetPredecessor() == predecessor.Truck;
+ 		if (proxyTarget) proxyTarget = proxy.CF_HasLease(waypoint);
++		float proxyCaptureError = -1;
++		if (proxy)
++		{
++			proxyCaptureError = driver.CF_GetDirectProxyCaptureError();
++			if (proxyCaptureError - proxyCaptureError != 0 || proxyCaptureError < 0 || proxyCaptureError > 0.001)
++				MixedFailure("proxy_captured_transform_mismatch", unit);
++		}
+ 		bool expectedMovingTarget = directTarget;
+ 		if (m_bHeadRoad81Proxy) expectedMovingTarget = proxyTarget;
+ 		bool movingMode = (!MixedExpectsGuide(unit) && unit == 1 && expectedMovingTarget && distance == CF_ConvoySettings.Get().m_fMovingGap);
+@@ -428,9 +435,15 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 		line += " assignment_established=" + evidence.AssignmentEstablished + " identity_retained=" + assignmentRetained;
+ 		line += " predecessor_id=" + EntityKey(predecessor.Truck) + " native_target_id=" + targetKey + " guide_id=" + EntityKey(guide);
+ 		line += " proxy_id=" + EntityKey(proxy) + " proxy_target_exact=" + proxyTarget;
+-		if (proxy) line += " proxy_generation=" + proxy.CF_GetGeneration() + " proxy_source_id=" + EntityKey(proxy.CF_GetPredecessor()) +
+-			" proxy_age_ms=" + (now - driver.CF_GetDirectProxyUpdatedMs()) + " proxy_origin=" + proxy.GetOrigin() +
+-			" proxy_source_origin=" + driver.CF_GetDirectProxySourceOrigin() + " proxy_position_error_m=" + vector.Distance(proxy.GetOrigin(), predecessor.Truck.GetOrigin());
++		if (proxy)
++		{
++			line += " proxy_generation=" + proxy.CF_GetGeneration() + " proxy_source_id=" + EntityKey(proxy.CF_GetPredecessor());
++			line += " proxy_age_ms=" + (now - driver.CF_GetDirectProxyUpdatedMs()) + " proxy_origin=" + proxy.GetOrigin();
++			line += " proxy_source_origin=" + driver.CF_GetDirectProxySourceOrigin();
++			line += " proxy_actual_target_lag_m=" + vector.Distance(proxy.GetOrigin(), predecessor.Truck.GetOrigin());
++			line += " proxy_capture_error=" + proxyCaptureError + " proxy_refresh=" + driver.CF_GetDirectProxyRefreshes();
++			line += " proxy_refresh_distance_m=15";
++		}
+ 		line += " waypoint_id=" + waypointKey + " related_id=" + EntityKey(related) + " activity=" + actionKey + " sequence=" + sequence;
+ 		line += " live=" + live + " exact=" + exact + " lease_reason=" + leaseReason + " active_actions=" + activeActions;
+ 		line += " desired_distance=" + distance + " moving_mode=" + movingMode + " stopped_mode=" + stoppedMode + " exact_formation=" + exactFormation;
