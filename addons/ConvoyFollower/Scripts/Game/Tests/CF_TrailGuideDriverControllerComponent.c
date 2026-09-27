@@ -299,6 +299,11 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 			!TryGetVehicleFacing(m_TrailPredecessor, m_vTrailResumeForward)) return false;
 		SCR_AIUtilityComponent utility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
 		if (!utility || utility.GetCurrentBehavior() != m_EntityCapturedWait) return false;
+		// Use the same explicit original-order retry after full held-route admission.
+		// This neither releases the selected Wait nor changes the retained epoch.
+		bool retry;
+		int previousGeneration;
+		if (!CF_PrepareOriginalFollowResume(retry, previousGeneration)) return false;
 		m_TrailResumeSession = m_Session; m_TrailResumeOwner = m_Leader;
 		m_TrailResumePredecessor = m_TrailPredecessor; m_iTrailResumeEpoch = m_iTrailEpoch;
 		m_vTrailResumeAnchor = m_TrailPredecessor.GetOrigin(); m_fTrailResumeBeginMs = m_TrailWorld.GetWorldTime();

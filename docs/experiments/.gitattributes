@@ -19,3 +19,7 @@ sampled-head-supply-integration-v4.patch -text
 sampled-head-supply-integration-v4.json -text
 cooperative-cohesion-trip-v2-source.patch -text
 cooperative-cohesion-trip-v2-source.json -text
+
+explicit-retry-2truck-v2-source.patch -text
+
+explicit-retry-2truck-v2-source.json -text

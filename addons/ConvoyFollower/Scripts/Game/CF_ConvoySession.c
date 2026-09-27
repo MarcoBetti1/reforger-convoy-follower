@@ -595,6 +595,9 @@ class CF_ConvoySession
 			return false;
 		}
 		Vehicle ownerVehicle = session.GetOwnerPilotedVehicle();
+		// A settled passenger in the same established lead may also order Hold.
+		// Reuse Resume's exact owner/session/seat/vehicle admission.
+		if (!ownerVehicle) ownerVehicle = session.GetOwnerResumeVehicle(user);
 		// The owner may step out of a parked lead truck to unload or give the
 		// order. The last observed lead remains valid only while it is nearby.
 		if (!ownerVehicle && session.m_OriginalLeadVehicle &&
@@ -1974,8 +1977,8 @@ class CF_ConvoySession
 		GetGame().GetCallqueue().CallLater(PollUnloadSequence, CF_UNLOAD_POLL_MS, false);
 	}
 
-	// Resume alone accepts the owner in any settled seat of the established
-	// lead. Other maneuvers retain their existing pilot-only admission.
+	// Read-only established-lead seat admission for Hold, Resume and cohesion.
+	// Other maneuvers retain their existing pilot-only admission.
 	protected Vehicle GetOwnerResumeVehicle(IEntity user)
 	{
 		if (!Replication.IsServer() || s_bWorldCleanup || m_bSessionClosed || !GetGame())

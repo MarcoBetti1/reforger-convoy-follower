@@ -1,0 +1,3952 @@
+{
+  "baselineCommit": "78a17900723f7842a5127c10263cdb95d05b4b5c",
+  "baselineRepresentation": "Raw Git blob bytes; use core.autocrlf=false when preparing a checkout. The patch also preserves recorded line endings so all frozen source bytes reconstruct exactly.",
+  "world": "Worlds/Tests/ConvoyFollower_Arland_ExplicitRetry_2Trucks.ent",
+  "sourceFiles": 594,
+  "sourceManifestSha256": "36F2ECC44430FF2F502B5C83EB2AE25263EA24BE3613E8A791FD175C5BA6D998",
+  "packSha256": "94C1C0B577FEA279145E9CE91798F45F611EEF3CDC4EF7737C6CE52583FEFF2B",
+  "patch": {
+    "file": "docs/experiments/explicit-retry-2truck-v2-source.patch",
+    "bytes": 439014,
+    "sha256": "62C2AF9751F0B25C703A0A9DB71C048439500060D1CA6CF28726366F585339FE"
+  },
+  "scope": "Three product files plus ten private fixture resources; remaining recorded differences preserve line endings only. No compiled resource database, media, logs or credentials included.",
+  "changedResources": [
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Characters/Character_CF_Driver_USSR.et",
+      "baselineSha256": "F485AF640D27A26A9EBC064B5EF2A9E1D8E1DDF074F407F2909EE938D3229156",
+      "sha256": "F013C78B7F5CF2B3EA9F15A11BC307C6513DAAB0CC35D6DC1CB4D7809D68A48E",
+      "bytes": 2728,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Characters/Character_CF_Driver.et",
+      "baselineSha256": "165479EBDF4D1F71C5222720D57F445DEFA1D588A2069E8307B56465933B568B",
+      "sha256": "F372C84F75DAEC9DA2E18EBA3A407F0E5EF342DE919DDD73420B29C808616CD8",
+      "bytes": 2719,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/AIWaypoint_CF_TrailGuide.et",
+      "baselineSha256": "EE0BA32F0BD1DF46CCEABF489D3FA4FAACEB94CD7FA25750303D35A52D089761",
+      "sha256": "1341DA336FDC5FCDB07E2F8B624436B767A318C6BF84A1DEAFA345F4FA48B75C",
+      "bytes": 506,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/AIWaypoint_CF_TrailGuide.et.meta",
+      "baselineSha256": "8BFC588ADB9D81D0FC37997F0F41E7512740BCFECB969A8D0E4CAEF0A8B97ABD",
+      "sha256": "A58880ACAAA1C5A88EE352262F15A5F3A579610FF6BBFD48D965DA85B6CF3A9A",
+      "bytes": 205,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/CF_TrailGuide.et",
+      "baselineSha256": "3DE205733D665A55E5345F77CD25E38D9CD9C8F2B0DCECD8602C3EFC2C4078B2",
+      "sha256": "E50766DFD3970CA7E997A7CE63920AD3172247D41EE733F4FA773E08C08E8B3B",
+      "bytes": 50,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/CF_TrailGuide.et.meta",
+      "baselineSha256": "83514062F9F4D829B2F78BF3836012282DC01FA72F2275C60243354A7DC3F5F4",
+      "sha256": "CD17567B7E2458A8BE2134E9DB52E857B69D2C9569FDE0552F215D34C667E01C",
+      "bytes": 194,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_EntityFollowDriver.et",
+      "baselineSha256": "5BB3524AE30AC58838C894B62F3516ADCD8AC785FC0C2EE6A862CC40D83029F5",
+      "sha256": "04FB1C7B91EBF92B9758E5481E6E5FA4D48289B8031B881B90D1BCCC40552F6C",
+      "bytes": 2591,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalTailGuideDriver.et",
+      "baselineSha256": "E1EE484D1B9C0B2BA3AC3110642B78B5F76211F1C776DE468381D0158D22C04D",
+      "sha256": "608BAFE8180777C28E220A7769F365B5A6CEEFB6AFC3CAB075AE7CB0D9EBA234",
+      "bytes": 235,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalTailGuideDriver.et.meta",
+      "baselineSha256": "E348108D7E64C4873700E7D45D56407FC7CF24F75A8ABEEC8A22B1C27FB44505",
+      "sha256": "21195D4D459E73930D43F32C6DF95368964C0BABE2BF219DAD0654D4CC26648D",
+      "bytes": 217,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_TrailGuideDriver.et",
+      "baselineSha256": "4D5EEA33C10FF87E89FE978AE7597796567529F3052507B72E97B7A84C9655DC",
+      "sha256": "67D52A55FBDF6E12486ED1FEE8BA7104B5DE631CB42E49446E4D974988BB7364",
+      "bytes": 2623,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_TrailGuideDriver.et.meta",
+      "baselineSha256": "CF9C06BE1B824D1705BAD8B3430AB35AE5C26AF5A1094D85BDB5A2625AB796C7",
+      "sha256": "A29BAD9B714C7211EE76D5F02F22D481B319AC4A9E644594A46024EBDAABCA83",
+      "bytes": 210,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Group_CF_TrailGuideDriver.et",
+      "baselineSha256": "591C75CEAB96BC6F6D21E8F951E4E58F0E6C3F92E54EED248B10F36F4DE9E7BE",
+      "sha256": "5DA617BD20FE7720EEB612E0CF9AE6EAEA5240242D5D94C354FB05C668041C27",
+      "bytes": 452,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Group_CF_TrailGuideDriver.et.meta",
+      "baselineSha256": "0BE6C69827D0C4A389CF1943B25A3C9684D54A4B800D5FA6F2C38A947E2C2A9B",
+      "sha256": "8247B2F816212A29C45A48D7ED1BDD14BBAAA4B0FAD263BBF94116288364E486",
+      "bytes": 206,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/README.md",
+      "baselineSha256": "F15043F81284EB074E4CD69348FD78F6B6FF6C186A045066F8CDE934BF50EDC6",
+      "sha256": "3AA7F25EEB0F8318D3FEDEA79A76D7183068E01AC0B3E76989D9BEA2A3AED08A",
+      "bytes": 26030,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_ConvoySession.c",
+      "baselineSha256": "F90702DF36181236EB21DBCF022AB9B822325B90321E6536796A9E2DD45DB53C",
+      "sha256": "3AAD13DF6DE481A419B29B9788342A5F7EB32D97D532C40CAED584E9DCEE7414",
+      "bytes": 111869,
+      "scope": "product"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_RadioPlayerController.c",
+      "baselineSha256": "C3368A843267F031B93FD22250CD588863122FFC81AEF2AA6743E0679D226008",
+      "sha256": "963D5D79A5037185F9F0DCE7278BADA8AC17CF70855DBF0F1309562C0B6E9B9C",
+      "bytes": 39561,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ConvoyFilmCameraComponent.c",
+      "baselineSha256": "3959426B8E7804BC60451BB1D621F9322B575991B2AA7ACB879A0760A08ADADF",
+      "sha256": "5F604C372AC4406B95711A1CD6D0559939E6171587642B3BAF1709EECFBC564B",
+      "bytes": 6558,
+      "scope": "private fixture"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c",
+      "baselineSha256": "3A16D6C5675120CA9983E53BBAB5ADD6E2078A1BB850266DB6AEF00DD9A95088",
+      "sha256": "547CB5267A790A9646430AED19A66AE0F2E38C09918321ABC688F962F428FDB2",
+      "bytes": 78207,
+      "scope": "product"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ExplicitRetryProbeComponent.c",
+      "baselineSha256": null,
+      "sha256": "B40B21003600FB9A490877C03AC0728306E5DDAEEF7B992213F3820960A74E15",
+      "bytes": 17103,
+      "scope": "private fixture"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c",
+      "baselineSha256": "2AF50353CCD9BE10ADF285E28F6171B72579D9F04174DC3A8F956701E2F1706D",
+      "sha256": "5F43A9EBBEA786F65FB78E3D7C47AB15A5DCF76698BA33A3512A508B444383D1",
+      "bytes": 61213,
+      "scope": "private fixture"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_OrdinaryMixedRoadProbeComponent.c",
+      "baselineSha256": "4AF411927A62413F7AE706CA98E8B2DCCBAB18FD3A8ED391991AE0AE87A57594",
+      "sha256": "16BF6A063C1541C7DDE9072E704BB76EA2B5CD8021DB76A9D975D223CB6369F1",
+      "bytes": 7764,
+      "scope": "private fixture"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c",
+      "baselineSha256": "BF1C2BA6ABF1D05217657D6671BB70716B390235EC0646FCABB348889DC3195D",
+      "sha256": "0DC7E52B7101D66A96F22E338E776B4C8EB9D23CC418C5AE585BF43F1FF02804",
+      "bytes": 21720,
+      "scope": "private fixture"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_PacedRoadProbeComponent.c",
+      "baselineSha256": "9F11C27E54A917177E27FE7C1FF899222E585DFD452AF41E753F1868413A8450",
+      "sha256": "2619F78EED5F6528360A3C2449424203CBF5954B9DAE41EA74763C7283947B79",
+      "bytes": 39600,
+      "scope": "private fixture"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_SmokeProbeComponent.c",
+      "baselineSha256": "B6F963C6D146BA0283C7D316E93962577E731C6C99690087D64697CEF4A0E532",
+      "sha256": "BC0F8F5B9DA545E4C15E72D9EA97CD344B3B0FAC2D7BE64588B9C27E736E445E",
+      "bytes": 39273,
+      "scope": "private fixture"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c",
+      "baselineSha256": "C9AACF09B95B053802EEB3FA70B5CE22C453DFE951EDD74240772DD344B4317D",
+      "sha256": "23713B0E57634BD09AA989A8F4959B7D76F0B47D54E1191BF8008CE3BFC9F0DE",
+      "bytes": 58813,
+      "scope": "product"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideRoadProbeComponent.c",
+      "baselineSha256": "DDB45A382B26DD1FD641B249AB600C1AEB6014928C49B84A5235739C5BF1D22E",
+      "sha256": "F921A9D64DD07AB887F47AA65F31A3CE58765A9616B76618E0E203B856BE623E",
+      "bytes": 9713,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_far_warning_b.wav.meta",
+      "baselineSha256": "426A60335C209CA6EE9DCF039934F91A45BDADCFA6DA29D0AA3A5FDF34F8FE08",
+      "sha256": "3170604F6DEF7490FC064F0AA13CF06D03CF957B71A12C62C8B47D7ED8B8827C",
+      "bytes": 346,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_far_warning_c.wav.meta",
+      "baselineSha256": "AD8B4CC4128BF64ABCEB92E8C7E9D862B06992B497F3EA8A2D8086D6FA4B3A41",
+      "sha256": "FD5AD405E20444B48B47C9B8F09D624CD825DC460888301C78DDEAFFC66CEC3F",
+      "bytes": 346,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_following_b.wav.meta",
+      "baselineSha256": "68C2DB44295D5E5B42F27B12243453E4498B50E460B03F4F326C522301654CE3",
+      "sha256": "BD3E517D9D8712A728A832711203E88ABA0EC0FF5352A45FCD65B84486BA5FE9",
+      "bytes": 344,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_following_c.wav.meta",
+      "baselineSha256": "E076FC40F9E2F8C44C9E799E05089EB0B4EBC5C49AFDA5C09A311EA9F2962B0C",
+      "sha256": "89E7F0B3086AB3FA7DD0C561A597867A913B38B1449D6D6FECCC6A020C0D714F",
+      "bytes": 344,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_holding_b.wav.meta",
+      "baselineSha256": "1BB70C1445D7D56B582DC55CC722759B7E36B59DFB4E56BB485A2A3B6F96210A",
+      "sha256": "621BC72A825FD81CB2AEFF13C746DC1A59B2637D161793F0847D36C0F40141AC",
+      "bytes": 342,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_holding_c.wav.meta",
+      "baselineSha256": "ED478FEAC75EAB551C52D015B50454F1010A3B74BD3CDC0931FF5C6A7B74230C",
+      "sha256": "39228ED08A4511CCE4D074FC49AB7D3C58A94A3968E5056CF3407EF9E15B008D",
+      "bytes": 342,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_lost_b.wav.meta",
+      "baselineSha256": "E569085C20C7AF709182D3FC029775D0297BBB866574BC094C84C6EDEA779381",
+      "sha256": "C36E1BCEA231524C078175EE94EE6927216EB1C16A2E1E4ADB36552EC87D69E6",
+      "bytes": 339,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_lost_c.wav.meta",
+      "baselineSha256": "AFE60226D2DFBD0EA9389628E4ACF81144104DD7BDFBC7BFDE43333007C53552",
+      "sha256": "CA769110385705009745DE930E1ED2CF7B4689530B100DEF96B314ED54BB3E7A",
+      "bytes": 339,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_ready_b.wav.meta",
+      "baselineSha256": "26D0FE74FFC8F17FE98CD668E05D7920068C1E073C9C314B3EE373299916F422",
+      "sha256": "1E98112C05E93F7DFCF643A1DD9FFA01AE25AD79949BF1D750D6CAB0A55A74C4",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_ready_c.wav.meta",
+      "baselineSha256": "379A06A7A9ABDC09E7727883C10C7031A269034E81F0BCD79250171D770E5271",
+      "sha256": "784BD3AEBD382928D0AE3ED6E8ED341185298B369C09C22AE4C052061FB9110D",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_rejoined_b.wav.meta",
+      "baselineSha256": "38DE5CB16897EF6186F9B7D9A461E94C34B0AC74CFD08C5F8F66C2C53EBAB560",
+      "sha256": "F038C83B0BD01B004C51910CF3EDBE703F03FB8CC00F736D65A354D2D5FB3F80",
+      "bytes": 343,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_rejoined_c.wav.meta",
+      "baselineSha256": "DCA294AA1152062B5A52FDB59DB885AF7B57114A7B479783EEFD2450D6564310",
+      "sha256": "4456B62CF84E8AAACD89DC026010873E7683BF19589926C4002696076A394A56",
+      "bytes": 343,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_stuck_b.wav.meta",
+      "baselineSha256": "F389CC823235822F465EE2E0379023E8EB9FAFC6C6DF0F7B7F12E609799C7EB1",
+      "sha256": "66A7CBFA927E61831D6D3AB0312BA5FCA1E5A1BDBC6F2314C374A69E91D22659",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_stuck_c.wav.meta",
+      "baselineSha256": "262B9BF3F82DD71ED37C7E2622193FBD2599A34913C7A6B4401E94319DDC68E6",
+      "sha256": "3C7B234F8B5024695D0918C3F0B28359AB60C3D2F44C860392B7DBBC3D49BDB6",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_under_fire_b.wav.meta",
+      "baselineSha256": "0D9B862E2CCDF2F8CC779B57FF9E809443C4BB31B57BB976C510B7A7174D8EE7",
+      "sha256": "95687DA889A25ADECB90C76355CB74FC0AC43382C68D57A844092FC8B065FB56",
+      "bytes": 345,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_under_fire_c.wav.meta",
+      "baselineSha256": "B7C56204D39913E913ABA69EF21B86B531357DBBA15FDF38BE742C495F642715",
+      "sha256": "8AEC99EACA0A05A2F4BC84391DEC0A7786FEAAB17A0C323AFF4E9CF84B1AC711",
+      "bytes": 345,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_far_warning_b.wav.meta",
+      "baselineSha256": "12C5C52AE207623167F39901A0D8F434D1E44B01B27C56C04530BF6A1F1FFE59",
+      "sha256": "0D2F77FAA9B37C6F04463B493FD4CCFDA90C0399C0CB7518711748C71372A584",
+      "bytes": 346,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_far_warning_c.wav.meta",
+      "baselineSha256": "84FB638FDF8E3982E17E613C53F0C1A7D501DF69D431A667669ABE3E15711F1A",
+      "sha256": "4BC37140A83CB7B3469136DAC971816F126C67AAB5137B3F4C6403368CB1E178",
+      "bytes": 346,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_lost_b.wav.meta",
+      "baselineSha256": "D815F1C4FED5AC0B876232AB26D8720CB6094DDAFDD4619416CA8240FB60773B",
+      "sha256": "A3E4A91F628BB27942854A77808F1E15514C7F1CEECC88D50ED0BE21A3BCF3E3",
+      "bytes": 339,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_lost_c.wav.meta",
+      "baselineSha256": "EEB0D4C46F23DD626C5CFAF4AFBAC1ED3310610DC5D7E1A985A8261EE14374D8",
+      "sha256": "46D130B7A0450E0CFE6866F465A1904871C99BA653A3FA60004DE058A88A3B5B",
+      "bytes": 339,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_rejoined_b.wav.meta",
+      "baselineSha256": "7A7E62D2A651D3B83D49C2991EF22C9807547BA4E8A461213AA9F2EE0CF73597",
+      "sha256": "C79D36EBE61DA4A75A5820C8A2CB401B055DF24EEF57B650D7C0DB1FF3D60092",
+      "bytes": 343,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_rejoined_c.wav.meta",
+      "baselineSha256": "AA07BBC1F84CE87391FE8DAE7F59B51FDF39BB05398DE9ADA8E0E5F4A2991E58",
+      "sha256": "F13D1E550DAFE50FB4395DC4BE53797F1A694F505CD06616BEB0E3B26B543758",
+      "bytes": 343,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_stuck_b.wav.meta",
+      "baselineSha256": "D9ED4E777195583E875556E8571C1E665CD3EE90832E8A2B7536E8CCE3643B45",
+      "sha256": "4CF1618AC81577562FFCD1D762A153E06BA72D109997E4E8A4EFBEDBDB132117",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_stuck_c.wav.meta",
+      "baselineSha256": "4F5636C75FD1EDDDE4444BA9D3B002720E147FF75F81E379A03AE77AFB4E85B3",
+      "sha256": "0FBCA24DC20C0A4705EEE142F6B8E9816E38834CA706E60020ADA49A80835D09",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_under_fire_b.wav.meta",
+      "baselineSha256": "C0B00A3BB5102C75086903832A3FBD9922A78755B40399212B2098AB1B9FF8D8",
+      "sha256": "B42DCFD39D8E2A60A011C4D9F8FE7F31D21A88D9940EC5C7C2CA44053E2E7E02",
+      "bytes": 345,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_under_fire_c.wav.meta",
+      "baselineSha256": "5F8A816085C8313ED31D9D03B40C677CF3C15EBE05DA04586907828FA818AE46",
+      "sha256": "D845C2A01D4C457D7851AE176B6232DA7793BC46D3CDDA2C53F4F2F5C0650029",
+      "bytes": 345,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_far_warning_b.wav.meta",
+      "baselineSha256": "4E56B0C867A8C96D65C8D7D1E5E9CBD6FECBED4005EDCBFD9BFC776B52FD47A1",
+      "sha256": "4D5C1170391AA18C2CFFCD84E2647CDAFE553734E2A653F940653AF45411A9D3",
+      "bytes": 346,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_far_warning_c.wav.meta",
+      "baselineSha256": "AC97263823F52413EBB2AD6E7A51238F4CA7A3FBFEAAF89B3EEE35AB790A552D",
+      "sha256": "511613343DF347FC9080A55E6C8CD27A0F18E04FAC1C28255F7313DB4C71C20A",
+      "bytes": 346,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_lost_b.wav.meta",
+      "baselineSha256": "DCDE6E8092DBF891C1C7010B730BE98AC5A0E3E0F98FF8DA8C3D9CB62075E9AF",
+      "sha256": "0796D2B2BD27153CAEE2AA34C9CC9A5FB117D98281B1A73582FBD5FAC666CEAC",
+      "bytes": 339,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_lost_c.wav.meta",
+      "baselineSha256": "4A394D1E8D82CE6B3037275F0C70B65723B1F35C8602F8FA14D180483C8C798F",
+      "sha256": "5977E72F05B7A457B67B526F4AD813B00511257930647F8E50BEC37F50A28F39",
+      "bytes": 339,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_rejoined_b.wav.meta",
+      "baselineSha256": "2E54487BEA87B2B1A8437A9CF9E752F435AB5985CD6D4B9D9CFEDBFA51D42CE6",
+      "sha256": "6033E77EDE18424F2CE4EDC535694440C94D4597759B2ED2F61292E750844089",
+      "bytes": 343,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_rejoined_c.wav.meta",
+      "baselineSha256": "233D272D7E00A86E15816C410D64BDB98B2D909AFD542B7C9C7ECEB782CCF558",
+      "sha256": "33C56F6E22E72BDFF795C294E5A576262B774C02F4A6FA8925B6AED12F433D7A",
+      "bytes": 343,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_stuck_b.wav.meta",
+      "baselineSha256": "5033013422BCBE2E6E90E240A281C0605981E8D1E285E66E655049895D0AE7D0",
+      "sha256": "563A9D3F2B618B5034A8CA25F4249AE8BD4A5A45FB0F9DACB829D60C9B751962",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_stuck_c.wav.meta",
+      "baselineSha256": "C2A470AD1AF05263E2BFE7FF720F437800269BA032D98EC6BA46AAF609D57B46",
+      "sha256": "794024C28FA11EFCF449EE5ABE971EDF10A567C5950FC70A3A039C06C753E2D3",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_under_fire_b.wav.meta",
+      "baselineSha256": "46FEC15169DA98D71A2674B4E954CD9389A85BB9216507B9F027577D437A09B8",
+      "sha256": "DB89D39339360302665BA080123971D0A1FD9EFF8E85343BFF0F6CF73C4A38C6",
+      "bytes": 345,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_under_fire_c.wav.meta",
+      "baselineSha256": "E423037BC3D9A6E1F9F7A9120D55C2F6D1B25FCE2A3B3E4F75F1279BB4BED3FB",
+      "sha256": "17E7E2D07D590F10D2DC5286D79641248CED88334C283FCADA11F8D1C9DFC071",
+      "bytes": 345,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_far_warning_b.wav.meta",
+      "baselineSha256": "5B42D3C09DF69FF4CA9692752486229463816B3B2B1CCB1AF34972AD09DA603F",
+      "sha256": "DE8DB5A04C223A8E627A8260883CE3253C2A096E9B5BC647B2D28B3EB70F4488",
+      "bytes": 346,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_far_warning_c.wav.meta",
+      "baselineSha256": "F185815B8DE240626536717A49CE2B2F9511A7D02ED7FB955E560A17061B224A",
+      "sha256": "895BD85241D60A863206E30DF756812DE2D4349F9A13B6B4F2F01A58A67D9122",
+      "bytes": 346,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_lost_b.wav.meta",
+      "baselineSha256": "C93C4463BA43B1428E3E6A986E2B913829313F498A9EC11E08D1C0A7F3615685",
+      "sha256": "3CD467EE069400AC5BE10D06E8C66AF09F94D4C9F59BCD790D6114A31DEC0B76",
+      "bytes": 339,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_lost_c.wav.meta",
+      "baselineSha256": "E6FF582305915B1B301EB427871A8E1FFDA133ED9C65FE1201B1ABFF93481701",
+      "sha256": "A836CD3D55B52D6F3B44403C528B805919F9B174E6DBF491324E64F1CBDF555F",
+      "bytes": 339,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_rejoined_b.wav.meta",
+      "baselineSha256": "4DD754109ABB74DFF6DF934B448EEEFDE195962E86173F9E6D6E3D2F8F6EF968",
+      "sha256": "199D5408E078EB53367734E6C0CD8876F59A5ED85E22EEEBFFA5609D75DCEE92",
+      "bytes": 343,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_rejoined_c.wav.meta",
+      "baselineSha256": "C016632CEFD9BD076AB112ACF013ED596B0416C213302B76B61B32C557484DCA",
+      "sha256": "C40A5233968B4BA1A0C85ABAA2D5DBE1259D68C9C5C9B496FB3D9504B4BD08F4",
+      "bytes": 343,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_stuck_b.wav.meta",
+      "baselineSha256": "B6302A3DF5EB4570A431773887F3C9F99685D7BB8DD183B804850D48891A1483",
+      "sha256": "667CE65EDD85C76152784D80FC1152A300B21E8AA1167DCDA50CB5B8F11825B9",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_stuck_c.wav.meta",
+      "baselineSha256": "0C5E9D3469ECC2BBA7D8A755EF9AF562D8DCE56F69467E7CC82F029E50BAA580",
+      "sha256": "9E48FA19CC5C06B726FE4221472A0A29E5B5E2941AC17C82213C05DFCE64C0C1",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_under_fire_b.wav.meta",
+      "baselineSha256": "31E99A3D6D9713764BEAC0E0333F373E20304712D8D8BBC8C6576A9C24FD5506",
+      "sha256": "D481EE2C598CD7565C899E2F6259E3204D3032905AE2F69F5E7232F6934FB075",
+      "bytes": 345,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_under_fire_c.wav.meta",
+      "baselineSha256": "BA03C06E507C9C4CD8EACD9B6CA9292651697A6FC30F459F137B3E240D949415",
+      "sha256": "2B34AE4EC2028E698CC8B80744C4DB3D7292D9DED7A959BC0693BE60A1E637F4",
+      "bytes": 345,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_far_warning_b.wav.meta",
+      "baselineSha256": "71014D2AC40F8B6DC1908FD288DA184F2ECC6A7A92E12A92A1B1A4E8A8433D1B",
+      "sha256": "33AFC47045D20818C8D36E59E82A9774EF680200A612322E909B663D6B56A6CF",
+      "bytes": 346,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_far_warning_c.wav.meta",
+      "baselineSha256": "8C5BAEF5F1370431F8CEB3D1EA5FBF45D3B64BC7EA453ED3296677604B2D04E1",
+      "sha256": "A8A998D02152B9A99C89AEB5399A4D86D5DAC72CE6D926AFD9C4B0AB91A78EFE",
+      "bytes": 346,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_lost_b.wav.meta",
+      "baselineSha256": "DEB139F472F4EB683ABCDB716F9F5D4BB079430F5977EDAF31CE29F9ED27C38F",
+      "sha256": "65D26F5A3E5256476A6A38341D255BA4294F88D770A6CE2FFD1EFBF724C63B36",
+      "bytes": 339,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_lost_c.wav.meta",
+      "baselineSha256": "EFB2DABF2E2A11F18520D104192628A485BA264070BD85F750A879C1D1EBC95A",
+      "sha256": "4314529D5DC38DACF52EDB9D033EBFE688D32FF68CC207C8762E659F1408B717",
+      "bytes": 339,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_rejoined_b.wav.meta",
+      "baselineSha256": "F9FB78BA22014732CBB76E5936A23FF4C0649D9F8764C86477F1E5D77E878225",
+      "sha256": "F4FFE3C3532612846A7A6E06E66AAC3887C94E62F1AEC4199274DFD6372CE59D",
+      "bytes": 343,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_rejoined_c.wav.meta",
+      "baselineSha256": "C111449850B054B016982F481E25F2506DE9E9B27CEB66DFB29E8D7930E703D1",
+      "sha256": "D6A1A0F43FC4D45CA33BCA4559F6E0A021DC73ECBBE3BA3A3E929B8DDE2B7D51",
+      "bytes": 343,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_stuck_b.wav.meta",
+      "baselineSha256": "2D7ADEB29D8D69140D13C68E0980B4C1461EE4D35AD1E1D18FE03260A940981C",
+      "sha256": "5CD13D38EC81F8539BA59A76BF63D7D95A41C41BA246E76C8830D4FF160E5AEB",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_stuck_c.wav.meta",
+      "baselineSha256": "9F1B4881430409108C1D0A9AFD39D0BBD4D435C2E9B748EF870EBF004BB1AACF",
+      "sha256": "540944C63F4E488318A4188A7013AAA61AAF9442201DD84F6CCE357A0FA8E63C",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_under_fire_b.wav.meta",
+      "baselineSha256": "94B0A08D695404114730A4485ECAC99181D0B43C17FDF25C3C15B1885E622D9A",
+      "sha256": "8708A5BB1D1A807DE4CD9DE61713FCF76370DF5E5DC965F74F6CF5604974D16E",
+      "bytes": 345,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_under_fire_c.wav.meta",
+      "baselineSha256": "42376541F9B4BCC6A9491B5E1F4ACE848F809AC3CB0FCE4CBB3A3718624E3480",
+      "sha256": "5AE522102F85710F56A673D2AC8096805843CB7AAB29513870E80DB601BA2A6F",
+      "bytes": 345,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_far_warning_b.wav.meta",
+      "baselineSha256": "1AA0F37EB7607825B210251B484C581B2507AFDF651693C1221CB77FE424A54E",
+      "sha256": "9D10705A14C8F3599280E20F4545D4E23EFA101CAA4A35A31A1EA7D096DE7128",
+      "bytes": 346,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_far_warning_c.wav.meta",
+      "baselineSha256": "70D5EFB650AF6C2A49F21CE7901AF2B05667976CAA8A4C60C73D00271A704B20",
+      "sha256": "BCC07B4A5B89D3E325D7A52DBAD9D27B4CDAEB29D48E8BBFB5B365D0920E9EDE",
+      "bytes": 346,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_lost_b.wav.meta",
+      "baselineSha256": "43D8A3F67F342F47ED07067DA7A34560512F9CED2CDD674372499D69150B839C",
+      "sha256": "E5A052B22FAE486EAFC9362D69E64762F832EF74A925E5F98F309AE589B6581F",
+      "bytes": 339,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_lost_c.wav.meta",
+      "baselineSha256": "593ACBCD8878A06EBCD1200FE2DF2FBF179A84376E16ED1494908B9D0B534ED0",
+      "sha256": "777C3C35B1E069DB3B5E4ABBB3901F259EC1B0902619AA7F05F21C7B541FB1CA",
+      "bytes": 339,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_rejoined_b.wav.meta",
+      "baselineSha256": "CF766609F1B4CA273340E7B18A25CB87CE1AD7AE55B4E4D37B13DE0CDA04AD01",
+      "sha256": "A9D8C5D8E0C5C65497643F111F81E06A820DADB87FB21D17A2C718DA51E587D9",
+      "bytes": 343,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_rejoined_c.wav.meta",
+      "baselineSha256": "89F9D760CEE2B8FEE7DAB86DB4F90CFC711C53547A85BC4DA7A958E65E8EE5EE",
+      "sha256": "ED214653E28E15CA0A7302F9022D3ED7D183E37D01E303446A443B8245E7FEE2",
+      "bytes": 343,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_stuck_b.wav.meta",
+      "baselineSha256": "BEEEE3F33D939515FAB3BED1F5A03DB38CEBBFDBBF9E3F20C315E23E9138B652",
+      "sha256": "8C91EBB09B35B78564A0F91E7040373F584CE957090EAB5C617054175CA874B0",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_stuck_c.wav.meta",
+      "baselineSha256": "D24DB6F6EB5D92C8433923D997762E1177A6B232FADBF39E2A72210054F718E2",
+      "sha256": "699D66ADA2A0C8FACE57BD43CA67AFBD14803D50EDD3F05627188669A2FFECC4",
+      "bytes": 340,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_under_fire_b.wav.meta",
+      "baselineSha256": "871BF39DE4386FB7471BBAB215C3ECDB711BA50BB60DF1B34A8F6175756E68AC",
+      "sha256": "70633CBBC8ACE087DFE3BCF2A01090C48CBDA3F49BF30432E92B838B218B2DE4",
+      "bytes": 345,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_under_fire_c.wav.meta",
+      "baselineSha256": "EB6C506E6C8DBF8AB98BACBA158C99A29A1E12C0C72DFFFE13F5EAD2F839F55F",
+      "sha256": "7F9A87F1A6A80D223AED26FDB14734D4C1715E08CBB1ACEA4AC6AD02DEC8E637",
+      "bytes": 345,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_far_warning.wav.meta",
+      "baselineSha256": "26DDB3E69A564A71973170C647E595C427C963507A4EF31A31BF2197D6294C44",
+      "sha256": "B764C967444F12B6293954F89D122CFB6301B157808560F3BFBF9791DB6E25F5",
+      "bytes": 137,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_following.wav.meta",
+      "baselineSha256": "F9AFB3F86A8148E3368167F4A48DD81F018ACD286E45F45299FFFFCCEDFE9594",
+      "sha256": "861699042790716976A7F1962D105E70BCB47ABDBAFD73D7AE3E951547822C0B",
+      "bytes": 135,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_holding.wav.meta",
+      "baselineSha256": "97988D82F9B6D4CBE0E1BA16B8355962B4D1F17CC4F21CD89D4CFB5D5862BF31",
+      "sha256": "3AC958ED40F806CD9E940635629575E32200C7BBE68C3D37E163E756F9161D98",
+      "bytes": 133,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_lost.wav.meta",
+      "baselineSha256": "188AC3DBD9423C7809CF5A6939733578C7C34E2A13A2B700A3F54FA136FDEBCC",
+      "sha256": "FC4CBA23BAA81F435ECEBAEFDE9A0132FAA2BBCFFAED794FB28CA23D9F742902",
+      "bytes": 130,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_ready.wav.meta",
+      "baselineSha256": "0E1021B45A4988DAFA0441C94A9B61C2BD5ACE96384FF960F0D36C46066713A1",
+      "sha256": "FC37A88544E704ECF5DA54DD1922D25C98549DE609B591BDDFD0A6110E9A5AA8",
+      "bytes": 131,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_rejoined.wav.meta",
+      "baselineSha256": "E58E697E1336CD1B5828DCEC0FE2A31B9CD6FC5BF4A3F9F4825E05C7B3B1590A",
+      "sha256": "502B333855BFD762E70F7C26CE4F9F9331891FF9F8DE8F52BF028A7E78F9ED42",
+      "bytes": 134,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_stuck.wav.meta",
+      "baselineSha256": "EA4AB3E6B7FC35761580172C030225B9E98E86AE37F251AC44A0B8EE80FFF24C",
+      "sha256": "F527819E8B824F254FEBD82C217F279A0B47C98D7B3328E64A31EF47584ED0AF",
+      "bytes": 131,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_under_fire.wav.meta",
+      "baselineSha256": "5EB29A25D97945B33D52E87AF4B8C190247752F32C133233C9B96BC147938170",
+      "sha256": "970655A117144FB47893824415FF89DE4F529567612E445148313DF2A96C2A83",
+      "bytes": 136,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_far_warning.wav.meta",
+      "baselineSha256": "B1B571F50F29B8955CE3DD603F421FF311D43250B854AB73C27F6905FC48346F",
+      "sha256": "4FA90A8C15A1F8000996138F58416775CC16E57945567D7A16803D8939BE5D86",
+      "bytes": 137,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_following.wav.meta",
+      "baselineSha256": "A8399333FA5E5A0A2C6022DA521E8A3F07C500B91C289FABDD3004D1718B3E25",
+      "sha256": "4518D865852678576430DB7D23C9C1E158FD8CAF664CE7FD13424A926EBD826F",
+      "bytes": 135,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_holding.wav.meta",
+      "baselineSha256": "AA14CDE8A852C975F7A3CADE795BE350F8232A8943502B7659F3174397AD78E1",
+      "sha256": "F90D0BF20930621B8A898967300664F1E3896EFA2CB24097008549A60A24F1BD",
+      "bytes": 133,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_lost.wav.meta",
+      "baselineSha256": "7C9DDB62FA12247585E2FB39E4049BD2617E1524F9BD9B1A6FD927FA4496DACA",
+      "sha256": "46365EF722545F024167C9A8B06901E3176620863131284B328241DC0649504A",
+      "bytes": 130,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_ready.wav.meta",
+      "baselineSha256": "47136D1BA84C800EA5132AE7416429C84F58471D49ED3E9CB84C113B81236F12",
+      "sha256": "27A1A2DCF5E7734C99B1A4A925F9964932159DD35EB65A38A1A43E8F34FD1868",
+      "bytes": 131,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_rejoined.wav.meta",
+      "baselineSha256": "59EB794EFA9CA6CBC8D8FF89F84C98C9132E6F03AA21D414EFCF8BC78C700691",
+      "sha256": "C92A6D1B993ABD3C225FE141976A9FC1835880297CCBBE7384D404C8CB4CABB4",
+      "bytes": 134,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_stuck.wav.meta",
+      "baselineSha256": "431858987B27B1D72B712DCF4B2D327A053BC91E3EF4A6BA66483D3CA71E241E",
+      "sha256": "DEBE790435B85B9F68E7FEE6E5B5E6FF39B7A7AC2B96692FDB11E4FD4EBCC3C6",
+      "bytes": 131,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_under_fire.wav.meta",
+      "baselineSha256": "C0C49EB0E2E1438F3CD1D40ACB726283E5B8880E0681883F261B682F0424826D",
+      "sha256": "5AAB4BCB0603F34A9C5A8A23FB93C603E6949A95E4440617A97A6C02518D7E6B",
+      "bytes": 136,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_SupplyDay_Layers/default.layer",
+      "baselineSha256": "C9422A4FB69FD19E027F8A5148F78E1BD332261D2CA05BE5472C0C67742D86CD",
+      "sha256": "6E05066BB8B70095381908C45B687C59B2C26016254ADFF27332B3D82EB33CA4",
+      "bytes": 2659,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_1Truck_Layers/default.layer",
+      "baselineSha256": "CFBBC8105012BACE9BAE412B30381AC4D0C3645A9A70AFCBD0487BC0E7D7CB82",
+      "sha256": "BC26D86EDECAC8E2E70CF7F90B39D7A2447A894166818431A0F3D0483CF70D53",
+      "bytes": 746,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_1Truck.ent",
+      "baselineSha256": "1C8D98281DB21FA9A277A15F3EC6A7725A57D357EC2328FC95DB5BE6B50C06AF",
+      "sha256": "45F7B028A49566D49A76D9DC80E5EEA9CD7DB7754023C304B00A7AAF4A1EF6D5",
+      "bytes": 76,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_1Truck.ent.meta",
+      "baselineSha256": "2CFBE0D8777E684FA1781534EF5EB93A9F6EAF08B30E77B23C17F1D4DDBCBC31",
+      "sha256": "48AE3189331D53954B7FE8CFB117FA01B11A99F03C5EAF5F54DCA2F66D592DA1",
+      "bytes": 184,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_2Trucks_Layers/default.layer",
+      "baselineSha256": "E264F74033E570A7F8253199E06DCE63FBB5F3133D99FC09B4599A63F8AC1FC9",
+      "sha256": "52844DF94454AA4E3DC22E38EEA42FB052BA3EE739BD028C4F03DC058D9278BD",
+      "bytes": 1019,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_2Trucks.ent",
+      "baselineSha256": "1C8D98281DB21FA9A277A15F3EC6A7725A57D357EC2328FC95DB5BE6B50C06AF",
+      "sha256": "45F7B028A49566D49A76D9DC80E5EEA9CD7DB7754023C304B00A7AAF4A1EF6D5",
+      "bytes": 76,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_2Trucks.ent.meta",
+      "baselineSha256": "B4B007D6938FD60FD448F4695EF2714548F539C7BAE8B0B084981081F25F8209",
+      "sha256": "D4F40F9570605CBB6AA815971285DBB76F1CEA3272590DF2DC11291A6BBA2DBB",
+      "bytes": 185,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_3Trucks_Layers/default.layer",
+      "baselineSha256": "943A192C154936564906F85533812EC12C70CBD7D89CE87A381AF55F190322B7",
+      "sha256": "58E3C7B209F6C58D6DAC4CD643EB3B950A6B3A877CDFA8374CCEEF79285C0ED8",
+      "bytes": 1292,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_3Trucks.ent",
+      "baselineSha256": "1C8D98281DB21FA9A277A15F3EC6A7725A57D357EC2328FC95DB5BE6B50C06AF",
+      "sha256": "45F7B028A49566D49A76D9DC80E5EEA9CD7DB7754023C304B00A7AAF4A1EF6D5",
+      "bytes": 76,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_3Trucks.ent.meta",
+      "baselineSha256": "1D4FD382A29149943C4A250DB144DACC7A2CCAC04BA295C9732D22017BDF70AC",
+      "sha256": "ADE7CE5614F9A2AE8E376C994AF51F7D938AF5307E60ADB4CA26D3E3812DF032",
+      "bytes": 185,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ExplicitRetry_2Trucks_Layers/default.layer",
+      "baselineSha256": null,
+      "sha256": "307C0D68B9B86CF6F8058E9B9DFC0DC4B639C03F6CBA22C55C8DC74A57D15D71",
+      "bytes": 1879,
+      "scope": "private fixture"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ExplicitRetry_2Trucks.ent",
+      "baselineSha256": null,
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C",
+      "bytes": 76,
+      "scope": "private fixture"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ExplicitRetry_2Trucks.ent.meta",
+      "baselineSha256": null,
+      "sha256": "E08D3B8CE3F8EC933C42375B85DAA9638BCFD627B552DE7A1380BABFD02D2AB7",
+      "bytes": 193,
+      "scope": "private fixture"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_1Truck_Layers/default.layer",
+      "baselineSha256": "270E2C7C03AA931723B51AB154DE339FE3CAEBC6723C1409821AB9493BD2B7C0",
+      "sha256": "1C8BD5A2BCEBF3A7D38DC475F1A2685CBA95FD8BF0E9813023F99CE83401D3F3",
+      "bytes": 2457,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer",
+      "baselineSha256": "85B54962BA1BD2DBA85ACFF065E97FB62430B99DB1EE2CEAD9068B651B0FF9C6",
+      "sha256": "4D9B27AC6930D2B1111334DB8A7DC6A989B4E00AA13C3C7E28BF6B7A17AD8D97",
+      "bytes": 2867,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks.ent",
+      "baselineSha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8",
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C",
+      "bytes": 76,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_2Trucks.ent",
+      "baselineSha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8",
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C",
+      "bytes": 76,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_3Trucks.ent",
+      "baselineSha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8",
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C",
+      "bytes": 76,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalGuideCooperative20_2Trucks.ent",
+      "baselineSha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8",
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C",
+      "bytes": 76,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalGuideRearPacing_2Trucks.ent",
+      "baselineSha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8",
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C",
+      "bytes": 76,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailEntry_2Trucks_Layers/default.layer",
+      "baselineSha256": "31C1F81B7CAAA69B4985DB272D1DDFC12A7B74CD50AD83626D1A4932102206CD",
+      "sha256": "492882BDC748D6987E3EAECC0CBAFF4747C299F74C3844658235510DCBD8E022",
+      "bytes": 1715,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailEntry_2Trucks.ent",
+      "baselineSha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8",
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C",
+      "bytes": 76,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailEntry_2Trucks.ent.meta",
+      "baselineSha256": "C2F7CA1855BAD8304987FCB914B233527E707FA724681162727FB0BC8A38FC21",
+      "sha256": "ADCD4224894099A2ADC76AAB7F4EA1E5F44BD465C6889CBDEF0435D1F6369AA5",
+      "bytes": 215,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailGuide_2Trucks_Layers/default.layer",
+      "baselineSha256": "88C1B1957798103AEB404BAE339A0EAC95D3D0CEB578F623786BEA8B4766633E",
+      "sha256": "5D84033D671ADADB5D6FA95EA029C67A5437DF91C460FBB491F5291FC9175FFE",
+      "bytes": 1715,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailGuide_2Trucks.ent",
+      "baselineSha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8",
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C",
+      "bytes": 76,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailGuide_2Trucks.ent.meta",
+      "baselineSha256": "CFBEC4F64681126A203F5D7BC18171FC8F907C73CDFDF71E6AB893D023ADD317",
+      "sha256": "C73B6B0AB0BB435C6F14F7C0506107E929B64495965CD9EDB74E279CC7E6067B",
+      "bytes": 215,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailProjectedStation_2Trucks.ent",
+      "baselineSha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8",
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C",
+      "bytes": 76,
+      "scope": "line-ending preservation"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_AutoExit_1Truck_Layers/default.layer",
+      "baselineSha256": "E13E58A97316E9662F9037FBA3E6C391D8A9320E30B125813C92744569561109",
+      "sha256": "1456E5CF5F0051DDF87687225A943F0F1F23AAB98B45A1FEFEFDB5801D6786D7",
+      "bytes": 1077,
+      "scope": "line-ending preservation"
+    }
+  ],
+  "verification": {
+    "isolatedApplyCheck": true,
+    "byteExactReconstructedFiles": 594
+  },
+  "priorRun": {
+    "id": "explicit-retry-2truck-v1",
+    "sourceManifestSha256": "758F3B237C7F40F8424980BB154EF2196C8BBFCDE760DC8B37FFC01AF9FAE2C6",
+    "onlyV2ChangedFile": "addons/ConvoyFollower/Scripts/Game/CF_ConvoySession.c",
+    "v1SessionSha256": "F90702DF36181236EB21DBCF022AB9B822325B90321E6536796A9E2DD45DB53C",
+    "reproduction": "After applying the V2 patch, restore only CF_ConvoySession.c from the baseline commit raw Git blob; all594 V1 frozen source hashes were verified with that substitution.",
+    "byteExactReconstructedFiles": 594
+  },
+  "frozenFiles": [
+    {
+      "file": "addons/ConvoyFollower/addon.gproj",
+      "bytes": 127,
+      "sha256": "5ACD6E066FEADC63513C6ED1476B4564AEDD8C91ADA74124EA97FE09D177C6CF"
+    },
+    {
+      "file": "addons/ConvoyFollower/AI/BehaviorTrees/ConvoyTests/EntityFollowLifetime.bt",
+      "bytes": 328,
+      "sha256": "585FB6134AA735B8E17972573FD07B020E72CBD333D7AF35E28E9C2E86A2E06B"
+    },
+    {
+      "file": "addons/ConvoyFollower/AI/BehaviorTrees/ConvoyTests/EntityFollowLifetime.bt.meta",
+      "bytes": 203,
+      "sha256": "550479FF0A2EFE0380228776E3ECA90C03148E1341E8D9EA34F271F1D75E8EDD"
+    },
+    {
+      "file": "addons/ConvoyFollower/AI/BehaviorTrees/ConvoyTests/OriginalOrchestration/ActivityOwnedVehicleFollow.bt",
+      "bytes": 5060,
+      "sha256": "611CEE1384D143F5F25FDD7B39D2B5CF2CC49E29AA2E1B30DA8CFADE53A40E0A"
+    },
+    {
+      "file": "addons/ConvoyFollower/AI/BehaviorTrees/ConvoyTests/OriginalOrchestration/ActivityOwnedVehicleFollow.bt.meta",
+      "bytes": 231,
+      "sha256": "182B406BE4C463E1F2D8450DE0FB1D371CFB727697BDDA53F1FA75D94C7DE4A4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Configs/CF_ConvoySettings.conf",
+      "bytes": 803,
+      "sha256": "9548008CA457A5210A1871C3B83843B3C3F28498EB15ACC95E36EF023196CD48"
+    },
+    {
+      "file": "addons/ConvoyFollower/Configs/CF_ConvoySettings.conf.meta",
+      "bytes": 165,
+      "sha256": "C3688E76E606950DA5ADB991366A797F988EA0FDE2C3CA9980BD04DA5315A164"
+    },
+    {
+      "file": "addons/ConvoyFollower/Configs/Editor/PlaceableEntities/CF_Groups.conf",
+      "bytes": 245,
+      "sha256": "4CB591321DF7DBD7508EA014BACFABFB97B5432D5CF9E16D9475E28112BD23AB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Configs/Editor/PlaceableEntities/CF_Groups.conf.meta",
+      "bytes": 182,
+      "sha256": "FA56D7890E2E878FB4CA18B6E000BBA4F6B66A3B6020682A0275102EDDBF4D9C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Missions/ConvoyFollower_Arland_Road81SupplyDay.conf",
+      "bytes": 841,
+      "sha256": "E03377819D89394BD409D85B9E224A92AB9DBFEC153240B693923DE4C32E72E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Missions/ConvoyFollower_Arland_Road81SupplyDay.conf.meta",
+      "bytes": 186,
+      "sha256": "00678EDCF04C1C2532935241A350DEDBFCDE43BDAA8106230541E0A473FB563E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Missions/ConvoyFollower_Arland_SupplyDay.conf",
+      "bytes": 768,
+      "sha256": "9B8922454ECD7B545A8EE867158D243711F143F0537371A6D516EDE2F30A144E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Missions/ConvoyFollower_Arland_SupplyDay.conf.meta",
+      "bytes": 180,
+      "sha256": "3B31BAF46A0BB1F2E7F4A1FBE2EAA896BD44B6B7DF6A40476595F5C4108524C6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Missions/ConvoyFollower_Everon_Night.conf",
+      "bytes": 626,
+      "sha256": "3DDDBB4CDBF64C4F299FD79AB9B5A818B7DB933C9CF2ADDA0E95247D541185F0"
+    },
+    {
+      "file": "addons/ConvoyFollower/Missions/ConvoyFollower_Everon_Night.conf.meta",
+      "bytes": 176,
+      "sha256": "1DD64EF919148BC134532C3ACC099B72FC9857D65F1A1C113CB8D82F1EFEE8FC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Characters/Character_CF_Driver_USSR.et",
+      "bytes": 2728,
+      "sha256": "F013C78B7F5CF2B3EA9F15A11BC307C6513DAAB0CC35D6DC1CB4D7809D68A48E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Characters/Character_CF_Driver_USSR.et.meta",
+      "bytes": 201,
+      "sha256": "3EFB59CFAC4A5D57DFB12111BCBDEEED7DEEA50CFC05343EFA6B3D4AB06931ED"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Characters/Character_CF_Driver.et",
+      "bytes": 2719,
+      "sha256": "F372C84F75DAEC9DA2E18EBA3A407F0E5EF342DE919DDD73420B29C808616CD8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Characters/Character_CF_Driver.et.meta",
+      "bytes": 196,
+      "sha256": "F40DD2F1DD2558C7047488117A576407260E703FE2E870A52DEC4D5E48F20BD6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Editor/Modes/EditorModeEdit.et",
+      "bytes": 338,
+      "sha256": "162C8B454B79843495922D86ACD670F1480BEC35B13E3A7F96D60CE60A7AC32C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Editor/Modes/EditorModeEdit.et.meta",
+      "bytes": 193,
+      "sha256": "46B92F19C7ECD33003AED36DE18525D6CD6F8876593DB1EF847395D254F8593E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Groups/Group_CF_Driver_USSR.et",
+      "bytes": 446,
+      "sha256": "F015FF4FC3514CD31D79BEE97B9E5F2E1DC15220BA0A90786B9AEEA9B282E3C8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Groups/Group_CF_Driver_USSR.et.meta",
+      "bytes": 193,
+      "sha256": "B2262F50F3B9AF539C817FA0B0504E4E73E9FA6376C75CCF877DC25D0844A561"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Groups/Group_CF_Driver.et",
+      "bytes": 429,
+      "sha256": "CB1ED859CC92D82433CB4DD4B796E019F545D0D9538BB3C26B5A73DA5625F867"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Groups/Group_CF_Driver.et.meta",
+      "bytes": 188,
+      "sha256": "7E5865CDB60DFD510A52C4EC4405AAE84D02C4111CD9441BDB608842D5A0EBAC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/MP/Spawning/CF_LAVSpawnPoint_US.et",
+      "bytes": 234,
+      "sha256": "9D3BA5D03CF6DA31A23049CE6C0361ECAEEB7549BED8F239B9C97C40959BEA76"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/MP/Spawning/CF_LAVSpawnPoint_US.et.meta",
+      "bytes": 197,
+      "sha256": "D7A6C8B71EFC579EDA498E097230CBC047AC34D983F3C13D32C0473D5E5EB876"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/AIWaypoint_CF_EntityFollow.et",
+      "bytes": 504,
+      "sha256": "529014F1D7BC3122BB0C6A633C8DFACE0034E48FA4E588BCD768F2008AA3FB82"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/AIWaypoint_CF_EntityFollow.et.meta",
+      "bytes": 198,
+      "sha256": "D4FFFC91ED09F2A7E7A033D2D7039DB34A52C0B7F3739A50537EC571FC685DDA"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/AIWaypoint_CF_TrailGuide.et",
+      "bytes": 506,
+      "sha256": "1341DA336FDC5FCDB07E2F8B624436B767A318C6BF84A1DEAFA345F4FA48B75C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/AIWaypoint_CF_TrailGuide.et.meta",
+      "bytes": 205,
+      "sha256": "A58880ACAAA1C5A88EE352262F15A5F3A579610FF6BBFD48D965DA85B6CF3A9A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/CF_ActionInputCrew.et",
+      "bytes": 214,
+      "sha256": "BBE3888F4A04BA3A57ACA7E58F83855409CE000F220069A30C7753983F8DA347"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/CF_ActionInputCrew.et.meta",
+      "bytes": 190,
+      "sha256": "F84409CB77F3D43D7DB8893B876AEF04B5CF20F4F5438D8D472A6CC2123F010D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/CF_TrailGuide.et",
+      "bytes": 50,
+      "sha256": "E50766DFD3970CA7E997A7CE63920AD3172247D41EE733F4FA773E08C08E8B3B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/CF_TrailGuide.et.meta",
+      "bytes": 194,
+      "sha256": "CD17567B7E2458A8BE2134E9DB52E857B69D2C9569FDE0552F215D34C667E01C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_EntityFollowDriver.et",
+      "bytes": 2591,
+      "sha256": "04FB1C7B91EBF92B9758E5481E6E5FA4D48289B8031B881B90D1BCCC40552F6C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_EntityFollowDriver.et.meta",
+      "bytes": 203,
+      "sha256": "126C454CEDAFDEC88FC2CF9D48C156440633EF2CC98EB1288E90DC958ACEC8CA"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalFollowDriver.et",
+      "bytes": 234,
+      "sha256": "1E544C1EA652D4E6327C32A7751BD5DB42A0C12A8C5D489A5510F7C44D2AC679"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalFollowDriver.et.meta",
+      "bytes": 205,
+      "sha256": "D72F566EF664AE3DAA013C74740EB891EB746CB41D93A4A9F8503F8D41DC5FD3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalGuideRearPacingDriver.et",
+      "bytes": 233,
+      "sha256": "39637B74B8A64E91E345CF00FFFD9BA3D42E5C25EC9522EEE150321D8E361249"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalGuideRearPacingDriver.et.meta",
+      "bytes": 214,
+      "sha256": "43ACEEA02DB25B36D8036B4F9711C1A17A856245394E0A2BDD140E1386D91EFD"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalTailEntryDriver.et",
+      "bytes": 236,
+      "sha256": "DDF3E75057C3CD1107100F00D5FA84843E97064BEB39D11CE668CD18092EAEA4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalTailEntryDriver.et.meta",
+      "bytes": 208,
+      "sha256": "B25E332D0151C9FF0C3C48CA3F4D9B7E6D2BA990FB1FF4C7CE09F0C60DEB374D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalTailGuideDriver.et",
+      "bytes": 235,
+      "sha256": "608BAFE8180777C28E220A7769F365B5A6CEEFB6AFC3CAB075AE7CB0D9EBA234"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalTailGuideDriver.et.meta",
+      "bytes": 217,
+      "sha256": "21195D4D459E73930D43F32C6DF95368964C0BABE2BF219DAD0654D4CC26648D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalTailProjectedStationDriver.et",
+      "bytes": 240,
+      "sha256": "1F650F16F388389E8CC158064364F0FFB30CA2DFD04E8CC898A1A8F9F0E9D4C5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalTailProjectedStationDriver.et.meta",
+      "bytes": 219,
+      "sha256": "F136137451BB83CB1FE61B03CCEFEABAC7A0A59F1DC751CB19118F7D313C9D31"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_TrailGuideDriver.et",
+      "bytes": 2623,
+      "sha256": "67D52A55FBDF6E12486ED1FEE8BA7104B5DE631CB42E49446E4D974988BB7364"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Character_CF_TrailGuideDriver.et.meta",
+      "bytes": 210,
+      "sha256": "A29BAD9B714C7211EE76D5F02F22D481B319AC4A9E644594A46024EBDAABCA83"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Group_CF_EntityFollowDriver.et",
+      "bytes": 436,
+      "sha256": "31C515E0AD786096037C9B360E4F00D743384829EBA5586083FE1E07EA454D9D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Group_CF_EntityFollowDriver.et.meta",
+      "bytes": 199,
+      "sha256": "C510732B2C2533FFFB268F3E21F01F8AA7F716E1270C366E109311CFD6B9F074"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Group_CF_TrailGuideDriver.et",
+      "bytes": 452,
+      "sha256": "5DA617BD20FE7720EEB612E0CF9AE6EAEA5240242D5D94C354FB05C668041C27"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Tests/Group_CF_TrailGuideDriver.et.meta",
+      "bytes": 206,
+      "sha256": "8247B2F816212A29C45A48D7ED1BDD14BBAAA4B0FAD263BBF94116288364E486"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Vehicles/Wheeled/M923A1/VehParts/M923A1_cargo.et",
+      "bytes": 1330,
+      "sha256": "C564EF0ED50C2E0A5AA92997E6EDAE19C063E74861DC4782A134791D387C9456"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Vehicles/Wheeled/M923A1/VehParts/M923A1_cargo.et.meta",
+      "bytes": 211,
+      "sha256": "9989FFBE9E7F58C7FE99581EEEDF1393D07F3EBC1218AE63DD41A142531E3F81"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Vehicles/Wheeled/Ural4320/VehParts/Ural4320_cargo.et",
+      "bytes": 1330,
+      "sha256": "AE96806EEB98E9BDE87B000144F0D0698DDFA64767397BC429187EED501EBFCE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Prefabs/Vehicles/Wheeled/Ural4320/VehParts/Ural4320_cargo.et.meta",
+      "bytes": 215,
+      "sha256": "2B2CE12E04EC9DF5149E01363504096050A6D4E80B2FC1BB81BA7F0857ADCAFB"
+    },
+    {
+      "file": "addons/ConvoyFollower/README.md",
+      "bytes": 26030,
+      "sha256": "3AA7F25EEB0F8318D3FEDEA79A76D7183068E01AC0B3E76989D9BEA2A3AED08A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_AddConvoyAction.c",
+      "bytes": 2490,
+      "sha256": "06AE3446C1126AEDD53B7EBCD8FE55F9B47E5AA2129DE1648B80593E5CD000AA"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_AssignTruckAction.c",
+      "bytes": 2269,
+      "sha256": "7C656E349B32F3FBB1CCB2B8D725486F90C272C39586B291154A2554A049E857"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_ControlHandoverWatch.c",
+      "bytes": 2678,
+      "sha256": "2A259568CFA0B4CD298F71F407D99F1124669737A175D456CEB8D4B801A280D9"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_ConvoyFollowDriverControllerComponent.c",
+      "bytes": 25165,
+      "sha256": "DB1255D5B23C611A8A0BD13292F558DC34134046449206C6BCB4DE7D5A5A0284"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_ConvoyMapPanel.c",
+      "bytes": 15541,
+      "sha256": "C13F2849388C59FA74B705E637943A039F4DF78C431EC338E63ACBE16FC4AC8E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_ConvoySession.c",
+      "bytes": 111869,
+      "sha256": "3AAD13DF6DE481A419B29B9788342A5F7EB32D97D532C40CAED584E9DCEE7414"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_ConvoySettings.c",
+      "bytes": 15753,
+      "sha256": "455C028889B6F458879998C9D3745B1173FB628FA424BB9DFB52B3FDD5103D02"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_DrivenRoute.c",
+      "bytes": 12705,
+      "sha256": "6D8A4203526F95FE06A4ED1DBAE1E1C4B1B64C6A9806C1E60B1379538C59355E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_DriverControllerComponent.c",
+      "bytes": 216604,
+      "sha256": "934489844D250691B19FE2D68EA96E0EF7E3BCE89E4015FE4FCF8D9548AC2609"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_FollowMeAction.c",
+      "bytes": 1019,
+      "sha256": "184647BCD922D30B9DEB6DD998FAACC8AFF8EFA8425742B8713023EF61969D4C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_FollowOnFootAction.c",
+      "bytes": 1253,
+      "sha256": "AC0FBE0AA07D2ED49C81543B626A49C0EBF455F9B2D87A5A11BB052262A4FFF2"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_FollowSpeedPolicy.c",
+      "bytes": 741,
+      "sha256": "8BB33294A38C21F70BFF9AF05ED938F4BC7AAFC3AB9E52E23F40028714222F17"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_InitialDepartureWait.c",
+      "bytes": 2443,
+      "sha256": "275D469F7880D19F3DD90179AC2E4FD84950E08061655F198B0E6557A6576526"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_LAVSpawnPoint.c",
+      "bytes": 3322,
+      "sha256": "DC50B91B32014893C77558E7B9A387E45CBA070377CB6F439C0F9D81A8EDC6E6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_NativeCruiseControl.c",
+      "bytes": 7053,
+      "sha256": "0F26790097A0302C7E69655706C31F20AC75FBBB105B83B5A77BEDAE4944D162"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_PullAheadAtUnloadAction.c",
+      "bytes": 1219,
+      "sha256": "781987110B0373CCFE757F858960E088D8DAD0E5E54E7EC34609FA5AFB238334"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_RadioPlayerController.c",
+      "bytes": 39561,
+      "sha256": "963D5D79A5037185F9F0DCE7278BADA8AC17CF70855DBF0F1309562C0B6E9B9C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_ReleaseAtUnloadAction.c",
+      "bytes": 2754,
+      "sha256": "C876C6B7B99636735D0F4E3D001E6059F20DA22FA9A607B2F8D2F8243E17CA6C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_ReplaceLeaderAction.c",
+      "bytes": 2125,
+      "sha256": "D43B630161F4E2EC18F1E3B05C0CB912207F193BF5432CE37D93BAC129573608"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_ResumeConvoyAction.c",
+      "bytes": 1600,
+      "sha256": "10ADB993FE223FACD1BFE3C991C0BBBC8D6AC7A9A531493765CD3100A3CBA033"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_ReturnConvoyAction.c",
+      "bytes": 1686,
+      "sha256": "3322C41FB3D285414BDEE877CA55BEFA6A4BFDB714068BA285CEA95AD82829DB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_RoadPolyline.c",
+      "bytes": 6266,
+      "sha256": "CB8027C4FA8EF7AA1860FC987CF9985C826CE31F33303D7A8304F5D9CCEAFD49"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_StandDownAction.c",
+      "bytes": 1449,
+      "sha256": "69612FD59A1D5549B2B5D40AE4BAF6CDB6F7F6725F53B837AC21AFAA4943FBDB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_StopOnFootAction.c",
+      "bytes": 1317,
+      "sha256": "D6BBCBE0CFF7F7A299D5AD63B6DCD6834736F1F10596BF74235CF55ED37C5D16"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_SupplyScenarioSettingsComponent.c",
+      "bytes": 2182,
+      "sha256": "9E384E74B145B2C17798295B049B56E796875981EBB449B7861C32D895C70EBA"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/CF_UnderFireMonitorComponent.c",
+      "bytes": 6585,
+      "sha256": "23B46F82E03439FD10CB5312042FB9EFFFBBEB42B4F37C957A0414BD5F23A928"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ActionInputCharacterController.c",
+      "bytes": 3834,
+      "sha256": "CA0FA682EFC2277BF168FB471EDEEA92A68B17687B50B2A35AF3FE3FCBB83A69"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ActionInputProbeComponent.c",
+      "bytes": 35433,
+      "sha256": "4C754B64F0AECC2BBCF3DB8C37D076B43F0D360C2AC670DF11E9544FD1E5B25C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ArlandClearFieldOffroadProbeComponent.c",
+      "bytes": 1744,
+      "sha256": "65C7BD60DE4BC3105F8097C51ECE68F6A453801C2383BAC6E4B82D6C64D656D0"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ClearFieldSurveyProbeComponent.c",
+      "bytes": 9463,
+      "sha256": "39D75CAB1ECAD2384FDD3569B41215C1A597D9330F9D9717F2D3D489D795269C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ConvoyFilmCameraComponent.c",
+      "bytes": 6558,
+      "sha256": "5F604C372AC4406B95711A1CD6D0559939E6171587642B3BAF1709EECFBC564B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_DrivenRouteGeometryProbeComponent.c",
+      "bytes": 20606,
+      "sha256": "B25B932F1CBE1AC0F3C36E2490F586CBDB1E63210557EA9DACEC1B8E6F71BB02"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c",
+      "bytes": 78207,
+      "sha256": "547CB5267A790A9646430AED19A66AE0F2E38C09918321ABC688F962F428FDB2"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowRoadProbeComponent.c",
+      "bytes": 8394,
+      "sha256": "31BE9F76EC00F66CBE3BEC88039B7A9085438642D8E6B19252D0C54DB43C0B4B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowWaypoint.c",
+      "bytes": 3921,
+      "sha256": "75B340A02F4C4BA8C9B1468B8CCBE35DC11BD6F538D24C92518939B2083AD8DF"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_EveronOffroadProbeComponent.c",
+      "bytes": 40546,
+      "sha256": "03BD82527E2A8B9EAF6BF89184EEEB712DD41E443FED25B714AA2AA48DF3D281"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ExplicitHoldResumeProbeComponent.c",
+      "bytes": 22600,
+      "sha256": "B16EC3E5DB5D58D18A6CCA40896949DBA62A14C98BDDCD81D7A1DB1ECCDCED6D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ExplicitRetryProbeComponent.c",
+      "bytes": 17103,
+      "sha256": "B40B21003600FB9A490877C03AC0728306E5DDAEEF7B992213F3820960A74E15"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_FollowCruiseProbeComponent.c",
+      "bytes": 6071,
+      "sha256": "9E4258C673AB94420A7A0CAAA9A3BFFC9678700B23E73DE69DAA7992FB51ACE2"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ForwardBlockedProbeComponent.c",
+      "bytes": 4255,
+      "sha256": "D3889669F46277E608B21CB130806269BA7E9D0F6F53F9BE375310F8A34C1173"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ForwardSlotProbeComponent.c",
+      "bytes": 5745,
+      "sha256": "49CB1D8411B261BBE67B76F4C0FC8737C63E8E6BEDD37799CFE43B71E1352BA0"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ForwardTwoAheadProbeComponent.c",
+      "bytes": 37027,
+      "sha256": "7B10B8055187810797295F9D600CE7DCF7C9EC32F6E2789EDC4F77E6532D9532"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ForwardWaitProbeComponent.c",
+      "bytes": 10173,
+      "sha256": "AED33B2BFF8DD4CA7CB263DEC362A43E6B40E7C6192373415FB1FD623F877BE9"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairCargoProbeComponent.c",
+      "bytes": 10376,
+      "sha256": "693C2C509E93ADF26C39F12D70415F1D567C77AA3A9E2B73D7123DA6A1E0A15E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedPairTripProbeComponent.c",
+      "bytes": 61213,
+      "sha256": "5F43A9EBBEA786F65FB78E3D7C47AB15A5DCF76698BA33A3512A508B444383D1"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_LoadedSupplyTripProbeComponent.c",
+      "bytes": 16736,
+      "sha256": "F511AD4CEE57DAE08392090151C7320A83D517F8263C8FAABB233CBC4F7F01AA"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_NativeCargoActionProbeComponent.c",
+      "bytes": 27758,
+      "sha256": "494C297BC1D8EE17E1B92CE83422A2146A61DCD867840893CDD412645838F11C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_OrdinaryMixedRoadProbeComponent.c",
+      "bytes": 7764,
+      "sha256": "16BF6A063C1541C7DDE9072E704BB76EA2B5CD8021DB76A9D975D223CB6369F1"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalFollowLease.c",
+      "bytes": 15593,
+      "sha256": "EA8460FFE82A0A74A9B490F567C579848D4DD3A234FE38CAC3008EF61F897C5B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalFollowResumeProbeComponent.c",
+      "bytes": 27387,
+      "sha256": "B6DB9922C48995D044E48E24C8E389AB570333EE8BF935543BFF77FEA882B204"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c",
+      "bytes": 21720,
+      "sha256": "0DC7E52B7101D66A96F22E338E776B4C8EB9D23CC418C5AE585BF43F1FF02804"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_OwnerDriveCalibrationProbeComponent.c",
+      "bytes": 15019,
+      "sha256": "C81349779DAA4400FC4C1F757FF350D1B72121BF058D1E1A3F3ED968BCF5DB5E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_PacedPathObserver.c",
+      "bytes": 13076,
+      "sha256": "BF5D0B9509F993B3A924B78BBFACAA0F693CA0C02770A7164DB52850938AD8F3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_PacedRoadProbeComponent.c",
+      "bytes": 39600,
+      "sha256": "2619F78EED5F6528360A3C2449424203CBF5954B9DAE41EA74763C7283947B79"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_PanelPilotProbeComponent.c",
+      "bytes": 23191,
+      "sha256": "0040DCB7D563B80D11F0984548A6D1AD2C522043C252F574E1B6E078710DC3EC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_PassCorridorSurveyProbeComponent.c",
+      "bytes": 22557,
+      "sha256": "E82D7375761ADF310653749444184B5DC3A9BBBB44C510DF6A0D84E42A01A081"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_PauseResumeProbeComponent.c",
+      "bytes": 9652,
+      "sha256": "6F8D15F21852849BD999786958934201765DC40691073A0ED9A38482879E11D6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ResumeStatusProbeComponent.c",
+      "bytes": 19785,
+      "sha256": "C36DBB5375CDB3F47E6C6CFC30081E2BAD429C90E0CBCB4E33EE0783F5F1FD61"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_RoadPolylineGeometryProbeComponent.c",
+      "bytes": 5149,
+      "sha256": "78B7D4C5BE51108AF918DA8FDC97AD241A7EA1C58FDE533B208CBEAABE1D7A30"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_RoadWidthSurveyProbeComponent.c",
+      "bytes": 7184,
+      "sha256": "DCD326028DEA7B1B6C68916E372D295F13C5E77828988750A5529A72CCB054F9"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ShortArrivalFilmCameraComponent.c",
+      "bytes": 1744,
+      "sha256": "415E09661F8DBD03794E5637811AD899F69FCDC16FE5E25734AB908672D7A4A3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ShortArrivalGeometryProbeComponent.c",
+      "bytes": 4372,
+      "sha256": "1F045F85542F8AA8188181713C37471A430AE368E77325C3C9B36089EC1B471E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_ShortArrivalProbeComponent.c",
+      "bytes": 24168,
+      "sha256": "78EFEAC3C2889ECA3FA12BD38D756FC418E72647D2E32D443F24E681A4C78D6A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_SmokeProbeComponent.c",
+      "bytes": 39273,
+      "sha256": "BC0F8F5B9DA545E4C15E72D9EA97CD344B3B0FAC2D7BE64588B9C27E736E445E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_SurfaceContactProbeComponent.c",
+      "bytes": 2307,
+      "sha256": "E3274557C7BA86617FB71A58E15497B85049DD37DE07F0D6DBA01C1A6104662F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailEntryWindowRoute.c",
+      "bytes": 2560,
+      "sha256": "7A3AD020FDEABBD1AB465865581937D9F497A4354F8766848560B77D9632BDA1"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c",
+      "bytes": 58813,
+      "sha256": "23713B0E57634BD09AA989A8F4959B7D76F0B47D54E1191BF8008CE3BFC9F0DE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideEntity.c",
+      "bytes": 25685,
+      "sha256": "82B25F477BEBE824F04CC829D21DE4B5A03ED1FF2FFA3C1526846C97F9787620"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideRoadProbeComponent.c",
+      "bytes": 9713,
+      "sha256": "F921A9D64DD07AB887F47AA65F31A3CE58765A9616B76618E0E203B856BE623E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_UnloadSequenceProbeComponent.c",
+      "bytes": 15747,
+      "sha256": "AC97F257956D55785866D39B020016A5BBEFC90E95513BC5062EF5D34DB4A6CD"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_far_warning.wav",
+      "bytes": 235842,
+      "sha256": "601A4EB6A37BFC946AC239349DA00661FF6EEFC7E71DE296C2433D73FF8F3C04"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_far_warning.wav.meta",
+      "bytes": 317,
+      "sha256": "C81A2CAB1CDDEFCB58122CCC82459F64F5694CD66E46B4E04C564F21ECB7B6EC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_following.wav",
+      "bytes": 123404,
+      "sha256": "7A63BC04CE77E048319E8EB0236AF06CB13EC2DE819D71C961888F4CA42EF6F1"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_following.wav.meta",
+      "bytes": 315,
+      "sha256": "2401BDDDC4CE13DFD8BD5BCD7B0A7066BDFE793B7FF09F2C808398B8301252FF"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_holding.wav",
+      "bytes": 115346,
+      "sha256": "C89B598F57CD54A68ABA05EC7E0715B90127A5D04974B856CBA4B01293519C73"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_holding.wav.meta",
+      "bytes": 313,
+      "sha256": "6CA079DA1031D64AEE9C7497E6E2E2ACD423B3B6B31CB7D8D5469B561739D1C4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_lost.wav",
+      "bytes": 207938,
+      "sha256": "D05ACAB0CC8D4E4E8AB5D9C0A94B3453C7886C002BC76B6BAEF1F531A3A02BE4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_lost.wav.meta",
+      "bytes": 310,
+      "sha256": "559FE2A9449ABD1F0AB7C6C89AA35CFC2498CC1DC5E8309121588B0C5CDD57DE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_ready.wav",
+      "bytes": 107084,
+      "sha256": "AFA55A5087C74FE008E01FCD574C05B854AF341609E8DE9C675E09532D26500F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_ready.wav.meta",
+      "bytes": 311,
+      "sha256": "4CF877524A0F19C5196527C517EC948EC7EEF6F1BFD44962B08398E8623D4F5A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_rejoined.wav",
+      "bytes": 184402,
+      "sha256": "009599C7F2FFE199FC61E0D21BC4DBBC2EC4DD92C8102E58B486C2197092715A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_rejoined.wav.meta",
+      "bytes": 314,
+      "sha256": "9021DEF9E21878EC0D2CEEA19846E066299B2BCAF2D6FC30DDBF684079A543C8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_stuck.wav",
+      "bytes": 164282,
+      "sha256": "D15EA3C604C9E098DD481D712C4A698AA41222EB31E7FB75995F8A81323969C6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_stuck.wav.meta",
+      "bytes": 311,
+      "sha256": "E0B921F46D65E3A007916CAB523258D315D1575E0144D14B8919435AFE304C58"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_under_fire.wav",
+      "bytes": 168048,
+      "sha256": "F30B65960B809453BB18520904CDB64A004D63E643E557ACA7432996F6580BD1"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/leader_under_fire.wav.meta",
+      "bytes": 316,
+      "sha256": "1D61FF374B87C785B377A863FFB5FC9D00611AAE099F73E042892BB0AC3B551F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_1_far_warning.wav",
+      "bytes": 221074,
+      "sha256": "BD00DCCB6481C3164269C12F8C8B03F3DF3E69C8FC3F68CC950814DBE3578ED0"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_1_far_warning.wav.meta",
+      "bytes": 317,
+      "sha256": "D39F4E2D424F573053EA9FC684C7027BE6EA2215BE0C0FBE3AEF53C87F2A6595"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_1_lost.wav",
+      "bytes": 244326,
+      "sha256": "51203CAE17EEBCBE5A73BA1022C488C5565FD02A3DEB29B0B3374BD63FEB0026"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_1_lost.wav.meta",
+      "bytes": 310,
+      "sha256": "F16E203099ACF84ECD2322DB6298DA421149C7E9C4831165DA16887BC103FA1E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_1_rejoined.wav",
+      "bytes": 230520,
+      "sha256": "71F8D5B1CB0301304704F4F1FE0BAE672AD1E6C0CFA519C0BFC1C634782C7AA0"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_1_rejoined.wav.meta",
+      "bytes": 314,
+      "sha256": "A59334E49B27BACEA0A666F3A2E6607D751CBE8C6BE1D949D3AF6DBF4610BFD2"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_1_stuck.wav",
+      "bytes": 186190,
+      "sha256": "EB6304E32D04C6913321DD339B8ABC21C490FB24D0B45F693149A7E9B33A65CB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_1_stuck.wav.meta",
+      "bytes": 311,
+      "sha256": "6C274CD5841B8231AE387162BF06E539AD9E1E041F8BD6AC7954354E715A5595"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_1_under_fire.wav",
+      "bytes": 210240,
+      "sha256": "4A98B93E4B57215C938060588E73CE520C3CB8757C3B81190878A3CB5FB8E701"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_1_under_fire.wav.meta",
+      "bytes": 316,
+      "sha256": "573E9E8D8832EAFEB606B59F8A5DA88B91D2ABAF674652548AEB7AF3EA16C404"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_10_far_warning.wav",
+      "bytes": 224370,
+      "sha256": "F7A747CB80363750EB2DD0BABB693DDB2420D5BBD78F1D303ABA949EF701D00C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_10_far_warning.wav.meta",
+      "bytes": 318,
+      "sha256": "9000898910F0069C1AD080F95D94E4DD4F7BCA05097AF5BB33C199A6F152B073"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_10_lost.wav",
+      "bytes": 247622,
+      "sha256": "D822839313C9F009CE2B21DB83E461C874AD67686A48630EC9A73DE5A73C9AB9"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_10_lost.wav.meta",
+      "bytes": 311,
+      "sha256": "8EAF5CDD5A8E021A383FDFDE9E22022D2DC68815A5047DC268DDB1E8276E26C3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_10_rejoined.wav",
+      "bytes": 233816,
+      "sha256": "DDB55C491AC20F6011E45248B98702FCDFB6A48D03FD278D8EDC6E36CBB75721"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_10_rejoined.wav.meta",
+      "bytes": 315,
+      "sha256": "6753A301444F2681E2C2DB3493FDC7488510FE856AF945DA15E7401F0204F2FE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_10_stuck.wav",
+      "bytes": 189486,
+      "sha256": "560314D6CC1502F0B705CA8795B00C52067B64A5177A628291765935971AC44E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_10_stuck.wav.meta",
+      "bytes": 312,
+      "sha256": "F42822CF29A3350101F84AC2AE5EBFAB65E74187C82215708EC172B1B412AAF5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_10_under_fire.wav",
+      "bytes": 213536,
+      "sha256": "9014682D3C9C965493789E7DD08C407466AC7AB71A43B7DBDAB5864429EB0AB5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_10_under_fire.wav.meta",
+      "bytes": 317,
+      "sha256": "B1D1AB183F64263CF10D4E7A74B0CAC1824BA8C0FBBAE9078227E38475225A09"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_2_far_warning.wav",
+      "bytes": 220888,
+      "sha256": "20E267FB7CA19A5B6234B8104B8C680274F9DFF7E59562C505B516610902C214"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_2_far_warning.wav.meta",
+      "bytes": 317,
+      "sha256": "3A533804AEF8437CB540A73ACB50AB00B9F8C4F5D61897133483E107265308F7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_2_lost.wav",
+      "bytes": 244140,
+      "sha256": "7B2476926B7379FBBE66466F1A2A16D5EE1CBB71D6B182060FD1D4F5C96CA756"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_2_lost.wav.meta",
+      "bytes": 310,
+      "sha256": "54D761219AFC15E99CA9206B933DBC6BE2DD6CBE1BFAD58E9F5695A0EB13DDE3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_2_rejoined.wav",
+      "bytes": 230334,
+      "sha256": "74DF4ED51BAF7E98441262787018FFB3A188FB42629B2DA714F3C574D65F0CF3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_2_rejoined.wav.meta",
+      "bytes": 314,
+      "sha256": "F97655127CE48938856F8CA22EEEE2325044716D06E7B52DA875AC83972CFD82"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_2_stuck.wav",
+      "bytes": 186004,
+      "sha256": "944B1CF7FAE78F6C008B6EEE9ACE309C20ABD56B78691716B7424305FEE857AE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_2_stuck.wav.meta",
+      "bytes": 311,
+      "sha256": "B852997D8CEEEC3E08B5B6DD80A587ED58E58988A5840C3AFB7B5592A4A35337"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_2_under_fire.wav",
+      "bytes": 210054,
+      "sha256": "F7D99D43D07BE84DD81FD8E70569E0EA4EDCF5FF7F014A7B4DED0BBDE7CFEF52"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_2_under_fire.wav.meta",
+      "bytes": 316,
+      "sha256": "C1359C5E5612A1D3C7973505F3FCE6425AA3F54BD1B051381DB2A5C9914C4BA8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_3_far_warning.wav",
+      "bytes": 228206,
+      "sha256": "F6AEC5985B2B5E9DAC74024AA8B77609D39D061E0DA8D119D127465F95553DE5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_3_far_warning.wav.meta",
+      "bytes": 317,
+      "sha256": "9775D3672545D846A9770538946702D40143EB95C969A55C0D32AB06FD913166"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_3_lost.wav",
+      "bytes": 251458,
+      "sha256": "06344C2E2EECF0E4960510D8F751157699F13F8F5A82A6D6E1557066A0E497FC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_3_lost.wav.meta",
+      "bytes": 310,
+      "sha256": "F9515E366FAE79CFF540C3C73875DF4A4675EF621FF6DDE454E1E519F577161C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_3_rejoined.wav",
+      "bytes": 237652,
+      "sha256": "FEC620B075D9FA2FDD8F5BD203D806F9C17A74F7DA0817B83F9697E0A1B37B64"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_3_rejoined.wav.meta",
+      "bytes": 314,
+      "sha256": "4E972F5B878952BB5537023C3AF4958F0962E57067E793FCF8C4E268FAC9C9D4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_3_stuck.wav",
+      "bytes": 193322,
+      "sha256": "714B5764F2AD0C5CF9A0B811D43380DC86F649F2BCC3141324C3C35964654165"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_3_stuck.wav.meta",
+      "bytes": 311,
+      "sha256": "10E89BEA132E2F05825A614A50F34A5D6484C7E660C530DC8E36BC9240C1D766"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_3_under_fire.wav",
+      "bytes": 217372,
+      "sha256": "EA965FC0E2723CA8726C608ED2FEB215B6866CB1F148E8BC89AED85EA575D31C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_3_under_fire.wav.meta",
+      "bytes": 316,
+      "sha256": "90D0A0189C6402A048F8407CF1EF1E715FE655438AC0F2AE7EE9221CC5051E17"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_4_far_warning.wav",
+      "bytes": 233096,
+      "sha256": "D900D9616D4BB43EE4678FA12FDEE0D0254B0A3388204D698682C109A4BCAB33"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_4_far_warning.wav.meta",
+      "bytes": 317,
+      "sha256": "642C546D7074AA6F75D1AB43E298AB171DEACA46C79B2D0F978E4E54B2336F4D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_4_lost.wav",
+      "bytes": 256348,
+      "sha256": "7CF43FB69096CEAE89464C3FD6F69C885C66308E1E64C813BCDBB6F53A8180F0"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_4_lost.wav.meta",
+      "bytes": 310,
+      "sha256": "27143DF34572AC0C96398BD102AB9BB44D7E4ACADE2BB4CE5D09A5B39F1528AE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_4_rejoined.wav",
+      "bytes": 242542,
+      "sha256": "EFADBCE502A70E357062D35F36CF8EE3D0D5A7B66D053AD4AC63386D18DE03E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_4_rejoined.wav.meta",
+      "bytes": 314,
+      "sha256": "F899EE93EC0F3B5C4F3ED97792F3069AD85A8009981544EBE19FD650B94036F9"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_4_stuck.wav",
+      "bytes": 198212,
+      "sha256": "D074D504F96155F033DE344A71ADB510DE4A11703143F2DBD1FCD9002DF1B909"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_4_stuck.wav.meta",
+      "bytes": 311,
+      "sha256": "FA6E452CA776B0892882A25767E0C8656560A9DC7D39ADB66DB7E705323BEF48"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_4_under_fire.wav",
+      "bytes": 222262,
+      "sha256": "00E0F6748B89948E84382123301A6B610C7A2D2A65A5279DA8A1C6EC9FDCA661"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_4_under_fire.wav.meta",
+      "bytes": 316,
+      "sha256": "A8C6CFE198C9E9C90BEAD62F54A00B9B55B70064EAD61F13F5EC33D26116E689"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_5_far_warning.wav",
+      "bytes": 235910,
+      "sha256": "989B767D9C76B26435EE160C4F4152FFDA56A55B594B48E677E79B6D5EA6077F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_5_far_warning.wav.meta",
+      "bytes": 317,
+      "sha256": "498CE73E25BDDCCA88F576B836293DC00F6188E30019D46067F902548115BFCD"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_5_lost.wav",
+      "bytes": 259162,
+      "sha256": "DD666795CD49A7DC8CD62DD0FCD8E6C9E689BE5C90CFFABA004A8117D8F89623"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_5_lost.wav.meta",
+      "bytes": 310,
+      "sha256": "289BC228A2134B17A1FA221B076F138F34363AF8D2BF93A3FC4F6003AE164557"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_5_rejoined.wav",
+      "bytes": 245356,
+      "sha256": "F9896D313071DDD694308A63ABEEF4C3FD2B60C471B3B39274A263E8192E38FA"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_5_rejoined.wav.meta",
+      "bytes": 314,
+      "sha256": "86083C597311B22055A275EBFC532F4198F6F0408A4AE4EA0C314B749E0B0136"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_5_stuck.wav",
+      "bytes": 201026,
+      "sha256": "3B9FA5631B78D077F05C8E3C22EAC9703780E854DBEBE560808036C5C8E29E5B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_5_stuck.wav.meta",
+      "bytes": 311,
+      "sha256": "C696DB35F31A2298C4D76B1D0CFBAB0D31798DAE3416C8C2A2DEDB02E68B367B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_5_under_fire.wav",
+      "bytes": 225076,
+      "sha256": "EEE0A9BCF99866258932CC48966CD3B27BE9FA13359C7AEB9079CF448966AF75"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_5_under_fire.wav.meta",
+      "bytes": 316,
+      "sha256": "A70F5D81D76B941BAD9E384F11DB4F482320B4073FF88E99CA26E78955ED0A89"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_6_far_warning.wav",
+      "bytes": 250662,
+      "sha256": "D4CF6A00BE9937319154D945032D439447F47E0599C792AFE5FC0FF649AAF7A7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_6_far_warning.wav.meta",
+      "bytes": 317,
+      "sha256": "B383FA7DD22FD43313EE14AE678CDB7CE354B0DADF3CB8E430DAF25B78A10E99"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_6_lost.wav",
+      "bytes": 273914,
+      "sha256": "1F9E91BE26259A6B1DB1726016A7AE68885820D881D60C8F25BE51979A948383"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_6_lost.wav.meta",
+      "bytes": 310,
+      "sha256": "215333BD866CF66DA8190D5D39ECE80E53FBBC8EE0737E087692C08385AB05F2"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_6_rejoined.wav",
+      "bytes": 260108,
+      "sha256": "C1ED5DFADE9918BE019CF4E807592B36CDDA13327FA0E9DDB5907569D00A15CB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_6_rejoined.wav.meta",
+      "bytes": 314,
+      "sha256": "9432D4F044075BCEACD038560A7EF2FF2D9A678E95CA75D8C0DCDD6485E50135"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_6_stuck.wav",
+      "bytes": 215778,
+      "sha256": "42488A3B94B3075368331280BD13375209A7537F25AF0816C1738E34804C7CB7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_6_stuck.wav.meta",
+      "bytes": 311,
+      "sha256": "9212C3C54E0FC4EBB9E7CD62DCF9ADB161B6B7232FD04B8BEF65F2C4BC044BC0"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_6_under_fire.wav",
+      "bytes": 239828,
+      "sha256": "17222BA4CC4A34E87FF9A1A1C4CB5144303B9CBC0BA3822DCF7B5CD71B79EF1B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_6_under_fire.wav.meta",
+      "bytes": 316,
+      "sha256": "714460716322996CBAF67EF10B1B337AE7D9B97C19C6B9A6C03C787855357F16"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_7_far_warning.wav",
+      "bytes": 229628,
+      "sha256": "CE876EE7D432E7A7D180E2C8D1C81AFE2539D735594F2DD14F26B6BA89DA17C8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_7_far_warning.wav.meta",
+      "bytes": 317,
+      "sha256": "AEA77B096914E75788DA48140F5C76F71AF49D4B8B25B6555D1E46BCB3BE8325"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_7_lost.wav",
+      "bytes": 252880,
+      "sha256": "49A219C142ABCD68DC2334EBD3DAD9B33C338C0B50C86CD5D9C2B1D67D38B966"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_7_lost.wav.meta",
+      "bytes": 310,
+      "sha256": "CD73F39546E31BEAFC2202E374EF9F5333D7879FA0AAAFBE86036FCE6B5A8322"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_7_rejoined.wav",
+      "bytes": 239074,
+      "sha256": "6C435CE816B4DA83B5F2FCFEC0B0FB62379FFE6B791DFA34C957EB69E2B7846F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_7_rejoined.wav.meta",
+      "bytes": 314,
+      "sha256": "8B93BBC8AE9C0DD4606F99F06180D12E835281673E8FFE2BCE80E839BF3F4A3A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_7_stuck.wav",
+      "bytes": 194744,
+      "sha256": "97ADEF345757CF8F04E3DA6744777DC55500B0D6DDE806877E139E13B2D0CEEB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_7_stuck.wav.meta",
+      "bytes": 311,
+      "sha256": "F6CD92B0183F10393FE51F9746F798D056D1B864E7DDC1F6134AAD7A788DD54D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_7_under_fire.wav",
+      "bytes": 218794,
+      "sha256": "226A59EC5D920E74331F6114ECA610CD3C5C8A57405BFF2ADB202C3AC44A7583"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_7_under_fire.wav.meta",
+      "bytes": 316,
+      "sha256": "BC15B2CA98112279DA66BAB54B1848068E01C43C27B4592491C4247F42DFF095"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_8_far_warning.wav",
+      "bytes": 241838,
+      "sha256": "7451A7DBC1BFE483B48E4F53F973DB4C6CDBB35FB54E3552ABC0ADD84EDC80EB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_8_far_warning.wav.meta",
+      "bytes": 317,
+      "sha256": "EBB69914052F0C66E5D14D2AEE5131958A5C6FD3F819E47BC6A535F76E5AB184"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_8_lost.wav",
+      "bytes": 265090,
+      "sha256": "CC25ECADDD42050D0D1B675F8AB7B4F8CDB04BBCB77424DEC45C29BC09E8FEA2"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_8_lost.wav.meta",
+      "bytes": 310,
+      "sha256": "C2304F0BCAFC8AB5BBBB7F2E4D08DD8B18AFD5E22728F5D8F93437B21304FEBA"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_8_rejoined.wav",
+      "bytes": 251284,
+      "sha256": "A529E9E4ACBB3E03BB9F0ED71CF945FEC1361DCBC150C21305F77F6FD418096D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_8_rejoined.wav.meta",
+      "bytes": 314,
+      "sha256": "ADD1B955CD30FB2DABB005B4D2FA603B32CEC8C5932055B8D82D4CA20DFAD1D3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_8_stuck.wav",
+      "bytes": 206954,
+      "sha256": "9FB2590490DC2742F87CBC96946930A96E831E000E27DDC348ED3A5B83851402"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_8_stuck.wav.meta",
+      "bytes": 311,
+      "sha256": "E8C89B258D81947DD4ACA9ABEB1752E28882980535BA32750B1564199C6AE164"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_8_under_fire.wav",
+      "bytes": 231004,
+      "sha256": "FF8216A0CE3776F2F3C7EC06F888B6DBF36856FAE9DF51E9506C48E0EE62975B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_8_under_fire.wav.meta",
+      "bytes": 316,
+      "sha256": "02D60F06D676BE9BC680C03B7037A9155C1C03A0A8017CFDE531B66721169712"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_9_far_warning.wav",
+      "bytes": 232750,
+      "sha256": "A93D95975F2CC66F217E5F685489AB673292FE7A4BCD421DBBA7B0A608CAC77B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_9_far_warning.wav.meta",
+      "bytes": 317,
+      "sha256": "6F7C44177F056DB4538BA453BAC1723AA334583E25D8F26EAE55B4D3200A8169"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_9_lost.wav",
+      "bytes": 256002,
+      "sha256": "73FDF70A50A59A1165C25CC3611861AF1D5CB31350B39738B6BF6ECA205938FE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_9_lost.wav.meta",
+      "bytes": 310,
+      "sha256": "807F6E871B5614B472E7D4EA6454EE1398D5F7337154E5019180060A90D179D7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_9_rejoined.wav",
+      "bytes": 242196,
+      "sha256": "B02760B5215A709D33D302B5813BD2D57249A647E1FABB33203BAD4F618CE96D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_9_rejoined.wav.meta",
+      "bytes": 314,
+      "sha256": "FCFFA66BD6D007109347F721FA60500D7B2A5F1DC01C2F33F4F0B4C222B45233"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_9_stuck.wav",
+      "bytes": 197866,
+      "sha256": "6E9527F3A7ACE8FC68C9E3A598E79A6DAF06E2561C846AE85AD1207C94877BC3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_9_stuck.wav.meta",
+      "bytes": 311,
+      "sha256": "21B256D6324929783A0C6BB5CAF8A852655934CACA042A7120C8AB673297F24A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_9_under_fire.wav",
+      "bytes": 221916,
+      "sha256": "DAAA749A974B1E50AE0C4BABEAD28AE4E46683DC5274A524332B6A2A6F99ACE0"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Leader/unit_9_under_fire.wav.meta",
+      "bytes": 316,
+      "sha256": "C3FEC6C2FA076C8B3BCC8573E4FF2B20B142A157A091FFEC0B78C075ECC6F7DD"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_far_warning_b.wav",
+      "bytes": 240292,
+      "sha256": "EBDD2CEA6E4D206DAEAF6E5D2E373399671E7807A6EA38FE73E61CB2291EA90A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_far_warning_b.wav.meta",
+      "bytes": 346,
+      "sha256": "3170604F6DEF7490FC064F0AA13CF06D03CF957B71A12C62C8B47D7ED8B8827C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_far_warning_c.wav",
+      "bytes": 224950,
+      "sha256": "35F7458F0AB13FD8B9111E1E377E9C2A0B7D53BEBD77E86A046FF1C3D7430DD8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_far_warning_c.wav.meta",
+      "bytes": 346,
+      "sha256": "FD5AD405E20444B48B47C9B8F09D624CD825DC460888301C78DDEAFFC66CEC3F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_following_b.wav",
+      "bytes": 147088,
+      "sha256": "F6DC2DF9C405ABB2EB6F037F538974A6DC8F8796842B0A167E46A119825412CB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_following_b.wav.meta",
+      "bytes": 344,
+      "sha256": "BD3E517D9D8712A728A832711203E88ABA0EC0FF5352A45FCD65B84486BA5FE9"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_following_c.wav",
+      "bytes": 245048,
+      "sha256": "786D003E72A2BEEEA016CBF0C7391213F837BC37FBC88FF4DB91A5E690864B63"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_following_c.wav.meta",
+      "bytes": 344,
+      "sha256": "89E7F0B3086AB3FA7DD0C561A597867A913B38B1449D6D6FECCC6A020C0D714F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_holding_b.wav",
+      "bytes": 163704,
+      "sha256": "FE2435152E87EC9F2900E7559842B15D6FD2D142F218D83F11CE74DCB953BC89"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_holding_b.wav.meta",
+      "bytes": 342,
+      "sha256": "621BC72A825FD81CB2AEFF13C746DC1A59B2637D161793F0847D36C0F40141AC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_holding_c.wav",
+      "bytes": 145744,
+      "sha256": "5F202B6EA38109FB81644431019E302F8F3F69FDD4D038E6D63C44CE5C0E4A02"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_holding_c.wav.meta",
+      "bytes": 342,
+      "sha256": "39228ED08A4511CCE4D074FC49AB7D3C58A94A3968E5056CF3407EF9E15B008D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_lost_b.wav",
+      "bytes": 250100,
+      "sha256": "637D8F4CD17146C75AAD34D5A402E52A0111047F50F5440DBD5BE4A24C6B09EC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_lost_b.wav.meta",
+      "bytes": 339,
+      "sha256": "C36E1BCEA231524C078175EE94EE6927216EB1C16A2E1E4ADB36552EC87D69E6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_lost_c.wav",
+      "bytes": 246918,
+      "sha256": "29B4AFA49BFFFB9DDCA39B7EFAE50AFE40C7C173FF85908B341F0EF49A61EC25"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_lost_c.wav.meta",
+      "bytes": 339,
+      "sha256": "CA769110385705009745DE930E1ED2CF7B4689530B100DEF96B314ED54BB3E7A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_ready_b.wav",
+      "bytes": 205184,
+      "sha256": "EB575AB42D75EA8791F6FEFBE20B89D1CD6D29C50A9B3F33EE281D587B3F3BB4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_ready_b.wav.meta",
+      "bytes": 340,
+      "sha256": "1E98112C05E93F7DFCF643A1DD9FFA01AE25AD79949BF1D750D6CAB0A55A74C4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_ready_c.wav",
+      "bytes": 199026,
+      "sha256": "44A5B8E79A61E254E02ADACFE5378C5798CB43193DE3EA6C88AD9385857670B1"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_ready_c.wav.meta",
+      "bytes": 340,
+      "sha256": "784BD3AEBD382928D0AE3ED6E8ED341185298B369C09C22AE4C052061FB9110D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_rejoined_b.wav",
+      "bytes": 129618,
+      "sha256": "DD4F05AEC28999458C124AE597DE12DB54B9AF13EFC886A26CB3E34CE7AE4A23"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_rejoined_b.wav.meta",
+      "bytes": 343,
+      "sha256": "F038C83B0BD01B004C51910CF3EDBE703F03FB8CC00F736D65A354D2D5FB3F80"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_rejoined_c.wav",
+      "bytes": 183034,
+      "sha256": "F0B766BD917FF0890E48D318BA7A5C24669F3F39553B5E132E276FF3ADA10A6C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_rejoined_c.wav.meta",
+      "bytes": 343,
+      "sha256": "4456B62CF84E8AAACD89DC026010873E7683BF19589926C4002696076A394A56"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_stuck_b.wav",
+      "bytes": 283162,
+      "sha256": "10EC635BEB3A9208A258A0C583453CE2411E7C1FE988C3AA66D7B5E24CF77D24"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_stuck_b.wav.meta",
+      "bytes": 340,
+      "sha256": "66A7CBFA927E61831D6D3AB0312BA5FCA1E5A1BDBC6F2314C374A69E91D22659"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_stuck_c.wav",
+      "bytes": 219352,
+      "sha256": "54BD6DF759A274878A674F01B13765F60024CF9623622B2E8D55A3ED865848ED"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_stuck_c.wav.meta",
+      "bytes": 340,
+      "sha256": "3C7B234F8B5024695D0918C3F0B28359AB60C3D2F44C860392B7DBBC3D49BDB6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_under_fire_b.wav",
+      "bytes": 228318,
+      "sha256": "793E415A90DEC65436F0F0897EB01B50C5675F1CEC0B4EF45A7A5338605188A4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_under_fire_b.wav.meta",
+      "bytes": 345,
+      "sha256": "95687DA889A25ADECB90C76355CB74FC0AC43382C68D57A844092FC8B065FB56"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_under_fire_c.wav",
+      "bytes": 203662,
+      "sha256": "10A0F0FC219E4E617527011C2429AE35292CAB0527C3E3E3DE7A3490AC49A2D3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/leader_under_fire_c.wav.meta",
+      "bytes": 345,
+      "sha256": "8AEC99EACA0A05A2F4BC84391DEC0A7786FEAAB17A0C323AFF4E9CF84B1AC711"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_far_warning_b.wav",
+      "bytes": 201904,
+      "sha256": "FAF8EDE13A757672490F8EE585ADC594AA71F5CA881B68A2F4403382D3416B13"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_far_warning_b.wav.meta",
+      "bytes": 346,
+      "sha256": "0D2F77FAA9B37C6F04463B493FD4CCFDA90C0399C0CB7518711748C71372A584"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_far_warning_c.wav",
+      "bytes": 187786,
+      "sha256": "57BD95EC2CAA412FA6D6D9D49E9F3FBC3A8430F8FEEDD7613BD3060B1F8FA884"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_far_warning_c.wav.meta",
+      "bytes": 346,
+      "sha256": "4BC37140A83CB7B3469136DAC971816F126C67AAB5137B3F4C6403368CB1E178"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_lost_b.wav",
+      "bytes": 229612,
+      "sha256": "C894280E4DEC7E857890B5C9F83420618C7137F080C66AD0423B3C96AD1FDE97"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_lost_b.wav.meta",
+      "bytes": 339,
+      "sha256": "A3E4A91F628BB27942854A77808F1E15514C7F1CEECC88D50ED0BE21A3BCF3E3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_lost_c.wav",
+      "bytes": 272952,
+      "sha256": "97CCDA531B3CF8B3037A67B3B392A2E5F913F03AA4A31E2F22AB7E8A5E6EDF95"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_lost_c.wav.meta",
+      "bytes": 339,
+      "sha256": "46D130B7A0450E0CFE6866F465A1904871C99BA653A3FA60004DE058A88A3B5B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_rejoined_b.wav",
+      "bytes": 218406,
+      "sha256": "6B3F96F016DAB1203545913156433874E81EF17891AED71412EFF75C37E84783"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_rejoined_b.wav.meta",
+      "bytes": 343,
+      "sha256": "C79D36EBE61DA4A75A5820C8A2CB401B055DF24EEF57B650D7C0DB1FF3D60092"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_rejoined_c.wav",
+      "bytes": 251010,
+      "sha256": "5758297E9E15F4C9746DE8C6D75AD108F6D3E8A1EA1340C7C0E017F567167135"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_rejoined_c.wav.meta",
+      "bytes": 343,
+      "sha256": "F13D1E550DAFE50FB4395DC4BE53797F1A694F505CD06616BEB0E3B26B543758"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_stuck_b.wav",
+      "bytes": 272446,
+      "sha256": "B5B9A293EB964262F512E92EA9C433BDD8342002239585E88C0BE1CAF14A01AB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_stuck_b.wav.meta",
+      "bytes": 340,
+      "sha256": "4CF1618AC81577562FFCD1D762A153E06BA72D109997E4E8A4EFBEDBDB132117"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_stuck_c.wav",
+      "bytes": 286388,
+      "sha256": "951BDCC539D6E37DA8DBD2BBEC2F53BE4ADF579406B27BEDF2E53D3FE0CA3B08"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_stuck_c.wav.meta",
+      "bytes": 340,
+      "sha256": "0FBCA24DC20C0A4705EEE142F6B8E9816E38834CA706E60020ADA49A80835D09"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_under_fire_b.wav",
+      "bytes": 154892,
+      "sha256": "18BC3C29B6ABBF413056778EFCA376697EA20825C051085201AD6F6DBEF708F4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_under_fire_b.wav.meta",
+      "bytes": 345,
+      "sha256": "B42DCFD39D8E2A60A011C4D9F8FE7F31D21A88D9940EC5C7C2CA44053E2E7E02"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_under_fire_c.wav",
+      "bytes": 227334,
+      "sha256": "7C26AB59819AE889CB9ED91B603BDD0168194241DED2C009935622C3D1881C4B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_1_under_fire_c.wav.meta",
+      "bytes": 345,
+      "sha256": "D845C2A01D4C457D7851AE176B6232DA7793BC46D3CDDA2C53F4F2F5C0650029"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_far_warning_b.wav",
+      "bytes": 201374,
+      "sha256": "C70823735711F2063CB1012067B71145A89B9B83099D8BD7D6C0D910CB5250DC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_far_warning_b.wav.meta",
+      "bytes": 346,
+      "sha256": "4D5C1170391AA18C2CFFCD84E2647CDAFE553734E2A653F940653AF45411A9D3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_far_warning_c.wav",
+      "bytes": 190386,
+      "sha256": "6342FCA8414DA5AFA2E91E87A7A12EBFD6A73B79DF610D8DA9B4214D0450C5C4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_far_warning_c.wav.meta",
+      "bytes": 346,
+      "sha256": "511613343DF347FC9080A55E6C8CD27A0F18E04FAC1C28255F7313DB4C71C20A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_lost_b.wav",
+      "bytes": 235816,
+      "sha256": "E11B105FB878E40CABF1630142C97B0CEEC1105400507D13FCA335480E3D44E5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_lost_b.wav.meta",
+      "bytes": 339,
+      "sha256": "0796D2B2BD27153CAEE2AA34C9CC9A5FB117D98281B1A73582FBD5FAC666CEAC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_lost_c.wav",
+      "bytes": 281104,
+      "sha256": "FF53365D44C184CD75DF7CB4D01A6868D6FFE0EC71FB32AA0028BA33C79887D6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_lost_c.wav.meta",
+      "bytes": 339,
+      "sha256": "5977E72F05B7A457B67B526F4AD813B00511257930647F8E50BEC37F50A28F39"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_rejoined_b.wav",
+      "bytes": 221622,
+      "sha256": "607FE2C4995906B3518C59C887DEFB34731BD8D29D14AF4101354057872F4DBB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_rejoined_b.wav.meta",
+      "bytes": 343,
+      "sha256": "6033E77EDE18424F2CE4EDC535694440C94D4597759B2ED2F61292E750844089"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_rejoined_c.wav",
+      "bytes": 249524,
+      "sha256": "CDEEB756EF879AEDEF03CFD403221CA75541631F0D7720BF119CB4EDBAC72FA1"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_rejoined_c.wav.meta",
+      "bytes": 343,
+      "sha256": "33C56F6E22E72BDFF795C294E5A576262B774C02F4A6FA8925B6AED12F433D7A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_stuck_b.wav",
+      "bytes": 277010,
+      "sha256": "3ECD5017D28174E9D6886F4A6B3D94AA61E379D0598A6500073C6E62D62D69B8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_stuck_b.wav.meta",
+      "bytes": 340,
+      "sha256": "563A9D3F2B618B5034A8CA25F4249AE8BD4A5A45FB0F9DACB829D60C9B751962"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_stuck_c.wav",
+      "bytes": 286322,
+      "sha256": "939C0ED78D90B16B6EB32810269DEF5C213F9C35AD8D0D6E47C64ACDF549DFF4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_stuck_c.wav.meta",
+      "bytes": 340,
+      "sha256": "794024C28FA11EFCF449EE5ABE971EDF10A567C5950FC70A3A039C06C753E2D3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_under_fire_b.wav",
+      "bytes": 160446,
+      "sha256": "1EBCE49CAE950A44CED131AF731CC1FE54774D94A69C276FF20C6A8878D35D75"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_under_fire_b.wav.meta",
+      "bytes": 345,
+      "sha256": "DB89D39339360302665BA080123971D0A1FD9EFF8E85343BFF0F6CF73C4A38C6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_under_fire_c.wav",
+      "bytes": 215320,
+      "sha256": "ED56845257A9C66F71E78F101C6536D62B748C1D890CE190B80F617F09385BD9"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_2_under_fire_c.wav.meta",
+      "bytes": 345,
+      "sha256": "17E7E2D07D590F10D2DC5286D79641248CED88334C283FCADA11F8D1C9DFC071"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_far_warning_b.wav",
+      "bytes": 206058,
+      "sha256": "A27BB98FFBFDDC742D32AA324EA0EF576B97DDD8C972CC2A746CDC058EB1C59C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_far_warning_b.wav.meta",
+      "bytes": 346,
+      "sha256": "DE8DB5A04C223A8E627A8260883CE3253C2A096E9B5BC647B2D28B3EB70F4488"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_far_warning_c.wav",
+      "bytes": 190426,
+      "sha256": "1EDB476767A7D04AF1E6DC4BE0864EEEB72A1DC4419A658B604FC772540033AF"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_far_warning_c.wav.meta",
+      "bytes": 346,
+      "sha256": "895BD85241D60A863206E30DF756812DE2D4349F9A13B6B4F2F01A58A67D9122"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_lost_b.wav",
+      "bytes": 236090,
+      "sha256": "44EB640A7FE1338C6B17D9EC0EC56AD463D6A7497092FCFCD33936AB18A64BF7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_lost_b.wav.meta",
+      "bytes": 339,
+      "sha256": "3CD467EE069400AC5BE10D06E8C66AF09F94D4C9F59BCD790D6114A31DEC0B76"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_lost_c.wav",
+      "bytes": 290330,
+      "sha256": "D19A784292A2287693138DDB403765E6FC117E2467442F3D1ECF52241D0F23D3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_lost_c.wav.meta",
+      "bytes": 339,
+      "sha256": "A836CD3D55B52D6F3B44403C528B805919F9B174E6DBF491324E64F1CBDF555F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_rejoined_b.wav",
+      "bytes": 224418,
+      "sha256": "6668FE823F17C624D4FB89FF9ECE0637149B38F9B01179D0FACD9791501E34C7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_rejoined_b.wav.meta",
+      "bytes": 343,
+      "sha256": "199D5408E078EB53367734E6C0CD8876F59A5ED85E22EEEBFFA5609D75DCEE92"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_rejoined_c.wav",
+      "bytes": 249426,
+      "sha256": "9B67F6B519782AD58679C037D2A19960747A33094DC7E997414756C272B2539A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_rejoined_c.wav.meta",
+      "bytes": 343,
+      "sha256": "C40A5233968B4BA1A0C85ABAA2D5DBE1259D68C9C5C9B496FB3D9504B4BD08F4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_stuck_b.wav",
+      "bytes": 286448,
+      "sha256": "40F998B49C4CDFAE8E8532F592EEB5C0D31DEC36CBAE71D765B5B8419F142F82"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_stuck_b.wav.meta",
+      "bytes": 340,
+      "sha256": "667CE65EDD85C76152784D80FC1152A300B21E8AA1167DCDA50CB5B8F11825B9"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_stuck_c.wav",
+      "bytes": 287732,
+      "sha256": "180D133BDD3D1FFA95FD547F9781987C16EA8FAD56A187B2E366BFEC06A8D0F3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_stuck_c.wav.meta",
+      "bytes": 340,
+      "sha256": "9E48FA19CC5C06B726FE4221472A0A29E5B5E2941AC17C82213C05DFCE64C0C1"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_under_fire_b.wav",
+      "bytes": 166364,
+      "sha256": "F8D0BAECD78B261549C2D25150EA8046248F94AC5663C2FD96BF03A594C0CCFD"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_under_fire_b.wav.meta",
+      "bytes": 345,
+      "sha256": "D481EE2C598CD7565C899E2F6259E3204D3032905AE2F69F5E7232F6934FB075"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_under_fire_c.wav",
+      "bytes": 227066,
+      "sha256": "F37FEFDB062327323C45C53F3B34ED98B4627ED0D99BCC0B538568D4D950AB3E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_3_under_fire_c.wav.meta",
+      "bytes": 345,
+      "sha256": "2B34AE4EC2028E698CC8B80744C4DB3D7292D9DED7A959BC0693BE60A1E637F4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_far_warning_b.wav",
+      "bytes": 209286,
+      "sha256": "669A67471E6ACA8604E119D2890CB53388699E7B95ED00FECB7734A55F87D592"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_far_warning_b.wav.meta",
+      "bytes": 346,
+      "sha256": "33AFC47045D20818C8D36E59E82A9774EF680200A612322E909B663D6B56A6CF"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_far_warning_c.wav",
+      "bytes": 192322,
+      "sha256": "BDD153F880622D0A44BE57D1941A1F8E6EC3409AB62294CFDF93BF342AFB2BCA"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_far_warning_c.wav.meta",
+      "bytes": 346,
+      "sha256": "A8A998D02152B9A99C89AEB5399A4D86D5DAC72CE6D926AFD9C4B0AB91A78EFE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_lost_b.wav",
+      "bytes": 238328,
+      "sha256": "F2FDA251103CF3CCB46F83C7D8A44D79FE55ED98B752EE770798D3C92CCD80A4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_lost_b.wav.meta",
+      "bytes": 339,
+      "sha256": "65D26F5A3E5256476A6A38341D255BA4294F88D770A6CE2FFD1EFBF724C63B36"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_lost_c.wav",
+      "bytes": 285358,
+      "sha256": "A70B1F71163A29E5DD859445039C5EE57BD1EE0C7F441ACC55737D687F196A06"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_lost_c.wav.meta",
+      "bytes": 339,
+      "sha256": "4314529D5DC38DACF52EDB9D033EBFE688D32FF68CC207C8762E659F1408B717"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_rejoined_b.wav",
+      "bytes": 222682,
+      "sha256": "66ECE94889072882003AB7B9A030196F1383436C2013D19690F88A8D33BC8D4E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_rejoined_b.wav.meta",
+      "bytes": 343,
+      "sha256": "F4FFE3C3532612846A7A6E06E66AAC3887C94E62F1AEC4199274DFD6372CE59D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_rejoined_c.wav",
+      "bytes": 255392,
+      "sha256": "FCFCC26602AD319BB054325C0CA3D0F58151EA30C0D6659AB893259A73FD6F06"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_rejoined_c.wav.meta",
+      "bytes": 343,
+      "sha256": "D6A1A0F43FC4D45CA33BCA4559F6E0A021DC73ECBBE3BA3A3E929B8DDE2B7D51"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_stuck_b.wav",
+      "bytes": 293028,
+      "sha256": "9E5B7DCD15F4A746B7EE547E7F76A7E821EF8C1757B25B821934194AF410CFC6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_stuck_b.wav.meta",
+      "bytes": 340,
+      "sha256": "5CD13D38EC81F8539BA59A76BF63D7D95A41C41BA246E76C8830D4FF160E5AEB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_stuck_c.wav",
+      "bytes": 293668,
+      "sha256": "549491DCC70025A5DA38A37BEEDCE372EADE4C9BF78DFDC15BCB370D88093102"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_stuck_c.wav.meta",
+      "bytes": 340,
+      "sha256": "540944C63F4E488318A4188A7013AAA61AAF9442201DD84F6CCE357A0FA8E63C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_under_fire_b.wav",
+      "bytes": 164104,
+      "sha256": "B0DC756DA4BDDC6042B9C29FFD518F28605A1484470E0327291B64138A14330C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_under_fire_b.wav.meta",
+      "bytes": 345,
+      "sha256": "8708A5BB1D1A807DE4CD9DE61713FCF76370DF5E5DC965F74F6CF5604974D16E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_under_fire_c.wav",
+      "bytes": 222898,
+      "sha256": "9CEED3EE01612F3BB8DA13B3420949BB5048A6A4FFD6BBD7EC221367462AC3AF"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_4_under_fire_c.wav.meta",
+      "bytes": 345,
+      "sha256": "5AE522102F85710F56A673D2AC8096805843CB7AAB29513870E80DB601BA2A6F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_far_warning_b.wav",
+      "bytes": 204478,
+      "sha256": "1B6BEFABFB7A490DA848040D051DF22A5CFB0D9C93C07B8EB011B04DC64A6827"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_far_warning_b.wav.meta",
+      "bytes": 346,
+      "sha256": "9D10705A14C8F3599280E20F4545D4E23EFA101CAA4A35A31A1EA7D096DE7128"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_far_warning_c.wav",
+      "bytes": 197638,
+      "sha256": "144BE0BFB99573B5C5068F09EE94DC0AB25333929FDA219D37139C20D76C0CEC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_far_warning_c.wav.meta",
+      "bytes": 346,
+      "sha256": "BCC07B4A5B89D3E325D7A52DBAD9D27B4CDAEB29D48E8BBFB5B365D0920E9EDE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_lost_b.wav",
+      "bytes": 230860,
+      "sha256": "463BD4E1F2191F5326EEC5C9266B121AC4026281CE36F5F851C80500BBA8FC39"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_lost_b.wav.meta",
+      "bytes": 339,
+      "sha256": "E5A052B22FAE486EAFC9362D69E64762F832EF74A925E5F98F309AE589B6581F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_lost_c.wav",
+      "bytes": 291210,
+      "sha256": "377C08E6ACDED2BFA2D617993FB81312119593767B60C97345015DF0E1DD769C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_lost_c.wav.meta",
+      "bytes": 339,
+      "sha256": "777C3C35B1E069DB3B5E4ABBB3901F259EC1B0902619AA7F05F21C7B541FB1CA"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_rejoined_b.wav",
+      "bytes": 221486,
+      "sha256": "98B8B879D1FAE8EC2C4D56E8D8DD61E60D9FCF2809C9D2D8B8EA84FC55C3449F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_rejoined_b.wav.meta",
+      "bytes": 343,
+      "sha256": "A9D8C5D8E0C5C65497643F111F81E06A820DADB87FB21D17A2C718DA51E587D9"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_rejoined_c.wav",
+      "bytes": 248610,
+      "sha256": "46656E7E9CEE8CF14E87E50DAEAB4D2343E6AC6EC9B8CC963B027130378F0C3E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_rejoined_c.wav.meta",
+      "bytes": 343,
+      "sha256": "ED214653E28E15CA0A7302F9022D3ED7D183E37D01E303446A443B8245E7FEE2"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_stuck_b.wav",
+      "bytes": 290914,
+      "sha256": "ACC86F6930FA5857BC59E20C350E3461016BD45AB805D4759382DE037734F2BE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_stuck_b.wav.meta",
+      "bytes": 340,
+      "sha256": "8C91EBB09B35B78564A0F91E7040373F584CE957090EAB5C617054175CA874B0"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_stuck_c.wav",
+      "bytes": 294234,
+      "sha256": "33E5C5FD24B58A0B23838ABCB1574783946E8E62F51E404B3468A3AAF447E652"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_stuck_c.wav.meta",
+      "bytes": 340,
+      "sha256": "699D66ADA2A0C8FACE57BD43CA67AFBD14803D50EDD3F05627188669A2FFECC4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_under_fire_b.wav",
+      "bytes": 158050,
+      "sha256": "D588795AF7F14A3CFE88F587F51EFD3D96B627C419F20FECFE5C810D9F9A1FC7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_under_fire_b.wav.meta",
+      "bytes": 345,
+      "sha256": "70633CBBC8ACE087DFE3BCF2A01090C48CBDA3F49BF30432E92B838B218B2DE4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_under_fire_c.wav",
+      "bytes": 227056,
+      "sha256": "989E92A6960D18C9E593EAE755FDB7685383E5048597B21CD52B36CB36F8CDE6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/LeaderGenerated/unit_5_under_fire_c.wav.meta",
+      "bytes": 345,
+      "sha256": "7F9A87F1A6A80D223AED26FDB14734D4C1715E08CBB1ACEA4AC6AD02DEC8E637"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_far_warning.wav",
+      "bytes": 321678,
+      "sha256": "B187F4121A27B92C6998B8989DAB65245FEBDE1A392633E1E59014F22BC0B5DD"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_far_warning.wav.meta",
+      "bytes": 137,
+      "sha256": "B764C967444F12B6293954F89D122CFB6301B157808560F3BFBF9791DB6E25F5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_following.wav",
+      "bytes": 221838,
+      "sha256": "BFF951FC1AFCCBD990411CA6B1E13BD7C69F18770E1E1BFCB1390F3DB314A25E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_following.wav.meta",
+      "bytes": 135,
+      "sha256": "861699042790716976A7F1962D105E70BCB47ABDBAFD73D7AE3E951547822C0B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_holding.wav",
+      "bytes": 243918,
+      "sha256": "E7FF2001C36851135139B63B3174AE5696DAFD2C9F71E4952F5173100A4DA81C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_holding.wav.meta",
+      "bytes": 133,
+      "sha256": "3AC958ED40F806CD9E940635629575E32200C7BBE68C3D37E163E756F9161D98"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_lost.wav",
+      "bytes": 319758,
+      "sha256": "DE2A7C0F424D9A920D84D644381DAF7F20891F45F08AF64ED7391A07A4802325"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_lost.wav.meta",
+      "bytes": 130,
+      "sha256": "FC4CBA23BAA81F435ECEBAEFDE9A0132FAA2BBCFFAED794FB28CA23D9F742902"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_ready.wav",
+      "bytes": 362958,
+      "sha256": "B7240CB08F2841F92935D91935795E4D0C441D123D9D6510789D41D6D7752A32"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_ready.wav.meta",
+      "bytes": 131,
+      "sha256": "FC37A88544E704ECF5DA54DD1922D25C98549DE609B591BDDFD0A6110E9A5AA8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_rejoined.wav",
+      "bytes": 269838,
+      "sha256": "60B497B69E6D640F0469D339893FC3EA5036A0B4657510C741E459D8080E10D7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_rejoined.wav.meta",
+      "bytes": 134,
+      "sha256": "502B333855BFD762E70F7C26CE4F9F9331891FF9F8DE8F52BF028A7E78F9ED42"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_stuck.wav",
+      "bytes": 305358,
+      "sha256": "0B769568AC2ABAEC2C63FAF6B9A6BCC99FB6365423271D878F79EE292267DD2B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_stuck.wav.meta",
+      "bytes": 131,
+      "sha256": "F527819E8B824F254FEBD82C217F279A0B47C98D7B3328E64A31EF47584ED0AF"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_under_fire.wav",
+      "bytes": 269838,
+      "sha256": "64367996A68911007D705FD925CFE4C4C9DECE04B08A62B1B1EF73CF6D0E730F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver1_under_fire.wav.meta",
+      "bytes": 136,
+      "sha256": "970655A117144FB47893824415FF89DE4F529567612E445148313DF2A96C2A83"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_far_warning.wav",
+      "bytes": 288078,
+      "sha256": "3B5E35628074A5F8704E1B4C6ADB8C3B7A8D071AD6BDE5FD838A3EE4E7ADB1EB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_far_warning.wav.meta",
+      "bytes": 137,
+      "sha256": "4FA90A8C15A1F8000996138F58416775CC16E57945567D7A16803D8939BE5D86"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_following.wav",
+      "bytes": 227598,
+      "sha256": "EE8FA35EEB23BEF2C867027E03F9788744BB4FEA1615A73C0304D24C464F52F5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_following.wav.meta",
+      "bytes": 135,
+      "sha256": "4518D865852678576430DB7D23C9C1E158FD8CAF664CE7FD13424A926EBD826F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_holding.wav",
+      "bytes": 244878,
+      "sha256": "50A33F749F420E9FE763C94BE31905E723AB524404E35117AB4EBB7867FD098C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_holding.wav.meta",
+      "bytes": 133,
+      "sha256": "F90D0BF20930621B8A898967300664F1E3896EFA2CB24097008549A60A24F1BD"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_lost.wav",
+      "bytes": 304398,
+      "sha256": "33446B31E22D15DBBDC403DF4DEC69B587124E826B2F1DD4D8AB9C5D4B556CD1"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_lost.wav.meta",
+      "bytes": 130,
+      "sha256": "46365EF722545F024167C9A8B06901E3176620863131284B328241DC0649504A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_ready.wav",
+      "bytes": 274638,
+      "sha256": "B65CC8E502A8EEE1D98F4B5F4632B4118FB7AB0D6838E8D79B77988A4D67168A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_ready.wav.meta",
+      "bytes": 131,
+      "sha256": "27A1A2DCF5E7734C99B1A4A925F9964932159DD35EB65A38A1A43E8F34FD1868"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_rejoined.wav",
+      "bytes": 310158,
+      "sha256": "461416683B8215C2B0D35A85B089776B83081B7A11A593D6606C7F297E1F8847"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_rejoined.wav.meta",
+      "bytes": 134,
+      "sha256": "C92A6D1B993ABD3C225FE141976A9FC1835880297CCBBE7384D404C8CB4CABB4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_stuck.wav",
+      "bytes": 301518,
+      "sha256": "FE96BD8F30133761ADE87AE4ECA9FE30171FC03254B929F3B516E54750E1BE52"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_stuck.wav.meta",
+      "bytes": 131,
+      "sha256": "DEBE790435B85B9F68E7FEE6E5B5E6FF39B7A7AC2B96692FDB11E4FD4EBCC3C6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_under_fire.wav",
+      "bytes": 270798,
+      "sha256": "47109590AD720E1A35ED6F5234F91A817256086576FABB9DFEDE723455B3AF46"
+    },
+    {
+      "file": "addons/ConvoyFollower/Sounds/Radio/driver2_under_fire.wav.meta",
+      "bytes": 136,
+      "sha256": "5AAB4BCB0603F34A9C5A8A23FB93C603E6949A95E4440617A97A6C02518D7E6B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay_Layers/default.layer",
+      "bytes": 2362,
+      "sha256": "5C3F623C6D7A1AAE374CC12547478A2406CFC2C02B35F0374D61A7A8F647B58D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_Road81SupplyDay.ent.meta",
+      "bytes": 190,
+      "sha256": "E9B52468E5F3675A7544A8836B803D430A91C7459586E472675FFCDCA14D7CA7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_SupplyDay_Layers/default.layer",
+      "bytes": 2659,
+      "sha256": "6E05066BB8B70095381908C45B687C59B2C26016254ADFF27332B3D82EB33CA4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_SupplyDay.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Showcase/ConvoyFollower_Arland_SupplyDay.ent.meta",
+      "bytes": 184,
+      "sha256": "4D107BC24FAEAB9BC709855499FB755959AAA3E2FE9EE4FA023BFF6BFE67501B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/CF_ActionInput_Arland_Layers/default.layer",
+      "bytes": 414,
+      "sha256": "053C0317CC936A6B6D2EE35D65D87011853003A3B42516B95302A7DD49C6EE3F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/CF_ActionInput_Arland.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/CF_ActionInput_Arland.ent.meta",
+      "bytes": 171,
+      "sha256": "66C12EBBB134DBA777F70FFDE79661ADE0F51FC60507D23436B7D33E6EB5BB1D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_1Truck_Layers/default.layer",
+      "bytes": 449,
+      "sha256": "3370ABEBDD83031F0D7801CED7B26426ED65AFD2CE5BC7BCAAC2256BE8FDFEC4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_1Truck.ent.meta",
+      "bytes": 178,
+      "sha256": "7F5EC9CA25C44AA3AE3C0A43B2632E98EFDEFB54DC6D47A59A5EF8076D80F6D2"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_2Trucks_Layers/default.layer",
+      "bytes": 671,
+      "sha256": "7FCE47345DFABE500707B3F640372FE6D088E2E45D531805E9457FD04FF46CA3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_2Trucks.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_2Trucks.ent.meta",
+      "bytes": 179,
+      "sha256": "B416F8F66CA3C4DDA7ACED4FEFE3465CDD228F837DC21A07E22BD69836199DF3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_1Truck_Layers/default.layer",
+      "bytes": 746,
+      "sha256": "BC26D86EDECAC8E2E70CF7F90B39D7A2447A894166818431A0F3D0483CF70D53"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_1Truck.ent",
+      "bytes": 76,
+      "sha256": "45F7B028A49566D49A76D9DC80E5EEA9CD7DB7754023C304B00A7AAF4A1EF6D5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_1Truck.ent.meta",
+      "bytes": 184,
+      "sha256": "48AE3189331D53954B7FE8CFB117FA01B11A99F03C5EAF5F54DCA2F66D592DA1"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_2Trucks_Layers/default.layer",
+      "bytes": 1019,
+      "sha256": "52844DF94454AA4E3DC22E38EEA42FB052BA3EE739BD028C4F03DC058D9278BD"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_2Trucks.ent",
+      "bytes": 76,
+      "sha256": "45F7B028A49566D49A76D9DC80E5EEA9CD7DB7754023C304B00A7AAF4A1EF6D5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_2Trucks.ent.meta",
+      "bytes": 185,
+      "sha256": "D4F40F9570605CBB6AA815971285DBB76F1CEA3272590DF2DC11291A6BBA2DBB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_3Trucks_Layers/default.layer",
+      "bytes": 1292,
+      "sha256": "58E3C7B209F6C58D6DAC4CD643EB3B950A6B3A877CDFA8374CCEEF79285C0ED8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_3Trucks.ent",
+      "bytes": 76,
+      "sha256": "45F7B028A49566D49A76D9DC80E5EEA9CD7DB7754023C304B00A7AAF4A1EF6D5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Auto_3Trucks.ent.meta",
+      "bytes": 185,
+      "sha256": "ADE7CE5614F9A2AE8E376C994AF51F7D938AF5307E60ADB4CA26D3E3812DF032"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ClearField_Offroad_1Truck_Layers/default.layer",
+      "bytes": 1095,
+      "sha256": "DD28A1B1B29C73DDA969E82D0751AF79377221F48DA67E2BA5988EA432040CC4"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ClearField_Offroad_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ClearField_Offroad_1Truck.ent.meta",
+      "bytes": 197,
+      "sha256": "3419CECEDCADB4083BC476F5BAC4DE555EF1F56204F3E4658BD2D357CBC59845"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ClearFieldSurvey_Layers/default.layer",
+      "bytes": 379,
+      "sha256": "0158C01801F5C0DD1426D17A359EFF51EA176A1C27A6D20D97DCF46B863CD0EC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ClearFieldSurvey.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ClearFieldSurvey.ent.meta",
+      "bytes": 188,
+      "sha256": "370B61CA8CABA4DBDA2E2CDEEB92E4BE83A45947CC9DB8820F60116467DC5F8F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_DrivenRouteGeometry_Layers/default.layer",
+      "bytes": 232,
+      "sha256": "1AFC78D19C5140D2B4FA61D811D61F34BD1C75260EE0710E930E3EA5A3FEAC47"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_DrivenRouteGeometry.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_DrivenRouteGeometry.ent.meta",
+      "bytes": 191,
+      "sha256": "D7362E60B522579C12ED745662945283A59D26EF8190D32037D53ADA2ACFCAEE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ExplicitHold_1Truck_Layers/default.layer",
+      "bytes": 939,
+      "sha256": "7A216AB3DBCB06E707331C86DFCF93947CF071E49831019EA9D1A15F8C137A1A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ExplicitHold_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ExplicitHold_1Truck.ent.meta",
+      "bytes": 191,
+      "sha256": "BF0B5444F94B33DFF50DBA2CC92EF545896C5F16F798A2DA51F84428C4D73A42"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ExplicitRetry_2Trucks_Layers/default.layer",
+      "bytes": 1879,
+      "sha256": "307C0D68B9B86CF6F8058E9B9DFC0DC4B639C03F6CBA22C55C8DC74A57D15D71"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ExplicitRetry_2Trucks.ent",
+      "bytes": 76,
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ExplicitRetry_2Trucks.ent.meta",
+      "bytes": 193,
+      "sha256": "E08D3B8CE3F8EC933C42375B85DAA9638BCFD627B552DE7A1380BABFD02D2AB7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Layers/default.layer",
+      "bytes": 740,
+      "sha256": "9AD4F68BB7133854D7A114C1E189E69A913202727DA9193D31FA6C6EB372812D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_1Truck_Layers/default.layer",
+      "bytes": 2457,
+      "sha256": "1C8BD5A2BCEBF3A7D38DC475F1A2685CBA95FD8BF0E9813023F99CE83401D3F3"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_1Truck.ent.meta",
+      "bytes": 195,
+      "sha256": "A0C948F176EEBD85250D59717BC3E997D617F617D1CDAFCAD1C83A169046BFE6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks_Layers/default.layer",
+      "bytes": 2867,
+      "sha256": "4D9B27AC6930D2B1111334DB8A7DC6A989B4E00AA13C3C7E28BF6B7A17AD8D97"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks.ent",
+      "bytes": 76,
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_LoadedSupplyTrip_2Trucks.ent.meta",
+      "bytes": 196,
+      "sha256": "C7E7B99A6D76F8D208C385CACCF5A464F9D836156387154A4F9495717631D893"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_1Truck_Layers/default.layer",
+      "bytes": 802,
+      "sha256": "850B47B4C720780BC3DF9DDD64010E983222858BDA27B383DC35B2B3A5619434"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_1Truck.ent.meta",
+      "bytes": 192,
+      "sha256": "BE14830B5E440D67F0E46579654154849B6D2B2B8305AD2BAFB60BF259720592"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_ForwardBlocked_Layers/default.layer",
+      "bytes": 1207,
+      "sha256": "8FA68058FC4366B48DFD94326FC2A24884DAA197F22E6A2432BA0BE99AE42F55"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_ForwardBlocked.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_ForwardBlocked.ent.meta",
+      "bytes": 208,
+      "sha256": "254EAD4DCA58860131BDEA0154F2962E495AFB426B8EC4C933DEA9BE3339DA33"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_ForwardWait_Layers/default.layer",
+      "bytes": 1204,
+      "sha256": "1C6CB74A4726E4A223C6E13BAEF90AD7DE0D33CA534360AD6969D5E988E2AAD8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_ForwardWait.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_ForwardWait.ent.meta",
+      "bytes": 205,
+      "sha256": "392812393C1ACF990CD519A685E803964AA19D1723A557379070033733735B18"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_Layers/default.layer",
+      "bytes": 1013,
+      "sha256": "70F281D174E6DF4AE69AE3DD4628F48953C1A5D00182F0C8998E64B969B247FA"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_PauseResume_Layers/default.layer",
+      "bytes": 1203,
+      "sha256": "8F6743B0B71B34A799108E3EC5A62E62969F125BC90E38B5266D34354E5F949D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_PauseResume.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_PauseResume.ent.meta",
+      "bytes": 205,
+      "sha256": "7082653C1FC175B304C632DFB6699F09B7DA62693F0B8E34BC9A37E3FB314064"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_Release_Layers/default.layer",
+      "bytes": 1207,
+      "sha256": "61262C1BB00A4C77953AC1EE5ED233277D243D66198E4C6D251EDE5AC609B5D8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_Release.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks_Release.ent.meta",
+      "bytes": 201,
+      "sha256": "1AC4A8BD9BE58B75D182493141C6A15D2AED5809415E775C00F8309F14A9A116"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_2Trucks.ent.meta",
+      "bytes": 193,
+      "sha256": "C09697C508A64B0CFBE157CC995F71A64DEBC3FA0B317A2798B776F6D9EB47AC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_3Trucks_ForwardTwoAhead_Layers/default.layer",
+      "bytes": 1521,
+      "sha256": "61A90FD17F1F6A5EF2E2DBD2FDD371904F22176D32042291E304CE4A5E4358C2"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_3Trucks_ForwardTwoAhead.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_3Trucks_ForwardTwoAhead.ent.meta",
+      "bytes": 209,
+      "sha256": "9BBFB0562EED295D58C7B8164526674ADE477906A4E4BBC562FC1CC0CC15D26D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_3Trucks_Layers/default.layer",
+      "bytes": 1339,
+      "sha256": "FF39580D6CD0A8008759448E364E9E76810F6871409D060E15D5006871DB02D1"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_3Trucks.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Auto_3Trucks.ent.meta",
+      "bytes": 193,
+      "sha256": "6022070BC146ABDD336F52673AC9F74F15DF8F01451F4CD23DCC6F972C61FB2D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_InputPilot_Layers/default.layer",
+      "bytes": 641,
+      "sha256": "2B99525D878B7AD8B6BDA8CB6BCE41AB0DEA1AF21313225CBD9EAB36C822506E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_InputPilot.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_InputPilot.ent.meta",
+      "bytes": 191,
+      "sha256": "EF25F80E19C41A47F564530020B23FCFC62FCC82D4425A7F520DC3F7AE2E758A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_1Truck_Layers/default.layer",
+      "bytes": 1147,
+      "sha256": "E40F2A1EF32E0064C664BD5D2CA5FC528E7D15EB2FB437F53F351F4016FFC3B7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_1Truck.ent.meta",
+      "bytes": 201,
+      "sha256": "04BD9A5F140C5079F203A5580A02CF92992F3C771D2E9E04239C42026ADEB2BB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_2Trucks_Layers/default.layer",
+      "bytes": 1461,
+      "sha256": "A306924801312D93F345B1FB525CC2308B05071C2D86E44B9A19FDF356172297"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_2Trucks.ent",
+      "bytes": 76,
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_2Trucks.ent.meta",
+      "bytes": 202,
+      "sha256": "0BE628418E437D6EC5F79B52684BE14E06FD3DE5461BBE258EA62FB13D19D0C6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_3Trucks_Layers/default.layer",
+      "bytes": 1807,
+      "sha256": "6A5D0B0FE902EED0EC6D07880B2880F5F096A2BA41A07B40E01252CFA0F2951C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_3Trucks.ent",
+      "bytes": 76,
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_3Trucks.ent.meta",
+      "bytes": 202,
+      "sha256": "18446D6E1C8A54C980DA6EEB2C9CE8EF52F186D33B421A5019C5C0462071B59C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalDirectRearPacing_2Trucks_Layers/default.layer",
+      "bytes": 1671,
+      "sha256": "FC308B3442BADCFF043A33DDF4D31E8C80DAF3DC25F8DCC666837C08208520FC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalDirectRearPacing_2Trucks.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalDirectRearPacing_2Trucks.ent.meta",
+      "bytes": 213,
+      "sha256": "69F5505218972127407B64CAF31C47E24BF9748AD3FB2C436EA2B1D43FC23B62"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalFollow_1Truck_Layers/default.layer",
+      "bytes": 1192,
+      "sha256": "5F2289B1936E89FAF3FC7509D2DB310FB57D58D4F55F1A3CB6119B5BECCFE39B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalFollow_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalFollow_1Truck.ent.meta",
+      "bytes": 202,
+      "sha256": "9C18BBDFF07009F44449FDFF025704776561EC4D162CD227C3378D772B802844"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalFollow_2Trucks_Layers/default.layer",
+      "bytes": 1652,
+      "sha256": "0B6388FB4DC380C0D701BFA61D6BBDDDA366EAC33EC2C33BCCF6E159B3A1FA4F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalFollow_2Trucks.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalFollow_2Trucks.ent.meta",
+      "bytes": 203,
+      "sha256": "B5022368F084480518A59C57D8F406850E68FADABF7B733831E0DB1806EDAD11"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalGuideCooperative20_2Trucks_Layers/default.layer",
+      "bytes": 1715,
+      "sha256": "924E8026BA845EC46E6314647320CDA9C4FC76340B3EC67AF8732DD0478C8384"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalGuideCooperative20_2Trucks.ent",
+      "bytes": 76,
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalGuideCooperative20_2Trucks.ent.meta",
+      "bytes": 215,
+      "sha256": "192E5C09BCF68F50CC80E7998AA3F654ABD529CD7BF1F255C1005C8ADF60D7F8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalGuideRearPacing_2Trucks_Layers/default.layer",
+      "bytes": 1685,
+      "sha256": "4046C39B2D9436065E5E05B70A86A70FCCEF18BE1DBAA0B798B423649FDCA8F5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalGuideRearPacing_2Trucks.ent",
+      "bytes": 76,
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalGuideRearPacing_2Trucks.ent.meta",
+      "bytes": 212,
+      "sha256": "619AA896A824F48FC803114A22184CE8C1C591989A4706BD5D0B3C56E94E87FA"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalResume_1Truck_Layers/default.layer",
+      "bytes": 1196,
+      "sha256": "0488BD54A1F12F60F7EB1E81AA477355219A6A620B90DC183904B2C87E034378"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalResume_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalResume_1Truck.ent.meta",
+      "bytes": 202,
+      "sha256": "FC6007499666660B28EE75AADAB312CCFE9BAFD0B4D9CCCCBA9B61ECEA9F7BC8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalResumeDiagnostic_1Truck_Layers/default.layer",
+      "bytes": 1242,
+      "sha256": "88E379DDB43463DD22EEA6CFB6DF11240C44A916D613142B40A7BDDC8343DEED"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalResumeDiagnostic_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalResumeDiagnostic_1Truck.ent.meta",
+      "bytes": 212,
+      "sha256": "FFB0347192AFC80457D8390175B3C5DA47389765615FB89CD01DC7C40874FD79"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailEntry_2Trucks_Layers/default.layer",
+      "bytes": 1715,
+      "sha256": "492882BDC748D6987E3EAECC0CBAFF4747C299F74C3844658235510DCBD8E022"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailEntry_2Trucks.ent",
+      "bytes": 76,
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailEntry_2Trucks.ent.meta",
+      "bytes": 215,
+      "sha256": "ADCD4224894099A2ADC76AAB7F4EA1E5F44BD465C6889CBDEF0435D1F6369AA5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailGuide_2Trucks_Layers/default.layer",
+      "bytes": 1715,
+      "sha256": "5D84033D671ADADB5D6FA95EA029C67A5437DF91C460FBB491F5291FC9175FFE"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailGuide_2Trucks.ent",
+      "bytes": 76,
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailGuide_2Trucks.ent.meta",
+      "bytes": 215,
+      "sha256": "C73B6B0AB0BB435C6F14F7C0506107E929B64495965CD9EDB74E279CC7E6067B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailProjectedStation_2Trucks_Layers/default.layer",
+      "bytes": 1681,
+      "sha256": "34D3331317A6D722A72AA35E909C4FA728565DB199F84CC6867CA6967210961B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailProjectedStation_2Trucks.ent",
+      "bytes": 76,
+      "sha256": "AA48210FAD41E1F80C57AC822135D81A12EFE8940546638C60BE0C6739634F8C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OriginalTailProjectedStation_2Trucks.ent.meta",
+      "bytes": 217,
+      "sha256": "7F374077CF9728A53648BC898A33C60C1109B23D0D38C99F3C47758C95A4C2CC"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_1Truck_Layers/default.layer",
+      "bytes": 1045,
+      "sha256": "D8A16FC678FFE02EB1351043BF83045D99187C3CD037DD6448AAB5092B95A8F7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_1Truck.ent.meta",
+      "bytes": 193,
+      "sha256": "3BBDE67E8029BDE1CCB22A6697A36C596D589F0C3C84ED1DD2F0243B073B0A07"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_2Trucks_Layers/default.layer",
+      "bytes": 1396,
+      "sha256": "0705F35C51A3E5F3607E9A0FA250DF2959B1F593F9C84100742EE0175F29A9EF"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_2Trucks.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_2Trucks.ent.meta",
+      "bytes": 194,
+      "sha256": "5BAB6753B3532EA4275A441FD5E417261F8A86E28EACE08F603C8029A353223D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_3Trucks_Layers/default.layer",
+      "bytes": 1719,
+      "sha256": "6E306478E74E7E47F8AAC9CC1B435B776D21BD5AF60BA9FD766A080F138A2516"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_3Trucks.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_3Trucks.ent.meta",
+      "bytes": 194,
+      "sha256": "1C744AF46B962F73A060AAABFEB7745B65B5C795A25C63C00622EE295755FE3B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_AutoExit_1Truck_Layers/default.layer",
+      "bytes": 1077,
+      "sha256": "1456E5CF5F0051DDF87687225A943F0F1F23AAB98B45A1FEFEFDB5801D6786D7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_AutoExit_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_Paced_AutoExit_1Truck.ent.meta",
+      "bytes": 202,
+      "sha256": "6C38604553EC4F1F147D2BF4B0C0A1E1E713FF4BFD9EE0B5B00D5F0C1E0B3649"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_PanelPilot_Layers/default.layer",
+      "bytes": 621,
+      "sha256": "82F176659F85FF005015ACC393C3C7DB0BDDF4239A00DDF0815E557D8BE0215E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_PanelPilot.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OpenRoad_PanelPilot.ent.meta",
+      "bytes": 191,
+      "sha256": "FFA2DEDC606C0C2844E9E34E8D66DE425040384E3C099AAE9A87BF130516630E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OwnerDriveCalibration_Layers/default.layer",
+      "bytes": 358,
+      "sha256": "DA1E6C925C5B168DD1CA854D5C1C02E38649A89A819A4A13A02E8F4316D8E2F2"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OwnerDriveCalibration.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_OwnerDriveCalibration.ent.meta",
+      "bytes": 193,
+      "sha256": "B727121C08F6BA873B93B4C7DF78FEECA64E1C9D5D40BBAFAD6F2FA1864F3F5E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_PassCorridorAtlas_Layers/default.layer",
+      "bytes": 801,
+      "sha256": "81EE4AC975A541C1E10EC0AC7A0E7A5002517EFEB77C28EB5A341C9098FBE4DF"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_PassCorridorAtlas.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_PassCorridorAtlas.ent.meta",
+      "bytes": 189,
+      "sha256": "50DA7449EE455D09412BB310B1B6AC2EF36AF1C95EE2A1A64279623E016CD1DF"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_PassCorridorSurvey_Layers/default.layer",
+      "bytes": 789,
+      "sha256": "981CFC647C34AA8BDB51F3A2D2346C0D2746D8F33D7D3D0259F3290F1A3EE25B"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_PassCorridorSurvey_Upstream_Layers/default.layer",
+      "bytes": 796,
+      "sha256": "80EFE1EEF57DDE8195D3B733E735EC894B700BE5A39949A3CA18CF7B067037C2"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_PassCorridorSurvey_Upstream.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_PassCorridorSurvey_Upstream.ent.meta",
+      "bytes": 199,
+      "sha256": "A520F2B2CE8078786472936CA1B5426BD27DA4A394DC39CD8709C2FC070868A7"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_PassCorridorSurvey.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_PassCorridorSurvey.ent.meta",
+      "bytes": 190,
+      "sha256": "77B69DD8E86A0A00597904E3ED479E150E69909914C272C77BDD2FC58730069A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ResumeStatus_1Truck_Layers/default.layer",
+      "bytes": 938,
+      "sha256": "30A184D8D646BDF6388DEC15A4C90878809E2E9EA1C08B1E93C1506D82C5BB44"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ResumeStatus_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_ResumeStatus_1Truck.ent.meta",
+      "bytes": 191,
+      "sha256": "B1BDF4DC06DC9951D4CB22FED2DA172DAF6056D6776D24125127B35850307462"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road23_Auto_3Trucks_ForwardTwoAhead_Layers/default.layer",
+      "bytes": 1844,
+      "sha256": "D638714C8BF02430554D823D93BE9B3E4AC8C24CF6C830BA4C0DC7A924EDBD28"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road23_Auto_3Trucks_ForwardTwoAhead.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road23_Auto_3Trucks_ForwardTwoAhead.ent.meta",
+      "bytes": 207,
+      "sha256": "AE3B9A5E07B652F0CEE500A0BF99C77D42838ED579E2840452EFCDADBA38CD66"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_Auto_3Trucks_ForwardTwoAhead_Layers/default.layer",
+      "bytes": 1774,
+      "sha256": "0FA04DA32F9F517B4C964AD7C482BFC4CA482F648BCFF3B5D33C66AABA8F4C39"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_Auto_3Trucks_ForwardTwoAhead.ent",
+      "bytes": 72,
+      "sha256": "7D9BD9D9830D30BB30C8098B9668CD424BFC044EC3FE12F3B091DDF9EBE1B48E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_Auto_3Trucks_ForwardTwoAhead.ent.meta",
+      "bytes": 207,
+      "sha256": "15DFB9FFCBE51AE07174B19F6A79445E98AE7B93DF479DC6F1FCBC5C30CF2F05"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_ForwardSlot_1Truck_Layers/default.layer",
+      "bytes": 799,
+      "sha256": "4E1827F47613538B9F9BD61F513BEB943539A8C52BC748258330BC88C8C35652"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_ForwardSlot_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_ForwardSlot_1Truck.ent.meta",
+      "bytes": 197,
+      "sha256": "A2F254308FB8E121A60FEBD1BFE9DF916C54F57AC7DBD8ECB0DD9B0F758A57B8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrival_1Truck_Layers/default.layer",
+      "bytes": 991,
+      "sha256": "E542E3AD52DBFB41863470C33ACE5F16BD3967E5C1BFBABF8B8C9055AF3387BB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrival_1Truck.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrival_1Truck.ent.meta",
+      "bytes": 198,
+      "sha256": "AF20557D23AAD0BB08BF5AE21F66C19F7A0CF3B65FB140F7FE11C13AAB78D8C5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrival_2Trucks_Layers/default.layer",
+      "bytes": 1265,
+      "sha256": "BDDAB453220766708F519F349A93D283304CCB6DC8D842F221F8544FFCC6828D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrival_2Trucks.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrival_2Trucks.ent.meta",
+      "bytes": 199,
+      "sha256": "F15F717A54D7BB85279A6C3C8C14FB050ABA8A95B72F51758FC701CFC9AE34D5"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrivalGeometry_Layers/default.layer",
+      "bytes": 316,
+      "sha256": "C0DF97C9EF5D0A2CCBB0F2F528AD9E95C63F69F55124F4C9AB65F0264B6B9116"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrivalGeometry.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_ShortArrivalGeometry.ent.meta",
+      "bytes": 199,
+      "sha256": "B2D8AA61F6FBD8C411CDD430DC4B2B56A69C33C7284CC35A976392E85403C700"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_RoadPolylineGeometry_Layers/default.layer",
+      "bytes": 432,
+      "sha256": "FF291B61DAD98C218E6411D1A97E09EF4DD2662ED304662B18A885AA5FF087C6"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_RoadPolylineGeometry.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_RoadPolylineGeometry.ent.meta",
+      "bytes": 192,
+      "sha256": "0B405B64F418E9D993E95F6B6D4F974FA6F86FA1999ED9C988FFDF520BFBFEBD"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_RoadWidthSurvey_Layers/default.layer",
+      "bytes": 757,
+      "sha256": "7984153DBF4E9A8ECDB8E7052F3C1EBA2512A875A7230C1C7EBD07D220FD6FF2"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_RoadWidthSurvey.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_RoadWidthSurvey.ent.meta",
+      "bytes": 187,
+      "sha256": "56A7685F54B6161E6872AD260DD7D717B42859DB9B7F96EF1748F70F581CE52D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_StaticCargoAction_Layers/default.layer",
+      "bytes": 1015,
+      "sha256": "89E741666ADF69E0893A4158727EB67FC3FA01551A7BF77605F3AD7FE70C7A7C"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_StaticCargoAction.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_StaticCargoAction.ent.meta",
+      "bytes": 189,
+      "sha256": "EF587499185827B594396C49B52600050DA3DE2063D2B92CF17B8CE7E85B9F9E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_USSR_Layers/default.layer",
+      "bytes": 894,
+      "sha256": "D1832CDD29EB0994D47D242009C4C8F28AFCDDA71DB0BD40A49D24A742CF3F4D"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_USSR.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_USSR.ent.meta",
+      "bytes": 325,
+      "sha256": "E12DECEE67D41B5BD37DE27AE17DD8EE3737358488D8F61840A2C6E498E6B436"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_WideRoad_Auto_3Trucks_ForwardTwoAhead_Layers/default.layer",
+      "bytes": 1663,
+      "sha256": "05EEB953AD6B01C949EC4AA48DBAAAFEB6E96451C31E78E42B9BD85C34D1ED59"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_WideRoad_Auto_3Trucks_ForwardTwoAhead.ent",
+      "bytes": 73,
+      "sha256": "0F89D1AF2D744A27DEC4921589717368851C8D32594CCB972F783B71D87EA4E8"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_WideRoad_Auto_3Trucks_ForwardTwoAhead.ent.meta",
+      "bytes": 209,
+      "sha256": "80A55B357E3FC86CF4AB8F2287A7CB03172FA189A345123810E591C3C593A406"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland.ent",
+      "bytes": 72,
+      "sha256": "7D9BD9D9830D30BB30C8098B9668CD424BFC044EC3FE12F3B091DDF9EBE1B48E"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland.ent.meta",
+      "bytes": 319,
+      "sha256": "3BC00B2F659003650B1865A2124A91EB14901AAE4D6EE4050BD7AC3D88B76757"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Everon_Night_Layers/default.layer",
+      "bytes": 2561,
+      "sha256": "1FEBF47DA20347CA6CB5F6FB3A0F16D3F000AAC2624561B192C25824FA4D4BEB"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Everon_Night.ent",
+      "bytes": 71,
+      "sha256": "63AB6405998265906581CA1249A480F06722A3E6932865537160506DC1D0252A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Everon_Night.ent.meta",
+      "bytes": 326,
+      "sha256": "A557C5FA54DB6A3186AC96B4FC88F6C2737A948A96947C193650D6920D63E24F"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Everon_Offroad_Auto_1Truck_Layers/default.layer",
+      "bytes": 727,
+      "sha256": "EEA076618CDE9032F5B9688FD8BB7F8CD000AAC4AB2D0C582C4373C9D2E0579A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Everon_Offroad_Auto_1Truck.ent",
+      "bytes": 71,
+      "sha256": "63AB6405998265906581CA1249A480F06722A3E6932865537160506DC1D0252A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Everon_Offroad_Auto_1Truck.ent.meta",
+      "bytes": 191,
+      "sha256": "8D816B4A97108FB9856796432210BBBF024BC19F138EA49CB0AB7130AA300CC1"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Everon_Offroad_Survey_1Truck_Layers/default.layer",
+      "bytes": 999,
+      "sha256": "A5B043A2859C01F20C95A5E0D87A819F0B9E85AEFED38BCBB0BE10ABD09BB995"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Everon_Offroad_Survey_1Truck.ent",
+      "bytes": 71,
+      "sha256": "63AB6405998265906581CA1249A480F06722A3E6932865537160506DC1D0252A"
+    },
+    {
+      "file": "addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Everon_Offroad_Survey_1Truck.ent.meta",
+      "bytes": 193,
+      "sha256": "A79E27AAF4F6A2DDFC3C905DAAD0FE807CFD04DE1478C6E4A2E867212B2E34C1"
+    }
+  ]
+}

@@ -514,6 +514,8 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 	protected int m_iEntityRetainLogs;
 	protected float m_fNextEntityRetainLogMs;
 	protected bool m_bEntityFallbackFailed;
+	// Historical evidence remains sticky after an explicit owned-order retry.
+	protected bool m_bEntityFallbackFailedEver;
 	protected IEntity m_EntityStopTarget;
 	protected bool m_bEntityStopAttempted;
 	protected int m_iEntityStopEpisode;
@@ -1251,52 +1253,79 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		return super.CF_GetResumeFailureReason();
 	}
 
+	// Explicit command preflight only: retire our exact old slot and acknowledge
+	// its active failure. The caller still owns Wait release/state/departure.
+	protected bool CF_PrepareOriginalFollowResume(out bool retry, out int previousGeneration)
+	{
+		retry = false;
+		previousGeneration = m_iOriginalFollowGeneration;
+		if (!m_bOriginalFollowGraph) return true;
+		string reason;
+		if (!CF_OriginalResumePilotReady(reason))
+		{
+			Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=" + reason);
+			return false;
+		}
+		if (CF_HasPersistentFollowFailure() || m_bEntityPanelWaitFailed)
+		{
+			Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=unrelated_persistent_or_panel_wait_failure");
+			return false;
+		}
+		bool originalFailure = m_bOriginalFollowBlocked;
+		// Revocation/timeout alone does not attribute a fallback to this order.
+		if (m_bEntityFallbackFailed && !originalFailure)
+		{
+			Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=unattributed_entity_fallback_failure");
+			return false;
+		}
+		retry = originalFailure || m_bOriginalRetireTimedOut;
+		if (m_OriginalFollowLease && m_OriginalFollowLease.Revoked) retry = true;
+		if (!retry) return true;
+		string previousReason = m_sOriginalFollowFailure;
+		if (m_OriginalFollowLease)
+		{
+			if (!CF_OriginalCanRetire(m_OriginalFollowLease))
+			{
+				Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=old_slot_not_safe_to_retire");
+				return false;
+			}
+			ClearWaypoints();
+		}
+		if (m_Waypoint || m_OriginalFollowLease)
+		{
+			Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=old_order_slot_remains");
+			return false;
+		}
+		if (originalFailure)
+		{
+			m_bEntityFallbackFailedEver = m_bEntityFallbackFailedEver || m_bEntityFallbackFailed;
+			m_bEntityFallbackFailed = false;
+		}
+		m_bOriginalFollowBlocked = false;
+		m_bOriginalFollowBlockApplied = false;
+		m_bOriginalRetireTimedOut = false;
+		m_fOriginalRetireStartMs = -1;
+		m_sOriginalFollowFailure = string.Empty;
+		string line = "[ConvoyFollower] ORIGINAL_FOLLOW_RETRY_PREPARED: unit=" + m_iUnitNumber;
+		line += " previous_generation=" + previousGeneration + " previous_reason=" + previousReason;
+		line += " original_failure=" + originalFailure + " historical_failure=" + CF_HasEntityFallbackFailure();
+		line += " exact_old_slot_retired=true new_order=false movement_claim=false";
+		Print(line);
+		return true;
+	}
+
 	override bool CF_PanelResume()
 	{
 		if (!Replication.IsServer() || !CF_CanPanelResume())
 			return false;
-		bool retry = false;
-		int previousGeneration = m_iOriginalFollowGeneration;
-		if (m_bOriginalFollowGraph)
+		bool retry;
+		int previousGeneration;
+		if (!CF_PrepareOriginalFollowResume(retry, previousGeneration)) return false;
+		if (retry)
 		{
-			string reason;
-			if (!CF_OriginalResumePilotReady(reason))
-			{
-				Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=" + reason);
-				return false;
-			}
-			retry = m_bOriginalFollowBlocked || m_bOriginalRetireTimedOut;
-			if (m_OriginalFollowLease && m_OriginalFollowLease.Revoked)
-				retry = true;
-			if (retry)
-			{
-				// Do not replace or fail a seat order. A timed-out revoked slot
-				// is retried only here, after this explicit server command.
-				if (m_OriginalFollowLease)
-				{
-					if (!CF_OriginalCanRetire(m_OriginalFollowLease))
-					{
-						Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=old_slot_not_safe_to_retire");
-						return false;
-					}
-					ClearWaypoints();
-				}
-				if (m_Waypoint || m_OriginalFollowLease)
-				{
-					Print("[ConvoyFollower] ORIGINAL_FOLLOW_RESUME_REJECTED: unit=" + m_iUnitNumber + " reason=old_order_slot_remains");
-					return false;
-				}
-				m_bOriginalFollowBlocked = false;
-				m_bOriginalFollowBlockApplied = false;
-				m_bOriginalRetireTimedOut = false;
-				m_fOriginalRetireStartMs = -1;
-				m_sOriginalFollowFailure = string.Empty;
-				// Base Resume otherwise treats FOLLOWING/ARRIVING as an active
-				// order and skips StartFollowing. Preserve explicit Hold intent
-				// until the base command releases it and creates a fresh order.
-				SetState(CF_WAITING_FOR_PREDECESSOR);
-				// m_bEntityFallbackFailed deliberately retains historical evidence.
-			}
+			// Base Resume otherwise treats FOLLOWING/ARRIVING as still active.
+			// Keep explicit Hold intent until the base command releases it.
+			SetState(CF_WAITING_FOR_PREDECESSOR);
 		}
 		CF_ReleaseCapturedWait("panel_resume");
 		CF_ResetRearPacing(-1, "panel_resume");
@@ -1316,6 +1345,12 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 	}
 
 	bool CF_HasEntityFallbackFailure()
+	{
+		return m_bEntityFallbackFailed || m_bEntityFallbackFailedEver;
+	}
+
+	// Current health only; the historical getter above never loses a failure.
+	bool CF_HasActiveEntityFallbackFailure()
 	{
 		return m_bEntityFallbackFailed;
 	}
