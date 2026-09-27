@@ -17,3 +17,5 @@ sampled-head-supply-integration-v3.patch -text
 sampled-head-supply-integration-v3.json -text
 sampled-head-supply-integration-v4.patch -text
 sampled-head-supply-integration-v4.json -text
+cooperative-cohesion-trip-v2-source.patch -text
+cooperative-cohesion-trip-v2-source.json -text
