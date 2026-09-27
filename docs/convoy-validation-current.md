@@ -20,6 +20,8 @@ Updated September 26, 2026. **The mod is not release ready.** This page separate
 
 **Next useful work:** isolate native target representation with one private, persistent nonphysical target at the actual predecessor's position, using the direct-control native distance 20 m and unchanged cruise, real-predecessor checks and physical gates. The matched direct follower accelerated after its actual lead stopped under the same request, while the recorded-guide follower sustained nearer lead speed. This supports an experiment, not a proven internal braking cause. The proxy is in preparation, uncompiled/unrun. Preserve the complete supply demo and integrated gameplay while testing this remaining driving weakness. Normal controls, repeatability and broader release requirements remain open.
 
+**Installed diagnostics reviewed:** the [version-pinned classification](experiments/installed-diagnostics-road81-v1.md) matches all nine current startup errors to two frozen no-addon controls. Of the 61 current shutdown resource paths, 55 match vanilla and six have only Raven-without-Convoy evidence. No new addon-owned cleanup fault is demonstrated. Full counts and strict failures remain unchanged; the documented evidence does not waive physical spacing, ordinary-input or multiplayer requirements.
+
 ## Product goal and source checkpoint
 
 Deliver a usable recruit/assign → load → follow → stop/Hold → unload → Resume trip and demonstration, then complete the broader release scope. Prioritize failures that interrupt that trip over additional diagnostic machinery.

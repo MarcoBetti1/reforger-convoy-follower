@@ -1,5 +1,15 @@
 # First complete native supply trip
 
+## Latest milestone: two trucks complete the useful loop
+
+The later [integrated Road81 run](experiments/road81-integrated-trip-v1.md) completes **load → follow → arrive → Hold → unload → Resume** with both original drivers and trucks. It delivers **200 supplies** to a distinct destination, retains assignments while unloading, and proves fresh powered movement from both trucks after Resume. The [90-second development demonstration](../.cache/test-videos/road81-integrated-trip-v1-demo.mp4) shows these stages.
+
+This is an automated native-AI-lead/server-command test. Ordinary player input remains unverified, and the run still fails spacing because the head fell **172.483 m** behind earlier in the journey. Arrival and explicit Hold passed with zero drift; **9 gameplay /0 post-result /62 shutdown errors** remain. The integrated driving files are canonical; the exact reviewed test overlays and package are pinned in the linked report.
+
+The practical next priority is dependable head following, then a normal player-controlled demonstration. See [current validation](convoy-validation-current.md) for the live development boundary. The one-truck milestone and failed early two-truck run below remain historical evidence; their then-next instructions do not supersede the current checkpoint.
+
+## First one-truck milestone
+
 **September 26, 2026 — physical PASS; strict full-run FAIL. The mod is not release ready.** One ordinary Convoy Driver and its original truck completed native loading, a road trip, stopped arrival, Hold, delivery to a distinct storage and powered Resume. The client then closed naturally. [Independent review](../.cache/client/runs/loaded-supply-trip-v1/independent-loaded-trip-review.md)
 
 ## What happened
