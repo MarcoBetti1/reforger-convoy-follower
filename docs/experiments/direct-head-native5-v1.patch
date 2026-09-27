@@ -1,0 +1,140 @@
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
+index e223b61..ca112ae 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c
+@@ -106,6 +106,16 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ {
+ 	[Attribute(defvalue: "0", desc: "Private persistent entity-follow comparison; never a production default")]
+ 	protected bool m_bEntityFollowPrototype;
++	[Attribute(defvalue: "0", desc: "Private direct-head comparison only: native moving precision5; physical moving gap and stopped approach unchanged")]
++	protected bool m_bDirectHeadNativePrecision5;
++
++	bool CF_IsDirectHeadNativePrecision5() { return m_bDirectHeadNativePrecision5; }
++
++	protected float CF_EntityMovingPrecision()
++	{
++		if (m_bDirectHeadNativePrecision5) return 5.0;
++		return CF_ConvoySettings.Get().m_fMovingGap;
++	}
+ 	[Attribute(defvalue: "0", desc: "Private comparison: owned native Wait only after measured stopped-entity arrival capture")]
+ 	protected bool m_bEntityCapturedWait;
+ 	[Attribute(defvalue: "0", desc: "Private comparison: reduce catch-up allowance for an active stretched immediate successor")]
+@@ -511,6 +521,10 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 		super.OnPostInit(owner);
+ 		if (Replication.IsServer())
+ 		{
++			Print("[ConvoyFollower] DIRECT_NATIVE_PRECISION_INIT: driver_id=" + owner.GetID() +
++				" enabled=" + m_bDirectHeadNativePrecision5 + " native_moving_precision_m=" + CF_EntityMovingPrecision() +
++				" physical_moving_gap_m=" + CF_ConvoySettings.Get().m_fMovingGap + " stopped_distance_m=" + CF_ConvoySettings.Get().m_fStoppedGap +
++				" cruise_policy_unchanged=true test_only=true");
+ 			Print("[ConvoyFollower] ORIGINAL_FOLLOW_INIT: driver_id=" + owner.GetID() +
+ 				" enabled=" + m_bOriginalFollowGraph + " graph_guid=976835B5116F4BC5" +
+ 				" native_planning=false native_failure_policy=blocked_no_seat_order test_only=true");
+@@ -1341,7 +1355,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 			return super.IssueMoveWaypoint(destination);
+ 		}
+ 		CF_ResetEntityStopEpisode();
+-		return CF_CreateEntityFollow(destination, CF_ConvoySettings.Get().m_fMovingGap, "moving_follow");
++		return CF_CreateEntityFollow(destination, CF_EntityMovingPrecision(), "moving_follow");
+ 	}
+ 
+ 	protected bool CF_CreateEntityFollow(vector destination, float desiredDistance, string reason)
+@@ -1617,7 +1631,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
+ 			return false;
+ 		reason = "target_or_distance_changed";
+ 		if (!target || target != m_LeadVehicle || lease.Predecessor != target || lease.NativeTarget != target ||
+-			lease.Distance != CF_ConvoySettings.Get().m_fMovingGap)
++			lease.Distance != CF_EntityMovingPrecision())
+ 			return false;
+ 		reason = "activity_lease_identity";
+ 		if (!lease.Activity || lease.Activity.Lease != lease)
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
+index c8550f3..6377db7 100644
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_OriginalTailGuideProbeComponent.c
+@@ -93,6 +93,14 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 	protected bool m_bHeadRoad81Comparison;
+ 	[Attribute(defvalue: "0", desc: "Require genuine actual-player-trail guide instead of the matched direct head")]
+ 	protected bool m_bHeadRoad81Guide;
++	[Attribute(defvalue: "0", desc: "Explicit matched direct-head native precision5 expectation; all physical gates unchanged")]
++	protected bool m_bHeadRoad81NativePrecision5;
++
++	protected float MixedDirectPrecision()
++	{
++		if (m_bHeadRoad81NativePrecision5) return 5.0;
++		return CF_ConvoySettings.Get().m_fMovingGap;
++	}
+ 	protected ref array<ref CF_OriginalTailGuideEvidence> m_MixedUnits = {};
+ 	protected bool m_bMixedFailed;
+ 	protected bool m_bMixedFatal;
+@@ -103,6 +111,8 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 		if (!Replication.IsServer()) return;
+ 		for (int unit = 1; unit <= m_iExpectedTrucks; unit++)
+ 			m_MixedUnits.Insert(new CF_OriginalTailGuideEvidence());
++		if (m_bHeadRoad81NativePrecision5 && (!m_bHeadRoad81Comparison || m_bHeadRoad81Guide))
++			MixedFailure("native_precision5_requires_declared_direct_head", 0);
+ 		if (m_bHeadRoad81Comparison)
+ 		{
+ 			string expectedWorld = "Worlds/Tests/ConvoyFollower_Arland_Road81_DirectHead_1Truck.ent";
+@@ -112,6 +122,7 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 				MixedFailure("head_road81_contract_mismatch", 0);
+ 			Print("[ConvoyFollower] HEAD_ROAD81_INIT: run_id=" + m_sPacedRun + " world=" + m_sPacedWorld +
+ 				" expected=1 guide_expected=" + m_bHeadRoad81Guide + " original_graph=true lead_cap_kmh=20" +
++				" native_precision5_expected=" + m_bHeadRoad81NativePrecision5 + " native_moving_precision_m=" + MixedDirectPrecision() + " physical_moving_gap_m=20" +
+ 				" required_progress_m=100 required_powered=3 peak_gap_m=60 arrival_s=180 max_drift_m=2" +
+ 				" cargo_tested=false hold_resume_tested=false ordinary_input=false");
+ 		}
+@@ -126,7 +137,7 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 		if (m_bHeadRoad81Comparison && m_bHeadRoad81Guide) headMode = "recorded_player_trail_original";
+ 		Print("[ConvoyFollower] MIXED_FOLLOW_INIT: run_id=" + m_sPacedRun + " world=" + m_sPacedWorld +
+ 			" expected=" + m_iExpectedTrucks + " unit1=" + headMode + " unit2=recorded_guide_original" +
+-			" moving_distance_m=20 guide_capture_m=1 recorded_standoff_m=20 stopped_distance_m=10" +
++			" moving_distance_m=" + MixedDirectPrecision() + " physical_moving_gap_m=20 guide_capture_m=1 recorded_standoff_m=20 stopped_distance_m=10" +
+ 			" required_each_progress_m=100 required_each_powered=3 max_link_m=60 hold_s=180 max_drift_m=2" +
+ 			" first_interval_credit=false selection_gap_credit=false follower_writes=false test_only=true");
+ 	}
+@@ -176,7 +187,8 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 		if (m_bHeadRoad81Comparison)
+ 		{
+ 			if (MixedExpectsGuide(unit)) return tail && tail.CF_IsHeadGuideArrivalEnabled();
+-			return !CF_TrailGuideDriverControllerComponent.Cast(driver);
++			return !CF_TrailGuideDriverControllerComponent.Cast(driver) &&
++				driver.CF_IsDirectHeadNativePrecision5() == m_bHeadRoad81NativePrecision5;
+ 		}
+ 		return !((unit == 1 && CF_TrailGuideDriverControllerComponent.Cast(driver)) || (unit > 1 && !tail));
+ 	}
+@@ -320,7 +332,7 @@ class CF_OriginalTailGuideProbeComponent : CF_PacedRoadProbeComponent
+ 		}
+ 		bool guideTarget = MixedExpectsGuide(unit) && guide && target == guide;
+ 		bool directTarget = target == predecessor.Truck;
+-		bool movingMode = (!MixedExpectsGuide(unit) && unit == 1 && directTarget && distance == CF_ConvoySettings.Get().m_fMovingGap);
++		bool movingMode = (!MixedExpectsGuide(unit) && unit == 1 && directTarget && distance == MixedDirectPrecision());
+ 		if (guideTarget) movingMode = distance == 1.0;
+ 		bool stoppedMode = directTarget && distance == CF_ConvoySettings.Get().m_fStoppedGap;
+ 		bool exact = live && original && original.Lease && waypoint && utility && activeActions == 1;
+diff --git a/addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalFollowDriver.et b/addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalFollowDriver.et
+index 0f7b350..3778be6 100644
+--- a/addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalFollowDriver.et
++++ b/addons/ConvoyFollower/Prefabs/Tests/Character_CF_OriginalFollowDriver.et
+@@ -3,6 +3,7 @@ SCR_ChimeraCharacter : "{78A3EB106EFC9541}Prefabs/Tests/Character_CF_EntityFollo
+  components {
+   CF_EntityFollowDriverControllerComponent "{E7F041D76B47D760}" {
+    m_bOriginalFollowGraph 1
++   m_bDirectHeadNativePrecision5 1
+   }
+  }
+ }
+diff --git a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_DirectHead_1Truck_Layers/default.layer b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_DirectHead_1Truck_Layers/default.layer
+index 7270105..fbc4811 100644
+--- a/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_DirectHead_1Truck_Layers/default.layer
++++ b/addons/ConvoyFollower/Worlds/Tests/ConvoyFollower_Arland_Road81_DirectHead_1Truck_Layers/default.layer
+@@ -31,7 +31,8 @@ Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1
+   }
+   CF_OriginalTailGuideProbeComponent "{BA3E073268484E6F}" {
+    m_bHeadRoad81Comparison 1
+-   m_bHeadRoad81Guide 0
++   m_bHeadRoad81Guide 0
++   m_bHeadRoad81NativePrecision5 1
+    m_bStraightReleaseRoadGoal 1
+    m_vStraightReleaseRoadGoal 1564.43 40.3222 3071.77
+    m_bPacedAutoExit 1

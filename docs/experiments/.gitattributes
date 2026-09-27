@@ -8,3 +8,4 @@ road81-arrival-trip-v1.patch -text
 reboard-canonical-v1/*.patch -text
 reboard-canonical-v1/*.json -text
 reboard-canonical-v1/*.txt -text
+direct-head-native5-v1.patch -text
