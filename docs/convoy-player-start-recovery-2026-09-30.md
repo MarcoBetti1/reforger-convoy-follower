@@ -34,7 +34,7 @@ Launcher session33018 is untimed. Console `D:/ReforgerAgentRuns/player-command-s
 
 The complete closed overlay console remains `D:/ReforgerAgentRuns/player-menu-overlay-v1/logs/console.log`. It ends at16:19:40.080 following world cleanup at16:19:39.286, with no `Game destroyed` marker. Launcher exit3489660927 is nonzero. The full console retains2 script error records and22 total error records, including shutdown resupply-catalog errors. Preserve these separately from the player's menu-opening success and recovery failure.
 
-GitHub backup archive `convoy-start-recovery-v1.zip` contains this exact frozen source and runtime trio, provenance, build logs, the complete closed overlay log and an explicitly partial snapshot of the still-open replacement log. Verify ZIP entries against originals and the uploaded asset digest before calling the backup complete. Existing raw videos remain local as recorded in the takeover checkpoint.
+GitHub draft takeover release backup `convoy-start-recovery-v1.zip` contains this exact frozen source and runtime trio, provenance, build logs, the complete closed overlay log and an explicitly partial snapshot of the still-open replacement log. All618 archived payloads passed full decompression/hash readback against originals. Upload size56879431 and SHA-256 `2672CBE413A11566F5EAA9FF30E03758F541425DCE21B6819CB4B30282F46A35` match GitHub's asset digest. The accompanying `start-recovery-asset.json` records verification. Code was pushed as `96fc34a`; the main control handoff was pushed as `0f25cd2`. This later documentation update records completed verification; the archive contains the preceding checkpoint version. Existing raw videos remain local as recorded in the takeover checkpoint.
 
 ## Human checks still pending
 
