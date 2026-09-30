@@ -1,5 +1,14 @@
 # Open player test — September 30, 2026
 
+Latest: Marco closed the previous run and authorized the next focused patch and relaunch. `player-debug-bay-v1` is running untimed, with verified exact package/RDB/trio, GAME17:24:15.636 and command listener. The code, checkpoint and exact frozen source/runtime plus previous complete console are pushed/backed up to GitHub with verified archive digest. Marco controls all deployment, placement and input.
+
+This candidate aligns existing bay readiness centers, preserves the4m bay MOVE through replacement, reduces/rearms cohesion speech by measured pressure episodes, selects the existing generated voice pack only in the isolated profile and adds a read-only native path/controls HUD. Native braking/general gap closing remains unresolved; no driving or bay PASS is claimed. Debug HUD is set to appear while controlling a character, with a local toggle in Maneuver options. Current exact checkpoint: `C:/Users/marco/.codex/worktrees/175a/REFORGER/docs/convoy-player-debug-bay-2026-09-30.md`. Prior run: normal exit0,31gameplay/70cleanup-shutdown errors (0/2SCRIPT), retained full console. Long goals remain paused.
+
+The current player session is `D:/ReforgerAgentRuns/player-debug-bay-v1`, launcher45042. Profile stays `D:/ReforgerAgentRuns/everon-journey-manual-v8/profile`; only the new voice-pack override was added. No automated deployment/input or timer. Human debug/bay/driving/warning/voice tests remain pending.
+
+## Earlier player test history
+
+
 **Steady-speed follow-up:** Marco reports a modest, fairly steady slight-decline segment where the follower maintains pace at a constant gap after initial lag/warning, without requiring him to stop. This narrows the next fix to closing the departure gap and responding smoothly to acceleration/restart; it is not proof of spacing acceptance or all-downhill reliability. Speed/slope remain user estimates. No game input or runtime change occurred.
 
 **Pacing clarification:** Marco reports repeated catch-up/restart lag downhill too, worse uphill, and suggests faster driving. Live samples show braking far below an ample speed cap, followed by much faster catch-up when the lead stops. General pacing/native braking remains the investigation; merely raising the maximum cap is not yet supported. A steady-speed straight/level segment without stops would isolate ongoing underpace. No driving source/runtime change was made from that suggestion.
@@ -43,3 +52,4 @@ This verifies this deployment path through observed mouse actions. It does not e
 Two original M923 trucks, one convoy driver and source supplies are nearby. The foremost/northern truck is the player lead; the follower and driver are behind it. Recruit the driver, test **F8** and menu closing, then load100 into each truck through native rear actions. Expected counts after loading: **1600/100/100/0**.
 
 Delivery storage is north along the road nearXZ7172/2907. Follow the [journey instructions](convoy-coordinator-handoff-2026-09-30.md) for Set bay/Hold queue, native unloading, Admit next truck, parking and return. Preserve the full console after normal player exit. No completed journey is claimed from this setup.
+
