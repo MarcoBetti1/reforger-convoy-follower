@@ -2,6 +2,10 @@
 
 Updated September 30, 2026. **The mod is not release ready.** This page separates completed evidence from work still in progress.
 
+## Open human result: debug works; bay readiness still fails
+
+Marco confirms the debug HUD and visual approach to the bay. Native completed MOVE4 still stops at7.59m from road projection but about8.96m from saved bay, outside the preserved8m readiness gate; no selected bay Wait/EXPLICIT_BAY_SETTLED. Cancel then actual Resume all worked; Resume ahead was the rejected other maneuver. Braking with remaining gap persists; native source/cause and alternate voice playback remain unverified. User continues this untimed frozen session; no source/package/input changes. See [open result and intended bay path](convoy-player-debug-bay-2026-09-30.md).
+
 ## Player debug and bay correction — September 30, 2026
 
 The previous human run closed normally but failed bay readiness and retained general stop/restart braking. Focused `player-debug-bay-v1` aligns existing bay centers and preserves4m MOVE radius, reduces cohesion speech/rearming, and adds a read-only native path/control HUD. Alternate voices are selected only in the isolated retest profile. All-five scripts/pack and607source/230packedtext/trio verify; data SHA `F0E5F10FA5AAA4479D427AFDAD6BB73DF2661F56EFA1D47990EEF5F3339C2E49`. Native braking remains unresolved. Untimed retest reached GAME17:24:15.636 with exact trio and listener; Marco owns deployment and input. HUD/rendered route, alternate playback, bay and driving remain pending human validation. See [current player debug checkpoint](convoy-player-debug-bay-2026-09-30.md). Earlier open/prepared statements below are historical.
