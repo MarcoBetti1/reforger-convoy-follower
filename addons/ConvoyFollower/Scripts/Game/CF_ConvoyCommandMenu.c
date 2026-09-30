@@ -69,10 +69,16 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 	{
 		if (!m_CFController || !m_CFController.GetControlledEntity() ||
 			!m_CFController.CF_HasActiveConvoy() || GetGame().GetMenuManager().IsAnyMenuOpen())
+		{
+			Print("[ConvoyFollower] COMMAND_MENU_REFUSED: owner, convoy or native menu guard");
 			return false;
+		}
 		SCR_RadialMenu opened = SCR_RadialMenu.GetOpenedRadialMenu();
 		if (opened && opened != this)
+		{
+			Print("[ConvoyFollower] COMMAND_MENU_REFUSED: another native radial is open");
 			return false;
+		}
 		if (IsOpened())
 		{
 			Close();
@@ -82,7 +88,10 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 		CF_BuildEntries();
 		SetMenuDisplay();
 		if (!m_Display)
+		{
+			Print("[ConvoyFollower] COMMAND_MENU_REFUSED: native radial display unavailable");
 			return false;
+		}
 		Open();
 		m_CFController.CF_RequestPanelSnapshot();
 		Print("[ConvoyFollower] COMMAND_MENU_OPEN: native radial, owner convoy");

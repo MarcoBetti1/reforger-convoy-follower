@@ -2,6 +2,10 @@
 
 Updated September 30, 2026. **The mod is not release ready.** This page separates completed evidence from work still in progress.
 
+## Narrow player-menu candidate — September 30, 2026
+
+Marco authorized a quick menu repair after ordinary V8 failed human F8/rebind input and following. The long development goals remain paused. `player-menu-overlay-v1` changes only the opening context priority/Overlay and event-boundary logs, preserving V8 driving/worlds. All-five validation, pack and607-source/230-packed-text/trio verification passed; data SHA `04C792A6B5126294A589CC705BB1CC696FE039CD39E505A069BAD89FF8450814`. Untimed client reached GAME and registered its input listener; native player deployment completed. Normal key opening/cancel/restored movement remain **unverified**, and ordinary driving remains **failed**. See [the player result and open retest](convoy-player-menu-retest-2026-09-30.md).
+
 **Development paused for Marco takeover.** No further autonomous runs or source changes until explicit resume. See [the takeover checkpoint](convoy-takeover-2026-09-30.md) for human-test steps, push proof and actual backup coverage.
 
 ## User takeover: road-start control interrupted — September30,2026

@@ -28,6 +28,7 @@ modded class SCR_PlayerController
 	protected string m_sCFCommandRoster;
 	protected string m_sCFCommandState;
 	protected bool m_bCFCommandInputRegistered;
+	protected bool m_bCFCommandContextEligible;
 	protected bool m_bCFCommandPending;
 	protected bool m_bCFCommandFirstReply;
 	protected float m_fCFCommandPollSeconds;
@@ -35,6 +36,7 @@ modded class SCR_PlayerController
 	void CF_OpenCommandMenu()
 	{
 		if (System.IsConsoleApp() || !GetGame() || this != GetGame().GetPlayerController()) return;
+		Print("[ConvoyFollower] COMMAND_MENU_REQUEST: local owner, members=" + m_iCFConvoyMemberCount);
 		if (!m_CFCommandMenu) m_CFCommandMenu = new CF_ConvoyCommandMenu(this);
 		m_CFCommandMenu.CF_SetSnapshot(m_sCFCommandRoster, m_sCFCommandState);
 		if (!m_CFCommandMenu.CF_Open())
@@ -70,8 +72,17 @@ modded class SCR_PlayerController
 		{
 			input.AddActionListener("CF_ConvoyCommands", EActionTrigger.DOWN, CF_OpenCommandMenu);
 			m_bCFCommandInputRegistered = true;
+			Print("[ConvoyFollower] COMMAND_INPUT_REGISTERED: native rebindable action");
 		}
-		if (CF_HasActiveConvoy() && ChimeraCharacter.Cast(GetControlledEntity()) && !GetGame().GetMenuManager().IsAnyMenuOpen())
+		bool commandEligible = CF_HasActiveConvoy() && ChimeraCharacter.Cast(GetControlledEntity()) && !GetGame().GetMenuManager().IsAnyMenuOpen();
+		if (commandEligible != m_bCFCommandContextEligible)
+		{
+			m_bCFCommandContextEligible = commandEligible;
+			Print("[ConvoyFollower] COMMAND_INPUT_ELIGIBILITY: eligible=" + commandEligible + " members=" + m_iCFConvoyMemberCount);
+		}
+		// Above ordinary character/vehicle contexts; Overlay keeps their controls
+		// available. The owner and native-menu guards still gate activation.
+		if (commandEligible)
 			input.ActivateContext("CF_ConvoyCommandOpeningContext");
 		if (m_CFCommandMenu)
 		{
