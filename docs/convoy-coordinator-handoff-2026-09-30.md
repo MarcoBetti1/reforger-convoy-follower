@@ -18,7 +18,7 @@ Both convoy checkouts were clean after their owner pushes. The harness main chec
 
 ## Additional GitHub artifact backup
 
-The [draft development backup](https://github.com/MarcoBetti1/reforger-convoy-follower/releases/tag/untagged-19d28708839fb7cb4a25), release ID `400404255`, tag `convoy-takeover-2026-09-30`, is uploaded and verified. It is an archival checkpoint; the mod is not release ready.
+The [draft development backup](https://github.com/MarcoBetti1/reforger-convoy-follower/releases), release ID `400404255`, tag `convoy-takeover-2026-09-30`, is uploaded and verified. It is an archival checkpoint; the mod is not release ready.
 
 - `convoy-frozen-source-and-player-v8.zip`: all seven preserved worktree frozen-source snapshots plus the exact V8 player deployment trio; 4,300 files, 227,893,930 bytes, SHA-256 `4F2022A6D1F914D602455E7A3BFB48309DDFFDEBBB86A6FEFBD4E7AEE8571421`.
 - `convoy-test-evidence-20260930.zip`: 571 original logs, review records and images from worktree client runs and `D:/ReforgerAgentRuns`; 149,328,365 bytes, SHA-256 `C5B356D6790FD6960685712B66EE6730C27B887C805697E0BFDCF694E908656E`. Profile/download/savegame directories are excluded.
