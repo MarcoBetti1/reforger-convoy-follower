@@ -2,7 +2,11 @@
 
 Updated September 30, 2026. **The mod is not release ready.** This page separates completed evidence from work still in progress.
 
-## Open human result: debug works; bay readiness still fails
+## Closed human checkpoint and storage cleanup — September 30, 2026
+
+Human-confirmed debug HUD, persistent bay readiness/native braking failures and original-only voice calls. Normal17:42:22.790 closure/exit0 retains21gameplay/69cleanup-shutdown errors (0/2SCRIPT). Wrong voice override location corrected for next startup only. Current and rollback trios unchanged after user-authorized cleanup removing71.88GB of206 exact package duplicates/195 superseded raw videos.25 useful clips/baselines, full logs and source remain. Historical raw-video-retention statements are superseded by [the deletion audit](cleanup/convoy-storage-audit-2026-09-30.md). Next product focus: on-foot unload/park/next-admit workflow, voice variety and driver clothing; no new launch or driving fix. See [the closed player checkpoint](convoy-player-debug-bay-2026-09-30.md).
+
+## Earlier open human result: debug works; bay readiness still fails
 
 Marco confirms the debug HUD and visual approach to the bay. Native completed MOVE4 still stops at7.59m from road projection but about8.96m from saved bay, outside the preserved8m readiness gate; no selected bay Wait/EXPLICIT_BAY_SETTLED. Cancel then actual Resume all worked; Resume ahead was the rejected other maneuver. Braking with remaining gap persists; native source/cause and alternate voice playback remain unverified. User continues this untimed frozen session; no source/package/input changes. See [open result and intended bay path](convoy-player-debug-bay-2026-09-30.md).
 
