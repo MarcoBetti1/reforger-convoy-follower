@@ -2,13 +2,37 @@
 
 Marco requested wrap-up, GitHub synchronization and paused goals through **Arma / Reforger Control**, chat `01a0f3e6-7755-7ae3-9e16-8d88e57a6a4b`. That chat owns subsequent machine coordination. Resume development only after Marco explicitly asks. No further game launch is part of this checkpoint.
 
+## Verified wrap-up
+
+Both **Convoy Mod Next Iteration** and **Redesign convoy controls and complete…** called `update_goal` with `status=paused` and finished their turns. Both chats are idle. This control chat has no active goal. The game and Workbench are closed, no player session was launched, and no convoy-owned recurring automation was found. The unrelated YouTube automation was already paused and was left unchanged.
+
+The control chat independently matched each owner checkpoint to its GitHub branch:
+
+| Repository and branch | Verified owner checkpoint |
+| --- | --- |
+| Convoy main, `codex/release-hardening` | [6938ac4](https://github.com/MarcoBetti1/reforger-convoy-follower/commit/6938ac4ec6131895f11324db6ad2d2fbbc7e771e) |
+| Newer convoy worktree, `codex/convoy-player-trip-20260929` | [b90157e](https://github.com/MarcoBetti1/reforger-convoy-follower/commit/b90157e851bda48c59cba31d3f02102aea3c5378), including source checkpoint `ac55826` |
+| Generic harness, `codex/convoy-handoff-20260930` | [c7b234a](https://github.com/MarcoBetti1/reforger-agent-harness/commit/c7b234a6602fb124bae3c0eaa44a5c9384af17a1) |
+
+Both convoy checkouts were clean after their owner pushes. The harness main checkout retains its existing edited notes, which are backed up on the separate checkpoint branch; no concurrent changes were discarded. No branches were force-pushed or merged. This control note's follow-up commit changes documentation only. The latest implementation remains in the newer worktree; consult its [takeover note](https://github.com/MarcoBetti1/reforger-convoy-follower/blob/codex/convoy-player-trip-20260929/docs/convoy-takeover-2026-09-30.md) and current validation before resuming.
+
+## Additional GitHub artifact backup
+
+The [draft development backup](https://github.com/MarcoBetti1/reforger-convoy-follower/releases/tag/untagged-19d28708839fb7cb4a25), release ID `400404255`, tag `convoy-takeover-2026-09-30`, is uploaded and verified. It is an archival checkpoint; the mod is not release ready.
+
+- `convoy-frozen-source-and-player-v8.zip`: all seven preserved worktree frozen-source snapshots plus the exact V8 player deployment trio; 4,300 files, 227,893,930 bytes, SHA-256 `4F2022A6D1F914D602455E7A3BFB48309DDFFDEBBB86A6FEFBD4E7AEE8571421`.
+- `convoy-test-evidence-20260930.zip`: 571 original logs, review records and images from worktree client runs and `D:/ReforgerAgentRuns`; 149,328,365 bytes, SHA-256 `C5B356D6790FD6960685712B66EE6730C27B887C805697E0BFDCF694E908656E`. Profile/download/savegame directories are excluded.
+- Both ZIPs contain a per-file manifest. Every archived entry was read back and matched its saved size/SHA-256, and GitHub's asset digests match the local ZIP digests. The README, asset list, packaging script and verification script are also uploaded. Local backup copies remain at `D:/ConvoyTakeoverBackups/2026-09-30`.
+
+The source Git checkpoint also contains exact reconstructable overlays/manifests and the newly written experiment reports. These uploads do not cover every historical cache or recording. The development [recording inventory](https://github.com/MarcoBetti1/reforger-convoy-follower/blob/codex/convoy-player-trip-20260929/docs/experiments/archives/local-recording-inventory.json) lists 221 videos totaling 68,412,459,812 bytes that remain local. Preserve those recordings, external original human-playtest media, and the local roots named in the takeover note. No complete remote video archive is claimed.
+
 ## Repository ownership and resume context
 
 - Main checkout: `C:/Users/marco/Desktop/REFORGER`, branch `codex/release-hardening`, GitHub `MarcoBetti1/reforger-convoy-follower`. Its pre-checkpoint parent is `27e30687ec213c4058031c23db390d0a495b1c50`. This checkpoint archives the previously outstanding retained-arrival OFF_ROUTE JSON/patch and its byte-preserving attributes; it does not apply or promote that experiment.
-- Current development checkout: `C:/Users/marco/.codex/worktrees/175a/REFORGER`, branch `codex/convoy-player-trip-20260929`. **Redesign convoy controls and complete…**, chat `01a0eeb9-21cd-7f63-9b98-de2e1bd11900`, owns that checkout and the generic harness changes. It is saving its own source, evidence summaries, commit/push proof and paused-goal handoff.
+- Current development checkout: `C:/Users/marco/.codex/worktrees/175a/REFORGER`, branch `codex/convoy-player-trip-20260929`. **Redesign convoy controls and complete…**, chat `01a0eeb9-21cd-7f63-9b98-de2e1bd11900`, owns that checkout and the generic harness changes. Its source, evidence summaries, verified push receipts and paused-goal handoff are saved and synchronized.
 - Generic harness: `C:/Users/marco/Desktop/reforger-agent-harness`, GitHub `MarcoBetti1/reforger-agent-harness`; its sync belongs to the development chat.
 - The development checkout's `docs/convoy-validation-current.md`, `docs/convoy-feature-courses.md` and `docs/experiments/player-trip-20260929-session.md` contain the latest development evidence. Main-checkout release-hardening records describe the preserved earlier baseline, not the newer player-trip build.
-- The overall control chat will record the final verified remote commit IDs after both owners finish. A local main-checkout push proof is saved at `.cache/coordinator-pause-20260930/push-proof.json` after a successful normal push. Generated packs, raw logs and recordings remain at their preserved local paths; GitHub source/summary synchronization does not imply those generated artifacts were all uploaded.
+- Verified owner commit IDs and additional artifact coverage are recorded above. A local main-checkout push proof is saved at `.cache/coordinator-pause-20260930/push-proof.json`. Preserve the remaining local generated artifacts and recordings; their presence is distinct from the verified uploaded subset.
 
 ## Latest observations and interrupted work
 
