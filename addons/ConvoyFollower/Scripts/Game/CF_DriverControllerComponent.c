@@ -279,6 +279,8 @@ class CF_DriverControllerComponent : ScriptComponent
 	// Later arrival, Resume and recovery keep their established behavior.
 	[RplProp()]
 	protected bool m_bInitialDeparturePending;
+	[RplProp()]
+	protected bool m_bManualStartPending;
 	protected IEntity m_InitialDepartureTarget;
 	protected vector m_vInitialDepartureAnchor;
 	protected vector m_vInitialDepartureForward;
@@ -361,7 +363,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			if (TryGetVehicleFacing(m_Truck, facing))
 				goalAhead = vector.Dot(toGoal, facing);
 		}
-		bool ready = target && target == GetTargetVehicle(false) && CanTargetMove() &&
+		bool ready = !m_bManualStartPending && target && target == GetTargetVehicle(false) && CanTargetMove() &&
 			advance >= 3.0 && forwardKmh > 1.5 && goalAhead > 2.0 &&
 			goalDistance > CF_ConvoySettings.Get().GetMoveCompletionRadius() + 2.0;
 		float nowMs = GetGame().GetWorld().GetWorldTime();
@@ -1387,6 +1389,8 @@ class CF_DriverControllerComponent : ScriptComponent
 			return "player control; convoy paused";
 		if (m_bPanelHoldReboardBlocked)
 			return "hold blocked: " + m_sPanelHoldReboardFailure;
+		if (m_bManualStartPending)
+			return "ready: choose Start convoy";
 		if (m_bPanelHoldRequested && m_iState == CF_REBOARDING)
 			return "reboarding assigned truck to hold";
 		if (m_iState == CF_PANEL_HOLD)
@@ -1625,6 +1629,25 @@ class CF_DriverControllerComponent : ScriptComponent
 			(m_bPanelHoldRequested && m_iState == CF_PAUSED_ON_FOOT);
 		return resumableState && CF_IsBoarded() && m_Group && movePrefab.IsValid() &&
 			GetTargetVehicle() && (!m_Predecessor || m_Predecessor.CF_IsBoarded());
+	}
+
+	bool CF_IsWaitingForStart()
+	{
+		return m_bManualStartPending;
+	}
+
+	bool CF_StartConvoyMovement()
+	{
+		if (!Replication.IsServer() || !m_bManualStartPending || !CF_CanPanelResume())
+			return false;
+		// Authorize the existing departure wait; do not issue or replace a move.
+		// The normal next-frame geometry/pilot guards still decide departure.
+		m_bManualStartPending = false;
+		CF_SetPanelHoldRequested(false);
+		if (m_iState == CF_PANEL_HOLD) SetState(CF_WAITING_FOR_PREDECESSOR);
+		Replication.BumpMe();
+		Print("[ConvoyFollower] CONVOY_START_AUTHORIZED: Unit " + m_iUnitNumber + " awaiting safe predecessor departure");
+		return true;
 	}
 
 	bool CF_PanelResume()
@@ -3648,6 +3671,7 @@ class CF_DriverControllerComponent : ScriptComponent
 		m_Driver = driver;
 		m_Leader = leader;
 		m_bInitialDeparturePending = true;
+		m_bManualStartPending = true;
 		CF_SetPanelHoldRequested(false);
 		m_PassengerVehicle = null;
 		m_bStopAfterPassengerExit = false;
@@ -4596,6 +4620,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected void ResetToIdle()
 	{
 		CF_StopControlWatch();
+		m_bManualStartPending = false;
 		CF_ResetInitialDeparture();
 		CF_ReleaseNativeCruise("reset_idle");
 		if (m_Driver)

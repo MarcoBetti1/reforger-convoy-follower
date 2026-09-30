@@ -185,7 +185,9 @@ modded class SCR_PlayerController
 			return;
 		}
 		bool accepted = false;
-		if (command == CF_ConvoyPanelOrder.FOLLOW)
+		if (command == CF_ConvoyPanelOrder.START)
+			accepted = CF_ConvoySession.CF_PanelStartConvoy(user);
+		else if (command == CF_ConvoyPanelOrder.FOLLOW)
 			accepted = CF_ConvoySession.CF_PanelResume(user);
 		else if (command == CF_ConvoyPanelOrder.HOLD)
 			accepted = CF_ConvoySession.CF_PanelHold(user);
@@ -206,7 +208,7 @@ modded class SCR_PlayerController
 		else if (command == CF_ConvoyPanelOrder.ADMIT_NEXT)
 			accepted = CF_ConvoySession.CF_PanelAdmitNextTruck(user);
 		if (!accepted)
-			Print("[ConvoyFollower] PANEL_ORDER_BLOCKED: " + command + " unit " + unitIdentity);
+			Print("[ConvoyFollower] PANEL_ORDER_BLOCKED: " + command + " unit " + unitIdentity + " reason=" + CF_ConvoySession.CF_GetOwnerPanelOrderState(user));
 		else
 			Print("[ConvoyFollower] PANEL_ORDER_ACCEPTED: " + command + " unit " + unitIdentity);
 		CF_SendPanelSnapshotToOwner(user);

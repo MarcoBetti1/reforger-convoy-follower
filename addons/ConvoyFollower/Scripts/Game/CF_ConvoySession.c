@@ -641,7 +641,7 @@ class CF_ConvoySession
 			encodedRow.Split("|", columns, false);
 			while (columns.Count() < 11) { encodedRow += "|"; columns.Insert(""); }
 			if (!extendedRows.IsEmpty()) extendedRows += ";";
-			extendedRows += encodedRow + "|" + CF_PanelField(setupReason) + "|" + CF_PanelField(admitReason) + "|" + session.m_bExplicitBay + "|" + CF_PanelField(session.m_sTripState);
+			extendedRows += encodedRow + "|" + CF_PanelField(setupReason) + "|" + CF_PanelField(admitReason) + "|" + session.m_bExplicitBay + "|" + CF_PanelField(session.m_sTripState) + "|" + CF_PanelField(session.CF_GetStartReason(user));
 		}
 		return extendedRows;
 	}
@@ -929,6 +929,11 @@ class CF_ConvoySession
 		bool anyHeld = false;
 		foreach (CF_DriverControllerComponent unit : session.m_aUnits)
 		{
+			if (unit && unit.CF_IsWaitingForStart())
+			{
+				session.m_sPanelOrderState = "blocked: choose Start convoy for newly recruited drivers";
+				return false;
+			}
 			if (!unit || !unit.CF_IsBoarded() ||
 				!unit.CF_CanPanelResume())
 			{
@@ -955,12 +960,61 @@ class CF_ConvoySession
 				if (!resumed.CF_PanelResume())
 				{
 					session.m_iPanelOrder = CF_PANEL_ORDER_NONE;
-					session.m_sPanelOrderState = "blocked: a driver could not accept Resume";
+					string failure = resumed.CF_GetResumeFailureReason();
+					if (failure.IsEmpty()) failure = "driver could not accept Resume";
+					session.m_sPanelOrderState = "blocked: Unit " + session.GetIdentityNumber(resumed) + ": " + failure;
 					return false;
 				}
 			}
 		}
 		session.CF_BeginPanelResumeTracking("accepted: Resume accepted");
+		return true;
+	}
+
+	protected string CF_GetStartReason(IEntity user)
+	{
+		if (!CF_CanUsePanelOrders() || m_iPanelOrder != CF_PANEL_ORDER_NONE)
+			return "finish the active maneuver and wait for all drivers to board";
+		if (!GetOwnerResumeVehicle(user))
+			return "enter your original lead truck";
+		bool waiting;
+		foreach (CF_DriverControllerComponent unit : m_aUnits)
+		{
+			if (!unit || !unit.CF_IsBoarded() || !unit.CF_CanPanelResume())
+				return "all assigned drivers must be seated and ready";
+			if (unit.CF_IsWaitingForStart() && !unit.CF_GetResumeFailureReason().IsEmpty())
+				return unit.CF_GetResumeFailureReason();
+			if (unit.CF_IsWaitingForStart()) waiting = true;
+		}
+		if (!waiting) return "already started; use Resume after Hold";
+		return "ready";
+	}
+
+	static bool CF_PanelStartConvoy(IEntity user)
+	{
+		if (!Replication.IsServer()) return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session) return false;
+		string reason = session.CF_GetStartReason(user);
+		if (reason != "ready")
+		{
+			session.m_sPanelOrderState = "blocked: " + reason;
+			return false;
+		}
+		foreach (CF_DriverControllerComponent unit : session.m_aUnits)
+		{
+			if (!unit.CF_IsWaitingForStart()) continue;
+			if (!unit.CF_StartConvoyMovement())
+			{
+				// A partial command must not silently set the other trucks off.
+				foreach (CF_DriverControllerComponent held : session.m_aUnits)
+					held.CF_RequestPanelHold();
+				session.m_sPanelOrderState = "blocked: Unit " + session.GetIdentityNumber(unit) + ": Start failed; trucks kept held";
+				return false;
+			}
+		}
+		session.m_sPanelOrderState = "accepted: convoy started; pull forward safely in your original lead. Drivers wait for a clear following gap";
+		Print("[ConvoyFollower] PANEL_START_ACCEPTED: explicit departure authorized; movement not yet proved");
 		return true;
 	}
 

@@ -11,6 +11,7 @@ class CF_ConvoyPanelOrder
 	static const int REGROUP_RETURN = 8;
 	static const int SET_UNLOAD_BAY = 9;
 	static const int ADMIT_NEXT = 10;
+	static const int START = 11;
 }
 
 class CF_ConvoyMapPanel : ScriptedWidgetEventHandler

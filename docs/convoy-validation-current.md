@@ -2,11 +2,15 @@
 
 Updated September 30, 2026. **The mod is not release ready.** This page separates completed evidence from work still in progress.
 
+## Player Start and recovery candidate — September 30, 2026
+
+Marco confirmed the overlay menu opens from ordinary player input. A subsequent live Resume rejection was traced to an active failure flag surviving dismissal/recruitment. The authorized focused `player-command-start-v1` patch clears it only after safe assignment retirement, preserves failure history, adds explicit vehicle Start and native symbols, and explains blocked Resume. All five script configurations, packaging and607-source/230-packed-text/trio verification passed; data SHA `B1C0D42F691BA4D185D17B07AF688B6F084F36574F41259F70A488924EA64ABC`. The untimed replacement confirms exact package loading, GAME and the command listener. Marco restored initial input responsiveness and owns placement/testing; automated input has stopped. Start, recovery, symbols and driving remain **unverified**. See [the current player checkpoint](convoy-player-start-recovery-2026-09-30.md).
+
 ## Narrow player-menu candidate — September 30, 2026
 
-Marco authorized a quick menu repair after ordinary V8 failed human F8/rebind input and following. The long development goals remain paused. `player-menu-overlay-v1` changes only the opening context priority/Overlay and event-boundary logs, preserving V8 driving/worlds. All-five validation, pack and607-source/230-packed-text/trio verification passed; data SHA `04C792A6B5126294A589CC705BB1CC696FE039CD39E505A069BAD89FF8450814`. Untimed client reached GAME and registered its input listener; native player deployment completed. Normal key opening/cancel/restored movement remain **unverified**, and ordinary driving remains **failed**. See [the player result and open retest](convoy-player-menu-retest-2026-09-30.md).
+Marco authorized a quick menu repair after ordinary V8 failed human F8/rebind input and following. The long development goals remain paused. `player-menu-overlay-v1` changes only the opening context priority/Overlay and event-boundary logs, preserving V8 driving/worlds. All-five validation, pack and607-source/230-packed-text/trio verification passed; data SHA `04C792A6B5126294A589CC705BB1CC696FE039CD39E505A069BAD89FF8450814`. Untimed client reached GAME and registered its input listener; native player deployment completed. Marco subsequently confirmed normal key opening. Cancel/restored movement remain unqualified, and ordinary driving remains failed. The overlay has closed with a nonzero exit and retained shutdown errors. See [the earlier player result](convoy-player-menu-retest-2026-09-30.md) and the current checkpoint above.
 
-**Development paused for Marco takeover.** No further autonomous runs or source changes until explicit resume. See [the takeover checkpoint](convoy-takeover-2026-09-30.md) for human-test steps, push proof and actual backup coverage.
+**Long development goals paused for Marco takeover.** The focused human-requested menu/Start/recovery changes above were separately authorized; no broader autonomous campaign is resumed. See [the takeover checkpoint](convoy-takeover-2026-09-30.md) for push proof and actual backup coverage.
 
 ## User takeover: road-start control interrupted — September30,2026
 

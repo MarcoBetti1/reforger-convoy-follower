@@ -1266,6 +1266,13 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		m_bOriginalRetireTimedOut = false;
 		m_bOriginalFollowBlocked = false;
 		m_bOriginalFollowBlockApplied = false;
+		// An ended assignment must not poison the same driver's next one.
+		// Keep the historical witness; only clear active failure after its exact
+		// old native slot passed the retirement checks above.
+		m_bEntityFallbackFailedEver = m_bEntityFallbackFailedEver || m_bEntityFallbackFailed;
+		m_bEntityFallbackFailed = false;
+		m_sOriginalFollowFailure = string.Empty;
+		CF_ResetEntityStopEpisode();
 		CF_ReleaseCapturedWait("reset_to_idle");
 		m_bEntityPanelWaitFailed = false;
 		CF_ResetRearPacing(-1, "reset_to_idle");
@@ -1401,6 +1408,8 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 
 	override string CF_GetResumeFailureReason()
 	{
+		if (m_bEntityFallbackFailed && !m_bOriginalFollowBlocked)
+			return "previous movement failed; dismiss and recruit this driver again";
 		if (m_bOriginalFollowGraph && m_bOriginalFollowBlocked)
 			return "original follow order blocked: " + m_sOriginalFollowFailure;
 		return super.CF_GetResumeFailureReason();
