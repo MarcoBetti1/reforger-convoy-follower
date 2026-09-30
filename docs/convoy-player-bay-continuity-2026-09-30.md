@@ -26,7 +26,11 @@ The intermediate `player-units-bay-v1` and final `player-stop-continuity-v1` pas
 | data.pak | `2C87FD7FE5C963E4DB7AE8C5B862F28BECB08B8B5B0B396928AC96662BAC736A` |
 | resourceDatabase.rdb | `CFE16D8660DB5BE7A67633AE145DDD72C22E3D225E38DEBE6B586062C4AD4845` |
 
-The final candidate is prepared, **not launched or gameplay-proven**. No replacement UI/input was injected. Preserve the owner's control; launch a retest when requested. Broader development goals remain paused.
+Marco subsequently requested the launch. All three frozen deployment hashes were rechecked, no existing client was found, and the untimed replacement launched with the existing isolated human profile and ordinary Regina supply world. Console confirms the exact frozen package/RDB, GAME16:46:58.591 and input-listener registration16:46:58.594. Launcher session39788; run/log root `D:/ReforgerAgentRuns/player-stop-continuity-v1`. No deployment or player input was injected; Marco owns placement/testing. **Startup is verified; replacement gameplay remains unverified.** Broader development goals remain paused.
+
+```powershell
+npm run client:run -- --profile D:/ReforgerAgentRuns/everon-journey-manual-v8/profile --run-dir D:/ReforgerAgentRuns/player-stop-continuity-v1 --world Worlds/Showcase/ConvoyFollower_Everon_ReginaSupplyDay_1Truck.ent --addon 5A5FB20BD40C7C70 --addons-dir C:/Users/marco/.codex/worktrees/175a/REFORGER/.cache/player-addons/player-stop-continuity-v1 --keep-open --expect-game --execute
+```
 
 ## Closed human evidence and next test
 
