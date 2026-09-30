@@ -4,7 +4,7 @@ Development is paused at Marco's explicit request. No autonomous features, tests
 
 ## GitHub checkpoint
 
-Addon worktree: `C:/Users/marco/.codex/worktrees/175a/REFORGER`, branch `codex/convoy-player-trip-20260929`, remote `https://github.com/MarcoBetti1/reforger-convoy-follower.git`. The source/docs/evidence checkpoint commit and verified push receipt are recorded below after synchronization. Main checkout `C:/Users/marco/Desktop/REFORGER` was not committed or reset by this chat.
+Addon worktree: `C:/Users/marco/.codex/worktrees/175a/REFORGER`, branch `codex/convoy-player-trip-20260929`, remote `https://github.com/MarcoBetti1/reforger-convoy-follower.git`. Source/docs/evidence checkpoint commit **ac55826be5c17f8a4e6c1b1c1c7c76b082bcf231** was pushed, and git ls-remote returned that exact SHA for this branch. This note's final receipt is a documentation follow-up commit; the source checkpoint remains an ancestor. No force push or merge occurred. Main checkout `C:/Users/marco/Desktop/REFORGER` was not committed or reset by this chat.
 
 Generic harness notes were committed in a separate D: worktree on branch `codex/convoy-handoff-20260930`, commit **c7b234a6602fb124bae3c0eaa44a5c9384af17a1**. Remote `https://github.com/MarcoBetti1/reforger-agent-harness.git` returned that exact SHA for the branch. Both `docs/operations-playbook.md` and `docs/client-window-options.md` are backed up. The shared harness main checkout retains its existing dirty copies; no concurrent changes were discarded. Isolated checkpoint worktree: `D:/ReforgerAgentBuilds/harness-handoff-20260930`.
 
