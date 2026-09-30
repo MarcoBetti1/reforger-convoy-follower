@@ -1,5 +1,9 @@
 # Reforger operations playbook
 
+## September 30 untimed ordinary V8 player deployment
+
+At Marco's request, the exact verified V8 trio launched with explicit GUID and `--keep-open`, using `D:/ReforgerAgentRuns/everon-journey-manual-v8` for isolated output. Direct Game Master startup initially had no playable factions. Verified native recovery: **Scenario properties → Playable factions → US Army → Save and close**, then **Respawn menu → US Army → join group → Continue → Convoy supply journey - Regina daylight staging → Deploy**. The final view was an on-foot player at staging with Game Master closed. Fresh observed mouse clicks worked with Computer Use26.928.21956; `y` requests had no immediate observed screen change. No general keyboard/F8/driving claim follows. [Exact setup and player handoff](convoy-player-session-2026-09-30.md). Leave this untimed session to Marco; development goals remain paused.
+
 ## Native supply-action setup — September 26
 
 For a supply scene inheriting Game Master, check the native game-mode resource setting before diagnosing a missing cargo action. The installed Editor game mode disables SUPPLIES by default. An explicit, one-time master `SCR_BaseGameMode.SetResourceTypeEnabled(true, EResourceType.SUPPLIES)` request made the native actions visible. Keep this scoped to an opted-in test/demo scene.
