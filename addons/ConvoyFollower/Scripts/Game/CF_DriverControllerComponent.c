@@ -839,8 +839,7 @@ class CF_DriverControllerComponent : ScriptComponent
 				return false;
 			bool withinArrivalGoal = false;
 			if (m_bUnloadSequenceHold && m_bUnloadBayGoalValid)
-				withinArrivalGoal = vector.Distance(m_Truck.GetOrigin(), m_vUnloadBayGoal) <=
-					CF_UNLOAD_BAY_READY_RADIUS;
+				withinArrivalGoal = CF_IsInsideUnloadBay(CF_UNLOAD_BAY_READY_RADIUS);
 			else if (m_LeadVehicle)
 				withinArrivalGoal = vector.Distance(m_Truck.GetOrigin(), m_LeadVehicle.GetOrigin()) <=
 					CF_ConvoySettings.Get().m_fStoppedGap + 4.0;
@@ -2675,6 +2674,55 @@ class CF_DriverControllerComponent : ScriptComponent
 		return true;
 	}
 
+
+	// Explicit admission records both the road projection and the owner's bay.
+	// Do not brake at one center while readiness waits at the other.
+	protected bool CF_IsInsideUnloadBay(float radius)
+	{
+		if (!m_Truck || !m_bUnloadBayGoalValid || vector.Distance(m_Truck.GetOrigin(), m_vUnloadBayGoal) > radius) return false;
+		vector savedBay;
+		if (m_Session && m_Session.CF_GetAdmittedExplicitBay(this, m_Truck, m_LeadVehicle, savedBay))
+			return vector.Distance(m_Truck.GetOrigin(), savedBay) <= radius;
+		return true;
+	}
+
+	// Read-only owner diagnostics. No waypoint, native controls or timers change.
+	string CF_GetDrivingDebugRow(int identity, bool detailed)
+	{
+		if (!m_Truck) return string.Empty;
+		CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+		if (!car || !car.GetSimulation()) return string.Empty;
+		VehicleWheeledSimulation sim = car.GetSimulation();
+		vector truckPos = m_Truck.GetOrigin();
+		vector targetPos = truckPos;
+		IEntity target = GetTargetVehicle(false);
+		string targetLabel = "predecessor";
+		if (target) targetPos = target.GetOrigin();
+		else targetLabel = "no target";
+		if (m_bUnloadSequenceHold && m_bUnloadBayGoalValid) { targetPos = m_vUnloadBayGoal; targetLabel = "bay road goal"; }
+		float cap = -1;
+		if (m_NativeCruise && m_NativeCruise.OwnsOverride()) cap = m_NativeCruise.GetRequestedSpeedKmh();
+		string text = "Unit " + identity + ": " + CF_GetPanelStateLabel() + " / " + Math.Round(sim.GetSpeedKmh()) + " km/h";
+		ref array<vector> points = {};
+		if (m_NativeCruise) m_NativeCruise.ReadCurrentPath(points);
+		string path;
+		if (detailed)
+		{
+			text += "\nCruise request " + Math.Round(cap) + " km/h (-1 = none). Gap " + Math.Round(vector.DistanceXZ(truckPos, targetPos)) + " m";
+			text += "\nBrake " + Math.Round(sim.GetBrake() * 100) + "% / throttle " + Math.Round(sim.GetThrottle() * 100) + "%";
+			text += " / steer " + Math.Round(sim.GetSteering() * 100) + "% / gear " + sim.GetGear();
+			text += "\nHandbrake " + sim.IsHandbrakeOn() + " / " + targetLabel + " / path points " + points.Count();
+			for (int i = 0; i < points.Count() && i < 24; i++)
+			{
+				if (i > 0) path += "~";
+				vector pathPoint = points[i];
+				path += "" + pathPoint[0] + " " + pathPoint[1] + " " + pathPoint[2];
+			}
+		}
+		if (path.IsEmpty()) path = "none";
+		return text + "|" + truckPos[0] + " " + truckPos[1] + " " + truckPos[2] + "|" + targetPos[0] + " " + targetPos[1] + " " + targetPos[2] + "|" + path;
+	}
+
 	bool CF_IsSettledAtExplicitBay(vector bay)
 	{
 		return CF_IsBoarded() && !CF_IsControlBlocked() && m_iState == CF_ARRIVING &&
@@ -4101,6 +4149,8 @@ class CF_DriverControllerComponent : ScriptComponent
 			waypoint.SetPriorityLevel(SCR_AIActionBase.PRIORITY_LEVEL_GAMEMASTER);
 		if (m_iState == CF_ON_FOOT_FOLLOW)
 			waypoint.SetCompletionRadius(CF_ON_FOOT_GAP);
+		else if (m_iState == CF_ARRIVING && m_bUnloadSequenceHold && m_bUnloadBayGoalValid)
+			waypoint.SetCompletionRadius(CF_STOPPED_ROAD_GOAL_RADIUS);
 		else if (m_iState == CF_FOLLOWING)
 			waypoint.SetCompletionRadius(CF_ConvoySettings.Get().GetMoveCompletionRadius());
 		else
@@ -4195,7 +4245,9 @@ class CF_DriverControllerComponent : ScriptComponent
 				SCR_AIWaypoint activeWaypoint = SCR_AIWaypoint.Cast(m_Waypoint);
 				if (activeWaypoint && HasOwnWaypointInGroup())
 				{
-					if (m_iState == CF_FOLLOWING)
+					if (m_iState == CF_ARRIVING && m_bUnloadSequenceHold && m_bUnloadBayGoalValid)
+						activeWaypoint.SetCompletionRadius(CF_STOPPED_ROAD_GOAL_RADIUS);
+					else if (m_iState == CF_FOLLOWING)
 						activeWaypoint.SetCompletionRadius(CF_ConvoySettings.Get().GetMoveCompletionRadius());
 					else
 						activeWaypoint.SetCompletionRadius(CF_ConvoySettings.Get().m_fMovingGap);
@@ -4361,8 +4413,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			return false;
 		if (m_iState == CF_ARRIVING && m_bArrivalCloseLogged &&
 			m_bUnloadSequenceHold && m_bUnloadBayGoalValid)
-			return vector.Distance(m_Truck.GetOrigin(), m_vUnloadBayGoal) <=
-				CF_UNLOAD_BAY_READY_EXIT_RADIUS;
+			return CF_IsInsideUnloadBay(CF_UNLOAD_BAY_READY_EXIT_RADIUS);
 		return m_iState == CF_ARRIVING && m_bArrivalCloseLogged &&
 			separation <= CF_ConvoySettings.Get().m_fStoppedGap + CF_ARRIVAL_CLOSE_REAPPROACH_BUFFER;
 	}
@@ -5824,9 +5875,8 @@ class CF_DriverControllerComponent : ScriptComponent
 			bool withinArrivalGate = separation <= CF_ConvoySettings.Get().m_fStoppedGap + 4.0;
 			if (m_bUnloadSequenceHold && m_bUnloadBayGoalValid)
 			{
-				float bayGap = vector.Distance(m_Truck.GetOrigin(), m_vUnloadBayGoal);
-				withinArrivalGate = bayGap <= CF_UNLOAD_BAY_READY_RADIUS;
-				if (m_bArrivalCloseLogged && bayGap <= CF_UNLOAD_BAY_READY_EXIT_RADIUS)
+				withinArrivalGate = CF_IsInsideUnloadBay(CF_UNLOAD_BAY_READY_RADIUS);
+				if (m_bArrivalCloseLogged && CF_IsInsideUnloadBay(CF_UNLOAD_BAY_READY_EXIT_RADIUS))
 					withinArrivalGate = true;
 				withinArrivalGate = withinArrivalGate && CF_IsTruckNearMappedRoad();
 			}

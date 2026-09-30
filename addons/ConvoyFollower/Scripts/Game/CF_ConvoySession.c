@@ -170,6 +170,8 @@ class CF_ConvoySession
 	protected float m_fCohesionCandidateSinceMs = -1;
 	protected float m_fCohesionLastRadioMs = -1;
 	protected bool m_bCohesionRadioPending;
+	protected int m_iCohesionAnnouncedLevel;
+	protected float m_fCohesionClearSinceMs = -1;
 
 	static bool CF_IsWorldCleanup()
 	{
@@ -382,6 +384,7 @@ class CF_ConvoySession
 		m_sCohesionBinding = string.Empty;
 		m_iCohesionCandidate = 0;
 		m_fCohesionCandidateSinceMs = -1;
+		m_fCohesionClearSinceMs = -1;
 		CF_CancelCohesionRadio();
 	}
 
@@ -484,13 +487,22 @@ class CF_ConvoySession
 		SCR_PlayerController controller = GetOrderingController();
 		if (level == 0 || !sample.LeadMoving) CF_CancelCohesionRadio();
 		bool radioDue = m_fCohesionLastRadioMs < 0 || now - m_fCohesionLastRadioMs >= settings.m_fCohesionCooldownSeconds * 1000;
-		if (level > 0 && sample.LeadMoving && controller && radioDue)
+		// Brief stops do not rearm speech. A pressure episode ends only after
+		// five measured seconds together; prediction alone cannot trigger audio.
+		if (sample.ProjectedGapMeters <= settings.m_fCohesionClearDistance)
+		{
+			if (m_fCohesionClearSinceMs < 0) m_fCohesionClearSinceMs = now;
+			if (now - m_fCohesionClearSinceMs >= 5000) m_iCohesionAnnouncedLevel = 0;
+		}
+		else m_fCohesionClearSinceMs = -1;
+		if (level > m_iCohesionAnnouncedLevel && sample.GapMeters >= settings.m_fCohesionEaseDistance && sample.LeadMoving && controller && radioDue)
 		{
 			// One spokesperson and one whole-chain call. Existing range audio
 			// fits both advice levels; precise current advice stays in the panel.
 			controller.CF_DiscardQueuedConvoyRadioEvent(CF_RadioEvent.FAR_WARNING);
 			controller.CF_SendConvoyRadioCall(CF_RadioEvent.COHESION, 0);
 			m_fCohesionLastRadioMs = now;
+			m_iCohesionAnnouncedLevel = level;
 			m_bCohesionRadioPending = true;
 			Print("[ConvoyFollower] COHESION_ADVICE: unit=" + sample.UnitIdentity + " level=" + level + " gap_m=" + sample.GapMeters);
 		}
@@ -546,6 +558,30 @@ class CF_ConvoySession
 
 	// The map panel reads only this server roster. Identity survives a physical
 	// rewire, while position and state come from the current ordered chain.
+	static string CF_GetOwnerDrivingDebug(IEntity user)
+	{
+		if (!Replication.IsServer() || CF_IsWorldCleanup()) return string.Empty;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session || session.m_OrderingPlayer != user) return string.Empty;
+		string rows;
+		for (int i = 0; i < session.m_aUnits.Count() && i < 5; i++)
+		{
+			CF_DriverControllerComponent unit = session.m_aUnits[i];
+			if (!unit) continue;
+			string row = unit.CF_GetDrivingDebugRow(session.GetIdentityNumber(unit), rows.IsEmpty());
+			if (row.IsEmpty()) continue;
+			if (rows.IsEmpty())
+			{
+				string adviceText = "Spacing advice: not assessed";
+				if (session.m_CohesionAdvice) adviceText = session.m_CohesionAdvice.Text;
+				row += "|" + CF_PanelField(adviceText);
+			}
+			if (!rows.IsEmpty()) rows += ";";
+			rows += row;
+		}
+		return rows;
+	}
+
 	static string CF_GetOwnerPanelSnapshot(IEntity user)
 	{
 		if (!Replication.IsServer())
@@ -3288,9 +3324,6 @@ class CF_ConvoySession
 			return;
 		}
 
-		CF_ConvoyCohesionAdvice advice;
-		if (eventId == CF_RadioEvent.FAR_WARNING && CF_ReadOwnerCohesionAdvice(m_OrderingPlayer, advice) && advice.Level > 0)
-			return; // The current whole-chain advice already reports this episode.
 		if (index == 0)
 		{
 			// Unit One is the only audible speaker. These clips use plural

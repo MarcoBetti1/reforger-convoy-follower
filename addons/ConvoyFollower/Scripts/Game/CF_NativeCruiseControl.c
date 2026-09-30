@@ -195,6 +195,14 @@ class CF_NativeCruiseControl
 	}
 
 	bool OwnsOverride() { return m_bOwnOverride; }
+	// Actual native route, not a replay of the leader's earlier position.
+	void ReadCurrentPath(notnull array<vector> points)
+	{
+		points.Clear();
+		if (WorldAlive() && IsAssignedAIPilot(m_Driver, m_Truck) && MovementOwnsTruck(m_Movement, m_Truck))
+			m_Movement.GetCurrentPath(points);
+	}
+
 	float GetRequestedSpeedKmh() { return m_fRequestedSpeedKmh; }
 	string GetResolver() { return m_sResolver; }
 	string GetReason() { return m_sReason; }

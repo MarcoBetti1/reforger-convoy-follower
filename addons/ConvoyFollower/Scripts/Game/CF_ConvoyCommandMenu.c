@@ -203,6 +203,9 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 		options.SetDescription("Whole convoy or waiting line commands. " + m_sCFOrderState);
 		options.SetIcon("{A4A692135635424E}UI/Imagesets/Commanding/Commanding_Icons.imageset", "patrol");
 		options.Enable(true);
+		string debugName = "Show driving debug";
+		if (m_CFController.CF_IsDrivingDebugEnabled()) debugName = "Hide driving debug";
+		options.AddEntry(CF_NewCommand(CF_ConvoyPanelOrder.DEBUG, 0, debugName, "Local read-only display: native path, target, speed request and actual controls. It never changes driving orders."));
 		string cancelName = "Cancel unload / follow";
 		string cancelDescription = "End the unload maneuver and resume outbound following.";
 		if (m_bCFExplicitBay) { cancelName = "Cancel bay / keep held"; cancelDescription = "After the trucks stop, cancel the bay while keeping the original drivers and cargo held. Resume all is a separate order."; }
@@ -318,6 +321,7 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 	{
 		CF_ConvoyCommandEntry entry = CF_ConvoyCommandEntry.Cast(selected);
 		if (!entry || !m_CFController) return;
+		if (entry.Command == CF_ConvoyPanelOrder.DEBUG) { m_CFController.CF_ToggleDrivingDebug(); return; }
 		m_CFController.CF_SubmitPanelOrder(entry.Command, entry.UnitIdentity);
 	}
 }

@@ -12,6 +12,7 @@ class CF_ConvoyPanelOrder
 	static const int SET_UNLOAD_BAY = 9;
 	static const int ADMIT_NEXT = 10;
 	static const int START = 11;
+	static const int DEBUG = 12; // Local overlay only; never a server order.
 }
 
 class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
@@ -481,5 +482,137 @@ modded class SCR_MapEntity
 	{
 		if (m_CFPanel)
 			m_CFPanel.SetFeedback(message);
+	}
+}
+
+// Owner-only read-only HUD. North-up diagram shows Unit One's actual native
+// path (at most 24 points), current truck and target, rather than stale waypoints.
+class CF_DrivingDebugOverlay
+{
+	protected ref Widget m_Root;
+	protected CanvasWidget m_Canvas;
+	protected TextWidget m_Text;
+	protected ref array<ref CanvasWidgetCommand> m_Draw = {};
+	protected float m_fAge;
+	protected bool m_bHasData;
+
+	void Open()
+	{
+		if (m_Root || !GetGame() || !GetGame().GetWorkspace()) return;
+		WorkspaceWidget workspace = GetGame().GetWorkspace();
+		m_Root = workspace.CreateWidgetInWorkspace(WidgetType.FrameWidgetTypeID, Math.Max(12, workspace.GetWidth() - 454), 30, 440, 420,
+			WidgetFlags.VISIBLE | WidgetFlags.IGNORE_CURSOR, Color.White, 1900);
+		if (!m_Root) return;
+		m_Root.SetName("CF_DrivingDebug");
+		m_Canvas = CanvasWidget.Cast(workspace.CreateWidget(WidgetType.CanvasWidgetTypeID, WidgetFlags.VISIBLE | WidgetFlags.IGNORE_CURSOR, Color.White, 0, m_Root));
+		if (m_Canvas)
+		{
+			FrameSlot.SetPos(m_Canvas, 0, 0);
+			FrameSlot.SetSize(m_Canvas, workspace.DPIUnscale(440), workspace.DPIUnscale(420));
+		}
+		m_Text = TextWidget.Cast(workspace.CreateWidget(WidgetType.TextWidgetTypeID,
+			WidgetFlags.VISIBLE | WidgetFlags.NO_LOCALIZATION | WidgetFlags.IGNORE_CURSOR, Color.White, 0, m_Root));
+		if (m_Text)
+		{
+			FrameSlot.SetPos(m_Text, workspace.DPIUnscale(12), workspace.DPIUnscale(190));
+			FrameSlot.SetSize(m_Text, workspace.DPIUnscale(416), workspace.DPIUnscale(225));
+			m_Text.SetExactFontSize((int)Math.Round(workspace.DPIUnscale(14)));
+			m_Text.SetTextWrapping(true);
+		}
+		SetSnapshot(string.Empty);
+	}
+
+	void Close()
+	{
+		if (m_Root) m_Root.RemoveFromHierarchy();
+		m_Root = null;
+		m_Canvas = null;
+		m_Text = null;
+		m_Draw.Clear();
+	}
+
+	void Tick(float dt)
+	{
+		m_fAge += dt;
+		if (m_bHasData && m_fAge > 3 && m_Text)
+		{
+			m_bHasData = false;
+			m_Text.SetText("DRIVING DEBUG: data stale. Waiting for the owner/server snapshot.");
+		}
+	}
+
+	protected void Rect(float x, float y, float w, float h, Color color)
+	{
+		ref PolygonDrawCommand command = new PolygonDrawCommand();
+		command.m_Vertices = {x, y, x+w, y, x+w, y+h, x, y+h};
+		command.m_iColor = color.PackToInt();
+		m_Draw.Insert(command);
+	}
+
+	protected void Line(float x, float y, float xx, float yy, Color color)
+	{
+		float dx = xx-x;
+		float dy = yy-y;
+		float length = Math.Sqrt(dx*dx+dy*dy);
+		if (length < 0.1) return;
+		float ox = -dy/length;
+		float oy = dx/length;
+		ref PolygonDrawCommand command = new PolygonDrawCommand();
+		command.m_Vertices = {x+ox, y+oy, xx+ox, yy+oy, xx-ox, yy-oy, x-ox, y-oy};
+		command.m_iColor = color.PackToInt();
+		m_Draw.Insert(command);
+	}
+
+	void SetSnapshot(string snapshot)
+	{
+		if (!m_Root || !m_Canvas || !m_Text) return;
+		m_fAge = 0;
+		m_bHasData = !snapshot.IsEmpty();
+		m_Draw.Clear();
+		Rect(0, 0, 440, 420, Color.FromRGBA(16, 24, 29, 215));
+		Rect(12, 12, 416, 166, Color.FromRGBA(24, 39, 45, 230));
+		string text = "DRIVING DEBUG (north up / first active unit)\nYellow = truck / green = target / cyan = native path\nCruise request allows speed; it is not actual speed.\nManeuver options: Hide driving debug.\nRecruit and board a driver to see live data.";
+		ref array<string> rows = {};
+		snapshot.Split(";", rows, false);
+		if (!rows.IsEmpty())
+		{
+			ref array<string> fields = {};
+			rows[0].Split("|", fields, false);
+			if (fields.Count() >= 4)
+			{
+				vector truck = fields[1].ToVector();
+				vector target = fields[2].ToVector();
+				ref array<string> encoded = {};
+				ref array<vector> points = {};
+				fields[3].Split("~", encoded, false);
+				float extent = Math.Max(20, Math.Max(Math.AbsFloat(target[0]-truck[0]), Math.AbsFloat(target[2]-truck[2])));
+				foreach (string point : encoded)
+				{
+					if (point == "none") continue;
+					vector position = point.ToVector();
+					points.Insert(position);
+					extent = Math.Max(extent, Math.Max(Math.AbsFloat(position[0]-truck[0]), Math.AbsFloat(position[2]-truck[2])));
+				}
+				float scale = 68 / extent;
+				Line(220, 18, 220, 172, Color.FromRGBA(70, 80, 85, 255));
+				Line(20, 95, 420, 95, Color.FromRGBA(70, 80, 85, 255));
+				for (int i = 1; i < points.Count(); i++)
+					Line(220+(points[i-1][0]-truck[0])*scale, 95-(points[i-1][2]-truck[2])*scale,
+						220+(points[i][0]-truck[0])*scale, 95-(points[i][2]-truck[2])*scale, Color.FromRGBA(50, 210, 235, 255));
+				Rect(216, 91, 8, 8, Color.FromRGBA(255, 215, 35, 255));
+				Rect(216+(target[0]-truck[0])*scale, 91-(target[2]-truck[2])*scale, 8, 8, Color.FromRGBA(80, 245, 90, 255));
+				text = "DRIVING DEBUG: north up / plot half-height " + Math.Round(extent) + " m\nYellow truck / green target / cyan native path\n" + fields[0];
+				if (fields.Count() > 4) text += "\n" + fields[4];
+				for (int j = 1; j < rows.Count(); j++)
+				{
+					ref array<string> other = {};
+					rows[j].Split("|", other, false);
+					if (!other.IsEmpty()) text += "\n" + other[0];
+				}
+				text += "\nCruise request is not actual speed. Hide: Maneuver options.";
+			}
+		}
+		m_Text.SetText(text);
+		m_Canvas.SetDrawCommands(m_Draw);
 	}
 }

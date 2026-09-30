@@ -25,15 +25,15 @@ class CF_ConvoySettings : ScriptAndConfig
 
 	[Attribute(defvalue: "1", category: "Cohesion advice", desc: "Show early whole-chain pace advice and reuse leader range-warning audio. Never controls the player's vehicle.")]
 	bool m_bCohesionAdviceEnabled;
-	[Attribute(defvalue: "40", params: "10 900 1", category: "Cohesion advice", desc: "Projected adjacent gap for Ease up advice; sustained for two seconds. Server validated relative to moving gap and range warning.")]
+	[Attribute(defvalue: "60", params: "10 900 1", category: "Cohesion advice", desc: "Projected adjacent gap for Ease up advice; sustained for two seconds. Server validated relative to moving gap and range warning.")]
 	float m_fCohesionEaseDistance;
-	[Attribute(defvalue: "50", params: "15 900 1", category: "Cohesion advice", desc: "Projected adjacent gap for Wait safely advice; does not issue Hold or change following distance.")]
+	[Attribute(defvalue: "90", params: "15 900 1", category: "Cohesion advice", desc: "Projected adjacent gap for Wait safely advice; does not issue Hold or change following distance.")]
 	float m_fCohesionWaitDistance;
-	[Attribute(defvalue: "30", params: "5 850 1", category: "Cohesion advice", desc: "Every projected adjacent gap must return below this distance to clear advice.")]
+	[Attribute(defvalue: "40", params: "5 850 1", category: "Cohesion advice", desc: "Every projected adjacent gap must return below this distance to clear advice.")]
 	float m_fCohesionClearDistance;
-	[Attribute(defvalue: "3", params: "0 5 0.5", category: "Cohesion advice", desc: "Seconds of actual opening velocity used for advice only; never extrapolates a driving target.")]
+	[Attribute(defvalue: "1.5", params: "0 5 0.5", category: "Cohesion advice", desc: "Seconds of actual opening velocity used for advice only; never extrapolates a driving target.")]
 	float m_fCohesionLookAheadSeconds;
-	[Attribute(defvalue: "30", params: "10 180 1", category: "Cohesion advice", desc: "Minimum seconds between leader cohesion calls, including a new pressure episode.")]
+	[Attribute(defvalue: "60", params: "10 180 1", category: "Cohesion advice", desc: "Minimum seconds between leader cohesion calls, including a new pressure episode.")]
 	float m_fCohesionCooldownSeconds;
 
 	[Attribute(defvalue: "180", params: "40 900 1", category: "Separation", desc: "Distance in metres from the preceding vehicle that starts a sustained range warning.")]
@@ -180,11 +180,11 @@ class CF_ConvoySettings : ScriptAndConfig
 		m_fTruckSearchRadius = 35.0;
 		m_iMaxConvoyUnits = 5;
 		m_bCohesionAdviceEnabled = true;
-		m_fCohesionEaseDistance = 40.0;
-		m_fCohesionWaitDistance = 50.0;
-		m_fCohesionClearDistance = 30.0;
-		m_fCohesionLookAheadSeconds = 3.0;
-		m_fCohesionCooldownSeconds = 30.0;
+		m_fCohesionEaseDistance = 60.0;
+		m_fCohesionWaitDistance = 90.0;
+		m_fCohesionClearDistance = 40.0;
+		m_fCohesionLookAheadSeconds = 1.5;
+		m_fCohesionCooldownSeconds = 60.0;
 		m_fRangeWarningDistance = 180.0;
 		m_fRangeWarningSeconds = 3.0;
 		m_fRangeWarningRearmDistance = 140.0;
@@ -250,12 +250,12 @@ class CF_ConvoySettings : ScriptAndConfig
 		float adviceMovingGap = CohesionValue(m_fMovingGap, 6, 40, 20);
 		float adviceRangeWarning = CohesionValue(m_fRangeWarningDistance, 40, 900, 180);
 		float easeMin = Math.Min(adviceMovingGap + 5.0, adviceRangeWarning - 10.0);
-		m_fCohesionEaseDistance = CohesionValue(m_fCohesionEaseDistance, easeMin, adviceRangeWarning - 5.0, 40);
-		m_fCohesionWaitDistance = CohesionValue(m_fCohesionWaitDistance, m_fCohesionEaseDistance + 1.0, adviceRangeWarning, 50);
+		m_fCohesionEaseDistance = CohesionValue(m_fCohesionEaseDistance, easeMin, adviceRangeWarning - 5.0, 60);
+		m_fCohesionWaitDistance = CohesionValue(m_fCohesionWaitDistance, m_fCohesionEaseDistance + 1.0, adviceRangeWarning, 90);
 		float clearMin = Math.Min(adviceMovingGap, m_fCohesionEaseDistance - 5.0);
-		m_fCohesionClearDistance = CohesionValue(m_fCohesionClearDistance, clearMin, m_fCohesionEaseDistance - 5.0, 30);
-		m_fCohesionLookAheadSeconds = CohesionValue(m_fCohesionLookAheadSeconds, 0, 5, 3);
-		m_fCohesionCooldownSeconds = CohesionValue(m_fCohesionCooldownSeconds, 10, 180, 30);
+		m_fCohesionClearDistance = CohesionValue(m_fCohesionClearDistance, clearMin, m_fCohesionEaseDistance - 5.0, 40);
+		m_fCohesionLookAheadSeconds = CohesionValue(m_fCohesionLookAheadSeconds, 0, 5, 1.5);
+		m_fCohesionCooldownSeconds = CohesionValue(m_fCohesionCooldownSeconds, 10, 180, 60);
 
 		m_fStuckLeadDistance = ClampFloat(m_fStuckLeadDistance, m_fMovingGap + 5.0, 300.0);
 		m_fStuckCheckSeconds = ClampFloat(m_fStuckCheckSeconds, 5.0, 90.0);

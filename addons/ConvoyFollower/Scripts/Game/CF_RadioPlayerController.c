@@ -32,6 +32,9 @@ modded class SCR_PlayerController
 	protected bool m_bCFCommandPending;
 	protected bool m_bCFCommandFirstReply;
 	protected float m_fCFCommandPollSeconds;
+	protected bool m_bCFDrivingDebugEnabled = true;
+	protected float m_fCFDrivingDebugPoll;
+	protected ref CF_DrivingDebugOverlay m_CFDrivingDebug;
 
 	void CF_OpenCommandMenu()
 	{
@@ -66,6 +69,20 @@ modded class SCR_PlayerController
 	{
 		super.OnUpdate(timeSlice);
 		if (System.IsConsoleApp() || !GetGame() || this != GetGame().GetPlayerController()) return;
+		if (m_bCFDrivingDebugEnabled && ChimeraCharacter.Cast(GetControlledEntity()))
+		{
+			if (!m_CFDrivingDebug) m_CFDrivingDebug = new CF_DrivingDebugOverlay();
+			m_CFDrivingDebug.Open();
+			m_CFDrivingDebug.Tick(timeSlice);
+			m_fCFDrivingDebugPoll += timeSlice;
+			if (m_fCFDrivingDebugPoll >= 0.5)
+			{
+				m_fCFDrivingDebugPoll = 0;
+				if (CF_HasActiveConvoy()) Rpc(CF_RpcAskDrivingDebug);
+				else m_CFDrivingDebug.SetSnapshot(string.Empty);
+			}
+		}
+		else if (m_CFDrivingDebug) m_CFDrivingDebug.Close();
 		InputManager input = GetGame().GetInputManager();
 		if (!input) return;
 		if (!m_bCFCommandInputRegistered)
@@ -102,6 +119,7 @@ modded class SCR_PlayerController
 	void ~SCR_PlayerController()
 	{
 		if (!GetGame()) return;
+		if (m_CFDrivingDebug) m_CFDrivingDebug.Close();
 		if (m_CFCommandMenu) m_CFCommandMenu.CF_Dispose();
 		if (m_bCFCommandInputRegistered && GetGame().GetInputManager())
 			GetGame().GetInputManager().RemoveActionListener("CF_ConvoyCommands", EActionTrigger.DOWN, CF_OpenCommandMenu);
@@ -127,6 +145,30 @@ modded class SCR_PlayerController
 	protected ref array<float> m_CFSentRadioTimes = {};
 	protected bool m_bCFHasRoutineCall;
 	protected float m_fCFLastRoutineCallMs;
+
+	bool CF_IsDrivingDebugEnabled() { return m_bCFDrivingDebugEnabled; }
+
+	void CF_ToggleDrivingDebug()
+	{
+		m_bCFDrivingDebugEnabled = !m_bCFDrivingDebugEnabled;
+		if (!m_bCFDrivingDebugEnabled && m_CFDrivingDebug) m_CFDrivingDebug.Close();
+	}
+
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void CF_RpcAskDrivingDebug()
+	{
+		IEntity user = CF_GetPanelOwnerEntity();
+		if (user) Rpc(CF_RpcDoDrivingDebug, CF_ConvoySession.CF_GetOwnerDrivingDebug(user));
+	}
+
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void CF_RpcDoDrivingDebug(string snapshot)
+	{
+		if (System.IsConsoleApp() || !GetGame() || this != GetGame().GetPlayerController() || !m_bCFDrivingDebugEnabled) return;
+		if (!m_CFDrivingDebug) m_CFDrivingDebug = new CF_DrivingDebugOverlay();
+		m_CFDrivingDebug.Open();
+		m_CFDrivingDebug.SetSnapshot(snapshot);
+	}
 
 	void CF_RequestPanelSnapshot()
 	{
