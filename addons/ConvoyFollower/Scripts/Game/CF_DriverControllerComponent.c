@@ -1778,6 +1778,20 @@ class CF_DriverControllerComponent : ScriptComponent
 	// A queued successor gets this road goal only after that truck is parked
 	// and the bay is physically clear. Never route to an occupied/unreachable
 	// point or pull into the player's lead vehicle.
+	// Read-only preflight shared by recording, menu eligibility and admission.
+	// Keep the existing road reach and saved-position tolerances unchanged.
+	string CF_GetUnloadBayRoadReason(vector bay, out vector roadGoal)
+	{
+		if (!m_Truck) return "original queued truck is unavailable";
+		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+		if (!aiWorld || !aiWorld.GetRoadNetworkManager()) return "road network is unavailable";
+		if (!aiWorld.GetRoadNetworkManager().GetReachableWaypointInRoad(m_Truck.GetOrigin(), bay, 8.0, roadGoal))
+			return "no road route from the queued truck to this bay; move both trucks onto a connected road and set the bay again";
+		if (vector.Distance(roadGoal, bay) > 5.0)
+			return "bay is too far from its reachable road goal; choose a position on that road";
+		return string.Empty;
+	}
+
 	bool CF_SetUnloadBayGoal(vector bay, vector leadAnchor)
 	{
 		if (!Replication.IsServer() || CF_IsControlBlocked() || !m_Truck || !CF_IsBoarded())
@@ -1793,17 +1807,11 @@ class CF_DriverControllerComponent : ScriptComponent
 				historicalLeadGap + " m from original lead vehicle");
 			return false;
 		}
-		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
-		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
-		{
-			Print("[ConvoyFollower] UNLOAD_BAY_REJECTED: road network unavailable");
-			return false;
-		}
 		vector roadGoal;
-		if (!aiWorld.GetRoadNetworkManager().GetReachableWaypointInRoad(
-			m_Truck.GetOrigin(), bay, 8.0, roadGoal))
+		string roadReason = CF_GetUnloadBayRoadReason(bay, roadGoal);
+		if (!roadReason.IsEmpty())
 		{
-			Print("[ConvoyFollower] UNLOAD_BAY_REJECTED: recorded bay is not road-reachable");
+			Print("[ConvoyFollower] UNLOAD_BAY_REJECTED: " + roadReason);
 			return false;
 		}
 		if (vector.Distance(roadGoal, bay) > 5.0 ||

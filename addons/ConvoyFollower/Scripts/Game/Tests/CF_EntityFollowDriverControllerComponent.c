@@ -1788,6 +1788,24 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			m_fEntityStableSeconds = 0;
 			return;
 		}
+		// A brief leader stop must not replace a healthy moving-gap lease
+		// while this truck still approaches. Native cruise already brakes for
+		// the real predecessor. Enter the tighter stopped-gap approach only
+		// after the truck is near and slow; final capture keeps all its guards.
+		if (!m_bEntityStopAttempted && m_bOriginalFollowGraph && m_OriginalFollowLease &&
+			m_OriginalFollowLease.Distance == CF_ConvoySettings.Get().m_fMovingGap &&
+			m_OriginalFollowLease.Predecessor == m_LeadVehicle && m_OriginalFollowLease.NativeTarget == m_LeadVehicle)
+		{
+			string approachReason;
+			float approachSpeed;
+			if (m_OriginalFollowLease.Executing(m_Group, approachReason) && CF_EntitySpeed(m_Truck, approachSpeed) &&
+				(separation > CF_ConvoySettings.Get().m_fMovingGap + 2.0 || approachSpeed > CF_ENTITY_STOP_SPEED_KMH))
+			{
+				m_bEntityStablePoseValid = false;
+				m_fEntityStableSeconds = 0;
+				return;
+			}
+		}
 		if (!m_bEntityStopAttempted && !CF_BeginStoppedEntityApproach())
 			return;
 		if (m_bArrivalRoadHold || m_bArrivalRoadRecoveryBlocked)

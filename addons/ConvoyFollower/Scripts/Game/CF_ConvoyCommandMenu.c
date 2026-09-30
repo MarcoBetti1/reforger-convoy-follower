@@ -152,8 +152,8 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 		else if (command == CF_ConvoyPanelOrder.REGROUP_RETURN || command == CF_ConvoyPanelOrder.PULL_REAR) symbol = "patrol";
 		else if (command == CF_ConvoyPanelOrder.CANCEL_UNLOAD) symbol = "halt";
 		if (command == CF_ConvoyPanelOrder.SET_UNLOAD_BAY || command == CF_ConvoyPanelOrder.ADMIT_NEXT)
-			entry.SetIcon("UI/Textures/RadialMenu/Radial-Menu-icons.imageset", "Ressuply");
-		else entry.SetIcon("UI/Imagesets/Commanding/Commanding_Icons.imageset", symbol);
+			entry.SetIcon("{39726705E9706337}UI/Textures/RadialMenu/Radial-Menu-icons.imageset", "Ressuply");
+		else entry.SetIcon("{A4A692135635424E}UI/Imagesets/Commanding/Commanding_Icons.imageset", symbol);
 	}
 
 	protected void CF_BuildEntries()
@@ -167,6 +167,11 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 		entries.Insert(m_CFStartCommand);
 		entries.Insert(CF_NewCommand(CF_ConvoyPanelOrder.HOLD, 0, "Hold all trucks", "Whole convoy: approach the stopped lead, then remain seated."));
 		entries.Insert(CF_NewCommand(CF_ConvoyPanelOrder.FOLLOW, 0, "Resume all trucks", "Whole convoy: follow the original lead in predecessor order."));
+		SCR_SelectionMenuCategoryEntry units = new SCR_SelectionMenuCategoryEntry();
+		units.SetName("Units");
+		units.SetDescription("Choose a truck, then choose its individual command. Whole-convoy orders stay on the main wheel.");
+		units.SetIcon("{A4A692135635424E}UI/Imagesets/Commanding/Commanding_Icons.imageset", "get-in");
+		units.Enable(true);
 		ref array<string> rows = {};
 		m_sCFRoster.Split(";", rows, false);
 		foreach (string row : rows)
@@ -180,7 +185,7 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 			SCR_SelectionMenuCategoryEntry truck = new SCR_SelectionMenuCategoryEntry();
 			truck.SetName("Unit " + identity);
 			truck.SetDescription(CF_TruckDescription(fields));
-			truck.SetIcon("UI/Imagesets/Commanding/Commanding_Icons.imageset", "get-in");
+			truck.SetIcon("{A4A692135635424E}UI/Imagesets/Commanding/Commanding_Icons.imageset", "get-in");
 			truck.Enable(true);
 			truck.AddEntry(CF_NewCommand(CF_ConvoyPanelOrder.PULL_REAR, identity, "Pull off / regroup", "Selected Unit " + identity + ": drive to the rear return line.", CF_Field(fields, 8, "waiting for server eligibility")));
 			truck.AddEntry(CF_NewCommand(CF_ConvoyPanelOrder.WAIT_AHEAD, identity, "Pull ahead / wait", "Selected Unit " + identity + ": drive ahead and remain seated.", CF_Field(fields, 9, "waiting for server eligibility")));
@@ -190,12 +195,13 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 				m_CFTruckCommands.Insert(CF_ConvoyCommandEntry.Cast(child));
 			m_CFTruckCategories.Insert(truck);
 			m_CFTruckIdentities.Insert(identity);
-			entries.Insert(truck);
+			units.AddEntry(truck);
 		}
+		entries.Insert(units);
 		SCR_SelectionMenuCategoryEntry options = new SCR_SelectionMenuCategoryEntry();
 		options.SetName("Maneuver options");
 		options.SetDescription("Whole convoy or waiting line commands. " + m_sCFOrderState);
-		options.SetIcon("UI/Imagesets/Commanding/Commanding_Icons.imageset", "patrol");
+		options.SetIcon("{A4A692135635424E}UI/Imagesets/Commanding/Commanding_Icons.imageset", "patrol");
 		options.Enable(true);
 		string cancelName = "Cancel unload / follow";
 		string cancelDescription = "End the unload maneuver and resume outbound following.";
@@ -207,11 +213,11 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 		entries.Insert(options);
 		SCR_SelectionMenuCategoryEntry bay = new SCR_SelectionMenuCategoryEntry();
 		bay.SetName("Unload bay");
-		bay.SetDescription("You unload your lead and drive clear. Admit one original truck, unload it, command parking, then repeat. " + m_sCFOrderState);
-		bay.SetIcon("UI/Textures/RadialMenu/Radial-Menu-icons.imageset", "Ressuply");
+		bay.SetDescription("Set bay saves the stopped lead's position. Unload, drive clear and stop, then Admit next truck. No separate clear-bay order. " + m_sCFOrderState);
+		bay.SetIcon("{39726705E9706337}UI/Textures/RadialMenu/Radial-Menu-icons.imageset", "Ressuply");
 		bay.Enable(true);
 		CF_ConvoyCommandEntry setup = CF_NewCommand(CF_ConvoyPanelOrder.SET_UNLOAD_BAY, 0, "Set bay / Hold queue", "Record your stopped original lead's position as the bay. Wait for all trucks to Hold before unloading your lead.", m_sCFBaySetupReason);
-		CF_ConvoyCommandEntry admit = CF_NewCommand(CF_ConvoyPanelOrder.ADMIT_NEXT, 0, "Admit next truck", "After unloading and driving clear, admit only the front original truck. The server checks the queue and actual vehicle bounds.", m_sCFBayAdmitReason);
+		CF_ConvoyCommandEntry admit = CF_NewCommand(CF_ConvoyPanelOrder.ADMIT_NEXT, 0, "Admit next truck", "The bay is already saved. Unload your lead, drive clear and stop while seated in it, then Admit. Clearance is checked automatically; Resume is blocked during bay operations.", m_sCFBayAdmitReason);
 		m_CFBayCommands.Insert(setup);
 		m_CFBayCommands.Insert(admit);
 		bay.AddEntry(setup);

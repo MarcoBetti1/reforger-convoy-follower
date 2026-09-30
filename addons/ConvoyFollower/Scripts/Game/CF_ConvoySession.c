@@ -672,6 +672,17 @@ class CF_ConvoySession
 			Print("[ConvoyFollower] EXPLICIT_BAY_RECORD_REJECTED: reason=original_lead_not_stopped queue_changed=false bay_recorded=false");
 			return false;
 		}
+		if (!session.m_aUnits.IsEmpty())
+		{
+			vector roadGoal;
+			string roadReason = session.m_aUnits[0].CF_GetUnloadBayRoadReason(lead.GetOrigin(), roadGoal);
+			if (!roadReason.IsEmpty())
+			{
+				session.m_sPanelOrderState = "blocked: " + roadReason;
+				Print("[ConvoyFollower] EXPLICIT_BAY_RECORD_REJECTED: " + roadReason + " queue_changed=false bay_recorded=false");
+				return false;
+			}
+		}
 		if (!CF_PanelHold(user)) return false;
 		session.m_bExplicitBay = true;
 		session.m_bManualReturnOnly = true;
@@ -732,6 +743,9 @@ class CF_ConvoySession
 			return "stop your lead clear of the bay before admission";
 		m_ExplicitBayAdmissionTruck = m_aUnits[0].CF_GetAssignedVehicle();
 		if (!m_ExplicitBayAdmissionTruck) return "original queued truck is unavailable";
+		vector roadGoal;
+		string roadReason = m_aUnits[0].CF_GetUnloadBayRoadReason(m_vUnloadBayPosition, roadGoal);
+		if (!roadReason.IsEmpty()) return roadReason;
 		m_sExplicitBayBlocker = string.Empty;
 		float radius = vector.Distance(m_ExplicitBayAdmissionTruck.GetOrigin(), m_vUnloadBayPosition) + 20.0;
 		GetGame().GetWorld().QueryEntitiesBySphere(m_vUnloadBayPosition, radius, CF_ConsiderExplicitBayVehicle);
