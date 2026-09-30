@@ -35,3 +35,7 @@ natural-recovery-trip-v1-source.json -text
 natural-retrace-trip-v1-source.patch -text
 
 natural-retrace-trip-v1-source.json -text
+
+retained-arrival-offroute-v1-source.patch -text
+
+retained-arrival-offroute-v1-source.json -text
