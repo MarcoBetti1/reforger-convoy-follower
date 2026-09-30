@@ -1,5 +1,13 @@
 # Human short trip and next candidate — September 30, 2026
 
+## Open replacement test: admitted bay fails readiness
+
+Marco reported Admit working in the running replacement, but the truck stopped short and the next commands stayed blocked. He canceled and continued to the hill test. The live console confirms bay recording16:53:04.014 at `<7163.32,140.902,2235.68>`, admission16:54:00.547 to projected road goal `<7161.26,140.829,2237.22>`, then mapped-road brake capture16:54:18.516. The truck settled near `<7154.26,141.36,2236.13>`: about7.1m from the projected road goal but9.1m from the saved bay. No EXPLICIT_BAY_SETTLED marker appeared before cancellation16:55:46.830; Resume was accepted16:56:10.430.
+
+Source uses8m from the projected road goal for brake capture and unload-release readiness, but8m from the saved bay for `CF_IsSettledAtExplicitBay`. The projected offset can therefore produce a stopped truck outside session readiness. There is no heading-match predicate in that explicit readiness path. This is a conflicting-center issue, not evidence that the player must reproduce exact orientation. A secondary defect appears after capture: the rebuilt MOVE at16:54:19.331 uses radius20 instead of the original explicit bay radius4 and completes immediately, without bringing the truck closer. Future correction should consistently honor saved-bay readiness and preserve the tight radius on every explicit-bay MOVE; do not widen acceptance or claim completion from admission alone.
+
+This is live, partial evidence, snapshot `.cache/player-stop-continuity-v1/human-bay-observation/console-PARTIAL.log`; the full running log remains `D:/ReforgerAgentRuns/player-stop-continuity-v1/logs/console.log`. No source/build/runtime/input changes were made during this observation. Hill feedback is pending; the owner's proposed next steps are multi-truck testing and then video staging if driving improves. Those are not yet completed or release acceptance.
+
 Marco reported a successful short trip on `player-command-start-v1`, including Hold/Resume halfway, recovery after initially getting lost, and cancellation of an unsuccessful bay followed by resumed driving. This is positive human experience on one trip, not autonomous repeatability or a full supply journey. No stale-failure poisoning was reported on this trip; it does not prove recreation of the previous dismissal/recruitment failure.
 
 ## Bay failure and menu changes
