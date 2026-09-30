@@ -1,5 +1,7 @@
 # Convoy Follower for Arma Reforger
 
+For current work, start at the [Convoy control point](docs/convoy-control-current.md): latest source location, player result, next priorities and storage cleanup. Older experiment pages are historical.
+
 Addon source, recorded radio assets, repeatable gameplay tests, and development notes for a player-led AI vehicle convoy. Unit One follows the player, later drivers follow the truck ahead, and the leader speaks for the convoy.
 
 ## Current focus

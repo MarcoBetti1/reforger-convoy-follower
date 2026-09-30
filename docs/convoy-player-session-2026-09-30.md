@@ -1,4 +1,6 @@
-# Open player test — September 30, 2026
+# Player test history — September 30, 2026
+
+**Current session closed normally at17:42:22.790, exit0.** Debug HUD works; bay readiness/native braking and alternate playback still failed. Profile override location corrected for next startup. User-authorized cleanup removed71.88GB and preserved the current/rollback packs and full logs. Start at [the concise control guide](convoy-control-current.md) and [cleanup audit](cleanup/convoy-storage-audit-2026-09-30.md); open-session statements below are earlier history.
 
 Latest: Marco closed the previous run and authorized the next focused patch and relaunch. `player-debug-bay-v1` is running untimed, with verified exact package/RDB/trio, GAME17:24:15.636 and command listener. The code, checkpoint and exact frozen source/runtime plus previous complete console are pushed/backed up to GitHub with verified archive digest. Marco controls all deployment, placement and input.
 

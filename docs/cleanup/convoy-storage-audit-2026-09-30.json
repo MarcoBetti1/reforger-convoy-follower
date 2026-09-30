@@ -1,0 +1,2958 @@
+{
+  "date": "2026-09-30",
+  "authorization": "Marco explicitly requested removal of superseded work/test recordings and unnecessary copies after the storage audit; repeated go-ahead after hearing ~97GB inventory.",
+  "freedBytes": 71884562499,
+  "deletedExactPackageCopies": [
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\probe-packs\\convoy-profile-smoke-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\local-server\\convoy-profile-smoke\\profile\\addons\\ConvoyFollower\\data.pak",
+      "sha256": "782BA09E7B9C89CC372743AC844AD12466E267C1E2CF21A59DBA88F1F063EC20",
+      "bytes": 32422522,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\workbench-runs\\convoy-auto-ai-camera-pack\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\local-server\\convoy-profile-smoke\\profile\\addons\\ConvoyFollower\\data.pak",
+      "sha256": "782BA09E7B9C89CC372743AC844AD12466E267C1E2CF21A59DBA88F1F063EC20",
+      "bytes": 32422522,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-action-active-observer-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-action-active-observer-v1\\data.pak",
+      "sha256": "3E241FA453B16D420C12BE120A0FB79EF7E3954601525B77A609F51FA0FD6790",
+      "bytes": 32640937,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-action-active-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-action-active-v1\\data.pak",
+      "sha256": "78046F6B52CAF47154F88F36AFEA822E773C5CB585B3E11409DEFD960301B69A",
+      "bytes": 32639415,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-action-baseline-suspension-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-action-baseline-suspension-v1\\data.pak",
+      "sha256": "5EA783183D6EDE9FCC5676FA16246E19062E4767DED909DEF4D3C847EA0ABC6D",
+      "bytes": 32641804,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-action-measurement-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-action-measurement-v2\\data.pak",
+      "sha256": "B5F2395E74AD67CDAD896257AB4AC5E2DC7AE2A79FCDE31C975CBB8A73E67ACC",
+      "bytes": 32640527,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-action-readiness-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-action-readiness-v1\\data.pak",
+      "sha256": "5BA9F239B316970328C0DB066DE5E03B85D8C9B43C4F9F789509EC174AA0F9CB",
+      "bytes": 32634719,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-arrival-canonical-three-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-arrival-handoff-canonical-v1\\data.pak",
+      "sha256": "3CC40540C30BE9CAEF37499424809B57DD7A3C8B3C7340EF4AC6B91CAB706F1D",
+      "bytes": 32756185,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-ordinary-three-arrival-recovery-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-arrival-recovery-v1\\data.pak",
+      "sha256": "39ACB01A7B39527E357BF13960756CD2C13665DF17B930D74BC2829A4A943CE7",
+      "bytes": 32722475,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-arrival-zero-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-arrival-zero-v1\\data.pak",
+      "sha256": "30D094F57232348A4E891AA35FA46FF06D480A4CC20C7396CBCB605AB98C5225",
+      "bytes": 32581710,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-authored-clean-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-authored-clean-v2\\data.pak",
+      "sha256": "378848C40D0714AD7D4AF9622ED37795D40A1D7676DF770FB92F5CA392F70E6E",
+      "bytes": 32678334,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-board-handover-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-board-handover-v1\\data.pak",
+      "sha256": "72553817EA40AF6AAC237D38CF1FB8F5719E363C358424EFA92B9FE4139BAF60",
+      "bytes": 32569369,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-canonical-pending-guide-trip-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-canonical-pending-guide-trip-v1\\data.pak",
+      "sha256": "0CAC7F858F82D2436792230DBDBB4AFD29FDEA17690DCA90C3BA00C7A20D00BA",
+      "bytes": 32753136,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-clear-field-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-clear-field-v1\\data.pak",
+      "sha256": "2507A0232756A0A8F52D3701FA9CD9F9A0A0636C195DE64380DA2F660FECA756",
+      "bytes": 32548510,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-cooperative-cohesion-trip-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-cooperative-cohesion-trip-v1\\data.pak",
+      "sha256": "EC0374C6AD4A9446B9AB0DB3F6D19BF62E28050602A44AE33B17FAB92CF24007",
+      "bytes": 32759338,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-cooperative-cohesion-trip-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-cooperative-cohesion-trip-v2\\data.pak",
+      "sha256": "E71C84A81F8C508B282DB7998895F68A858F335B118557E16C6554BD0C1F6EB7",
+      "bytes": 32759822,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-cooperative-supply-recovery-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-cooperative-supply-recovery-v1\\data.pak",
+      "sha256": "82753824BCF978D1E3030EB206A646C22BC73B0910FD281B8B53D93D02E0568C",
+      "bytes": 32762261,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-cooperative20-two-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-cooperative20-v1\\data.pak",
+      "sha256": "48D3F65CE5D36E00108249BC402B97B1521088F2102185A27348DDDD84D88B90",
+      "bytes": 32695521,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-cruise-lead-hold-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-cruise-lead-hold-v1\\data.pak",
+      "sha256": "62AB8EFA25448E877B61C3A9B9B971CAD0EACA02F59743598BD39ADF85773526",
+      "bytes": 32553518,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-cruise-probe-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-cruise-probe-v1\\data.pak",
+      "sha256": "A64A1B6C391FF75E61757ADE18AB6FBEB3C324F9762FCE603A1A89D9A1DB1F5E",
+      "bytes": 32552892,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-departure-panel-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-departure-panel-v1\\data.pak",
+      "sha256": "C657779ABA984D49894FBBD9623DBFB6AB993DE898B22347A65C9969CA627ACD",
+      "bytes": 32598502,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-direct-head-native5-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-direct-head-native5-v1\\data.pak",
+      "sha256": "71CFCFD2477AEB84F887F61678D37DDFFC76E48183BD853B56DA9F381403C7E9",
+      "bytes": 32757712,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-direct-head-proxy-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-direct-head-proxy-v1\\data.pak",
+      "sha256": "83D314E0174776B02775F83C60D814F372FC7B9E0614180390B6C125975C5756",
+      "bytes": 32759553,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-direct-head-sampled-native5-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-direct-head-sampled-native5-v1\\data.pak",
+      "sha256": "DBA02C44A2F2B4F3FE64EA1A7F6394C10B82E14187619F518D5FE9130EA61BA2",
+      "bytes": 32760258,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-direct-head-sampled-proxy-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-direct-head-sampled-proxy-v1-pack2\\data.pak",
+      "sha256": "64C0B211434679C70CAB9F29EA5019B580BD835D292AEA9CD64D8D0D60E036FE",
+      "bytes": 32760159,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-driving-integration-held-reboard-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-driving-integration-v1\\data.pak",
+      "sha256": "FA835A46E5A3DC4CDA340839988DB12FE1A7A75CD8E24E520DA1275E85443DA9",
+      "bytes": 32754538,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-engine-ready-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-engine-ready-v1\\data.pak",
+      "sha256": "195A3E7DB0A0F68C23A334826D336A2E50BC5C0ED7516262F01C7AA1C14E6D05",
+      "bytes": 32550040,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-entity-follow-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-entity-follow-v2\\data.pak",
+      "sha256": "21658B5401A8FF709BE5AC031FA78F78F35183E910782CAABE051A1074DABBCE",
+      "bytes": 32620881,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-entity-rear-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-entity-rear-v1\\data.pak",
+      "sha256": "BA45A5BA24CD7E5C473530CE04B18C7F02ED86BAD5814753622BEA159B604315",
+      "bytes": 32639440,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-entity-stop-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-entity-stop-v1\\data.pak",
+      "sha256": "E01A1EC379C84C2F2E0BB205CD5AB5C93D695444CAC797FB9768CDFBD732287F",
+      "bytes": 32629750,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-entity-stop-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-entity-stop-v3\\data.pak",
+      "sha256": "7C599AE16FBEBFDA519A3CB1BF41B4BD1B2280F62098685816317EB379AD6F5B",
+      "bytes": 32634066,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-entity-wait-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-entity-wait-v2\\data.pak",
+      "sha256": "D4E3874CE7928747E061F64653866B8302E1E2950658EA95C173A997B79154CC",
+      "bytes": 32637172,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-ordinary-three-entry-pacing-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-entry-rear-pacing-v1\\data.pak",
+      "sha256": "EDC4B52E856E4786647B81E6B8C9C54D02A347BFCEB4C40F6F127B3D23E19334",
+      "bytes": 32722997,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-explicit-retry-2truck-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-explicit-retry-v2\\data.pak",
+      "sha256": "F113FACAF9904F24FA8B3AA168E058FE543AE603542D6063E63959FAA8B1A804",
+      "bytes": 32767477,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-explicit-retry-2truck-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-explicit-retry-v3\\data.pak",
+      "sha256": "94C1C0B577FEA279145E9CE91798F45F611EEF3CDC4EF7737C6CE52583FEFF2B",
+      "bytes": 32767546,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-feature-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-feature-courses-v2\\data.pak",
+      "sha256": "B55B50E3972264F7D210CB6DF6F0B67EF45E1342133AFE9EF17B208D14C43FA0",
+      "bytes": 32529977,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-feature-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-feature-courses-v3\\data.pak",
+      "sha256": "7700B4B063929105D68C590B0CC6B316B736256479E04260CADEC3F3ECAE69DF",
+      "bytes": 32535907,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-feature-v4-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-feature-courses-v4\\data.pak",
+      "sha256": "28ECA5B662F1D8E9020821606A7ACA1816B9E855162749D60DF58220C89CE991",
+      "bytes": 32541306,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-guidance-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-guidance-v1\\data.pak",
+      "sha256": "27D2AF85070871A0013F91FD5514C51DC949E881B91E1723B888A05303398669",
+      "bytes": 32546363,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-head-guide-prejoin-approach-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-head-guide-prejoin-approach-v1\\data.pak",
+      "sha256": "D5D5735F01FF82A06EDBFB6A8680C42456BBB56BEA93D656EDF078A721DCBA59",
+      "bytes": 32757611,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-head-guide-road81-direct-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-head-guide-road81-v1\\data.pak",
+      "sha256": "9B58385623DFDED5B8E5FB1B61BEB263C84EEFF85E16380ABBDC44626270DFD0",
+      "bytes": 32757314,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-head-guide-road81-guide-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-head-guide-road81-v1\\data.pak",
+      "sha256": "9B58385623DFDED5B8E5FB1B61BEB263C84EEFF85E16380ABBDC44626270DFD0",
+      "bytes": 32757314,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-input-pilot-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-input-pilot-v1\\data.pak",
+      "sha256": "C54DF7B703C915712ABE85F14A82E738C05A420D22B5BB7757DF4CC11500D801",
+      "bytes": 32605619,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-loaded-pair-trip-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-loaded-pair-trip-v1\\data.pak",
+      "sha256": "C229B6600DFF5E1CCC55FBE0216BAE85DA5029604FD1AA2B76A7281E4703C540",
+      "bytes": 32735434,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-loaded-pair-trip-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-loaded-pair-trip-v2\\data.pak",
+      "sha256": "037F30C6D6E18A284146536B7CEEBE6A08B547A4DE3AEC213C79A2F39701AE89",
+      "bytes": 32735982,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-loaded-pair-trip-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-loaded-pair-trip-v3\\data.pak",
+      "sha256": "CDE24B2F16E895335721FB32B8C2E7349966367F5FCBE60CB315F6DE5DD3639D",
+      "bytes": 32737815,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-loaded-pair-trip-v4-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-loaded-pair-trip-v4\\data.pak",
+      "sha256": "034B5BBABBD49586876F2E4245E7B6BD428EE221AB220CC19CDD25CDB3B5E415",
+      "bytes": 32737903,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-loaded-straight-trip-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-loaded-straight-trip-v1\\data.pak",
+      "sha256": "5BE37BAE52010EEA457666A70CC07A5B965D5B0E234AAC8515A2C610389F53FF",
+      "bytes": 32746308,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-loaded-straight-trip-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-loaded-straight-trip-v2\\data.pak",
+      "sha256": "4E97FE8D728C13665BB62D2E845F988A25D0F4E8983FF37DCE3FDDA61A7ED8D6",
+      "bytes": 32746783,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-loaded-straight-trip-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-loaded-straight-trip-v3\\data.pak",
+      "sha256": "515335F7452D9A9B3E1F9B0D7D91730AEE65B1F299E1AC7C0DB3FDAB69B9D783",
+      "bytes": 32747697,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-loaded-straight-trip-v4-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-loaded-straight-trip-v4\\data.pak",
+      "sha256": "A40590B23BB1C59D4F517F28F71796B77FBBF6118E1F8EDA6B9D6F435B8B2619",
+      "bytes": 32748169,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-loaded-supply-trip-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-loaded-supply-trip-v1-repair1\\data.pak",
+      "sha256": "6361D179EA75890F0D4C2BFF1A11A53A98A4BD64622CBAFDE037257740353D50",
+      "bytes": 32717242,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-local-chain-geometry-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-local-chain-projection-v1\\data.pak",
+      "sha256": "CC7354EBAD022459D55A1A9496AC5E2155F8D3E22131FDCF884171F1EFDBC777",
+      "bytes": 32750570,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-local-chain-geometry-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-local-chain-projection-v2\\data.pak",
+      "sha256": "7FFD7818CBB7573C71B35D4C97151734CC83BF6FD43824E78948DAF6BC9AF00E",
+      "bytes": 32750994,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-local-chain-geometry-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-local-chain-projection-v3\\data.pak",
+      "sha256": "78C44BE44931A74E559D2092AF255D283DD161C65234DBBC909D075320EDD147",
+      "bytes": 32751051,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-loaded-straight-trip-v5-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-local-chain-projection-v4\\data.pak",
+      "sha256": "3DBA6E1B5E132E105868AE658FA0EACB7DA1C89B09EEFC8DCCF51C078D8E1919",
+      "bytes": 32751177,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-local-chain-geometry-v4-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-local-chain-projection-v4\\data.pak",
+      "sha256": "3DBA6E1B5E132E105868AE658FA0EACB7DA1C89B09EEFC8DCCF51C078D8E1919",
+      "bytes": 32751177,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-ordinary-three-middle-pacing-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-middle-rear-pacing-v1\\data.pak",
+      "sha256": "AC5D5AC7A8786C7E6AC46B749AB73C61D65FCBE283CE2F8D106D035F33948BF9",
+      "bytes": 32722528,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-moving-refresh-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-moving-refresh-v1\\data.pak",
+      "sha256": "00FB22C5F930C8D100F7A7E8CEBD685C4B2981D6B3E001430DBB1FCDDBDB1D2A",
+      "bytes": 32561253,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-moving-restart-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-moving-restart-v1\\data.pak",
+      "sha256": "652C4BE39007C0E9FF4F9175A3FB48D835FD3555A4A13D6B289F52AE8FFE6759",
+      "bytes": 32576153,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-native-cargo-action-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-native-cargo-action-v1\\data.pak",
+      "sha256": "50587A637504BC76DDCEB37163707FC0D72E0FAEF974F8B79D4E37BF811744EA",
+      "bytes": 32708685,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-native-cargo-action-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-native-cargo-action-v2\\data.pak",
+      "sha256": "6801D9667AE41105C13304DF64DBEC87E4A505B82942E0797B157CFA4601FB66",
+      "bytes": 32709085,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-native-cargo-action-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-native-cargo-action-v3\\data.pak",
+      "sha256": "64D67FFE82703D816A7670B4875C387952F0955C97DE5C2CFED320AB7BBB706B",
+      "bytes": 32709599,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-native-cargo-action-v4-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-native-cargo-action-v4\\data.pak",
+      "sha256": "31E7D431E9C1D665F1074CD33FDD5D0D6A86BD3FF92C684907F000D759919D6A",
+      "bytes": 32709889,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-native-cargo-action-v5-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-native-cargo-action-v5\\data.pak",
+      "sha256": "20B9DBB6B406237433F4C812BC7E5D482C90C4949645D10A850A23B0E2929FAE",
+      "bytes": 32710238,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-native-cargo-action-v6-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-native-cargo-action-v6\\data.pak",
+      "sha256": "CC39384DD7C1A9DFFE64EC180A781FD03B0C5AFBBC313F8736F0A31E10A7EE4C",
+      "bytes": 32710564,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-native-lead-hold-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-native-lead-hold-v2\\data.pak",
+      "sha256": "D17AEB665902501A629D735466FA67E3982891D532FCB24E389D1D65C8C6CA50",
+      "bytes": 32556576,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-natural-recovery-trip-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-natural-recovery-trip-v1\\data.pak",
+      "sha256": "EA4BE53E9841133E2EEA5A200CAABB717A003B22A5881861A50CC117F0068A8F",
+      "bytes": 32768925,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-offnetwork-arrival-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-offnetwork-arrival-v1\\data.pak",
+      "sha256": "783B9A89D036E711E3A0E952F3CF4B808FB5C43318C22AE1924719857591A18E",
+      "bytes": 32549685,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-ordinary-one-resume-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-ordinary-gameplay-v1\\data.pak",
+      "sha256": "7ED4448FC670B14F4557DC68F202E8A14FE0A8EC31EA6227049506057B736464",
+      "bytes": 32702315,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-ordinary-two-arrival-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-ordinary-gameplay-v1\\data.pak",
+      "sha256": "7ED4448FC670B14F4557DC68F202E8A14FE0A8EC31EA6227049506057B736464",
+      "bytes": 32702315,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-original-command-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-original-command-v1\\data.pak",
+      "sha256": "FA913F7A6883247168528C6C7275FFB528DF9FEC9F91470571D64A46B248AB7A",
+      "bytes": 32676375,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-original-command-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-original-command-v2\\data.pak",
+      "sha256": "59F799062000EAB76E59D27940D9EF6A59C724DE87EDE854448D6E3476704570",
+      "bytes": 32677682,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-original-command-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-original-command-v3\\data.pak",
+      "sha256": "BBEF53063EE8072D710AEDBDB0B529ACB075EBD1222AED956CEF562238C29BEF",
+      "bytes": 32678205,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-original-comparisons-v4-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-original-comparisons-v4\\data.pak",
+      "sha256": "46122D43810C05B65C91F7247C5A9B5705AFD7967737519FA789C17BA9052169",
+      "bytes": 32685785,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-original-follow-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-original-follow-v2\\data.pak",
+      "sha256": "424A3383A06DB504106ED7CE6BE597B5BB3DA96156548366FF22BB15942830EB",
+      "bytes": 32666782,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-original-follow-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-original-follow-v3\\data.pak",
+      "sha256": "223CA993D3915D9805586149F63AC9352463F75563FFF61DBEA890B371A18B83",
+      "bytes": 32667623,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-paced-native-close-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-paced-native-close-v1\\data.pak",
+      "sha256": "CF7B2B778F56A3BF0DBCCE500B8657A0AFFE2CE9E111B1EB31C53AD151F2B680",
+      "bytes": 32607969,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-paced-panel-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-paced-panel-v1\\data.pak",
+      "sha256": "E85212EA74C18CE20C1190666DFD1DDE75BB2C0C0260BB6F3EABC7918E6C8A41",
+      "bytes": 32594043,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-path-input-observer-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-path-input-observer-v2\\data.pak",
+      "sha256": "8C58BE9E5458F7597F86F0EB4E7F233B92EF7CA00CBEB88D372E323C3560227B",
+      "bytes": 32604741,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-natural-retrace-trip-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-predecessor-retrace-v2\\data.pak",
+      "sha256": "083875C2BEB6D07E462B47162771D97C16E7AC84F62E5607B092D811879B7600",
+      "bytes": 32771246,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-production-cruise-complete-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-production-cruise-v1\\data.pak",
+      "sha256": "8357AACE82D0817F2A194A488D93BBF2132C2BABA641ED2E024876430B1D766B",
+      "bytes": 32561155,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-production-cruise-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-production-cruise-v1\\data.pak",
+      "sha256": "8357AACE82D0817F2A194A488D93BBF2132C2BABA641ED2E024876430B1D766B",
+      "bytes": 32561155,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-reboard-canonical-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-reboard-canonical-v1\\data.pak",
+      "sha256": "7F996DA5EF6098ACD4B814DE26808B40CFDBD155569B206867E1996732B0D474",
+      "bytes": 32745687,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-reboard-held-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-reboard-held-v2\\data.pak",
+      "sha256": "9D350B188EC5AA9837DBEAB8CECB35D53080A03A96E19680AFA6A189C8B1D565",
+      "bytes": 32758023,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-reboard-selected-trip-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-reboard-selected-build-v1\\data.pak",
+      "sha256": "C7E3A045BFD887E9C8F95C878DC2274F5BC873348A8862076991EE6C20257539",
+      "bytes": 32755796,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-resume-seat-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-resume-seat-v3\\data.pak",
+      "sha256": "E4671BAE3CC73152785CB89D810B6908AA079F4D1634A6BBE3485DA91983E893",
+      "bytes": 32585293,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-resume-status-clear-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-resume-status-clear-v2\\data.pak",
+      "sha256": "E456315895F79DBB76E1046C683932FE88C675CD4007CD769959E6D485A20722",
+      "bytes": 32581817,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-reverse-recovery-geometry-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-reverse-recovery-v1\\data.pak",
+      "sha256": "883B1947193553D7B465DFDF1A00ED8A9C3F2DE49D1A6E4BA1642079971E635A",
+      "bytes": 32743085,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-reverse-recovery-stop-resume-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-reverse-recovery-v1\\data.pak",
+      "sha256": "883B1947193553D7B465DFDF1A00ED8A9C3F2DE49D1A6E4BA1642079971E635A",
+      "bytes": 32743085,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-reverse-recovery-stop-resume-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-reverse-recovery-v2\\data.pak",
+      "sha256": "89A0C7722F6BE3A2F51E006D076EC6CC30C6033393F4969B6742FB1B79DC17EA",
+      "bytes": 32743082,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-reverse-recovery-stop-resume-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-reverse-recovery-v3\\data.pak",
+      "sha256": "3BEA87003A7B5F1DD4810ADD2A8D11FA5DFC770463EEF8E889BB6D54BFC351A0",
+      "bytes": 32743022,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-reverse-recovery-geometry-v4-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-reverse-recovery-v4\\data.pak",
+      "sha256": "1DAD97F423199AB93F473B6172AA6BAD67AC8B207CC18883CA3D791694A092FF",
+      "bytes": 32743405,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-reverse-recovery-stop-resume-v4-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-reverse-recovery-v4\\data.pak",
+      "sha256": "1DAD97F423199AB93F473B6172AA6BAD67AC8B207CC18883CA3D791694A092FF",
+      "bytes": 32743405,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-reverse-recovery-geometry-v5-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-reverse-recovery-v5\\data.pak",
+      "sha256": "44B9394EDA8B148766AB64B6A520B4BA11E8CC35D314027DCFAE386F0E4076CD",
+      "bytes": 32743587,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-reverse-recovery-stop-resume-v5-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-reverse-recovery-v5\\data.pak",
+      "sha256": "44B9394EDA8B148766AB64B6A520B4BA11E8CC35D314027DCFAE386F0E4076CD",
+      "bytes": 32743587,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-corridor-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-road-corridor-v1\\data.pak",
+      "sha256": "49B2460259B48CA62F45A7CE9C69F30B51E9B46B5A18E9D87CF20FD32AD45302",
+      "bytes": 32527911,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-road81-arrival-trip-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-road81-arrival-trip-v1\\data.pak",
+      "sha256": "86B0F6A880F2339EC846030217FB3AF9801D6F0514A6E7FF2D4CDBAE108449D3",
+      "bytes": 32753578,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-road81-entry-approach-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-road81-entry-approach-v1\\data.pak",
+      "sha256": "EE3B4C3DEDFE7D8650C911EBE75982A8B460E713042DBE53A9B76E12B80460EA",
+      "bytes": 32753105,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-road81-integrated-trip-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-road81-integrated-trip-v1\\data.pak",
+      "sha256": "0813A7E99FE8861DF6F3EF71791FC8CA6D62FB4642881FFCBE84AB797069E77C",
+      "bytes": 32752736,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-road81-loaded-trip-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-road81-loaded-trip-v1\\data.pak",
+      "sha256": "1819F8E1C987019372CB6382D2C0B2C8E3D4E6011D6F0F1FC62757C9B60CA8EA",
+      "bytes": 32752002,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-road81-v4b-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-road81-short-geometry-v1\\data.pak",
+      "sha256": "78DD490686099B935E4C86710F5C807B503B91B79E2FD5537FD29A8D446171CB",
+      "bytes": 32513178,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-sampled-head-supply-integration-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-sampled-head-supply-integration-v1\\data.pak",
+      "sha256": "F683F18D377E0485EAE4AD891C0086115FA62E49FA681A01DA564FC7704B0300",
+      "bytes": 32756045,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-sampled-head-supply-integration-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-sampled-head-supply-integration-v2\\data.pak",
+      "sha256": "9B0D072ED5C9D5AADA1CA6346221491BF4F4407517E1C9C3DEA50370C419147F",
+      "bytes": 32756429,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-sampled-head-supply-integration-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-sampled-head-supply-integration-v3\\data.pak",
+      "sha256": "60BE19638A673C35B539368D96605F38C8C657D8F3A904A9C6D11205E53FA99D",
+      "bytes": 32756752,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-sampled-head-supply-integration-v4-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-sampled-head-supply-integration-v4\\data.pak",
+      "sha256": "04EB75881CA3DD32DEB7471F713D3EF30C100EFB6E6FC29DD775E7AE3EF5B93D",
+      "bytes": 32758656,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-stable-waypoint-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-stable-waypoint-v1\\data.pak",
+      "sha256": "E765E6B4B36C08EAD4CB50F1518F4BF006BC9171750AEBFCBBEFB89A747EB432",
+      "bytes": 32606313,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-straight-arrival-stop-resume-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-straight-arrival-v1\\data.pak",
+      "sha256": "497B6E8806966A7B573F80C2148A0F1D6CAA5A58CA413DB6236EEA28563F2039",
+      "bytes": 32743838,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-straight-arrival-geometry-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-straight-arrival-v2\\data.pak",
+      "sha256": "2D7E438A93055018E9982F61CDFC359E4BD982F8C453C0A3A45AC801579F62A0",
+      "bytes": 32744239,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-straight-arrival-stop-resume-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-straight-arrival-v2\\data.pak",
+      "sha256": "2D7E438A93055018E9982F61CDFC359E4BD982F8C453C0A3A45AC801579F62A0",
+      "bytes": 32744239,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-straight-arrival-stop-resume-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-straight-arrival-v3\\data.pak",
+      "sha256": "BABAE02E311A5342515FA33C35EA84D3495798DEDD6DEB3266801F9A0E4F8D0C",
+      "bytes": 32744494,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-straight-arrival-stop-resume-v4-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-straight-arrival-v4\\data.pak",
+      "sha256": "4C6FAA89C1C969CEBFFBA5D8103508D8C957D7814C0BA3137954DCEC8BD479CC",
+      "bytes": 32745235,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-straight-arrival-stop-resume-v5-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-straight-arrival-v5\\data.pak",
+      "sha256": "258A02CF13ADC067F152E821A17273107F208EF853A74610D7DE623E69E7E069",
+      "bytes": 32745932,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-ordinary-three-arrival-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-supply-integration-v1\\data.pak",
+      "sha256": "13B39DBF641FB57370962A05C2D13D9D5B52B11DE97FCD66372C627372D465A3",
+      "bytes": 32718221,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-tail-entry-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-tail-entry-v1\\data.pak",
+      "sha256": "2BCA4FC7A0EE9D2680616991864B25E634BD64296D63C6FB4B1E7B19E0D8EA21",
+      "bytes": 32681158,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-projected-station-geometry-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-tail-projected-station-v2\\data.pak",
+      "sha256": "A275514B22C94CAF2B046CB4452ADD3F47D6D16347FA74DFD59FE80F39B2BF41",
+      "bytes": 32686851,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-projected-station-two-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-tail-projected-station-v2\\data.pak",
+      "sha256": "A275514B22C94CAF2B046CB4452ADD3F47D6D16347FA74DFD59FE80F39B2BF41",
+      "bytes": 32686851,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-trail-guide-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-trail-guide-v2\\data.pak",
+      "sha256": "CE3DEF31B5DA8F4B52D69220F156BDDEE70C7C3E3E9A33156220E4BFC5C698C8",
+      "bytes": 32656705,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-trail-guide-v3-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-trail-guide-v3\\data.pak",
+      "sha256": "F134EAA11615CEF065836F511F32532F01D60642B94D5BE0EFBE3594098BCDC3",
+      "bytes": 32657811,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-convoy-trip-two-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-trip-v1\\data.pak",
+      "sha256": "AE6CB3595A37D2A7CC6BCAEE07104D43739221A79E5BFFC93B0DAA4C4D696F6D",
+      "bytes": 32690833,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-trip-geometry-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-trip-v1\\data.pak",
+      "sha256": "AE6CB3595A37D2A7CC6BCAEE07104D43739221A79E5BFFC93B0DAA4C4D696F6D",
+      "bytes": 32690833,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-convoy-trip-two-v2-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-trip-v2\\data.pak",
+      "sha256": "E3A0EB37EA06A12AFA7AAB20C23380E91261698DD0E723AA4C3E693D3C711420",
+      "bytes": 32694393,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-original-direct-rear-two-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\convoy-trip-v2\\data.pak",
+      "sha256": "E3A0EB37EA06A12AFA7AAB20C23380E91261698DD0E723AA4C3E693D3C711420",
+      "bytes": 32694393,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\standalone-retained-arrival-offroute-v1-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\packed\\retained-arrival-offroute-v1\\data.pak",
+      "sha256": "B707B02622C6493B187868EE5733CFF01865E73012F56F83BC4BE91F44DA6A86",
+      "bytes": 32757250,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\workbench-runs\\convoy-kokoro-pack\\output\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\probe-packs\\convoy-order-rewire-v3\\data.pak",
+      "sha256": "0F2FA545126DAAE6A8C232D7683B557426C8F30D5D8C51EC45BA24D03D6E3816",
+      "bytes": 32415259,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\workbench-runs\\convoy-auto-probe-pack3\\data.pak",
+      "keep": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\probe-packs\\convoy-profile-smoke\\data.pak",
+      "sha256": "D461AF05145E75A4E1EC0BA4D55BBD1BCE81368F6CFF380C1ED5E612EA8530E7",
+      "bytes": 32421594,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\arrival-observer-baseline-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\arrival-observer-baseline-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "76F7DF92219AFBC58173B768E6FD77D509DF269987AFE34E1BB4DEB4AA7677E2",
+      "bytes": 32757072,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\arrival-observer-quarantine-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\arrival-observer-quarantine-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "0E3CFC13560023EB536D7D38F0B2C9F0B90C12F6C30203AA0B4C3E2E5F14F580",
+      "bytes": 32758156,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\arrival-observer-quarantine-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\arrival-observer-quarantine-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "5E3873C10F4C34446FB99A9FB816E310E477D9BAE5B8DB7514348E331AAD3BF4",
+      "bytes": 32758174,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\command-radial-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\command-radial-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "13D43CBA7A5B768794A1645208D3DEB8419BF46E3C0FB711124F97A3AACDC7DA",
+      "bytes": 32805808,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-bay-feature-v1-final\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-bay-feature-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "D972CF512ED33C40E734E7FA36CEA3B5C68178BD65DD6B519D4EBD22F0FD7144",
+      "bytes": 32831130,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-bay-feature-v10\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-bay-feature-v10\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "94124FA1A9AD783EAB1C1738E1B68238092FBE76B594DD6F36853B0AE9C48BAE",
+      "bytes": 32838605,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-bay-feature-v11\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-bay-feature-v11\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "B4DF06D8C06853F6CACE14B6512F08D1581A4B99996CF96DF372B111DECFB9E9",
+      "bytes": 32839107,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-bay-feature-v12\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-bay-feature-v12\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "C8867B559E9DFF134A72DF3E2253A16E980D1F5515AAD0BD3310560748B12FC1",
+      "bytes": 32839298,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-bay-feature-v2-final\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-bay-feature-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "1E3DC5072B6D612420716F211A1831EF19B5EE63CA0820A9C715D477262223D5",
+      "bytes": 32833251,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-bay-feature-v3\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-bay-feature-v3\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "167FBF4AE06359E7F3F6BBBCD0506F1C462BD0740B8398768B517ED54594E289",
+      "bytes": 32833751,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-bay-feature-v4-final\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-bay-feature-v4\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "A5A81E15C8B9F03B08FEC2412C1212DFA7E57CE89F387D9F8BAA50A5E1771D76",
+      "bytes": 32833856,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-bay-feature-v5\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-bay-feature-v5\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "2DD7EB80E3FCB4774627B11EBCD57A24E5ED1AAF9C632441086A12711FE5C81A",
+      "bytes": 32834947,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-bay-feature-v6-final\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-bay-feature-v6\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "5A041270EEB4FD62813830AFEAEDC4726452DA2CB49E5A29BC32F2E2A8EA54AB",
+      "bytes": 32835691,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-bay-feature-v7\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-bay-feature-v7\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "F955A95645D178A8B628830CEEAD6EBC8CE1C7ED2A24C7E5168F3355FDC078E5",
+      "bytes": 32836319,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-bay-feature-v8\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-bay-feature-v8\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "80F6AA9DBF0E552EDB2F550D72BF3F488F904B6FC1A4AE35ABBA0BF9CB3D560B",
+      "bytes": 32836317,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-bay-feature-v9-final\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-bay-feature-v9\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "7DF1222BDE0689F3F5B3906EB668CBBF1953B7256E879961089FA4C4FBF47F50",
+      "bytes": 32838606,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-brake-trace-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-brake-trace-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "BB539EFE81A944C20D59ED11CB66429B29E2758D07777AA540C19F4C2D0D7330",
+      "bytes": 32816191,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-brake-trace-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-brake-trace-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "25945930FF6F32D644C32C9DF79627749CF1F9501194E1E6B1803C120961FA2E",
+      "bytes": 32816713,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-brake-trace-v3\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-brake-trace-v3\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "FA88BA1F4F0BDD058FF01734A2E5E0C0B2EA50E0871FD52C6C28822204453722",
+      "bytes": 32816796,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-day-route-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-day-route-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "B2FD65B4BF6492BD0A76D0B57ADE464DA226F8C18CDD2790A0860C4897DBFCFE",
+      "bytes": 32814980,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-day-route-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-day-route-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "003F097E5C5BD449CABF2A2715B6026D1B6620AAF20A7A2B5D28156150DABD9C",
+      "bytes": 32815281,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-follow-cap-baseline-west-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-follow-cap-baseline-west-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "60AD202F22D0DA20701EE0FEA50B8064F004FA51A5044491D6A75B055384FA97",
+      "bytes": 32817243,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-follow-cap20-west-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-follow-cap20-west-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "C3B7D045561ABF17C409C12AED815C2B5CD4284204EE72E1F61B0FE7A6AB61B9",
+      "bytes": 32817243,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-journey-scene-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-journey-scene-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "63EEFFBBDC128487F7134F1CC91845F4D95B8929B05F57589E12CD84474EA081",
+      "bytes": 32817775,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-journey-scene-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-journey-scene-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "57ACE11135D82E4586352BD5398F8A1716C94664D8729B2B046A65361FCB997D",
+      "bytes": 32819245,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-journey-scene-v3\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-journey-scene-v3\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "6842DC3AF69F729CA69D68E73205119E8B03871DC67D7D6857409E472C3D82DC",
+      "bytes": 32819871,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-journey-scene-v4\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-journey-scene-v4\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "0C15C9C51194A042AEFE74E43F337A191AE4CCC2EFABDE6EAA35A52D73F66009",
+      "bytes": 32819871,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-journey-scene-v5\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-journey-scene-v5\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "D44D2D13FA07BBBCAF91DEA36A6EED9269F2F4B5123B42C012A8AEB8E8D64DD3",
+      "bytes": 32819871,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-journey-scene-v6\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-journey-scene-v6\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "C472287D7C1A62EE6B500B3388062573F31B9A3B2CCF0CC7498E7A2DCB430821",
+      "bytes": 32821655,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\player-addons\\everon-journey-scene-v7\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-journey-scene-v7\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "28A3EE98D15178488DAF4F61A9B2FD8C4944BBDC6D5D5ECA06EE382652BC5DB4",
+      "bytes": 32821791,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-journey-scene-v7\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-journey-scene-v7\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "28A3EE98D15178488DAF4F61A9B2FD8C4944BBDC6D5D5ECA06EE382652BC5DB4",
+      "bytes": 32821791,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\player-addons\\everon-journey-scene-v8\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-journey-scene-v8\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "727B39B942A6325FB343BCA744C5C63CEED4E25B5772F614193CB4347B9BCD55",
+      "bytes": 32821889,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-journey-scene-v8\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-journey-scene-v8\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "727B39B942A6325FB343BCA744C5C63CEED4E25B5772F614193CB4347B9BCD55",
+      "bytes": 32821889,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-loaded-native-follow-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-loaded-native-follow-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "7A339478DE83C7D734F5D5D06AD379B64110BEB3340196CD3B37A21E36AE234A",
+      "bytes": 32832180,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-loaded-native-move-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-loaded-native-move-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "23595F90E3EBCEB0F82C7EA9B53E6015D30379F8C9C801878921565F864F5545",
+      "bytes": 32832180,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-loaded-native-follow-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-loaded-native-follow-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "9228C6A90FE0005EB3274B2ADCB86CDCC3B4C573E30A7678C370C023E1DB4C32",
+      "bytes": 32832157,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-loaded-native-move-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-loaded-native-move-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "1C105DC1A1DC42D287413AF86800E123433C2B91E9C879554E06C5693F71C356",
+      "bytes": 32832158,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-loaded-ordinary-aligned-v3\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-loaded-ordinary-aligned-v3\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "FAF6CEF1489AFF14EDECDF608198E0A53F966FD96FCBFEEF0070273DDC6F1E95",
+      "bytes": 32823068,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-loaded-ordinary-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-loaded-ordinary-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "4431D58B97D9254DE422FF36A88038E1F073234B0ECD65578CDDC2F424ADCB45",
+      "bytes": 32822192,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-loaded-ordinary-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-loaded-ordinary-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "09A02DA4DA8728732EDF41DD4B6CF5CF9F58060A87E3E7FC6DB54D3ADF5D1DE8",
+      "bytes": 32822776,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-loaded-recorded-move-v1-repair1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-loaded-recorded-move-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "EB4E57FBE1DB1CA4D6FD8BD8B5425C86DDD9A45873BEB372BB359E83B4D516D4",
+      "bytes": 32824453,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-loaded-recorded-move-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-loaded-recorded-move-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "2DFF1A0A0D9528E9617EE6B5B51AE1406DBD23A7F2FB958254D425661678B5A2",
+      "bytes": 32824899,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-native-follow-isolation-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-native-follow-isolation-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "1640E1FA127880467829F4C79F62AEFAA9D009647BDE4D4FED9FAFBAC4FD5D5F",
+      "bytes": 32821276,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-native-follow-isolation-west-guid-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-native-follow-isolation-west-guid-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "726568AC02CBBDC9C36F0BDC7364EF355548207AD41E241A801F25B9E11FEFF5",
+      "bytes": 32821307,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-native-follow-isolation-west-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-native-follow-isolation-west-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "E52F1535093A8DF99E26DD8614EBA827D94891EC6C4584BF95B2CBC5FA16A7DF",
+      "bytes": 32821291,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-native-route-isolation-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-native-route-isolation-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "2AE4A3C1A11EADE294D79AFCACCBAF2B7F23E69E5C272750671F1734A10BCE49",
+      "bytes": 32821002,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-physical-goal-lifecycle-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-physical-goal-lifecycle-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "7071DA9CC0D04190ADCE69F7BD8BE24083457CD119258E75AFE2CF526F4FE1DB",
+      "bytes": 32827516,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-physical-goal-lifecycle-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-physical-goal-lifecycle-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "A9274817D1CDDDA767784F6AE72D77980BAE86753ACE2336F3739CE7ABB42DB0",
+      "bytes": 32827583,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-shared-original-run-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-shared-original-run-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "0B53A3FB90431805BDE6077A8F8F7837D3194D6F15848C036EB64FA81512C42C",
+      "bytes": 32826561,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-shared-original-state-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-shared-original-state-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "9A6CE2206E15F5513B1F7FC1BD1322EE24D4906929F9990EA54E7464DFA1CEB5",
+      "bytes": 32826517,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\everon-shared-state-audit-v1-repair1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\everon-shared-state-audit-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "D9DB15FCD6ADABF25044D893F491484B5CADC718E6DBD06D4BC7441675AC26A5",
+      "bytes": 32826517,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\explicit-bay-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\explicit-bay-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "B46B2EFBF08D8F3FA1221FBD1D94482A1237D8BAD7253D9C642683DFB89DBF40",
+      "bytes": 32809613,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\journey-cargo-lead-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\journey-cargo-lead-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "7EA5AD34E1A70B94EEF0C9F4D04061007D4B7FD6804E553F92CABC2A609F3CEB",
+      "bytes": 32829007,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\journey-cargo-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\journey-cargo-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "B32734A6D8614029B33473AEC13105F28E1099341A884D5B7B2EDD1F78E3E1CC",
+      "bytes": 32828999,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\journey-cargo-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\journey-cargo-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "A4F9E24E14E9D9C3F58F99DE22C7C902F22A96ACB2C2DB19777E9D24E637D696",
+      "bytes": 32828999,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\journey-startup-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\journey-startup-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "64386A62F2B66F0793F17D7F5918ACE5C7ACEC3470274D31E9BDCD522D6EBB0B",
+      "bytes": 32821185,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\journey-startup-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\journey-startup-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "4F3A5E77B4CBAB0F93C14938859BCD7AD1D83F9C5B7A00828BDE71331748DCA4",
+      "bytes": 32821433,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\journey-startup-v3\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\journey-startup-v3\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "2FAEE0A2E3F6796AAA9EA372FB1EE7883805459B691B0227AA5576D5C6B72792",
+      "bytes": 32821811,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\native-frame-smoke-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\native-frame-smoke-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "16BD11D39C070B49170DD9C6D71189D6AA272CCFBBEE63B4991FE588D888F8F0",
+      "bytes": 32840013,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\native-parking-visual-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\native-parking-visual-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "29A97470FE698E169F00F2C8081A5BB9C23E1BC6CC25BDA27360A3059F7E2055",
+      "bytes": 32840771,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\native-radial-smoke-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\native-radial-smoke-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "68C2E6A8F20156FC48CB849ED138A5AF4EBD0DAD36AEE955720FAD0B6C779941",
+      "bytes": 32841107,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\native-radial-smoke-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\native-radial-smoke-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "2CDB844504724B40B3F089ADD784A7D8BC0EC5337D7FF4DE26DB9160D632B39E",
+      "bytes": 32841297,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\native-radial-smoke-v3\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\native-radial-smoke-v3\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "98B1ECFE27244186E1F0C05934504803B73E9783AEEEF03AC3DC17FA2A38D235",
+      "bytes": 32841538,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\player-trip-departure-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\player-trip-departure-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "19D1DD5386CFB7B623D50D1AB4F03FE64AE134DE2B9309107D360CB3B3E90CC1",
+      "bytes": 32757224,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\retained-focus-baseline-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\retained-focus-baseline-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "7225F35C1C6A78FCFD90BF50135E36428AE1260D34D0C488961378E1920FB2B9",
+      "bytes": 32761276,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\retained-focus-baseline-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\retained-focus-baseline-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "27E756F434A77BC5277102B68A641E3FF5DA262386035842D6B132AC7B23BF08",
+      "bytes": 32761323,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\retained-focus-quarantine-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\retained-focus-quarantine-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "0581E2E75F3242206FFD3D732A7250558CEE6E90A857E4D41D523373D0B9ACCA",
+      "bytes": 32762320,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\retained-focus-quarantine-v2\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\retained-focus-quarantine-v2\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "860BCB43348D46FD214917226FC8264547DB29A89AFD21AEA458373816B28C09",
+      "bytes": 32762367,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\return-predicate-observer-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\return-predicate-observer-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "7CE521333C414252F97412799EFDF87B5DFC000A9CD0EACA7AA7D764DDCD578A",
+      "bytes": 32841650,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\startup-pair-baseline-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\startup-pair-baseline-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "D112752247D5664A5BEE45DD6ADD689303428DABD9FA802390FD0D75384A1AFB",
+      "bytes": 32756757,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\startup-pair-departure-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-addons\\startup-pair-departure-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "D6E7554FAE6EDDDA9759074BE053C4F9AC0F473FA1D1BD119F18BC15644A70E5",
+      "bytes": 32757238,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\player-command-start-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\player-addons\\player-command-start-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "B1C0D42F691BA4D185D17B07AF688B6F084F36574F41259F70A488924EA64ABC",
+      "bytes": 32823304,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\player-debug-bay-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\player-addons\\player-debug-bay-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "F0E5F10FA5AAA4479D427AFDAD6BB73DF2661F56EFA1D47990EEF5F3339C2E49",
+      "bytes": 32826735,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\player-menu-overlay-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\player-addons\\player-menu-overlay-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "04C792A6B5126294A589CC705BB1CC696FE039CD39E505A069BAD89FF8450814",
+      "bytes": 32822183,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\player-stop-continuity-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\player-addons\\player-stop-continuity-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "2C87FD7FE5C963E4DB7AE8C5B862F28BECB08B8B5B0B396928AC96662BAC736A",
+      "bytes": 32823994,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\packed\\player-units-bay-v1\\data.pak",
+      "keep": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\player-addons\\player-units-bay-v1\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "B0E9076764C63D345BE96EDA2ADA6C20B729AAED3E2132085F97656C042FFA32",
+      "bytes": 32823741,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v1\\packed-parking-release\\data.pak",
+      "keep": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v1\\frozen-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "B1FAF12B8E803D0DF8B3E5D250EA823736BF0A98199FBEF539CB9C1DAF023C48",
+      "bytes": 32847258,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v1\\packed-resume-baseline\\data.pak",
+      "keep": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v1\\frozen-addons-final\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "D710F0B3C6A0A5780E5D7810BE0D4B8ED15B7412102F43FE27E4531CA8D68E20",
+      "bytes": 32847375,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v2\\packed\\data.pak",
+      "keep": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v2\\frozen-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "42C50D712F95138E7C904F952127FAB777EB0A62D14A1BCA8AA7AB3DBBC6E67F",
+      "bytes": 32847949,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    },
+    {
+      "path": "D:\\ReforgerAgentBuilds\\ordinary-road-start-join-v1\\packed\\data.pak",
+      "keep": "D:\\ReforgerAgentBuilds\\ordinary-road-start-join-v1\\frozen-addons\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "sha256": "B279929DBDA1F2836E9124AF5A071C855E654E319C00B8561AB87EBD53D298B3",
+      "bytes": 32848027,
+      "reason": "Exact byte duplicate; canonical package retained; source/evidence/metadata not deleted"
+    }
+  ],
+  "deletedSupersededVideos": [
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/action-input-calibration-v1-full.mp4",
+      "Bytes": 60480576,
+      "SHA256": "C68582301FD9C7B6D8E924DEA0623B890E8F0ED3D8C1131158F698B5137FA604",
+      "LastWriteUtc": "2026-09-26T11:39:42.5304562Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/action-input-calibration-v2-full.mp4",
+      "Bytes": 80181185,
+      "SHA256": "45D5A12B776E5604171029B48F433CFE808EF758113582B2DD76179AC144F90E",
+      "LastWriteUtc": "2026-09-26T11:50:16.0018845Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/action-input-calibration-v3-full.mp4",
+      "Bytes": 91839750,
+      "SHA256": "6B229D2E22EAA514BF349CCEBA31A1047C379378B216D65F168D0C6E5A47C8FC",
+      "LastWriteUtc": "2026-09-26T12:27:10.5720732Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/action-input-calibration-v4-full.mp4",
+      "Bytes": 100443934,
+      "SHA256": "6982AD897127AA28202F19E163EE3E49C94261D138D7BED582FE6E2358E090EA",
+      "LastWriteUtc": "2026-09-26T12:49:41.3633471Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/action-input-calibration-v5-full.mp4",
+      "Bytes": 91906969,
+      "SHA256": "456E94D3B7179875E16E87532F62F61A72315FCF5B10F6322DDF6B8E483282F2",
+      "LastWriteUtc": "2026-09-26T12:55:46.6458857Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/action-input-calibration-v6-full.mp4",
+      "Bytes": 100825209,
+      "SHA256": "D7F755CFE527F7B12165A9B61083E9AEB8FFC22F73B8AC66BA804B4CA2F79FEE",
+      "LastWriteUtc": "2026-09-26T13:11:59.9435545Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/arland-clear-field-1truck-v1-standalone.mp4",
+      "Bytes": 85385943,
+      "SHA256": "9E2933360E233024451EE08CA73F4EB311A199D7F59544584F41C850D4CD128D",
+      "LastWriteUtc": "2026-09-26T03:15:04.5931067Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/arland-clear-field-1truck-v2-standalone.mp4",
+      "Bytes": 115692550,
+      "SHA256": "064B1202D18CE923073F2F57A4844F17D0196FF6FFE8BDAD833FAC08D976E2E0",
+      "LastWriteUtc": "2026-09-26T03:29:31.5007153Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/arland-clear-field-1truck-v3-standalone.mp4",
+      "Bytes": 215208645,
+      "SHA256": "DA0D7C658EA9D3D80C8F2CF7C92BEDC4992EC29B9AC6E3F6EE0ED204E0B42B2B",
+      "LastWriteUtc": "2026-09-26T03:35:30.1338580Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/arland-clear-field-cruise-hold-v1-standalone.mp4",
+      "Bytes": 77394751,
+      "SHA256": "7787B4934AAFF0E27647DA5F21F66D10D830DA41D23500D85DB324B533263F50",
+      "LastWriteUtc": "2026-09-26T03:50:32.4396943Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/arland-clear-field-cruise-v1-standalone.mp4",
+      "Bytes": 233303126,
+      "SHA256": "52014A362F48ABCC7D82939D61BAE1A626902FB88F84E942E4550DECA9CDB0C1",
+      "LastWriteUtc": "2026-09-26T03:48:20.7739669Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/arland-clear-field-survey-v1-standalone.mp4",
+      "Bytes": 14231897,
+      "SHA256": "222BA403FA260438AD6AEFFEA20465F56528085A5CBAC80E84F61B0828803A45",
+      "LastWriteUtc": "2026-09-26T03:03:52.8641674Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/arrival-canonical-three-v1-full.mp4",
+      "Bytes": 274370560,
+      "SHA256": "C40E7044183CCF1B870FF1F831E01624CEE981073AF7F1AD41CA9F0064309C32",
+      "LastWriteUtc": "2026-09-27T09:00:47.9850475Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/arrival-zero-radius5-v1-monitor0.mp4",
+      "Bytes": 475747302,
+      "SHA256": "F8B139DEF759090BDBD0420D8CE3C0194E80ABDADFD74E83DEB51C7DA91FA3ED",
+      "LastWriteUtc": "2026-09-26T07:35:37.6356613Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/arrival-zero-radius5-v2-full.mp4",
+      "Bytes": 518293206,
+      "SHA256": "421A390EF70265D81514652DDE47C75DB1130781CFF95F6563771B1B0523E9EA",
+      "LastWriteUtc": "2026-09-26T07:55:32.3976739Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/authored-clean-resume-v1-full.mp4",
+      "Bytes": 632120907,
+      "SHA256": "390A405E6C5C748EAC71D30243E5C5B1B8CF0481F7D0B5B93AE9DD8CAC2B54FD",
+      "LastWriteUtc": "2026-09-26T16:57:59.9229755Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-1truck-attempt1.mp4",
+      "Bytes": 915219,
+      "SHA256": "72D08A6755BCC740DB99EF963E74E31F48ABBAA62C787A598FABDDF2950343D7",
+      "LastWriteUtc": "2026-09-25T06:17:08.4009457Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-1truck-long-attempt1.mp4",
+      "Bytes": 1967626,
+      "SHA256": "1419349B4714661ADF1B348A17AC07D94ED5EE28DA8E209CF3D0DF21B12BFAD0",
+      "LastWriteUtc": "2026-09-25T06:45:36.7482854Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-1truck-release-retest.mp4",
+      "Bytes": 126812247,
+      "SHA256": "02369889B0D77A5B7CD52B2000D36F7071FAA1E1458DA3611359194A92B3C906",
+      "LastWriteUtc": "2026-09-25T07:04:50.3153365Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-1truck-scan-attempt2.mp4",
+      "Bytes": 1557433,
+      "SHA256": "A5645ECF20EDA78AB8F94B5531E9B1C9CCDD9EF86E17E221BBE7210D28AE019D",
+      "LastWriteUtc": "2026-09-25T06:54:14.1906238Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-forward-blocked-v1.mp4",
+      "Bytes": 127132423,
+      "SHA256": "2D64FBFA0D444EE299122FAF45F5A5C1473E1230AF8C69D8B0DF89171E118D69",
+      "LastWriteUtc": "2026-09-25T16:17:15.6734933Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-forward-wait-v1.mp4",
+      "Bytes": 246749067,
+      "SHA256": "35A89C1DADE1F31A48A08BECEC178F60D3AC892FDFFD8087C900C8A193C1A1C3",
+      "LastWriteUtc": "2026-09-25T15:26:26.0179986Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-forward-wait-v2.mp4",
+      "Bytes": 241169380,
+      "SHA256": "BB0EC50DDD4A634ABD1B445E39DF7F7D4998E0D6473327E9732743F4BA67AD2B",
+      "LastWriteUtc": "2026-09-25T15:32:10.0569477Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-forward-wait-v3.mp4",
+      "Bytes": 249111214,
+      "SHA256": "75526FA5D8807B4C4803998117524D2464B106125339609F0398FAEA894FF00D",
+      "LastWriteUtc": "2026-09-25T15:37:37.6057254Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-pause-resume-v2.mp4",
+      "Bytes": 469371554,
+      "SHA256": "5350E3F523D3E1BA107BBF4C83A805941629881CBDF8C6736909789F9CBFE0EA",
+      "LastWriteUtc": "2026-09-25T15:08:43.2643398Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-pause-resume.mp4",
+      "Bytes": 536601461,
+      "SHA256": "6D8D1DF17356D82B2B87DA64198A72A02CA933229D03CEE9986201C019824402",
+      "LastWriteUtc": "2026-09-25T14:59:10.8915018Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-final-v1.mp4",
+      "Bytes": 470155761,
+      "SHA256": "185F10B6E8369C17D9425725A8CC59EAA57EFB5CFFF5110E5CE87911474716FC",
+      "LastWriteUtc": "2026-09-25T08:41:43.1397189Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-final-v2.mp4",
+      "Bytes": 452121216,
+      "SHA256": "84A3268C77F068A24A4BC3402739D93A33B66E86606C39121D40547EF045DD0D",
+      "LastWriteUtc": "2026-09-25T08:48:10.5745970Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-final-v3.mp4",
+      "Bytes": 456758001,
+      "SHA256": "17E4660D567B39EF7CD0DFDF3B495B4E52986D379B4B250FB345F3BFA7AD1419",
+      "LastWriteUtc": "2026-09-25T08:54:55.3529257Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-final-v4.mp4",
+      "Bytes": 479499296,
+      "SHA256": "94CE236BEE9B7EB76A4E8580895DBA43FBFFA71489512564C2C495FE3C3A97FF",
+      "LastWriteUtc": "2026-09-25T09:01:04.3477365Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-final-v5.mp4",
+      "Bytes": 486298800,
+      "SHA256": "A67E3F733FE8AC14C6E9CF2CB46CD3BCACFCF6B117FBE38BDD001DC3D8FA1D92",
+      "LastWriteUtc": "2026-09-25T09:09:09.4527601Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-final-v6.mp4",
+      "Bytes": 551120255,
+      "SHA256": "FF5FB22BCF411027B472A25016C97FD04AA24BE24C7643CDBB86F47E2633884E",
+      "LastWriteUtc": "2026-09-25T09:21:32.7758081Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-final-v7.mp4",
+      "Bytes": 544226827,
+      "SHA256": "E4548EAD5F9E2FAFCF3C7E2E34519E305862B64CAE9134F7609B36B8D3446FD2",
+      "LastWriteUtc": "2026-09-25T09:27:10.5915711Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-final-v8.mp4",
+      "Bytes": 345767984,
+      "SHA256": "AAB3ADFBEF952E2206A1057182D1FC289C588B5AF00D1C7DC03DA181C90255DA",
+      "LastWriteUtc": "2026-09-25T09:36:03.5525949Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-live.mp4",
+      "Bytes": 558163693,
+      "SHA256": "A3DEB4CFCB4916E45D1BC76379BF8327E6BADDE206B4568F738F1F7091A2ACE9",
+      "LastWriteUtc": "2026-09-25T08:13:33.3725206Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-rerun.mp4",
+      "Bytes": 621911109,
+      "SHA256": "8AF7585AD6237D28F6CA5BEF0DA4E2BE097820B806F9A59F36DF3E5FC5473FB0",
+      "LastWriteUtc": "2026-09-25T08:24:39.4056429Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-v10.mp4",
+      "Bytes": 369897062,
+      "SHA256": "78A205C6310C8D9DC21A986E60B9A9B143B7270DBBC7FE050034121CCA271F64",
+      "LastWriteUtc": "2026-09-25T09:51:46.3172666Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-v11.mp4",
+      "Bytes": 402862126,
+      "SHA256": "9D2079BD27C15EE28D31214FA4B6B3C655DA16AB45E8E5473760BC0F0246DA68",
+      "LastWriteUtc": "2026-09-25T09:58:43.3392108Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-v12.mp4",
+      "Bytes": 567036230,
+      "SHA256": "EB66FC8AD8E347537C3B97FF6F078CAF96CECDEF932A6EB585485D83CD179230",
+      "LastWriteUtc": "2026-09-25T10:08:32.9920066Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-v13.mp4",
+      "Bytes": 342252196,
+      "SHA256": "629C389C28D83A457D51E88D92015645BF072A23465558F7651FC250B2AD63D2",
+      "LastWriteUtc": "2026-09-25T14:26:35.7462850Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-v14.mp4",
+      "Bytes": 392771353,
+      "SHA256": "7BBA316855580BE651E17B89B2D178216A725B2DF3A6A6BA8AC7A526F08C8205",
+      "LastWriteUtc": "2026-09-25T14:34:28.8414918Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-v15.mp4",
+      "Bytes": 344878596,
+      "SHA256": "597AAA6B560EAD569C34D3EA38D6FF0A0350D6A26405CD88643C1B386752CACA",
+      "LastWriteUtc": "2026-09-25T14:42:51.2899574Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2truck-release-v9.mp4",
+      "Bytes": 394849649,
+      "SHA256": "BEAA96C4C71C701C3FA1BAC1BBCD45D564EE6F57E98EA832DB7D7CE794776B89",
+      "LastWriteUtc": "2026-09-25T09:44:53.5363880Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-2trucks.mp4",
+      "Bytes": 369616629,
+      "SHA256": "87D9E4741F42A143429AEFA1CF39EC74AEB384241FFEA1B06F02B723BD11DF08",
+      "LastWriteUtc": "2026-09-25T07:13:05.2345307Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-final-braked.mp4",
+      "Bytes": 426365486,
+      "SHA256": "3FE3BEBCC82D6E0441E3FC0E1835FB0EA7900E283727ABD6ED3D9254123ECEAA",
+      "LastWriteUtc": "2026-09-25T08:05:39.7807836Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-final-parked.mp4",
+      "Bytes": 85846234,
+      "SHA256": "7008F3871550D7DAB307F6004A482E21658469913AE8934002D3DE023EAE6392",
+      "LastWriteUtc": "2026-09-25T08:07:22.1379823Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-v1.mp4",
+      "Bytes": 247321507,
+      "SHA256": "A6B63A3D6EF945FA4E50A60733CACC46EA0ADC3D58835D12D46F9912733F6A50",
+      "LastWriteUtc": "2026-09-25T16:24:09.7862150Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v1.mp4",
+      "Bytes": 223581327,
+      "SHA256": "C8A66EFDBBF285EC501464040CAD855B84EA1EE92AEDB5D1803B62EC7C84F0B0",
+      "LastWriteUtc": "2026-09-25T17:05:48.2577523Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v10.mp4",
+      "Bytes": 419341209,
+      "SHA256": "80BAA73BAB68B87F79AE3C56A8EED33A91CD8CB7B51F9095AF8C02D34F91DAE9",
+      "LastWriteUtc": "2026-09-25T18:34:44.9717760Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v11.mp4",
+      "Bytes": 678567718,
+      "SHA256": "B7BB2FFB602E8B04BE20247A3ABD3587A173C995BCB040F952ED25307980D58C",
+      "LastWriteUtc": "2026-09-25T18:47:16.9074103Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v12-repeat.mp4",
+      "Bytes": 642934772,
+      "SHA256": "E340005784E7D6104EA6ECD533454529F3281D2209AF0F160F557D7CC481FE0A",
+      "LastWriteUtc": "2026-09-25T19:04:00.8660313Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v12.mp4",
+      "Bytes": 416818983,
+      "SHA256": "87A10686801D703C6CBE0D14C8AD6C5FD1B250117D475AA8E33BA941A1657704",
+      "LastWriteUtc": "2026-09-25T18:56:45.8525271Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v2.mp4",
+      "Bytes": 601993767,
+      "SHA256": "2C10743E7C10E22E39143807F9B27563C694D637CD0262D42D7EBA00DE4C407F",
+      "LastWriteUtc": "2026-09-25T17:16:03.5087897Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v3.mp4",
+      "Bytes": 462720421,
+      "SHA256": "239292E268CD28311DC06A90562B61F0EB9FCAFD441A1A8CCECECD938FFE03F5",
+      "LastWriteUtc": "2026-09-25T17:28:02.7023212Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v4.mp4",
+      "Bytes": 309455511,
+      "SHA256": "F2F296D1A7185D8843ACC61A7B62972743F45C6126C37F9E06D5B7F11CE5784E",
+      "LastWriteUtc": "2026-09-25T17:38:29.1061092Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v5.mp4",
+      "Bytes": 442722026,
+      "SHA256": "674ED4D02672D1D996D1297AE14DBB143E6E32781BF7A5E9C4F68C86B4A5ABDE",
+      "LastWriteUtc": "2026-09-25T17:48:06.4710739Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v6.mp4",
+      "Bytes": 336132030,
+      "SHA256": "9946438C8FAEB18DDD247544216ADFA9CCB4CF6DC8EA41EF2B509E1BC7FFA92F",
+      "LastWriteUtc": "2026-09-25T17:54:18.9722640Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v7.mp4",
+      "Bytes": 630592028,
+      "SHA256": "E37CB00FC40B8F831D6737790AA4663DA82B7B6B6E346A8B71169736032BD0E2",
+      "LastWriteUtc": "2026-09-25T18:04:38.2556887Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v8.mp4",
+      "Bytes": 513718259,
+      "SHA256": "B5FB080FA8FB61091445E947B949BA857A6E2FA7BC94E6E51E018AA1B8BBB0B6",
+      "LastWriteUtc": "2026-09-25T18:14:45.6500024Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-forward-twoahead-wide-v9.mp4",
+      "Bytes": 408565669,
+      "SHA256": "586ADD816A155F11C2BC2CF358C6436DE29A5AD2DA768E9B2EB595B14F0C11A9",
+      "LastWriteUtc": "2026-09-25T18:27:29.4803849Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-nav-diagnostic.mp4",
+      "Bytes": 364089952,
+      "SHA256": "6109836408A38C7A033ABEC92C1076A4D5C81E3BF7DA21B6EB0AC4511720DBC2",
+      "LastWriteUtc": "2026-09-25T07:48:41.3764651Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/auto-3truck-spacing-v2.mp4",
+      "Bytes": 449615833,
+      "SHA256": "59DF57594972301333DDB5CE74DF5A1ED91B423A62422F4D7CDFA52A31C3B75D",
+      "LastWriteUtc": "2026-09-25T07:56:51.9233836Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/board-handover-radius5-v1-full.mp4",
+      "Bytes": 265484319,
+      "SHA256": "940D47EA2BD487766F3930CC3008C39129040D89AB5727AE085113B7617EC521",
+      "LastWriteUtc": "2026-09-26T06:50:53.9809747Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/canonical-pending-guide-trip-v1-full.mp4",
+      "Bytes": 687551590,
+      "SHA256": "AE8203D77C251DCDEC321BFD819ECD03D680BAAC7FBFD4FC9507FAC3C1C93814",
+      "LastWriteUtc": "2026-09-27T06:35:49.9745815Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/capture-smoke.mp4",
+      "Bytes": 154798,
+      "SHA256": "FA044125062247FE6E1551AB7AC1D4167D338B6497D18CE3789AA7E671AE70BD",
+      "LastWriteUtc": "2026-09-25T06:03:28.2546505Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/convoy-supply-progress-v1.mp4",
+      "Bytes": 52093602,
+      "SHA256": "A3710395E107F61C410118B1F662C8F97B5943D2C7542E7B28EC71CCE8B73F71",
+      "LastWriteUtc": "2026-09-27T02:34:22.1814308Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/convoy-trip-two-v1-full.mp4",
+      "Bytes": 220169216,
+      "SHA256": "5C439526F08908EBD3DAC298D0A5123D939E957E78AC74BA13CBFC8EB8079596",
+      "LastWriteUtc": "2026-09-26T18:09:47.4585181Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/convoy-trip-two-v2-full.mp4",
+      "Bytes": 529376671,
+      "SHA256": "47D77F45325ED19234F3C99796A50D587C0E139EC23DF4336EF7EDD1D3924D4E",
+      "LastWriteUtc": "2026-09-26T18:42:10.4447729Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/cooperative-cohesion-trip-v1-full.mp4",
+      "Bytes": 352842339,
+      "SHA256": "812155715480BB33FEEB2CB6973871DE6EE2553C72E795D63D109A8AF3BA51DA",
+      "LastWriteUtc": "2026-09-27T06:58:45.7154134Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/cooperative-cohesion-trip-v2-full.mp4",
+      "Bytes": 291136249,
+      "SHA256": "A69A0AEABEAD94D6F5F8623E4B39104D2EE3194BD3017834AA844F2F3DEB24B3",
+      "LastWriteUtc": "2026-09-27T07:09:06.4509317Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/cooperative-supply-recovery-v1-full.mp4",
+      "Bytes": 322254512,
+      "SHA256": "2093635EDE640D170229DB194CDCD7AF20A24AB0A4231880D3EE6A13F4EEBFBB",
+      "LastWriteUtc": "2026-09-27T08:03:32.1488056Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/cooperative20-two-v1-full.mp4",
+      "Bytes": 487569052,
+      "SHA256": "83901CC3AABDF4963D8C6F876F4C80D95D2C336DAB6186F33AFC10345BC309AE",
+      "LastWriteUtc": "2026-09-26T18:57:30.3205958Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/corridor-v1-forward-blocked.mp4",
+      "Bytes": 110813366,
+      "SHA256": "C9F347CAB5767591EBF3D5AC960D832F4CD243AD36F5326152AA80B119E73F1C",
+      "LastWriteUtc": "2026-09-26T02:26:54.7681107Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/ddagrab-test-1.mp4",
+      "Bytes": 2439364,
+      "SHA256": "98FD370F8E216735034BA9F7AB65135027D547F1C2C700F0822FAEF91D563F8E",
+      "LastWriteUtc": "2026-09-25T07:00:10.4070823Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/ddagrab-test.mp4",
+      "Bytes": 900834,
+      "SHA256": "E3C537560A38C89C55B29E36E7BD396013AF84A18CD3FC7F7D518860A50984B3",
+      "LastWriteUtc": "2026-09-25T06:58:29.4480380Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/direct-head-native5-v1-full.mp4",
+      "Bytes": 555013573,
+      "SHA256": "0017362ABB28B2552CD0D4A61366807284A9A49F4E1CDA3C7CC31F36A11768BD",
+      "LastWriteUtc": "2026-09-27T04:23:52.3069038Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/direct-head-proxy-v1-full.mp4",
+      "Bytes": 472200136,
+      "SHA256": "C8FAAEAB05C9E2EAF6A44DFC62A94D2B4318EF5CBF3AA82A9860C0E6509FDF67",
+      "LastWriteUtc": "2026-09-27T04:47:59.9763028Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/direct-head-sampled-native5-v1-full.mp4",
+      "Bytes": 462467753,
+      "SHA256": "B6E1AEAC9C06DFB0D27EB27EA060A56AF96C02F9345DA00CB4F17E10E968CF8A",
+      "LastWriteUtc": "2026-09-27T05:18:35.3455379Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/direct-head-sampled-proxy-v1-full.mp4",
+      "Bytes": 456789406,
+      "SHA256": "96192BEFB6E8D9DB5ABA455AC1470F059A9DBB86CC3F0930D3F56E7AEDB6C05F",
+      "LastWriteUtc": "2026-09-27T05:06:10.0175127Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/driving-integration-held-reboard-v1-full.mp4",
+      "Bytes": 105140849,
+      "SHA256": "15224F624340A314CA5E418B893033F4BC00BBC84767BAD253837362201D336E",
+      "LastWriteUtc": "2026-09-27T03:44:30.1093156Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/everon-offroad-1truck-v1-standalone.mp4",
+      "Bytes": 19723031,
+      "SHA256": "84C109E5F94948D4D2A929664142CE2C203342A8C72A17D4415A1DC7F59AF875",
+      "LastWriteUtc": "2026-09-26T02:39:52.1362967Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/explicit-hold-radius5-v1-full.mp4",
+      "Bytes": 222771626,
+      "SHA256": "F6445BA46260848376630BF32B979FE0D1D8B6DB71E293968B1DBC802F74976B",
+      "LastWriteUtc": "2026-09-26T06:53:17.5108203Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/explicit-retry-2truck-v1-full.mp4",
+      "Bytes": 120789360,
+      "SHA256": "8D73332093C4E6DB8472300757D4F14E5154B422C2EBAA846E7BD65A405FB9DB",
+      "LastWriteUtc": "2026-09-27T07:46:13.6142795Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/explicit-retry-2truck-v2-full.mp4",
+      "Bytes": 215346326,
+      "SHA256": "B07700BDCF29262EFFD0F38F53D82A90CED15C6BC31D052CF8366A412F015CEF",
+      "LastWriteUtc": "2026-09-27T07:51:53.6163340Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/forward-slot-1truck-v1-standalone.mp4",
+      "Bytes": 151052806,
+      "SHA256": "2EC7E1DA0624DAF1E14A2BF908C9E7CF7EE219A2C399F4B946B2EFE76C16C5E5",
+      "LastWriteUtc": "2026-09-26T02:49:34.4982815Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/forward-slot-1truck-v2-standalone.mp4",
+      "Bytes": 110894398,
+      "SHA256": "EF40141E63DFF334FF9ADA5C3DFB1A5EA27125BAA86254C4A4A040A3C847C9D6",
+      "LastWriteUtc": "2026-09-26T03:01:33.9553128Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/gfxcapture-test.mp4",
+      "Bytes": 0,
+      "SHA256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "LastWriteUtc": "2026-09-25T06:57:00.0563213Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/gfxcapture-test2.mp4",
+      "Bytes": 48,
+      "SHA256": "64D52708F594E8A1A3A4F76DEEF7275C8AD5184480C9473D8F60A0C9B6F4628B",
+      "LastWriteUtc": "2026-09-25T06:57:22.7183767Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/head-guide-prejoin-approach-v1-full.mp4",
+      "Bytes": 561610708,
+      "SHA256": "50C55BCB4D1BB5186FA3DA3926F0A6422EAFEA60DFEF5FFCE04EA5A2167A6D0C",
+      "LastWriteUtc": "2026-09-27T03:58:30.5878596Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/head-guide-road81-direct-v1-full.mp4",
+      "Bytes": 557755690,
+      "SHA256": "E8C4FB983EDF8845C79EAC5E8DC5D64EE3C3F03CF35D90FE5164E0C5BB56D792",
+      "LastWriteUtc": "2026-09-27T03:34:02.0544603Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/head-guide-road81-guide-v1-full.mp4",
+      "Bytes": 558883757,
+      "SHA256": "8D62AED63B1857F272F395A10F611CD5266EAAD38043F0ECFA530A3BCD5BFCC9",
+      "LastWriteUtc": "2026-09-27T03:40:39.5790972Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/input-pilot-mapfree-v1-full.mp4",
+      "Bytes": 184895967,
+      "SHA256": "09B639C680D91C2F2F9FE872726BA6091CD39CCF61B2A01A74013EFF0E9E5D1A",
+      "LastWriteUtc": "2026-09-26T09:47:43.5081877Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/loaded-pair-trip-v1-full.mp4",
+      "Bytes": 23748421,
+      "SHA256": "2DC9E976DF4C1D8ADA3EEB7A4416D318381EAB869AF4CFC782DDE51729788002",
+      "LastWriteUtc": "2026-09-26T21:59:44.4951156Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/loaded-pair-trip-v3-full.mp4",
+      "Bytes": 264056980,
+      "SHA256": "8E97735368151669A50B1C4701450393818179598DEB16988765E99E56FF1E7F",
+      "LastWriteUtc": "2026-09-26T22:30:02.0492506Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/loaded-pair-trip-v4-full.mp4",
+      "Bytes": 130038515,
+      "SHA256": "788B683148AECBBDD086C785F05322FAB8FF00659D5D4285D562228E66A04C31",
+      "LastWriteUtc": "2026-09-26T22:39:57.9833548Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/loaded-straight-trip-v1-full.mp4",
+      "Bytes": 675899071,
+      "SHA256": "841B08E729F708DE93EAB365A85BB8AC21192761C6C15A059E248FD57A2CF84E",
+      "LastWriteUtc": "2026-09-27T00:42:10.2361912Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/loaded-straight-trip-v2-full.mp4",
+      "Bytes": 653527482,
+      "SHA256": "2C4F5C1EF89F75BAE17F92AF5C080D6D4F741FF63297BEB16EA8E19E57947099",
+      "LastWriteUtc": "2026-09-27T01:03:58.9050324Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/loaded-straight-trip-v3-full.mp4",
+      "Bytes": 836260572,
+      "SHA256": "CAF74CA5532F7C50EE56CBA2B0E3CDFEADD066A061B7739AD99AFD17199B5761",
+      "LastWriteUtc": "2026-09-27T01:22:58.8005971Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/loaded-straight-trip-v4-full.mp4",
+      "Bytes": 677870370,
+      "SHA256": "89EFEA78E601D602C0FDACA9A5A6A1AD3E78A0ABF09554FAC8A5A7B115B5FAB7",
+      "LastWriteUtc": "2026-09-27T01:43:50.9773234Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/loaded-straight-trip-v5-full.mp4",
+      "Bytes": 120430764,
+      "SHA256": "012124467E392503CC2B2AF950179557700F66D8528B86811757032CAA1CC93F",
+      "LastWriteUtc": "2026-09-27T02:14:51.3794173Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/moving-refresh-radius5-v1-full.mp4",
+      "Bytes": 120040458,
+      "SHA256": "E29143E7E17004618A6FFE05CDA30A82802A859A0C2A786F8FE0195E01A465BF",
+      "LastWriteUtc": "2026-09-26T06:30:30.0014462Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/moving-refresh-radius5-v2-full.mp4",
+      "Bytes": 261043352,
+      "SHA256": "3721C40E788F84206F8FF9AF8AE22433AF8E71E78CD4A773D973BAA1793D02B2",
+      "LastWriteUtc": "2026-09-26T06:35:02.1077215Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/moving-restart-radius5-v1-full.mp4",
+      "Bytes": 358434998,
+      "SHA256": "91586BC534B3CB33044D2811512199B069F700D213EEE19BD89AD85C0AD4662E",
+      "LastWriteUtc": "2026-09-26T07:17:55.8222399Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/native-cargo-action-v1-full.mp4",
+      "Bytes": 202987424,
+      "SHA256": "77952447E693E32358E2B9DA8DD54AF547DF17A90638005A87349DCED6BAF64A",
+      "LastWriteUtc": "2026-09-26T19:42:25.3374071Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/native-cargo-action-v2-full.mp4",
+      "Bytes": 304398537,
+      "SHA256": "4384D735CBE5FF352542908283F069C4A130364F069200D5ADE55316B0C4AAE0",
+      "LastWriteUtc": "2026-09-26T19:49:01.5161996Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/native-cargo-action-v3-full.mp4",
+      "Bytes": 303737575,
+      "SHA256": "3F8449DB6C2EC9914F031120812325B5D6CCA9738690B92ED0E1DE1E15457214",
+      "LastWriteUtc": "2026-09-26T19:57:30.4265842Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/native-cargo-action-v4-full.mp4",
+      "Bytes": 219386314,
+      "SHA256": "B42F03156BAC6292D283C4C982F456C1A83266620072A1FEC8652857C500055A",
+      "LastWriteUtc": "2026-09-26T20:04:10.8880928Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/native-cargo-action-v5-full.mp4",
+      "Bytes": 300304195,
+      "SHA256": "0BA83E9D10FC7EF58B6D50869233AC7422663162FCC770D139371668553F7E3F",
+      "LastWriteUtc": "2026-09-26T20:11:51.0956948Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/native-lead-hold-radius5-v2-full.mp4",
+      "Bytes": 277000237,
+      "SHA256": "3C8A28847BA71FBDC15569423E250569DA76435DB5E62230114A7C5280CED684",
+      "LastWriteUtc": "2026-09-26T06:06:10.8431724Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/native-lead-hold-v2-full.mp4",
+      "Bytes": 341009084,
+      "SHA256": "DFF75F4B09EE6E0DD253D9F2F37149933E833DD91BE6C3E8412AFEC43428E0C2",
+      "LastWriteUtc": "2026-09-26T05:55:57.3835215Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/natural-recovery-trip-v1-full.mp4",
+      "Bytes": 770064685,
+      "SHA256": "0EE12E019A2A2D4452715F01278E740FA19A2B3D0431456B1F755D705601B9C4",
+      "LastWriteUtc": "2026-09-27T08:26:11.0876278Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/natural-retrace-trip-v1-full.mp4",
+      "Bytes": 728775381,
+      "SHA256": "062EC5C8CB2FBF081D72E10D599C6C8E3CF7CCEB568FDD8CCE1ADF7B7AFFB6B2",
+      "LastWriteUtc": "2026-09-27T08:49:39.4292946Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/ordinary-one-resume-v1-full.mp4",
+      "Bytes": 572972686,
+      "SHA256": "297009D379EC3A04AF6FC67552C38AA8ACD426BA48D342C4AC726EE9698566DB",
+      "LastWriteUtc": "2026-09-26T19:18:56.8529483Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/ordinary-three-arrival-recovery-v1-full.mp4",
+      "Bytes": 487994837,
+      "SHA256": "5785B83AD66B13CDD67A28F7DD90E7CDB50B47FA65724157F31C26F28646594A",
+      "LastWriteUtc": "2026-09-26T21:12:28.4634104Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/ordinary-three-arrival-v1-full.mp4",
+      "Bytes": 245645902,
+      "SHA256": "B8134A582C162516988484CEADEF02520C82215E650DD8A5F6A544D6E06DB116",
+      "LastWriteUtc": "2026-09-26T20:46:22.4858249Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/ordinary-three-entry-pacing-v1-full.mp4",
+      "Bytes": 234178896,
+      "SHA256": "2121B968D8940C9D41EE564D23039BEFE16582811141D2D25A81914F1369AA34",
+      "LastWriteUtc": "2026-09-26T21:35:21.0048794Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/ordinary-three-middle-pacing-v1-full.mp4",
+      "Bytes": 509299024,
+      "SHA256": "037A70CA31D4A02A2E2002599E721E4A371CE86067CB44729DC05B626F9D0D88",
+      "LastWriteUtc": "2026-09-26T21:26:36.3904040Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/ordinary-two-arrival-v1-full.mp4",
+      "Bytes": 558971885,
+      "SHA256": "96356947751563573BB612E03A27D176381E3356E4981FF562AA5D169EF037A7",
+      "LastWriteUtc": "2026-09-26T19:28:39.3023543Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/original-direct-rear-two-v1-full.mp4",
+      "Bytes": 539579846,
+      "SHA256": "65C804CDA8B1D8BF892ABE18BF357B7AA53CF7DEF6BB0985DEC5B8D52FB278AC",
+      "LastWriteUtc": "2026-09-26T18:35:15.9454749Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/original-direct-two-v4-full.mp4",
+      "Bytes": 448999813,
+      "SHA256": "4CB73967AACA0B92CD3ECD99E7CF28F381912475F655FC0B16986756C2D3AB0E",
+      "LastWriteUtc": "2026-09-26T16:24:54.1535328Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/original-follow-hold-resume-v1-full.mp4",
+      "Bytes": 525082015,
+      "SHA256": "A110649259F207E211032E94B2F9B594FF956EEA2217929DDAC3BB0F934EA11E",
+      "LastWriteUtc": "2026-09-26T15:06:09.6448748Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/original-follow-hold-resume-v2-full.mp4",
+      "Bytes": 564000836,
+      "SHA256": "1919B42E4DF07E8E15DF9FBD275DA672950E37DCF617E48C95F9DC50A674A2BC",
+      "LastWriteUtc": "2026-09-26T15:44:59.7254099Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/original-follow-hold-resume-v3-full.mp4",
+      "Bytes": 520592367,
+      "SHA256": "F2FDFC69B7321522632BC34994B7FF2A0A1A04AED1C53E27813A77601964EED4",
+      "LastWriteUtc": "2026-09-26T15:57:04.2872202Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/original-resume-diagnostic-v1-full.mp4",
+      "Bytes": 527300827,
+      "SHA256": "CF83C161451094FCC997FBAAF334D5C8563A6D870ED12283D8894E5147764712",
+      "LastWriteUtc": "2026-09-26T16:17:27.1849701Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/original-tail-entry-two-v1-full.mp4",
+      "Bytes": 138845019,
+      "SHA256": "9F8FC0AA90EF94C41467C2A31044B0CD2E4739F3990568CA0680DED17F4B3174",
+      "LastWriteUtc": "2026-09-26T17:09:31.6692382Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/original-tail-projected-station-two-v2-full.mp4",
+      "Bytes": 188397256,
+      "SHA256": "DD0758D98B2C2BCC04695E32A3DDF3A635EAD513721FEC9E5878F0EC9553A6FC",
+      "LastWriteUtc": "2026-09-26T17:47:45.4981970Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/original-tail-two-v1-full.mp4",
+      "Bytes": 145517218,
+      "SHA256": "BD85639B4E6B474E0ACE21F7D735E7B13F986A87B30F6425BC3AF20924519F8F",
+      "LastWriteUtc": "2026-09-26T16:28:53.2844831Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/owner-drive-calibration-coasting-diagnostic.mp4",
+      "Bytes": 3723938,
+      "SHA256": "45731593FC189CFC7CA272546C76BBCF637EDF969ECF71FDD18E3B2D6A62F4B5",
+      "LastWriteUtc": "2026-09-26T00:40:23.5626790Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/owner-drive-calibration-v1.mp4",
+      "Bytes": 159134632,
+      "SHA256": "E762BB30622E3D0B7710A9929D6EA5D0F05360DED8BB02B3EA7F89F50E340104",
+      "LastWriteUtc": "2026-09-26T00:37:56.4934104Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/owner-drive-calibration-v2-standalone.mp4",
+      "Bytes": 107052633,
+      "SHA256": "CE9548293854BFE515515BCF184E51EC5CF36C4098F9ED6B50D49CF8BCC28561",
+      "LastWriteUtc": "2026-09-26T02:58:47.0115790Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/owner-drive-calibration-v3-standalone.mp4",
+      "Bytes": 87478085,
+      "SHA256": "4B58D8F219CC432D467916E9920AB46BDFDA90A4AC756536B9B7D3224F37E127",
+      "LastWriteUtc": "2026-09-26T03:12:32.4358883Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-entity-follow-1truck-v1-full.mp4",
+      "Bytes": 503030556,
+      "SHA256": "15E63383D559837874F2F246E277787EEA228E2326845922DD0C9BFEB53BDBBB",
+      "LastWriteUtc": "2026-09-26T10:58:37.7914786Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-entity-rear-2truck-v1-full.mp4",
+      "Bytes": 519583760,
+      "SHA256": "5457BB9E8A1B4910F072EBE20B8BFF6B96C9067773E4134CAFA82302A809138E",
+      "LastWriteUtc": "2026-09-26T12:39:26.3861372Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-entity-stop-1truck-v1-full.mp4",
+      "Bytes": 749429294,
+      "SHA256": "4C208541083702F842CA1C7F6BF491C6C01662521394636A93F8E518F551E1DC",
+      "LastWriteUtc": "2026-09-26T11:24:52.3886399Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-entity-stop-2truck-v1-full.mp4",
+      "Bytes": 677952211,
+      "SHA256": "437510E300954CF9A9A3E6C1D7F4662049AC56E6533FDD9621DB3F20658A1B3F",
+      "LastWriteUtc": "2026-09-26T11:47:37.2331708Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-entity-wait-1truck-v1-full.mp4",
+      "Bytes": 522174282,
+      "SHA256": "ABCC859155DBAF4D43D84AD4EC3983C265CD9ACB64BDBD198CB97CCD62D96F42",
+      "LastWriteUtc": "2026-09-26T13:20:01.1437109Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-entity-wait-2truck-v1-full.mp4",
+      "Bytes": 560431311,
+      "SHA256": "A81DFB1BFE8728CF83C5C8B3A0C7C0EF678B10B0DD2B061678D6008FCDF45F84",
+      "LastWriteUtc": "2026-09-26T12:10:21.5990999Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-native-close-1truck-v1-full.mp4",
+      "Bytes": 506277641,
+      "SHA256": "0BF9A4D2783776860F124C84C9E1A81C2F8C6C43375EFCB3A74A769DED6C3FEB",
+      "LastWriteUtc": "2026-09-26T10:39:37.1806953Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-native-path-2truck-v1-full.mp4",
+      "Bytes": 45350960,
+      "SHA256": "2299877238A3B936AD568D9C289252DFE61C428AB947724F184327455AADBC2B",
+      "LastWriteUtc": "2026-09-26T09:31:56.7634922Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-native-path-2truck-v2-full.mp4",
+      "Bytes": 553937077,
+      "SHA256": "5B52B920AB18619C41D19F3D3F3B0F26DC7BC03AB6A27B86E3AFFE77B3CFBCCD",
+      "LastWriteUtc": "2026-09-26T09:55:08.9197111Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-original-follow-1truck-v1-full.mp4",
+      "Bytes": 546056418,
+      "SHA256": "F117E15B3F793867CC41F9BABFDB5DE4CA1D1D0C453A7A1CE8FC0A8F62BFE3A0",
+      "LastWriteUtc": "2026-09-26T14:15:58.6212210Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-original-follow-2truck-v1-full.mp4",
+      "Bytes": 534651369,
+      "SHA256": "B95CFBCC34895824EE26B291C2C55C299792937807EC915BCC41A973C8C4F3A0",
+      "LastWriteUtc": "2026-09-26T14:26:31.7745304Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-road-2truck-departure-v1-full.mp4",
+      "Bytes": 473195971,
+      "SHA256": "9F2260CE2B5B6FB6B5667C731C9FD5FC460FB6ED7F025FED6AA559A050561568",
+      "LastWriteUtc": "2026-09-26T09:03:56.4523408Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-road-2truck-v1-full.mp4",
+      "Bytes": 744527798,
+      "SHA256": "0659A2DFECE38A24D7AF4E2E23B06E2B1346409BF9287453E26A9BD96215420D",
+      "LastWriteUtc": "2026-09-26T08:35:34.7392609Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-stable-waypoint-2truck-v1-full.mp4",
+      "Bytes": 795913722,
+      "SHA256": "6E375502C9396E6919309F58EA0BB574D355FF0AA5EC8CF8966031AD46083767",
+      "LastWriteUtc": "2026-09-26T10:16:38.0112655Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-trail-guide-1truck-v1-full.mp4",
+      "Bytes": 213003211,
+      "SHA256": "423179E5C68D555D72EA62454CC67EFC87D062C5A75E1F3ABF8066044C8697D3",
+      "LastWriteUtc": "2026-09-26T13:38:52.0973884Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/paced-trail-guide-1truck-v2-full.mp4",
+      "Bytes": 216539162,
+      "SHA256": "464BE2467BE9BE3E8083288A7D567BA9AAD339F074A0F1EFBB2646CAF7824DC5",
+      "LastWriteUtc": "2026-09-26T13:56:44.6718890Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/panel-input-events-v3-full.mp4",
+      "Bytes": 36764155,
+      "SHA256": "2A8CA38E4332F067A1C168C6881C9AE98214AF28A534D90469595B45B36E616C",
+      "LastWriteUtc": "2026-09-26T09:07:50.2344004Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/panel-input-observer-v1-full.mp4",
+      "Bytes": 288330304,
+      "SHA256": "B5FAAC38B236C314CE19E8CCE26478B9870E0B1F11A2509264D345990847D297",
+      "LastWriteUtc": "2026-09-26T08:17:11.4083857Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/panel-input-special-key-v2-full.mp4",
+      "Bytes": 48914524,
+      "SHA256": "A3FD9AEE0F2753025071116D036410BCB676E8D3CAD15D0AF772DA435AA81D06",
+      "LastWriteUtc": "2026-09-26T08:43:28.9096781Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/panel-pilot-dpi-v1.mp4",
+      "Bytes": 25710317,
+      "SHA256": "428484C3D8726B931E55BA3A306DEEAC80B548E0F71E484E6C651133C9AC92A2",
+      "LastWriteUtc": "2026-09-25T16:32:59.3849371Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/panel-pilot-dpi-v2.mp4",
+      "Bytes": 2608317,
+      "SHA256": "018998D001549DBC14AC4431A9A2686A5936F9CA1B783331429226E104A7BFDC",
+      "LastWriteUtc": "2026-09-25T16:35:59.8130906Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/panel-pilot-dpi-v3.mp4",
+      "Bytes": 362519530,
+      "SHA256": "FB8A4AE3212231890024413654BFC5D558C3011A3631662FD7B8C25AAEF4AF46",
+      "LastWriteUtc": "2026-09-25T16:42:44.6579829Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/panel-raw-input-v1-full.mp4",
+      "Bytes": 31036208,
+      "SHA256": "0553BECFB9182D7247C17EAFF05E541D33051ABC38FC800866F49FF7B999CEB6",
+      "LastWriteUtc": "2026-09-26T09:30:07.1460207Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/pass-corridor-atlas-v1.mp4",
+      "Bytes": 156816017,
+      "SHA256": "17A83C130744C4A0A5D00B5E0261DF9BF6917DD108A66383AD6D36DAE7A39200",
+      "LastWriteUtc": "2026-09-26T00:48:25.9536554Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/pass-corridor-atlas-v2.mp4",
+      "Bytes": 73257734,
+      "SHA256": "B2BB04ED61F1082338967EAB57D856507A9384D58BB7CEE09772F4BB06177976",
+      "LastWriteUtc": "2026-09-26T00:53:48.1833625Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/pause-v2-title-test.mp4",
+      "Bytes": 434171,
+      "SHA256": "48EC9BDB3D9101CD3904A40251C2D4D07AB188C286E6A1F2E4076D7F9F9D7DA5",
+      "LastWriteUtc": "2026-09-25T15:11:52.0914787Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/production-cruise-radius5-v1-full.mp4",
+      "Bytes": 264229235,
+      "SHA256": "BCD0D23135021978E52071105FCAEFB6726049E551738B17DE36A669F59CFD55",
+      "LastWriteUtc": "2026-09-26T06:16:36.8637034Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/production-cruise-radius5-v2-full.mp4",
+      "Bytes": 265931393,
+      "SHA256": "7807BD61BBF3CBF3B76575CDDC5ADD8ED3856ED764C006A07F795644BB1FE512",
+      "LastWriteUtc": "2026-09-26T06:25:30.1401822Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/reboard-canonical-v1-full.mp4",
+      "Bytes": 118736205,
+      "SHA256": "689BC2A55969217325EA2E380BA1169634542D865ECFB61F433370510CE2F041",
+      "LastWriteUtc": "2026-09-27T02:58:39.6016604Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/reboard-held-v2-full.mp4",
+      "Bytes": 93645786,
+      "SHA256": "66EA5F2A4667DCE5016A44A79240490517EE8005E2CCF2BDA49E6714B50FFC31",
+      "LastWriteUtc": "2026-09-27T02:45:36.0620844Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/reboard-selected-trip-v1-full.mp4",
+      "Bytes": 677912287,
+      "SHA256": "D347CC01E75E99D0A9C2799EEF87FA24A72BE1A76BFCD4B39F6F9FF06F7DADC3",
+      "LastWriteUtc": "2026-09-27T02:30:05.0397137Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/resume-status-radius5-v1-full.mp4",
+      "Bytes": 22449934,
+      "SHA256": "B3E1E80A172FB5F042614C30C349F4A9874A0472E15FF6714C2F5C3FEC9C66DC",
+      "LastWriteUtc": "2026-09-26T07:37:22.7675025Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/resume-status-radius5-v2-full.mp4",
+      "Bytes": 753114047,
+      "SHA256": "2691C0902AF6DE347B8876724A36F74B6688BE29B0500E697E31798DEEFCC6DF",
+      "LastWriteUtc": "2026-09-26T07:48:24.7790615Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/resume-status-radius5-v3-full.mp4",
+      "Bytes": 805945978,
+      "SHA256": "ACCE620D024BD756A3FFEE1F52422BB3432619BEBA2CBE1C7D756E47B1BB1D4E",
+      "LastWriteUtc": "2026-09-26T08:10:30.6560757Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/retained-arrival-offroute-v1-full.mp4",
+      "Bytes": 226603512,
+      "SHA256": "47C494E32D5F84ACC0A16D1094E21FB3DACB968106EE42B3761471BB7C00CEAA",
+      "LastWriteUtc": "2026-09-27T09:20:53.6530758Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/reverse-recovery-stop-resume-v1-full.mp4",
+      "Bytes": 73260844,
+      "SHA256": "0DAF125A055C8010B7EF83782B972D6CB55C686DB00D086AF75DE8577B4A1C2E",
+      "LastWriteUtc": "2026-09-26T23:03:27.6192186Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/reverse-recovery-stop-resume-v2-full.mp4",
+      "Bytes": 4021110,
+      "SHA256": "36049013280B746530266E571FC4EF62F0B63C5C303E0E92987CBFB6E81E9404",
+      "LastWriteUtc": "2026-09-26T23:05:25.0718846Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/reverse-recovery-stop-resume-v3-full.mp4",
+      "Bytes": 239781215,
+      "SHA256": "F2DFAE3F717F57619AD3B25875A98F224ECAD56781EC4C63FEED22EC3E91CE62",
+      "LastWriteUtc": "2026-09-26T23:11:03.3366897Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/reverse-recovery-stop-resume-v4-full.mp4",
+      "Bytes": 242638008,
+      "SHA256": "22CF306B3C4061C072B68B0AAB044AA921F05683FCA1E1454F7AF174309D1AEC",
+      "LastWriteUtc": "2026-09-26T23:20:23.9211356Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/reverse-recovery-stop-resume-v5-full.mp4",
+      "Bytes": 269257531,
+      "SHA256": "2040AD3A4451D1BC1777908E283511927F7FDC36638B2905E533C74FC338C5FE",
+      "LastWriteUtc": "2026-09-26T23:30:27.4158196Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/review-3truck-sample.mp4",
+      "Bytes": 19017346,
+      "SHA256": "CF4E1D60ABD1FA031D728B6F3352B24C2DA6BE732EA134B134D00F0594A9BB67",
+      "LastWriteUtc": "2026-09-25T08:32:35.8936913Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/road23-3truck-forward-twoahead-v1.mp4",
+      "Bytes": 354285490,
+      "SHA256": "F91FBF4072A89986ABF22970A4DD5C08266570DF1B89DDC03FE6DB8FB82B419E",
+      "LastWriteUtc": "2026-09-26T01:10:37.8395924Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/road23-3truck-forward-twoahead-v2.mp4",
+      "Bytes": 351793539,
+      "SHA256": "ECB57875BFD0DCD55B0AA47B55E80B218759954BE9E11AAF4D67BEDABE8606BB",
+      "LastWriteUtc": "2026-09-26T01:16:24.4158557Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/road81-3truck-forward-twoahead-v1.mp4",
+      "Bytes": 336564251,
+      "SHA256": "7A01D31E561A2DADB7BFAAA4AE97EE7A32349264EB94F7E8E8B70ACA2D492DB2",
+      "LastWriteUtc": "2026-09-26T01:42:36.5641400Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/road81-3truck-forward-twoahead-v2.mp4",
+      "Bytes": 390382921,
+      "SHA256": "AFE35EDACD454E8905AAA5052AD0DF931CDA1992E930FAA9F917F509D0CC0568",
+      "LastWriteUtc": "2026-09-26T01:49:03.7286713Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/road81-3truck-forward-twoahead-v3.mp4",
+      "Bytes": 447639787,
+      "SHA256": "0B5162B9637BE9AB958ED999A63DD355672120B00B260446D3B9508D3A0BD0BB",
+      "LastWriteUtc": "2026-09-26T01:59:12.9551773Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/road81-3truck-forward-twoahead-v4-standalone.mp4",
+      "Bytes": 123576629,
+      "SHA256": "A0650104AFE6A233D2880954588600B0FD754D1688DCA6099C1C9AAF5ABD191D",
+      "LastWriteUtc": "2026-09-26T02:13:15.6928443Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/road81-3truck-forward-twoahead-v5-standalone.mp4",
+      "Bytes": 276308205,
+      "SHA256": "FB5178C585D408FC2CCF77E43FB025C9C3919B13F308EEF6DAC8581F29FC8F6D",
+      "LastWriteUtc": "2026-09-26T02:33:07.5690840Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/road81-arrival-trip-v1-full.mp4",
+      "Bytes": 987468704,
+      "SHA256": "227A5467477046EC8D2A57E1F77F081BB8387BDBF6B8ADED44DE0E9A6B0EDB56",
+      "LastWriteUtc": "2026-09-27T03:15:07.3279211Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/road81-entry-approach-v1-full.mp4",
+      "Bytes": 721010558,
+      "SHA256": "9BA08FFA42DE10FD7DECB8032339E7FC09791B7632725F4BCEB7A61453E9BFFE",
+      "LastWriteUtc": "2026-09-27T02:55:03.0246074Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/road81-integrated-trip-v1-full.mp4",
+      "Bytes": 634581162,
+      "SHA256": "119B9B8F4ACA7A257682A7346794B01B1701EEB137637F0D7FB95C30836F9BFA",
+      "LastWriteUtc": "2026-09-27T04:08:50.3012772Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/road81-loaded-trip-v1-full.mp4",
+      "Bytes": 122857567,
+      "SHA256": "D76E023411DE1AF75CF2CCCB09E67E3B6AEAE41C1E4D9431870FFF259FF9F59A",
+      "LastWriteUtc": "2026-09-27T02:34:54.5665985Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/sampled-head-supply-integration-v1-full.mp4",
+      "Bytes": 138069965,
+      "SHA256": "9BD21BAF7E89DCF373F21C664776C1B2986FDF349ADFDADAAA655E3B88202409",
+      "LastWriteUtc": "2026-09-27T05:30:26.4278860Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/sampled-head-supply-integration-v2-full.mp4",
+      "Bytes": 646554781,
+      "SHA256": "B836C98E0A7BFF250D4CA03192288DFDA249497BC1A0D275DA71F2B45CF6508E",
+      "LastWriteUtc": "2026-09-27T05:49:45.3744799Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/sampled-head-supply-integration-v3-full.mp4",
+      "Bytes": 658113075,
+      "SHA256": "E7A1ACC3534090F2675506F3F67118727F04FDD36C5601C2CA1407C71AE6334C",
+      "LastWriteUtc": "2026-09-27T06:01:30.7959615Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/sampled-head-supply-integration-v4-full.mp4",
+      "Bytes": 584728831,
+      "SHA256": "DBD71952E5EB90158DD4D07BCEE8C755B3D0BB4CA8EE70F3793D25B948AA4869",
+      "LastWriteUtc": "2026-09-27T06:21:44.1683518Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/short-arrival-1truck-v1-standalone.mp4",
+      "Bytes": 99077615,
+      "SHA256": "CA62D3F0A7978C32C42FEA39E8F80EFDFF2E081603AED5299488C9C66941D712",
+      "LastWriteUtc": "2026-09-26T02:37:28.3354223Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/short-arrival-1truck-v2-standalone.mp4",
+      "Bytes": 59742524,
+      "SHA256": "D0E73234F2B4E14862DAE95DDE6630351118C3EC08D8430837D01CAEBA5C82B4",
+      "LastWriteUtc": "2026-09-26T02:45:47.7628039Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/straight-arrival-stop-resume-v1-full.mp4",
+      "Bytes": 166654105,
+      "SHA256": "E7252A8AA0E7B06074BBD9E51A2687D773885A3B36C961D73568376BD5A4AF62",
+      "LastWriteUtc": "2026-09-26T23:39:31.5838720Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/straight-arrival-stop-resume-v2-full.mp4",
+      "Bytes": 190859724,
+      "SHA256": "AE26F42153175110DD32E88393927632C32AED6EBBE17CB97DEC383D2EB4E4B9",
+      "LastWriteUtc": "2026-09-26T23:55:43.2142700Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/straight-arrival-stop-resume-v3-full.mp4",
+      "Bytes": 186220945,
+      "SHA256": "56F5A6AB1CFABB797A5EC6C8D29336DC8B604C4CFE13F1D194C7E0064B4BE6D9",
+      "LastWriteUtc": "2026-09-27T00:06:12.9797401Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/straight-arrival-stop-resume-v4-full.mp4",
+      "Bytes": 528903755,
+      "SHA256": "319514A5B8C2CB05CC87ED5D398C3D31D178A4D376B8EF89DAEE3AB09FD384F2",
+      "LastWriteUtc": "2026-09-27T00:18:14.6275759Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/straight-arrival-stop-resume-v5-full.mp4",
+      "Bytes": 599377745,
+      "SHA256": "04688335958442DB67A223C8D5A233305C0DF0B3C71782462DD70F6552C5CDE3",
+      "LastWriteUtc": "2026-09-27T00:30:48.7429313Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    },
+    {
+      "Path": "C:/Users/marco/Desktop/REFORGER/.cache/test-videos/vanilla-ui-delivery-v1-full.mp4",
+      "Bytes": 80315135,
+      "SHA256": "12275C4C53B6C4721B6E5F4D85F2DEA5345410F67647C3F4EE89F598C74492B8",
+      "LastWriteUtc": "2026-09-26T09:24:00.9548633Z",
+      "Reason": "Superseded automated test/calibration raw recording; textual evidence retained; deletion explicitly authorized"
+    }
+  ],
+  "retainedVideos": [
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\arland-paved-follower-lag-v1-small.mp4",
+      "bytes": 5357021,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\arrival-zero-radius5-v2-game-review.mp4",
+      "bytes": 259445610,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\auto-2truck-release-final-v2-audio-review.mp4",
+      "bytes": 456290756,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\auto-2trucks-review-sample.mp4",
+      "bytes": 1652483,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\auto-3truck-nav-diagnostic-review-sample.mp4",
+      "bytes": 2421835,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\convoy-trip-two-v1-gameplay.mp4",
+      "bytes": 28317890,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\convoy-trip-two-v2-gameplay.mp4",
+      "bytes": 48750003,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\cooperative20-two-v1-gameplay.mp4",
+      "bytes": 61434590,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\explicit-hold-radius5-v1-gameplay.mp4",
+      "bytes": 131838523,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\explicit-retry-2truck-v2-demo.mp4",
+      "bytes": 10407749,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\loaded-pair-trip-v2-full.mp4",
+      "bytes": 611618663,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\loaded-pair-trip-v2-highlights.mp4",
+      "bytes": 66943516,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\loaded-straight-trip-v3-highlights.mp4",
+      "bytes": 41108263,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\loaded-supply-trip-v1-full.mp4",
+      "bytes": 650032583,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\loaded-supply-trip-v1-gameplay.mp4",
+      "bytes": 241059169,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\loaded-supply-trip-v1-highlights.mp4",
+      "bytes": 90710728,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\native-cargo-action-v6-full.mp4",
+      "bytes": 305404233,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\natural-recovery-trip-v1-demo.mp4",
+      "bytes": 34428860,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\natural-retrace-trip-v1-demo.mp4",
+      "bytes": 32881978,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\ordinary-three-arrival-recovery-v1-gameplay.mp4",
+      "bytes": 58487525,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\ordinary-two-arrival-v1-gameplay.mp4",
+      "bytes": 48662899,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\paced-road-2truck-departure-v1-reversal-review.mp4",
+      "bytes": 3950665,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\paced-road-2truck-v1-avoidance-review.mp4",
+      "bytes": 12700693,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\road81-integrated-trip-v1-demo.mp4",
+      "bytes": 45252002,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    },
+    {
+      "path": "C:\\Users\\marco\\Desktop\\REFORGER\\.cache\\test-videos\\sampled-head-supply-integration-v3-demo.mp4",
+      "bytes": 21873776,
+      "reason": "Selected compact demonstration/review or native supply baseline"
+    }
+  ],
+  "removedCleanWorktree": {
+    "path": "D:/ReforgerAgentBuilds/harness-handoff-20260930",
+    "pushedCommit": "42750719249649f17a2a5ba9314e228dcc37effc",
+    "remote": "https://github.com/MarcoBetti1/reforger-agent-harness.git"
+  },
+  "preserved": [
+    "Both mod working copies and their branch history",
+    "Current player-debug-bay-v1 runtime and frozen source",
+    "player-stop-continuity-v1 rollback runtime and frozen source",
+    "All historical full console logs, terminal snapshots, reports and source snapshots",
+    "Original recorded voice and generated clips/models",
+    "Tracked docs/media and original human recordings outside the audited test-video folder",
+    "Workshop/install caches and user save/profile data; corrected one misplaced voice override",
+    "Dirty harness main documentation and its pushed handoff branch"
+  ]
+}
