@@ -1,0 +1,98 @@
+{
+  "baseSource": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v1/frozen-source-final/source",
+  "sourceRoot": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/source/ConvoyFollower",
+  "buildRoot": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2",
+  "changedFile": "Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c",
+  "baseSha256": "2624FD8A4E10E0BECD2F0BC6515AB3A89FCDAFD0EBDE666F0C6D8274CED720BE",
+  "candidateSha256": "73A0B43E5D64C054C4F90B6A8C4463AAED70A74126EE195E7C1E226911077A77",
+  "restoredV1ByteTextMatches": true,
+  "edits": [
+    {
+      "label": "journey phase stops at terminal",
+      "before": " protected void JourneyPhase(int phase)\n {\n",
+      "after": " protected void JourneyPhase(int phase)\n {\n  if (m_bPacedTerminal) return;\n"
+    },
+    {
+      "label": "read-only handoff diagnostics and terminal guarded bay phase",
+      "before": " protected void JourneyCapture(string tag)\n",
+      "after": " override protected void BayPhase(int phase)\n {\n  if (m_bPacedTerminal) return;\n  super.BayPhase(phase);\n }\n // Copy/read the unchanged native seat-handoff conjunction; no actor/control writes.\n protected bool JourneyHandoffReadback(bool toOwner, string seam)\n {\n  bool parkAllowed = CanCommandPark(); float speed = CommandSpeed(m_Lead);\n  bool speedRejected = speed > 2; // Preserve the existing rejection comparison.\n  bool directionReady; bool nativeControl; bool selectedWait; bool ownerPilot; bool nativeOnFoot;\n  if (toOwner)\n  {\n   nativeControl = CanControlLead(); selectedWait = LeadWaitSelected();\n   directionReady = nativeControl && selectedWait;\n  }\n  else\n  {\n   ownerPilot = CommandSeat(m_PacedOwner, true); nativeOnFoot = CommandOnFoot(m_Pilot);\n   directionReady = ownerPilot && nativeOnFoot;\n  }\n  bool accepted = parkAllowed && !speedRejected && directionReady;\n  string line = \"[ConvoyFollower] ORDINARY_BAY_HANDOFF_PRECONDITIONS: phase=\" + m_iJourneyPhase + \" bay_phase=\" + m_iBayPhase + \" seam=\" + seam + \" to_owner=\" + toOwner;\n  line += \" can_command_park=\" + parkAllowed + \" speed_kmh=\" + speed + \" speed_over2_rejected=\" + speedRejected + \" speed_nan=\" + (speed != speed);\n  line += \" native_control_required=\" + toOwner + \" native_control=\" + nativeControl + \" selected_wait_required=\" + toOwner + \" selected_owned_wait=\" + selectedWait;\n  line += \" owner_pilot_required=\" + !toOwner + \" owner_pilot=\" + ownerPilot + \" native_onfoot_required=\" + !toOwner + \" native_onfoot=\" + nativeOnFoot;\n  line += \" unchanged_conjunction_accepted=\" + accepted + \" original_identities=\" + BayIdentities() + \" read_only=true\";\n  Print(line);\n  return accepted;\n }\n override protected void BeginCommandSeatTransfer(bool toOwner)\n {\n  if (m_bPacedTerminal) return;\n  JourneyHandoffReadback(toOwner, \"native_begin_call\");\n  super.BeginCommandSeatTransfer(toOwner);\n }\n protected void JourneyCapture(string tag)\n"
+    },
+    {
+      "label": "version and selected-Wait subbound metadata",
+      "before": "total_world_s=1650 setup_s=95 outbound_s=240",
+      "after": "version=2 startup_wait_selection_s=10 total_world_s=1650 setup_s=95 outbound_s=240"
+    },
+    {
+      "label": "selected-Wait stage within unchanged95world setup",
+      "before": "m_iJourneyPhase == 0 || m_iJourneyPhase == 11 || m_iJourneyPhase == 12",
+      "after": "m_iJourneyPhase == 0 || m_iJourneyPhase == 13 || m_iJourneyPhase == 11 || m_iJourneyPhase == 12"
+    },
+    {
+      "label": "one Wait request; no immediate seat transfer",
+      "before": "    HoldLeadAtRoadGoal(); BeginCommandSeatTransfer(true); JourneyPhase(11); return;",
+      "after": "    HoldLeadAtRoadGoal();\n    if (m_bPacedTerminal) return;\n    JourneyPhase(13); return;"
+    },
+    {
+      "label": "bounded selected-Wait handoff phase",
+      "before": "  if (m_iJourneyPhase == 11)\n",
+      "after": "  if (m_iJourneyPhase == 13)\n  {\n   if (!JourneyHandoffReadback(true, \"startup_selected_wait_poll\"))\n   { if (now - m_fJourneyPhaseMs > 10000) JourneyFail(\"startup_selected_owned_wait_handoff_10world_timeout\"); return; }\n   BeginCommandSeatTransfer(true);\n   if (m_bPacedTerminal) return;\n   JourneyPhase(11); return;\n  }\n  if (m_iJourneyPhase == 11)\n"
+    },
+    {
+      "label": "stop outbound callback after terminal motion failure",
+      "before": "   JourneyMotion(m_JourneyOutbound, false);",
+      "after": "   JourneyMotion(m_JourneyOutbound, false);\n   if (m_bPacedTerminal) return;"
+    },
+    {
+      "label": "stop Resume callback after terminal motion failure",
+      "before": "   JourneyMotion(m_JourneyResumeEvidence, true);",
+      "after": "   JourneyMotion(m_JourneyResumeEvidence, true);\n   if (m_bPacedTerminal) return;"
+    }
+  ],
+  "seamAudit": [
+    {
+      "seam": "Journey startup phase0",
+      "before": "Wait request and BeginCommandSeatTransfer in samecallback",
+      "after": "One request then phase13 polls unchanged exact conjunction;10world subbound within95world setup"
+    },
+    {
+      "seam": "Journey arrival phase3",
+      "condition": "JourneyArrivalReady requires exact selected lead/follower Wait continuously for180world before handoff",
+      "unchanged": true
+    },
+    {
+      "seam": "Journey resumed corridor phase8",
+      "condition": "LeadWaitSelected and speed<=2 before handoff",
+      "unchanged": true
+    },
+    {
+      "seam": "Inherited bay first stop phase1",
+      "condition": "LeadWaitSelected and speed<=2 before handoff",
+      "unchanged": true
+    },
+    {
+      "seam": "Inherited bay clear phases6/16",
+      "condition": "LeadWaitSelected and speed<=2 and powered native motion before handoff",
+      "unchanged": true
+    },
+    {
+      "seam": "Inherited bay/return owner-to-native",
+      "condition": "Existing owner pilot/native pilot onfoot and parked ownership predicates; original helper retained",
+      "unchanged": true
+    },
+    {
+      "seam": "All JourneyPhase and inherited BayPhase transitions",
+      "after": "Private terminal guard prevents phase writes after failures; native handoff logs unchanged reject terms then calls original helper"
+    }
+  ],
+  "productionSourceChanged": false,
+  "originalDriverSourceUnchanged": true,
+  "guardResetRearm": false,
+  "routeGeometryCargoUnchanged": true,
+  "numericAcceptanceUnchanged": true,
+  "totalWorldSeconds": 1650,
+  "setupWorldSeconds": 95,
+  "selectedWaitSubboundWorldSeconds": 10,
+  "launcherWallSeconds": 5000,
+  "snapshotWallSeconds": 5100,
+  "liveRun": false
+}

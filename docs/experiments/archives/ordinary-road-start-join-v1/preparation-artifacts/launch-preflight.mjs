@@ -1,0 +1,11 @@
+import fs from 'node:fs';import crypto from 'node:crypto';
+import {verifyOriginalFollowSources} from '../startup-pair-v1/analysis/original-follow-report.mjs';
+const root='.cache/ordinary-road-start-join-v1',r=JSON.parse(fs.readFileSync(root+'/frozen-review.json')),run='D:/ReforgerAgentRuns/ordinary-road-start-join-v1';
+if(fs.existsSync(run))throw Error('Existing run: no replay');
+const hash=b=>crypto.createHash('sha256').update(b).digest('hex').toUpperCase();
+for(const [file,x]of Object.entries(r.trio)){const b=fs.readFileSync(r.deployment+'/'+file);if(b.length!==x.bytes||hash(b)!==x.sha256)throw Error('Frozen trio changed '+file);}
+const children=fs.readdirSync(r.runtimeParent,{withFileTypes:true}).filter(x=>x.isDirectory()).map(x=>x.name);if(children.length!==1||children[0]!=='ConvoyFollower_5A5FB20BD40C7C70')throw Error('GUID parent');
+const v=await verifyOriginalFollowSources({manifestPath:r.runtimeParent+'/source-manifest.json',copiedRoot:r.frozenSource,packPath:r.deployment+'/data.pak',expectedPack:r.trio['data.pak'].sha256});
+let watcher=fs.readFileSync('.cache/ordinary-outbound-bay-v2/watch-terminal.mjs','utf8');if(watcher.split('ordinary-outbound-bay-v2').length!==2)throw Error('Watcher seam');watcher=watcher.replace('ordinary-outbound-bay-v2','ordinary-road-start-join-v1');fs.writeFileSync(root+'/watch-terminal.mjs',watcher,{flag:'wx'});
+const plan={status:'AUTHORIZED_SINGLE_RUN_PREFLIGHT_PASSED',authorizedBy:'Coordinator frozen review September30; one run, no replay or geometry/gate/source change',preflightUtc:new Date().toISOString(),runRoot:run,world:r.world,addon:r.addon,addonsDir:r.runtimeParent,profile:run+'/profile',durationSeconds:5000,snapshotSeconds:5100,totalWorldSeconds:1650,naturalCloseWorldSeconds:30,expectGame:true,trio:r.trio,sourceFiles:v.checks.length,packedText:v.checks.filter(x=>x.packMatches!==undefined).length,guardReset:false,sourceAccessNativeBarrierBeforeDriving:true,candidateEditsAfterFreeze:false,manualV8Launch:false};
+fs.writeFileSync(root+'/launch-plan.json',JSON.stringify(plan,null,2)+'\n',{flag:'wx'});fs.writeFileSync(root+'/prelaunch-source-verification.json',JSON.stringify(v,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(plan,null,2));

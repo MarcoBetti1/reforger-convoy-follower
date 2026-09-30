@@ -1,0 +1,12 @@
+{
+  "profile": "D:/ReforgerAgentRuns/everon-journey-manual-v8/profile",
+  "runDir": "D:/ReforgerAgentRuns/everon-journey-manual-v8",
+  "keepOpen": true,
+  "gameLaunched": false,
+  "reason": "C: prelaunch storage guard refused a diagnostic before spawn; D: has more than 2 GiB available",
+  "addonDir": ".cache/player-addons/everon-journey-scene-v8",
+  "world": "Worlds/Showcase/ConvoyFollower_Everon_ReginaSupplyDay_1Truck.ent",
+  "packChanged": false,
+  "availableAfter": "2026-09-30 16:00 America/Chicago",
+  "requiresMarcoPresence": true
+}

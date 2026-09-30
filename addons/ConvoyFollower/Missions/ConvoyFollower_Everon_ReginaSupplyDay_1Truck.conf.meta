@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{A935F7AC7A6407EA}Missions/ConvoyFollower_Everon_ReginaSupplyDay_1Truck.conf"
+ Configurations {
+  CONFResourceClass PC {
+  }
+  CONFResourceClass HEADLESS : PC {
+  }
+ }
+}

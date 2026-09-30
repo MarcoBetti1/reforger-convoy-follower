@@ -1,0 +1,102 @@
+---------------------------------------------
+Log D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\workbench\validate\script.log started at 2026-09-30 13:36:43 (2026-09-30 18:36:43 UTC)
+
+13:36:43.637    SCRIPT       : SCRIPT       : Initializing scripts
+13:36:43.637     SCRIPT       : SCRIPT       : ScriptProjectManager init
+13:36:43.869    SCRIPT       : SCRIPT       : Compiling GameLib scripts
+13:36:43.898    SCRIPT       : Module: Workbench; loaded 18x files; 36x classes; used 125K of static memory; defines: "ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE"; CRC32: 90ce0460
+13:36:43.898    SCRIPT       : Module: GameLib; loaded 465x files; 648x classes; used 828K of static memory; defines: "ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE"; CRC32: 4507af04
+13:36:43.898    SCRIPT       : SCRIPT       : Compiling Game scripts
+13:36:44.495   SCRIPT       : Compiling Game scripts
+13:36:44.495    SCRIPT    (W): @"Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c,785": 'GetPlayerPlatformKind' is obsolete
+13:36:44.495    SCRIPT    (W): @"Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c,786": 'GetPlayerPlatformId' is obsolete
+13:36:44.665    SCRIPT    (W): @"Scripts/Game/Workshop/SCR_AddonManager.c,876": 'GetRefCount' is obsolete: Will be removed
+13:36:44.683    SCRIPT    (W): @"Scripts/Game/Campaign/SCR_PlayerProfileManagerComponent.c,142": 'PlayerData' is obsolete
+13:36:44.749    SCRIPT    (W): @"Scripts/Game/UI/Backend/CareerBackend.c,159": 'GetDSSession' is obsolete
+13:36:44.749    SCRIPT    (W): @"Scripts/Game/UI/Backend/CareerBackend.c,162": 'RoomID' is obsolete
+13:36:44.749    SCRIPT    (W): @"Scripts/Game/UI/Backend/CareerBackend.c,197": 'GetDSSession' is obsolete
+13:36:44.749    SCRIPT    (W): @"Scripts/Game/UI/Backend/CareerBackend.c,201": 'RoomID' is obsolete
+13:36:44.805    SCRIPT    (W): @"Scripts/Game/DataCollection/SCR_DataCollectorComponent.c,481": 'GetStorage' is obsolete
+13:36:44.805    SCRIPT    (W): @"Scripts/Game/DataCollection/SCR_DataCollectorComponent.c,483": 'GetOnlineWritePrivilege' is obsolete
+13:36:44.805    SCRIPT    (W): @"Scripts/Game/Utilities/SCR_PlayerIdentityUtils.c,20": 'GetPlayerIdentityId' is obsolete
+13:36:44.829    SCRIPT    (W): @"Scripts/Game/UI/Menu/MainMenuUI.c,643": 'GetNotifyCount' is obsolete: Will be substitued by Notification Api.
+13:36:44.829    SCRIPT    (W): @"Scripts/Game/UI/Menu/MainMenuUI.c,645": 'GetNotifyItem' is obsolete: Will be substitued by Notification Api.
+13:36:44.865    SCRIPT    (W): @"Scripts/Game/DataCollection/PlayerData/SCR_PlayerData.c,210": 'PlayerData' is obsolete
+13:36:45.013    SCRIPT       : Module: WorkbenchGame; loaded 170x files; 615x classes; used 2477K of static memory; defines: "ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE"; CRC32: 9919a758
+13:36:45.018    SCRIPT       : Module: Game; loaded 5739x files; 11280x classes; used 34000K of static memory; defines: "ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE,ENABLE_BASE_DESTRUCTION,BUDGET_OPTIMIZATION_CHECKS,SHOW_DISCLAIMER,DEBUG,RESPAWN_TIMER_COMPONENT_DEBUG,GAME_MODE_DEBUG,DEBUG_CONFIGURABLE_DIALOGS,DISABLE_WEAPON_SWITCHING,SCRIPTED_AIM_MODIFIER_DEBUG"; CRC32: e775b68f
+13:36:45.083  SCRIPT       : Validating script for configuration WORKBENCH...
+13:36:45.631  SCRIPT    (W): Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c(785): warning: 'GetPlayerPlatformKind' is obsolete
+13:36:45.631  SCRIPT    (W): Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c(786): warning: 'GetPlayerPlatformId' is obsolete
+13:36:45.801  SCRIPT    (W): Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolete: Will be removed
+13:36:45.819  SCRIPT    (W): Scripts/Game/Campaign/SCR_PlayerProfileManagerComponent.c(142): warning: 'PlayerData' is obsolete
+13:36:45.884  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(159): warning: 'GetDSSession' is obsolete
+13:36:45.884  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(162): warning: 'RoomID' is obsolete
+13:36:45.884  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(197): warning: 'GetDSSession' is obsolete
+13:36:45.884  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(201): warning: 'RoomID' is obsolete
+13:36:45.939  SCRIPT    (W): Scripts/Game/DataCollection/SCR_DataCollectorComponent.c(481): warning: 'GetStorage' is obsolete
+13:36:45.939  SCRIPT    (W): Scripts/Game/DataCollection/SCR_DataCollectorComponent.c(483): warning: 'GetOnlineWritePrivilege' is obsolete
+13:36:45.939  SCRIPT    (W): Scripts/Game/Utilities/SCR_PlayerIdentityUtils.c(20): warning: 'GetPlayerIdentityId' is obsolete
+13:36:45.964  SCRIPT    (W): Scripts/Game/UI/Menu/MainMenuUI.c(643): warning: 'GetNotifyCount' is obsolete: Will be substitued by Notification Api.
+13:36:45.964  SCRIPT    (W): Scripts/Game/UI/Menu/MainMenuUI.c(645): warning: 'GetNotifyItem' is obsolete: Will be substitued by Notification Api.
+13:36:46.000  SCRIPT    (W): Scripts/Game/DataCollection/PlayerData/SCR_PlayerData.c(210): warning: 'PlayerData' is obsolete
+13:36:46.177  SCRIPT       : Validating script for configuration PC...
+13:36:46.721  SCRIPT    (W): Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c(785): warning: 'GetPlayerPlatformKind' is obsolete
+13:36:46.721  SCRIPT    (W): Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c(786): warning: 'GetPlayerPlatformId' is obsolete
+13:36:46.883  SCRIPT    (W): Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolete: Will be removed
+13:36:46.900  SCRIPT    (W): Scripts/Game/Campaign/SCR_PlayerProfileManagerComponent.c(142): warning: 'PlayerData' is obsolete
+13:36:46.965  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(159): warning: 'GetDSSession' is obsolete
+13:36:46.965  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(162): warning: 'RoomID' is obsolete
+13:36:46.965  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(197): warning: 'GetDSSession' is obsolete
+13:36:46.965  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(201): warning: 'RoomID' is obsolete
+13:36:47.017  SCRIPT    (W): Scripts/Game/DataCollection/SCR_DataCollectorComponent.c(481): warning: 'GetStorage' is obsolete
+13:36:47.017  SCRIPT    (W): Scripts/Game/DataCollection/SCR_DataCollectorComponent.c(483): warning: 'GetOnlineWritePrivilege' is obsolete
+13:36:47.017  SCRIPT    (W): Scripts/Game/Utilities/SCR_PlayerIdentityUtils.c(20): warning: 'GetPlayerIdentityId' is obsolete
+13:36:47.042  SCRIPT    (W): Scripts/Game/UI/Menu/MainMenuUI.c(643): warning: 'GetNotifyCount' is obsolete: Will be substitued by Notification Api.
+13:36:47.042  SCRIPT    (W): Scripts/Game/UI/Menu/MainMenuUI.c(645): warning: 'GetNotifyItem' is obsolete: Will be substitued by Notification Api.
+13:36:47.077  SCRIPT    (W): Scripts/Game/DataCollection/PlayerData/SCR_PlayerData.c(210): warning: 'PlayerData' is obsolete
+13:36:47.175  SCRIPT       : Validating script for configuration XBOX...
+13:36:47.721  SCRIPT    (W): Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c(785): warning: 'GetPlayerPlatformKind' is obsolete
+13:36:47.721  SCRIPT    (W): Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c(786): warning: 'GetPlayerPlatformId' is obsolete
+13:36:47.881  SCRIPT    (W): Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolete: Will be removed
+13:36:47.899  SCRIPT    (W): Scripts/Game/Campaign/SCR_PlayerProfileManagerComponent.c(142): warning: 'PlayerData' is obsolete
+13:36:47.961  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(159): warning: 'GetDSSession' is obsolete
+13:36:47.961  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(162): warning: 'RoomID' is obsolete
+13:36:47.961  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(197): warning: 'GetDSSession' is obsolete
+13:36:47.961  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(201): warning: 'RoomID' is obsolete
+13:36:48.013  SCRIPT    (W): Scripts/Game/DataCollection/SCR_DataCollectorComponent.c(481): warning: 'GetStorage' is obsolete
+13:36:48.013  SCRIPT    (W): Scripts/Game/DataCollection/SCR_DataCollectorComponent.c(483): warning: 'GetOnlineWritePrivilege' is obsolete
+13:36:48.014  SCRIPT    (W): Scripts/Game/Utilities/SCR_PlayerIdentityUtils.c(20): warning: 'GetPlayerIdentityId' is obsolete
+13:36:48.040  SCRIPT    (W): Scripts/Game/UI/Menu/MainMenuUI.c(643): warning: 'GetNotifyCount' is obsolete: Will be substitued by Notification Api.
+13:36:48.040  SCRIPT    (W): Scripts/Game/UI/Menu/MainMenuUI.c(645): warning: 'GetNotifyItem' is obsolete: Will be substitued by Notification Api.
+13:36:48.075  SCRIPT    (W): Scripts/Game/DataCollection/PlayerData/SCR_PlayerData.c(210): warning: 'PlayerData' is obsolete
+13:36:48.173  SCRIPT       : Validating script for configuration PS4...
+13:36:48.716  SCRIPT    (W): Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c(785): warning: 'GetPlayerPlatformKind' is obsolete
+13:36:48.716  SCRIPT    (W): Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c(786): warning: 'GetPlayerPlatformId' is obsolete
+13:36:48.877  SCRIPT    (W): Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolete: Will be removed
+13:36:48.894  SCRIPT    (W): Scripts/Game/Campaign/SCR_PlayerProfileManagerComponent.c(142): warning: 'PlayerData' is obsolete
+13:36:48.957  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(159): warning: 'GetDSSession' is obsolete
+13:36:48.957  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(162): warning: 'RoomID' is obsolete
+13:36:48.957  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(197): warning: 'GetDSSession' is obsolete
+13:36:48.957  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(201): warning: 'RoomID' is obsolete
+13:36:49.009  SCRIPT    (W): Scripts/Game/DataCollection/SCR_DataCollectorComponent.c(481): warning: 'GetStorage' is obsolete
+13:36:49.009  SCRIPT    (W): Scripts/Game/DataCollection/SCR_DataCollectorComponent.c(483): warning: 'GetOnlineWritePrivilege' is obsolete
+13:36:49.010  SCRIPT    (W): Scripts/Game/Utilities/SCR_PlayerIdentityUtils.c(20): warning: 'GetPlayerIdentityId' is obsolete
+13:36:49.035  SCRIPT    (W): Scripts/Game/UI/Menu/MainMenuUI.c(643): warning: 'GetNotifyCount' is obsolete: Will be substitued by Notification Api.
+13:36:49.035  SCRIPT    (W): Scripts/Game/UI/Menu/MainMenuUI.c(645): warning: 'GetNotifyItem' is obsolete: Will be substitued by Notification Api.
+13:36:49.071  SCRIPT    (W): Scripts/Game/DataCollection/PlayerData/SCR_PlayerData.c(210): warning: 'PlayerData' is obsolete
+13:36:49.168  SCRIPT       : Validating script for configuration PS5...
+13:36:49.712  SCRIPT    (W): Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c(785): warning: 'GetPlayerPlatformKind' is obsolete
+13:36:49.712  SCRIPT    (W): Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c(786): warning: 'GetPlayerPlatformId' is obsolete
+13:36:49.871  SCRIPT    (W): Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolete: Will be removed
+13:36:49.888  SCRIPT    (W): Scripts/Game/Campaign/SCR_PlayerProfileManagerComponent.c(142): warning: 'PlayerData' is obsolete
+13:36:49.950  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(159): warning: 'GetDSSession' is obsolete
+13:36:49.950  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(162): warning: 'RoomID' is obsolete
+13:36:49.950  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(197): warning: 'GetDSSession' is obsolete
+13:36:49.950  SCRIPT    (W): Scripts/Game/UI/Backend/CareerBackend.c(201): warning: 'RoomID' is obsolete
+13:36:50.003  SCRIPT    (W): Scripts/Game/DataCollection/SCR_DataCollectorComponent.c(481): warning: 'GetStorage' is obsolete
+13:36:50.003  SCRIPT    (W): Scripts/Game/DataCollection/SCR_DataCollectorComponent.c(483): warning: 'GetOnlineWritePrivilege' is obsolete
+13:36:50.004  SCRIPT    (W): Scripts/Game/Utilities/SCR_PlayerIdentityUtils.c(20): warning: 'GetPlayerIdentityId' is obsolete
+13:36:50.029  SCRIPT    (W): Scripts/Game/UI/Menu/MainMenuUI.c(643): warning: 'GetNotifyCount' is obsolete: Will be substitued by Notification Api.
+13:36:50.029  SCRIPT    (W): Scripts/Game/UI/Menu/MainMenuUI.c(645): warning: 'GetNotifyItem' is obsolete: Will be substitued by Notification Api.
+13:36:50.064  SCRIPT    (W): Scripts/Game/DataCollection/PlayerData/SCR_PlayerData.c(210): warning: 'PlayerData' is obsolete
+13:36:50.162  SCRIPT       : Script validation successful.

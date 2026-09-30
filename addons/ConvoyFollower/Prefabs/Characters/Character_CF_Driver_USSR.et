@@ -30,6 +30,15 @@ SCR_ChimeraCharacter : "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR
   }
   ActionsManagerComponent "{520EA1D2F659CE02}" {
    additionalActions + {
+    CF_OpenConvoyCommandsAction "{CF20260929000006}" {
+     ParentContextList {
+      "default"
+     }
+     UIInfo SCR_ActionUIInfo "{CF20260929000010}" {
+      Name "Convoy commands"
+     }
+     VisibilityRange 2.5
+    }
     CF_FollowOnFootAction "{B8355944A88C4288}" {
      ParentContextList {
       "default"

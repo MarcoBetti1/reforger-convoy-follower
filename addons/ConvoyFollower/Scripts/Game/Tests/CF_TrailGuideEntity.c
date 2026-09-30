@@ -253,7 +253,16 @@ class CF_TrailGuideRoute : CF_DrivenRoute
 		newResidual[1] = 0;
 		reason = "reverse_corridor_lost";
 		if (crossTrack > maxCrossTrack || oldResidual.Length() > maxCrossTrack)
-		{ result.State = OFF_ROUTE; return -1; }
+		{
+			Print("[ConvoyFollower] TRAIL_REVERSE_CORRIDOR_REJECTED: epoch=" + targetKey +
+				" segment=" + m_Segment + " candidate_segment=" + segment + " previous_pose=" + m_PreviousPose +
+				" pose=" + pose + " segment_start=" + a + " segment_end=" + b +
+				" progress=" + m_Progress + " candidate=" + candidate + " previous_residual_m=" + oldResidual.Length() +
+				" cross_track_m=" + crossTrack + " limit_m=" + maxCrossTrack + " measured_m=" + measured +
+				" history_changed=false control_writes=false");
+			result.State = OFF_ROUTE;
+			return -1;
+		}
 		// A successfully retained clamped endpoint can have a longitudinal
 		// residual. The signed residual correction below accounts for it;
 		// orthogonality is not required for actual reverse motion proof.

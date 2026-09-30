@@ -1,0 +1,205 @@
+diff --git a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+--- a/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
++++ b/addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c
+@@ -51,6 +51,12 @@
+ 	protected int m_iTrailQueryFailureLogs;
+ 	protected int m_iRetainedPoseLeaseLogs;
+ 	protected int m_iRetainedPoseLoggedGeneration;
++	// An inactive retained route may be unusable while owned native parking continues.
++	protected bool m_bRetainedArrivalOffRoute;
++	protected bool m_bRetainedArrivalQueryDeferred;
++	protected int m_iRetainedArrivalGeneration;
++	protected int m_iRetainedArrivalEpisode;
++	protected int m_iRetainedArrivalRouteLogs;
+ 	protected int m_iPendingGuidePoseLogs;
+ 	protected int m_iPendingGuidePoseLoggedGeneration;
+ 	protected int m_iTrailResumeRejectLogs;
+@@ -199,6 +205,8 @@
+ 	{
+ 		if (CF_HasPersistentFollowFailure())
+ 			return "recorded route is blocked";
++		if (m_bRetainedArrivalOffRoute)
++			return "arrival left recorded route; guide restart unavailable";
+ 		return super.CF_GetResumeFailureReason();
+ 	}
+ 
+@@ -212,16 +220,28 @@
+ 		if (CF_HasPersistentFollowFailure() && !CF_IsControlBlocked() && !m_bPanelHoldRequested &&
+ 			(m_iState == CF_FOLLOWING || m_iState == CF_ARRIVING))
+ 			return "route blocked";
++		if (m_bRetainedArrivalOffRoute && !CF_IsControlBlocked() && !m_bTrailBlocked &&
++			!m_bEntityFallbackFailed && !m_bOriginalFollowBlocked && !m_bEntityPanelWaitFailed)
++		{
++			if (m_bControlBoardingTimedOut || m_bPanelHoldReboardBlocked || m_bArrivalRoadRecoveryBlocked)
++				return super.CF_GetPanelStateLabel();
++			if (CF_IsPanelHeld()) return "held: guide restart unavailable";
++			if (!m_bPanelHoldRequested && CF_HasSelectedArrivalWait(m_Session, m_Truck))
++				return "parked: guide restart unavailable";
++			if (!m_bPanelHoldRequested && m_iState == CF_ARRIVING)
++				return "parking: recorded route unavailable";
++		}
+ 		return super.CF_GetPanelStateLabel();
+ 	}
+ 
+ 	override bool CF_CanPanelResume()
+ 	{
+-		return !CF_HasPersistentFollowFailure() && super.CF_CanPanelResume();
++		return !m_bRetainedArrivalOffRoute && !CF_HasPersistentFollowFailure() && super.CF_CanPanelResume();
+ 	}
+ 
+ 	override bool CF_PanelResume()
+ 	{
++		if (m_bRetainedArrivalOffRoute) return false;
+ 		if (CF_HasPersistentFollowFailure())
+ 		{
+ 			if (Replication.IsServer() && m_iTrailResumeRejectLogs < 32)
+@@ -239,6 +259,7 @@
+ 
+ 	override protected void StartFollowing(IEntity targetVehicle, bool rejoined, bool emitRadio)
+ 	{
++		if (m_bRetainedArrivalOffRoute) return;
+ 		// Guard before the parent releases a Wait or resets its stop episode.
+ 		if (m_bTrailResumePending) return;
+ 		if (CF_HasPersistentFollowFailure())
+@@ -249,7 +270,7 @@
+ 	// Existing waiting-state and arrival paths consult this before issuing an order.
+ 	override protected bool CF_WaitForInitialDeparture(IEntity target)
+ 	{
+-		if (m_bTrailResumePending) return true;
++		if (m_bTrailResumePending || m_bRetainedArrivalOffRoute) return true;
+ 		return super.CF_WaitForInitialDeparture(target);
+ 	}
+ 
+@@ -393,6 +414,7 @@
+ 
+ 	protected void CF_ResetTrailHistory(IEntity target)
+ 	{
++		m_bRetainedArrivalOffRoute = false;
+ 		CF_InvalidateRearGuideQuery();
+ 		m_TrailPredecessor = target;
+ 		m_TrailWorld = GetGame().GetWorld();
+@@ -497,6 +519,50 @@
+ 		m_bTrailPoseInterrupted = false;
+ 	}
+ 
++	// This exception belongs only to the same healthy, real-target parking episode.
++	// The caller has already checked original pilot, world, session and predecessor.
++	protected bool CF_RetainedArrivalScope()
++	{
++		if (m_iState != CF_ARRIVING || m_bPanelHoldRequested || m_bTrailResumePending) return false;
++		if (m_bEntityFallbackFailed || m_bOriginalFollowBlocked || m_bArrivalRoadRecoveryBlocked || m_bEntityPanelWaitFailed) return false;
++		if (!m_bEntityStopAttempted || m_EntityStopTarget != m_TrailPredecessor) return false;
++		if (m_bRetainedArrivalOffRoute && (m_iRetainedArrivalEpisode != m_iEntityStopEpisode ||
++			m_iRetainedArrivalGeneration != m_iOriginalFollowGeneration)) return false;
++		CF_EntityFollowDriverControllerComponent predecessor = CF_EntityFollowDriverControllerComponent.Cast(m_Predecessor);
++		bool predecessorCaptured;
++		if (!predecessor || !predecessor.CF_HasOwnedArrivalPhase(m_Session, m_TrailPredecessor, predecessorCaptured)) return false;
++		if (m_EntityCapturedWait)
++			return m_bRetainedArrivalOffRoute && CF_HasSelectedArrivalWait(m_Session, m_Truck);
++		CF_OriginalFollowLease lease = m_OriginalFollowLease;
++		if (!lease || lease.Revoked || lease.Failed || !lease.BindingUnchanged()) return false;
++		if (lease.NativeTarget != m_TrailPredecessor || lease.Predecessor != m_TrailPredecessor) return false;
++		if (lease.Distance != CF_ConvoySettings.Get().m_fStoppedGap || lease.Waypoint != CF_GetEntityFollowWaypoint()) return false;
++		if (!lease.Activity || lease.Activity.Lease != lease) return false;
++		if (lease.Activity.GetActionState() == EAIActionState.COMPLETED || lease.Activity.GetActionState() == EAIActionState.FAILED) return false;
++		string reason;
++		if (!CF_CheckOriginalFollowLease(lease, reason)) return false;
++		// Selection is required to admit the exception, not to observe a later
++		// same-lease native parking preemption. No native authority is granted here.
++		return m_bRetainedArrivalOffRoute || lease.Executing(m_Group, reason);
++	}
++
++	protected void CF_DeferRetainedArrivalRoute(string reason)
++	{
++		m_bRetainedArrivalQueryDeferred = true;
++		if (m_bRetainedArrivalOffRoute) return;
++		m_bRetainedArrivalOffRoute = true;
++		m_iRetainedArrivalGeneration = m_iOriginalFollowGeneration;
++		m_iRetainedArrivalEpisode = m_iEntityStopEpisode;
++		if (m_iRetainedArrivalRouteLogs >= 8) return;
++		m_iRetainedArrivalRouteLogs++;
++		string line = "[ConvoyFollower] TRAIL_RETAINED_ARRIVAL_OFF_ROUTE: unit=" + m_iUnitNumber;
++		line += " epoch=" + m_iTrailEpoch + " generation=" + m_iRetainedArrivalGeneration;
++		line += " stop_episode=" + m_iRetainedArrivalEpisode + " reason=" + reason;
++		line += " pose=" + m_Truck.GetOrigin() + " local_progress=" + m_TrailRoute.GetLocalProgress();
++		line += " native_arrival_preserved=true guide_restart_allowed=false history_reset=false physical_credit=false";
++		Print(line);
++	}
++
+ 	// A retained joined route still needs actual-pose queries while its guide
+ 	// is retired for the owned direct arrival or captured Wait. Otherwise the
+ 	// next Resume submits the whole arrival displacement as one physical step.
+@@ -560,15 +626,32 @@
+ 			m_bTrailResumePosePreempted = preempted;
+ 		}
+ 		if (!ownedContext) return; // Keep pending measured motion; never grant gap credit.
+-		CF_QueryTrailPose();
++		bool preserveArrival = CF_RetainedArrivalScope();
++		// Losing the exception does not authorize a new order or route reset.
++		// Existing native lifecycle/commands remain responsible for the arrival.
++		if (m_bRetainedArrivalOffRoute && !preserveArrival) return;
++		CF_QueryTrailPose(preserveArrival);
++		if (m_bRetainedArrivalQueryDeferred) return;
+ 		if (!m_bTrailBlocked && (!m_TrailGuidance.HasArcGap ||
+ 			(m_TrailGuidance.State != CF_DrivenRoute.TRACKING && m_TrailGuidance.State != CF_DrivenRoute.SPACING_HOLD)))
+ 			CF_BlockTrail("retained_route_state_" + m_TrailGuidance.State);
++		if (!m_bTrailBlocked && m_bRetainedArrivalOffRoute)
++		{
++			m_bRetainedArrivalOffRoute = false;
++			if (m_iRetainedArrivalRouteLogs < 8)
++			{
++				m_iRetainedArrivalRouteLogs++;
++				Print("[ConvoyFollower] TRAIL_RETAINED_ARRIVAL_REACQUIRED: unit=" + m_iUnitNumber +
++					" epoch=" + m_iTrailEpoch + " local_progress=" + m_TrailRoute.GetLocalProgress() +
++					" existing_strict_query=true history_reset=false physical_credit=false");
++			}
++		}
+ 		// No guide transform, native request, join/epoch reset or pacing receipt.
+ 	}
+ 
+-	protected float CF_QueryTrailPose()
+-	{
++	protected float CF_QueryTrailPose(bool preserveArrival = false)
++	{
++		m_bRetainedArrivalQueryDeferred = false;
+ 		CF_InvalidateRearGuideQuery();
+ 		m_bTrailPhysicalQueried = true;
+ 		float budget;
+@@ -591,8 +674,21 @@
+ 		}
+ 		if (!queried)
+ 		{
++			// QueryPhysical clears its result before every failure. PhysicalBudget
++			// alone does not, so its false-mode failures must never use old state.
++			if (preserveArrival && m_bTrailProjectionCorrection && (m_TrailGuidance.State == CF_DrivenRoute.OFF_ROUTE ||
++				(m_bRetainedArrivalOffRoute && reason == "reverse_physical_context_unavailable")))
++			{
++				CF_DeferRetainedArrivalRoute(reason);
++				return 0;
++			}
+ 			CF_BlockTrail(reason);
+ 			return 0;
++		}
++		if (preserveArrival && m_TrailGuidance.State == CF_DrivenRoute.OFF_ROUTE)
++		{
++			CF_DeferRetainedArrivalRoute("retained_corridor_departure");
++			return budget;
+ 		}
+ 		if (m_TrailGuidance.HasProjectionCorrection && m_iTrailProjectionLogs < 12)
+ 		{
+@@ -1234,6 +1330,7 @@
+ 
+ 	override void CF_DetachForWorldCleanup()
+ 	{
++		m_bRetainedArrivalOffRoute = false;
+ 		CF_CancelTrailResume("world_cleanup", false);
+ 		CF_InvalidateRearGuideQuery();
+ 		CF_DetachTrailGuide(false);
+@@ -1242,6 +1339,7 @@
+ 
+ 	override protected void ResetToIdle()
+ 	{
++		m_bRetainedArrivalOffRoute = false;
+ 		CF_CancelTrailResume("reset_to_idle");
+ 		CF_InvalidateRearGuideQuery();
+ 		if (m_TrailGuide)

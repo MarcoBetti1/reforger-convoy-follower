@@ -1,0 +1,29 @@
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 7239.0 138.9 2440.0
+}
+SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 7240.0 138.9 2435.0
+}
+SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 7240.0 138.9 2414.0
+}
+Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 7233.0 138.9 2414.0
+ angles 0 0 0
+ components {
+  CF_SurfaceContactProbeComponent "{1B4A1CDE78F85B6A}" { }
+ }
+}
+Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 7233.0 138.9 2438.0
+ angles 0 0 0
+ components {
+  CF_SurfaceContactProbeComponent "{E9FD9567321EA80C}" { }
+  CF_EveronDayRouteProbeComponent "{9C3D5F9C62714CC8}" {
+   m_iExpectedTrucks 1
+   m_fPacedLeadSpeedKmh 20
+   m_bPacedAutoExit 1
+   m_sPacedWorld "Worlds/Tests/ConvoyFollower_Everon_DayRoute_1Truck.ent"
+  }
+ }
+}

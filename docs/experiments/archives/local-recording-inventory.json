@@ -1,0 +1,1110 @@
+{
+  "scope": "Actual local recordings beyond the Git source/report checkpoint; individual release inclusion not assumed",
+  "files": [
+    {
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\test-videos\\startup-pair-baseline-v1.mp4",
+      "bytes": 63210,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\action-input-calibration-v1-full.mp4",
+      "bytes": 60480576,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\action-input-calibration-v2-full.mp4",
+      "bytes": 80181185,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\action-input-calibration-v3-full.mp4",
+      "bytes": 91839750,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\action-input-calibration-v4-full.mp4",
+      "bytes": 100443934,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\action-input-calibration-v5-full.mp4",
+      "bytes": 91906969,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\action-input-calibration-v6-full.mp4",
+      "bytes": 100825209,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\arland-clear-field-1truck-v1-standalone.mp4",
+      "bytes": 85385943,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\arland-clear-field-1truck-v2-standalone.mp4",
+      "bytes": 115692550,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\arland-clear-field-1truck-v3-standalone.mp4",
+      "bytes": 215208645,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\arland-clear-field-cruise-hold-v1-standalone.mp4",
+      "bytes": 77394751,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\arland-clear-field-cruise-v1-standalone.mp4",
+      "bytes": 233303126,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\arland-clear-field-survey-v1-standalone.mp4",
+      "bytes": 14231897,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\arland-paved-follower-lag-v1-small.mp4",
+      "bytes": 5357021,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\arrival-canonical-three-v1-full.mp4",
+      "bytes": 274370560,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\arrival-zero-radius5-v1-monitor0.mp4",
+      "bytes": 475747302,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\arrival-zero-radius5-v2-full.mp4",
+      "bytes": 518293206,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\arrival-zero-radius5-v2-game-review.mp4",
+      "bytes": 259445610,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\authored-clean-resume-v1-full.mp4",
+      "bytes": 632120907,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-1truck-attempt1.mp4",
+      "bytes": 915219,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-1truck-long-attempt1.mp4",
+      "bytes": 1967626,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-1truck-release-retest.mp4",
+      "bytes": 126812247,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-1truck-scan-attempt2.mp4",
+      "bytes": 1557433,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-forward-blocked-v1.mp4",
+      "bytes": 127132423,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-forward-wait-v1.mp4",
+      "bytes": 246749067,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-forward-wait-v2.mp4",
+      "bytes": 241169380,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-forward-wait-v3.mp4",
+      "bytes": 249111214,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-pause-resume-v2.mp4",
+      "bytes": 469371554,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-pause-resume.mp4",
+      "bytes": 536601461,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-final-v1.mp4",
+      "bytes": 470155761,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-final-v2-audio-review.mp4",
+      "bytes": 456290756,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-final-v2.mp4",
+      "bytes": 452121216,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-final-v3.mp4",
+      "bytes": 456758001,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-final-v4.mp4",
+      "bytes": 479499296,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-final-v5.mp4",
+      "bytes": 486298800,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-final-v6.mp4",
+      "bytes": 551120255,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-final-v7.mp4",
+      "bytes": 544226827,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-final-v8.mp4",
+      "bytes": 345767984,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-live.mp4",
+      "bytes": 558163693,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-rerun.mp4",
+      "bytes": 621911109,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-v10.mp4",
+      "bytes": 369897062,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-v11.mp4",
+      "bytes": 402862126,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-v12.mp4",
+      "bytes": 567036230,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-v13.mp4",
+      "bytes": 342252196,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-v14.mp4",
+      "bytes": 392771353,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-v15.mp4",
+      "bytes": 344878596,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2truck-release-v9.mp4",
+      "bytes": 394849649,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2trucks-review-sample.mp4",
+      "bytes": 1652483,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-2trucks.mp4",
+      "bytes": 369616629,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-final-braked.mp4",
+      "bytes": 426365486,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-final-parked.mp4",
+      "bytes": 85846234,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-v1.mp4",
+      "bytes": 247321507,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v1.mp4",
+      "bytes": 223581327,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v10.mp4",
+      "bytes": 419341209,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v11.mp4",
+      "bytes": 678567718,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v12-repeat.mp4",
+      "bytes": 642934772,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v12.mp4",
+      "bytes": 416818983,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v2.mp4",
+      "bytes": 601993767,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v3.mp4",
+      "bytes": 462720421,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v4.mp4",
+      "bytes": 309455511,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v5.mp4",
+      "bytes": 442722026,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v6.mp4",
+      "bytes": 336132030,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v7.mp4",
+      "bytes": 630592028,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v8.mp4",
+      "bytes": 513718259,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-forward-twoahead-wide-v9.mp4",
+      "bytes": 408565669,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-nav-diagnostic-review-sample.mp4",
+      "bytes": 2421835,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-nav-diagnostic.mp4",
+      "bytes": 364089952,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\auto-3truck-spacing-v2.mp4",
+      "bytes": 449615833,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\board-handover-radius5-v1-full.mp4",
+      "bytes": 265484319,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\canonical-pending-guide-trip-v1-full.mp4",
+      "bytes": 687551590,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\capture-smoke.mp4",
+      "bytes": 154798,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\convoy-supply-progress-v1.mp4",
+      "bytes": 52093602,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\convoy-trip-two-v1-full.mp4",
+      "bytes": 220169216,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\convoy-trip-two-v1-gameplay.mp4",
+      "bytes": 28317890,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\convoy-trip-two-v2-full.mp4",
+      "bytes": 529376671,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\convoy-trip-two-v2-gameplay.mp4",
+      "bytes": 48750003,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\cooperative-cohesion-trip-v1-full.mp4",
+      "bytes": 352842339,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\cooperative-cohesion-trip-v2-full.mp4",
+      "bytes": 291136249,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\cooperative-supply-recovery-v1-full.mp4",
+      "bytes": 322254512,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\cooperative20-two-v1-full.mp4",
+      "bytes": 487569052,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\cooperative20-two-v1-gameplay.mp4",
+      "bytes": 61434590,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\corridor-v1-forward-blocked.mp4",
+      "bytes": 110813366,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\ddagrab-test-1.mp4",
+      "bytes": 2439364,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\ddagrab-test.mp4",
+      "bytes": 900834,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\direct-head-native5-v1-full.mp4",
+      "bytes": 555013573,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\direct-head-proxy-v1-full.mp4",
+      "bytes": 472200136,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\direct-head-sampled-native5-v1-full.mp4",
+      "bytes": 462467753,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\direct-head-sampled-proxy-v1-full.mp4",
+      "bytes": 456789406,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\driving-integration-held-reboard-v1-full.mp4",
+      "bytes": 105140849,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\everon-offroad-1truck-v1-standalone.mp4",
+      "bytes": 19723031,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\explicit-hold-radius5-v1-full.mp4",
+      "bytes": 222771626,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\explicit-hold-radius5-v1-gameplay.mp4",
+      "bytes": 131838523,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\explicit-retry-2truck-v1-full.mp4",
+      "bytes": 120789360,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\explicit-retry-2truck-v2-demo.mp4",
+      "bytes": 10407749,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\explicit-retry-2truck-v2-full.mp4",
+      "bytes": 215346326,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\forward-slot-1truck-v1-standalone.mp4",
+      "bytes": 151052806,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\forward-slot-1truck-v2-standalone.mp4",
+      "bytes": 110894398,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\gfxcapture-test.mp4",
+      "bytes": 0,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\gfxcapture-test2.mp4",
+      "bytes": 48,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\head-guide-prejoin-approach-v1-full.mp4",
+      "bytes": 561610708,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\head-guide-road81-direct-v1-full.mp4",
+      "bytes": 557755690,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\head-guide-road81-guide-v1-full.mp4",
+      "bytes": 558883757,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\input-pilot-mapfree-v1-full.mp4",
+      "bytes": 184895967,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-pair-trip-v1-full.mp4",
+      "bytes": 23748421,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-pair-trip-v2-full.mp4",
+      "bytes": 611618663,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-pair-trip-v2-highlights.mp4",
+      "bytes": 66943516,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-pair-trip-v3-full.mp4",
+      "bytes": 264056980,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-pair-trip-v4-full.mp4",
+      "bytes": 130038515,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-straight-trip-v1-full.mp4",
+      "bytes": 675899071,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-straight-trip-v2-full.mp4",
+      "bytes": 653527482,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-straight-trip-v3-full.mp4",
+      "bytes": 836260572,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-straight-trip-v3-highlights.mp4",
+      "bytes": 41108263,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-straight-trip-v4-full.mp4",
+      "bytes": 677870370,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-straight-trip-v5-full.mp4",
+      "bytes": 120430764,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-supply-trip-v1-full.mp4",
+      "bytes": 650032583,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-supply-trip-v1-gameplay.mp4",
+      "bytes": 241059169,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\loaded-supply-trip-v1-highlights.mp4",
+      "bytes": 90710728,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\moving-refresh-radius5-v1-full.mp4",
+      "bytes": 120040458,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\moving-refresh-radius5-v2-full.mp4",
+      "bytes": 261043352,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\moving-restart-radius5-v1-full.mp4",
+      "bytes": 358434998,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\native-cargo-action-v1-full.mp4",
+      "bytes": 202987424,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\native-cargo-action-v2-full.mp4",
+      "bytes": 304398537,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\native-cargo-action-v3-full.mp4",
+      "bytes": 303737575,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\native-cargo-action-v4-full.mp4",
+      "bytes": 219386314,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\native-cargo-action-v5-full.mp4",
+      "bytes": 300304195,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\native-cargo-action-v6-full.mp4",
+      "bytes": 305404233,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\native-lead-hold-radius5-v2-full.mp4",
+      "bytes": 277000237,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\native-lead-hold-v2-full.mp4",
+      "bytes": 341009084,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\natural-recovery-trip-v1-demo.mp4",
+      "bytes": 34428860,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\natural-recovery-trip-v1-full.mp4",
+      "bytes": 770064685,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\natural-retrace-trip-v1-demo.mp4",
+      "bytes": 32881978,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\natural-retrace-trip-v1-full.mp4",
+      "bytes": 728775381,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\ordinary-one-resume-v1-full.mp4",
+      "bytes": 572972686,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\ordinary-three-arrival-recovery-v1-full.mp4",
+      "bytes": 487994837,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\ordinary-three-arrival-recovery-v1-gameplay.mp4",
+      "bytes": 58487525,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\ordinary-three-arrival-v1-full.mp4",
+      "bytes": 245645902,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\ordinary-three-entry-pacing-v1-full.mp4",
+      "bytes": 234178896,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\ordinary-three-middle-pacing-v1-full.mp4",
+      "bytes": 509299024,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\ordinary-two-arrival-v1-full.mp4",
+      "bytes": 558971885,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\ordinary-two-arrival-v1-gameplay.mp4",
+      "bytes": 48662899,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\original-direct-rear-two-v1-full.mp4",
+      "bytes": 539579846,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\original-direct-two-v4-full.mp4",
+      "bytes": 448999813,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\original-follow-hold-resume-v1-full.mp4",
+      "bytes": 525082015,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\original-follow-hold-resume-v2-full.mp4",
+      "bytes": 564000836,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\original-follow-hold-resume-v3-full.mp4",
+      "bytes": 520592367,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\original-resume-diagnostic-v1-full.mp4",
+      "bytes": 527300827,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\original-tail-entry-two-v1-full.mp4",
+      "bytes": 138845019,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\original-tail-projected-station-two-v2-full.mp4",
+      "bytes": 188397256,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\original-tail-two-v1-full.mp4",
+      "bytes": 145517218,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\owner-drive-calibration-coasting-diagnostic.mp4",
+      "bytes": 3723938,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\owner-drive-calibration-v1.mp4",
+      "bytes": 159134632,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\owner-drive-calibration-v2-standalone.mp4",
+      "bytes": 107052633,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\owner-drive-calibration-v3-standalone.mp4",
+      "bytes": 87478085,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-entity-follow-1truck-v1-full.mp4",
+      "bytes": 503030556,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-entity-rear-2truck-v1-full.mp4",
+      "bytes": 519583760,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-entity-stop-1truck-v1-full.mp4",
+      "bytes": 749429294,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-entity-stop-2truck-v1-full.mp4",
+      "bytes": 677952211,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-entity-wait-1truck-v1-full.mp4",
+      "bytes": 522174282,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-entity-wait-2truck-v1-full.mp4",
+      "bytes": 560431311,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-native-close-1truck-v1-full.mp4",
+      "bytes": 506277641,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-native-path-2truck-v1-full.mp4",
+      "bytes": 45350960,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-native-path-2truck-v2-full.mp4",
+      "bytes": 553937077,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-original-follow-1truck-v1-full.mp4",
+      "bytes": 546056418,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-original-follow-2truck-v1-full.mp4",
+      "bytes": 534651369,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-road-2truck-departure-v1-full.mp4",
+      "bytes": 473195971,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-road-2truck-departure-v1-reversal-review.mp4",
+      "bytes": 3950665,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-road-2truck-v1-avoidance-review.mp4",
+      "bytes": 12700693,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-road-2truck-v1-full.mp4",
+      "bytes": 744527798,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-stable-waypoint-2truck-v1-full.mp4",
+      "bytes": 795913722,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-trail-guide-1truck-v1-full.mp4",
+      "bytes": 213003211,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\paced-trail-guide-1truck-v2-full.mp4",
+      "bytes": 216539162,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\panel-input-events-v3-full.mp4",
+      "bytes": 36764155,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\panel-input-observer-v1-full.mp4",
+      "bytes": 288330304,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\panel-input-special-key-v2-full.mp4",
+      "bytes": 48914524,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\panel-pilot-dpi-v1.mp4",
+      "bytes": 25710317,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\panel-pilot-dpi-v2.mp4",
+      "bytes": 2608317,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\panel-pilot-dpi-v3.mp4",
+      "bytes": 362519530,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\panel-raw-input-v1-full.mp4",
+      "bytes": 31036208,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\pass-corridor-atlas-v1.mp4",
+      "bytes": 156816017,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\pass-corridor-atlas-v2.mp4",
+      "bytes": 73257734,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\pause-v2-title-test.mp4",
+      "bytes": 434171,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\production-cruise-radius5-v1-full.mp4",
+      "bytes": 264229235,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\production-cruise-radius5-v2-full.mp4",
+      "bytes": 265931393,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\reboard-canonical-v1-full.mp4",
+      "bytes": 118736205,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\reboard-held-v2-full.mp4",
+      "bytes": 93645786,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\reboard-selected-trip-v1-full.mp4",
+      "bytes": 677912287,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\resume-status-radius5-v1-full.mp4",
+      "bytes": 22449934,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\resume-status-radius5-v2-full.mp4",
+      "bytes": 753114047,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\resume-status-radius5-v3-full.mp4",
+      "bytes": 805945978,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\retained-arrival-offroute-v1-full.mp4",
+      "bytes": 226603512,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\reverse-recovery-stop-resume-v1-full.mp4",
+      "bytes": 73260844,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\reverse-recovery-stop-resume-v2-full.mp4",
+      "bytes": 4021110,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\reverse-recovery-stop-resume-v3-full.mp4",
+      "bytes": 239781215,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\reverse-recovery-stop-resume-v4-full.mp4",
+      "bytes": 242638008,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\reverse-recovery-stop-resume-v5-full.mp4",
+      "bytes": 269257531,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\review-3truck-sample.mp4",
+      "bytes": 19017346,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\road23-3truck-forward-twoahead-v1.mp4",
+      "bytes": 354285490,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\road23-3truck-forward-twoahead-v2.mp4",
+      "bytes": 351793539,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\road81-3truck-forward-twoahead-v1.mp4",
+      "bytes": 336564251,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\road81-3truck-forward-twoahead-v2.mp4",
+      "bytes": 390382921,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\road81-3truck-forward-twoahead-v3.mp4",
+      "bytes": 447639787,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\road81-3truck-forward-twoahead-v4-standalone.mp4",
+      "bytes": 123576629,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\road81-3truck-forward-twoahead-v5-standalone.mp4",
+      "bytes": 276308205,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\road81-arrival-trip-v1-full.mp4",
+      "bytes": 987468704,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\road81-entry-approach-v1-full.mp4",
+      "bytes": 721010558,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\road81-integrated-trip-v1-demo.mp4",
+      "bytes": 45252002,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\road81-integrated-trip-v1-full.mp4",
+      "bytes": 634581162,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\road81-loaded-trip-v1-full.mp4",
+      "bytes": 122857567,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\sampled-head-supply-integration-v1-full.mp4",
+      "bytes": 138069965,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\sampled-head-supply-integration-v2-full.mp4",
+      "bytes": 646554781,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\sampled-head-supply-integration-v3-demo.mp4",
+      "bytes": 21873776,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\sampled-head-supply-integration-v3-full.mp4",
+      "bytes": 658113075,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\sampled-head-supply-integration-v4-full.mp4",
+      "bytes": 584728831,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\short-arrival-1truck-v1-standalone.mp4",
+      "bytes": 99077615,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\short-arrival-1truck-v2-standalone.mp4",
+      "bytes": 59742524,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\straight-arrival-stop-resume-v1-full.mp4",
+      "bytes": 166654105,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\straight-arrival-stop-resume-v2-full.mp4",
+      "bytes": 190859724,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\straight-arrival-stop-resume-v3-full.mp4",
+      "bytes": 186220945,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\straight-arrival-stop-resume-v4-full.mp4",
+      "bytes": 528903755,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\straight-arrival-stop-resume-v5-full.mp4",
+      "bytes": 599377745,
+      "remoteBackupVerifiedByThisChat": false
+    },
+    {
+      "path": "D:\\ReforgerEvidence\\test-videos-2026-09-26\\vanilla-ui-delivery-v1-full.mp4",
+      "bytes": 80315135,
+      "remoteBackupVerifiedByThisChat": false
+    }
+  ]
+}

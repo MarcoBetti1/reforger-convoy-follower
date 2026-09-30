@@ -24,6 +24,78 @@ class CF_ConvoyFailureEvent
 
 modded class SCR_PlayerController
 {
+	protected ref CF_ConvoyCommandMenu m_CFCommandMenu;
+	protected string m_sCFCommandRoster;
+	protected string m_sCFCommandState;
+	protected bool m_bCFCommandInputRegistered;
+	protected bool m_bCFCommandPending;
+	protected bool m_bCFCommandFirstReply;
+	protected float m_fCFCommandPollSeconds;
+
+	void CF_OpenCommandMenu()
+	{
+		if (System.IsConsoleApp() || !GetGame() || this != GetGame().GetPlayerController()) return;
+		if (!m_CFCommandMenu) m_CFCommandMenu = new CF_ConvoyCommandMenu(this);
+		m_CFCommandMenu.CF_SetSnapshot(m_sCFCommandRoster, m_sCFCommandState);
+		if (!m_CFCommandMenu.CF_Open())
+			SCR_HintManagerComponent.ShowCustomHint("Close the current menu and control your convoy owner to open commands.", "Convoy", 4.0, true);
+	}
+
+	void CF_CommandOrderSent()
+	{
+		m_bCFCommandPending = true;
+		m_bCFCommandFirstReply = true;
+		SCR_HintManagerComponent.ShowCustomHint("Request sent; waiting for server admission.", "Convoy", 3.0, true);
+	}
+
+	void CF_ReceiveCommandSnapshot(string roster, string state)
+	{
+		m_sCFCommandRoster = roster;
+		if (m_bCFCommandPending && (m_bCFCommandFirstReply || state != m_sCFCommandState))
+			SCR_HintManagerComponent.ShowCustomHint(state, "Convoy", 5.0, true);
+		m_bCFCommandFirstReply = false;
+		m_sCFCommandState = state;
+		if (state.StartsWith("completed:") || state.StartsWith("blocked:") || state.StartsWith("cancelled:") || state == "idle")
+			m_bCFCommandPending = false;
+		if (m_CFCommandMenu) m_CFCommandMenu.CF_SetSnapshot(roster, state);
+	}
+
+	override void OnUpdate(float timeSlice)
+	{
+		super.OnUpdate(timeSlice);
+		if (System.IsConsoleApp() || !GetGame() || this != GetGame().GetPlayerController()) return;
+		InputManager input = GetGame().GetInputManager();
+		if (!input) return;
+		if (!m_bCFCommandInputRegistered)
+		{
+			input.AddActionListener("CF_ConvoyCommands", EActionTrigger.DOWN, CF_OpenCommandMenu);
+			m_bCFCommandInputRegistered = true;
+		}
+		if (CF_HasActiveConvoy() && ChimeraCharacter.Cast(GetControlledEntity()) && !GetGame().GetMenuManager().IsAnyMenuOpen())
+			input.ActivateContext("CF_ConvoyCommandOpeningContext");
+		if (m_CFCommandMenu)
+		{
+			if (!CF_HasActiveConvoy() || !ChimeraCharacter.Cast(GetControlledEntity()))
+			{
+				if (m_CFCommandMenu.IsOpened()) m_CFCommandMenu.Close();
+			}
+			m_CFCommandMenu.Update(timeSlice);
+		}
+		m_fCFCommandPollSeconds += timeSlice;
+		if (m_fCFCommandPollSeconds < 1.0) return;
+		m_fCFCommandPollSeconds = 0;
+		if (CF_HasActiveConvoy() && ((m_CFCommandMenu && m_CFCommandMenu.IsOpened()) || m_bCFCommandPending))
+			CF_RequestPanelSnapshot();
+	}
+
+	void ~SCR_PlayerController()
+	{
+		if (!GetGame()) return;
+		if (m_CFCommandMenu) m_CFCommandMenu.CF_Dispose();
+		if (m_bCFCommandInputRegistered && GetGame().GetInputManager())
+			GetGame().GetInputManager().RemoveActionListener("CF_ConvoyCommands", EActionTrigger.DOWN, CF_OpenCommandMenu);
+	}
+
 	// Mirrored for local ScriptedUserAction visibility; the server still checks
 	// every Start/Add/Replace request against its authoritative roster.
 	[RplProp()]
@@ -56,6 +128,7 @@ modded class SCR_PlayerController
 	{
 		if (System.IsConsoleApp() || !GetGame() || this != GetGame().GetPlayerController())
 			return;
+		CF_CommandOrderSent();
 		Rpc(CF_RpcAskPanelOrder, command, unitIdentity);
 	}
 
@@ -115,6 +188,12 @@ modded class SCR_PlayerController
 			accepted = CF_ConvoySession.CF_PanelCancelUnload(user);
 		else if (command == CF_ConvoyPanelOrder.REBOARD_SELECTED)
 			accepted = CF_ConvoySession.CF_PanelReboardSelected(user, unitIdentity);
+		else if (command == CF_ConvoyPanelOrder.REGROUP_RETURN)
+			accepted = CF_ConvoySession.CF_PanelRegroupReturn(user, unitIdentity);
+		else if (command == CF_ConvoyPanelOrder.SET_UNLOAD_BAY)
+			accepted = CF_ConvoySession.CF_PanelSetUnloadBay(user);
+		else if (command == CF_ConvoyPanelOrder.ADMIT_NEXT)
+			accepted = CF_ConvoySession.CF_PanelAdmitNextTruck(user);
 		if (!accepted)
 			Print("[ConvoyFollower] PANEL_ORDER_BLOCKED: " + command + " unit " + unitIdentity);
 		else
@@ -127,6 +206,7 @@ modded class SCR_PlayerController
 	{
 		if (System.IsConsoleApp() || !GetGame() || this != GetGame().GetPlayerController())
 			return;
+		CF_ReceiveCommandSnapshot(roster, orderState);
 		SCR_MapEntity mapEntity = SCR_MapEntity.GetMapInstance();
 		if (!mapEntity)
 			return;

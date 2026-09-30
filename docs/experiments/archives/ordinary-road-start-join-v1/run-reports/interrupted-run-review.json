@@ -1,0 +1,158 @@
+{
+  "status": "ONE_RUN_INTERRUPTED_FOR_USER_TAKEOVER",
+  "liveLaunches": 1,
+  "runRoot": "D:/ReforgerAgentRuns/ordinary-road-start-join-v1",
+  "recordedUtc": "2026-09-30T20:10:35.614Z",
+  "clientOwnedPid": 9268,
+  "clientStartLocal": "2026-09-30 14:59:20 America/Chicago",
+  "normalWindowCloseRequestUtc": "2026-09-30T20:02:02.6627248Z",
+  "forcedOwnedProcessStop": true,
+  "forceReason": "Marco explicitly requested takeover/pause; normal CloseMainWindow returned true but did not exit after bounded wait. Only verified owned PID9268 stopped.",
+  "launcherSession": 43749,
+  "launcherExitCode": 1,
+  "gameProcessExitCode": 4294967295,
+  "watcherSession": 83530,
+  "watcherCancelled": true,
+  "watcherExitCode": 1,
+  "terminal": null,
+  "terminalSnapshotExists": false,
+  "userAbortSnapshot": {
+    "path": "D:/ReforgerAgentRuns/ordinary-road-start-join-v1/user-abort-console.log",
+    "bytes": 24676,
+    "sha256": "E909B7676C03ADC7061F51B8AA30CCCDFCCC0F4A1AF5B8CAC286A785243C2227",
+    "equalsFullLog": true,
+    "notScenarioTerminal": true
+  },
+  "fullLog": {
+    "path": "D:/ReforgerAgentRuns/ordinary-road-start-join-v1/logs/console.log",
+    "bytes": 24676,
+    "sha256": "E909B7676C03ADC7061F51B8AA30CCCDFCCC0F4A1AF5B8CAC286A785243C2227"
+  },
+  "scenarioRecords": [
+    {
+      "line": 178,
+      "text": "14:59:32.646     SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO_INIT: run_id=0x4000000000000003 {}_0 truck_name=CF_SmokeFollower1 source_name=CF_JourneySource destination_name=CF_JourneyDestination transfer=100 native_dispatch=true resource_writes=false truck_pose_writes=false ordinary_input=false"
+    },
+    {
+      "line": 180,
+      "text": "14:59:32.650     SCRIPT       : [ConvoyFollower] AUTO_INIT: expected=1"
+    },
+    {
+      "line": 181,
+      "text": "14:59:32.650     SCRIPT       : string initMessage = '[ConvoyFollower] PACED_INIT: run_id=0x4000000000000005 {}_0 world=Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent expected=1 lead_cap_kmh=20 peak_gap_m=60 observation_s=180 max_drift_m=2 timeout_s=480 fixture_change=controlled_native_lead_and_entry_barrier legacy_worlds_unchanged=true follower_writes=false native_cruise=true stable_follow_waypoints=false auto_exit=true auto_exit_delay_s=30 moving_gap=20 stopped_gap=10 completion_radius=20'"
+    },
+    {
+      "line": 182,
+      "text": "14:59:32.650     SCRIPT       : [ConvoyFollower] ENTITY_FOLLOW_INIT: run_id=0x4000000000000005 {}_0 world=Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent expected=1 test_only=true production_move_control_unchanged=true vehicle_planning=true target_basis=current_predecessor_entity driven_trail_claim=false required_single_activity_progress_m=100 required_powered_samples=3 inherited_peak_gap_m=60 inherited_hold_s=180"
+    },
+    {
+      "line": 183,
+      "text": "14:59:32.650     SCRIPT       : [ConvoyFollower] ORIGINAL_RESUME_INIT: run_id=0x4000000000000005 {}_0 baseline_hold_s=180 command_hold_s=30 max_drift_m=2 restart_progress_m=20 powered_samples=3 command_timeout_s=240 total_timeout_s=720 owner_seat_setup=true human_input_claim=false follower_writes=false"
+    },
+    {
+      "line": 184,
+      "text": "14:59:32.650     SCRIPT       : [ConvoyFollower] ORDINARY_FIXTURE_INIT: run_id=0x4000000000000005 {}_0 world=Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent expected=1 head=direct_original tail=none ordinary_controller=CF_ConvoyFollowDriverControllerComponent lead_cap_kmh=20 restart_lead_cap_kmh=20 moving_gap_m=20 stopped_gap_m=10 readback_only=true commands=existing_server_hold_resume spacing_diagnostic=false"
+    },
+    {
+      "line": 185,
+      "text": "14:59:32.650     SCRIPT       : [ConvoyFollower] BAY_STOP_GUARD_SCOPE: moving_negative_unverified=true optional_external_boarding_probe_bypassed=true stopped_owner_positive_pending=true speed_injected=false"
+    },
+    {
+      "line": 186,
+      "text": "14:59:32.650     SCRIPT       : [ConvoyFollower] BAY_FEATURE_INIT: scope=physical_bay_native_unload_commanded_park_only full_trip=false following_pass=false arrival_180s_claim=false input_claim=false video_claim=false hold_s=30 hold_drift_m=2 admission_timeout_s=90 park_timeout_s=90 park_stable_s=30 short_distinct_destination_m=83 production_follower_unchanged=true"
+    },
+    {
+      "line": 187,
+      "text": "14:59:32.650     SCRIPT       : [ConvoyFollower] ORDINARY_BAY_COURSE_INIT: version=2 startup_wait_selection_s=10 total_world_s=1650 setup_s=95 outbound_s=240 arrival_capture_s=90 arrival_stable_s=180 hold_s=30 hold_drift_m=2 resume_return_leg_s=240 bay_park_return_safety_unchanged=true spacing_60m_sticky=true diagnostic_continuation_after_spacing_only=true real_departure_required=true same_activity_outbound_m=100 powered_min=3 fresh_resume_m=20 camera_only_observer=true normal_input=false video=false"
+    }
+  ],
+  "loadedWitness": false,
+  "motionWitness": false,
+  "arrivalWitness": false,
+  "nativeImages": [],
+  "observedErrors": {
+    "beforeUserShutdown": 8,
+    "rows": [
+      {
+        "line": 104,
+        "text": "14:59:21.838   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+        "phase": "observed_before_user_shutdown"
+      },
+      {
+        "line": 159,
+        "text": "14:59:32.547           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+        "phase": "observed_before_user_shutdown"
+      },
+      {
+        "line": 164,
+        "text": "14:59:32.581         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+        "phase": "observed_before_user_shutdown"
+      },
+      {
+        "line": 165,
+        "text": "14:59:32.581         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+        "phase": "observed_before_user_shutdown"
+      },
+      {
+        "line": 170,
+        "text": "14:59:32.582         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+        "phase": "observed_before_user_shutdown"
+      },
+      {
+        "line": 171,
+        "text": "14:59:32.582         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+        "phase": "observed_before_user_shutdown"
+      },
+      {
+        "line": 172,
+        "text": "14:59:32.582         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+        "phase": "observed_before_user_shutdown"
+      },
+      {
+        "line": 173,
+        "text": "14:59:32.582         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+        "phase": "observed_before_user_shutdown"
+      }
+    ],
+    "postResultClassification": "not applicable: no scenario result",
+    "shutdownErrors": "unobserved/censored; not zero"
+  },
+  "natural30WorldClose": false,
+  "shutdownCensored": true,
+  "latestObservedLogLine": "14:59:34.051 SCRIPT       : 2026-09-30 19:59:34 voteEnd: SCR_VotingResultData{flag_vote_success=1}",
+  "clockAndFocus": {
+    "lastLogLocal": "2026-09-30 14:59:34.051",
+    "noPacedWorldTimeSample": true,
+    "elapsedWorldRateUnknown": true,
+    "focusNotObserved": true,
+    "noActivationOrInputIssued": true,
+    "noFocusCauseClaim": true
+  },
+  "sourceFiles": 616,
+  "packedText": 238,
+  "trio": [
+    {
+      "file": "addon.gproj",
+      "bytes": 135,
+      "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579",
+      "matches": true
+    },
+    {
+      "file": "data.pak",
+      "bytes": 32848027,
+      "sha256": "B279929DBDA1F2836E9124AF5A071C855E654E319C00B8561AB87EBD53D298B3",
+      "matches": true
+    },
+    {
+      "file": "resourceDatabase.rdb",
+      "bytes": 35273,
+      "sha256": "E93B54246F7A0B2E9E6D73B95C2859F2BB68F6E58AA225031132BC962CDEAD06",
+      "matches": true
+    }
+  ],
+  "noFrozenSourceEdit": true,
+  "noGeometryOrGateAdjustment": true,
+  "noReplay": true,
+  "userPauseSupersedesRun": true,
+  "noFullTripOrReleaseClaim": true
+}

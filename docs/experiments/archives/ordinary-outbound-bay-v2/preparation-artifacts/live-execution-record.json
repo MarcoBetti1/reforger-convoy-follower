@@ -1,0 +1,38 @@
+{
+  "status": "ONE_RUN_CLOSED_ARRIVAL_FAIL",
+  "liveLaunches": 1,
+  "runRoot": "D:/ReforgerAgentRuns/ordinary-outbound-bay-v2",
+  "review": "D:/ReforgerAgentRuns/ordinary-outbound-bay-v2/final-live-review.json",
+  "terminal": {
+    "line": 5103,
+    "text": "13:48:27.400 SCRIPT       : [ConvoyFollower] PACED_RESULT: FAIL run_id=0x4000000000000005 {}_0 tick=208 seconds=238.31 expected=1 peak_gap_m=303.235 observation_samples=0 first_failure=spacing:link_over_60m_unit_1 owned_lead_park_retained=true",
+    "marker": "PACED_RESULT",
+    "run_id": "0x4000000000000005 {}_0",
+    "tick": "208",
+    "seconds": "238.31",
+    "expected": "1",
+    "peak_gap_m": "303.235",
+    "observation_samples": "0",
+    "first_failure": "spacing:link_over_60m_unit_1",
+    "owned_lead_park_retained": "true"
+  },
+  "fullLog": {
+    "bytes": 1615162,
+    "sha256": "89963DE1015E2B9CCBD045B7154C763B814A512A3E871359FD87C45A9E77236F"
+  },
+  "snapshot": {
+    "bytes": 1581787,
+    "sha256": "E6B789C03533B44F6DA64876A080A031492B61C6C87AB2BFA8A67574B67436D1",
+    "exactPrefix": true
+  },
+  "errors": {
+    "runtime": 19,
+    "post-result": 0,
+    "shutdown": 59
+  },
+  "naturalCloseWorldSeconds": 30.0157,
+  "noReplay": true,
+  "noFrozenEdit": true,
+  "noNewCandidate": true,
+  "nextActionProposal": "For review only: one fixed loaded ordinary-follow control on an already driven paved straight segment, with both original trucks initially aligned along the road, removing the staging grass-to-road turn. Retain the original native lead/passenger owner, production formation backend, native100 load/cancel and conservation, requested20kmh lead pace, original identities/guards, continuous100m goal-axis plus independent net100m/3powered, sticky60m spacing and bounded owned-arrival gates. Declare one geometry and reachable endpoint before any candidate/run; no sweep, speed/cap/backend/guard changes or runtime pose/control writes. Compare early gap growth and continued straight-road underpace with this run. Passing would support a join/turn contribution only; failing would show that removing this join does not solve formation underpace. It would not qualify varied driving, UI, delivery or the full trip. No candidate or launch is authorized by this proposal."
+}

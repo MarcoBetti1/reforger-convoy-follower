@@ -1,5 +1,6 @@
-// Private comparison only. The waypoint owns one persistent native activity;
-// it is never used by a normal convoy prefab or a stock FOLLOW reaction.
+// Ordinary convoy prefabs use this waypoint through the controller's exact
+// original-follow lease. It owns one persistent activity; stock FOLLOW reactions
+// remain separate. The Tests path reflects its development origin.
 class CF_EntityFollowActivity : SCR_AIFollowActivity
 {
 	protected static int s_iSequence;

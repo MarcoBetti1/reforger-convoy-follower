@@ -1,0 +1,24 @@
+{
+  "method": "first observed marker; up to poll latency; complete successful read, not atomic terminal boundary",
+  "startedUtc": "2026-09-30T18:44:02.292Z",
+  "readStartedUtc": "2026-09-30T18:48:27.440Z",
+  "capturedUtc": "2026-09-30T18:48:27.441Z",
+  "markerLiteral": "PACED_RESULT:",
+  "firstMarkerOffsetBytes": 1581358,
+  "pollMs": 50,
+  "timeoutMs": 5100000,
+  "attempts": 4258,
+  "source": {
+    "path": "D:/ReforgerAgentRuns/ordinary-outbound-bay-v2/logs/console.log",
+    "bytes": 1581787,
+    "sha256": "E6B789C03533B44F6DA64876A080A031492B61C6C87AB2BFA8A67574B67436D1",
+    "hashScope": "captured read only"
+  },
+  "output": {
+    "path": "D:/ReforgerAgentRuns/ordinary-outbound-bay-v2/gameplay-at-terminal.log",
+    "bytes": 1581787,
+    "sha256": "E6B789C03533B44F6DA64876A080A031492B61C6C87AB2BFA8A67574B67436D1"
+  },
+  "provenancePath": "D:/ReforgerAgentRuns/ordinary-outbound-bay-v2/gameplay-at-terminal.log.provenance.json",
+  "scope": "Private long-course watch; same64MiB/50ms/read-only/exclusive evidence discipline; installed generic CLI has3600s maximum."
+}

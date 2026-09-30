@@ -8,6 +8,9 @@ class CF_ConvoyPanelOrder
 	static const int RESUME_AHEAD_LINE = 5;
 	static const int CANCEL_UNLOAD = 6;
 	static const int REBOARD_SELECTED = 7;
+	static const int REGROUP_RETURN = 8;
+	static const int SET_UNLOAD_BAY = 9;
+	static const int ADMIT_NEXT = 10;
 }
 
 class CF_ConvoyMapPanel : ScriptedWidgetEventHandler
@@ -428,7 +431,8 @@ modded class SCR_MapEntity
 	override protected void OnMapOpen(MapConfiguration config)
 	{
 		super.OnMapOpen(config);
-		GetGame().GetCallqueue().CallLater(CF_OpenConvoyPanel, 20, false);
+		// Commands now open independently through the native radial. Keep the
+		// legacy view callable for retained diagnostic courses, not automatic.
 	}
 
 	override protected void OnMapClose()

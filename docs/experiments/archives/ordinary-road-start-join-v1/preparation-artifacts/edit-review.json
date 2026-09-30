@@ -1,0 +1,47 @@
+{
+  "status": "PREPARED_SOURCE_ONLY_UNLAUNCHED",
+  "declaration": ".cache/ordinary-road-start-join-v1/geometry-declaration.json",
+  "sourceRoot": "D:/ReforgerAgentBuilds/ordinary-road-start-join-v1/source/ConvoyFollower",
+  "baseline": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source",
+  "authoredFile": "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck_Layers/default.layer",
+  "edits": [
+    {
+      "before": "coords 7239.0 138.9 2440.0",
+      "after": "coords 7176.295128 143.73 2527.023737",
+      "label": "same local spawn offset rotated with lead"
+    },
+    {
+      "before": "coords 7253.0 138.9 2432.0",
+      "after": "coords 7170.007368 142.211 2511.101404",
+      "label": "original follower group local6m offset"
+    },
+    {
+      "before": "coords 7253.0 138.9 2438.0\n angles 0 -90 0",
+      "after": "coords 7175.97 142.211 2511.77\n angles 0 -6.39791 0",
+      "label": "original follower road pose"
+    },
+    {
+      "before": "coords 7233.0 138.9 2438.0\n angles 0 -90 0",
+      "after": "coords 7173.61 143.73 2532.75\n angles 0 -6.687617 0",
+      "label": "original lead road pose"
+    },
+    {
+      "before": "coords 7253.0 138.6 2428.0\n angles 0 90 0",
+      "after": "coords 7166.03228 141.911 2510.655673\n angles 0 173.60209 0",
+      "label": "original source local offset rotated"
+    },
+    {
+      "before": "coords 7233.0 138.9 2432.0",
+      "after": "coords 7167.650825 143.73 2532.051263",
+      "label": "original native pilot group local6m offset"
+    }
+  ],
+  "baselineSha256": "905DFF75F4BA268CF0851926A6F0464251D12792377D210A85E81D0D272E17BA",
+  "candidateSha256": "B6A132DA13BB9107622B7B22A08C509298B22314C7AFF18F93437E048C090CF4",
+  "restoredOriginalByteTextMatches": true,
+  "productionScriptsAndWorldComponentUnchanged": true,
+  "worldResourceAndMetadataUnchanged": true,
+  "actorAndStorageCountPrefabsNamesAndContainersUnchanged": true,
+  "destinationUnchanged": true,
+  "liveRun": false
+}

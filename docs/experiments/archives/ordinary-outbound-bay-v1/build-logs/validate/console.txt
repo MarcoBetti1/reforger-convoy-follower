@@ -1,0 +1,201 @@
+---------------------------------------------
+Log D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\workbench\validate\console.log started at 2026-09-30 12:44:20 (2026-09-30 17:44:20 UTC)
+
+12:44:20.842   ENGINE       : FileSystem: Adding relative directory 'D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\workbench\validate' to filesystem under name logs
+12:44:20.842   ENGINE       : FileSystem: Adding relative directory 'C:\Users\marco\Documents\My Games\ArmaReforgerWorkbench\profile' to filesystem under name profile
+12:44:20.842   ENGINE       : FileSystem: Current working directory: 'D:\SteamLibrary\steamapps\common\Arma Reforger Tools\Workbench\'
+12:44:20.843  PROFILING    : Workbench Create Engine took: 3.444000 ms
+12:44:20.844   INIT         : INIT         : Workbench Init Engine
+12:44:20.844   ENGINE       : Initializing engine, version 192142
+12:44:20.844   ENGINE       : CLI Params: -gproj D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\source\ConvoyFollower\addon.gproj -addonsDir D:\SteamLibrary\steamapps\common\Arma Reforger\addons -logsDir D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\workbench\validate -wbSilent -wbModule ScriptEditor -validate PC 
+12:44:20.846   ENGINE       : Addon dirs:
+12:44:20.846    ENGINE       : dir: 'D:/ReforgerAgentBuilds/ordinary-outbound-bay-v1/source/ConvoyFollower/'
+12:44:20.846    ENGINE       : dir: 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons'
+12:44:20.846    ENGINE       : dir: './addons'
+12:44:20.846    ENGINE       : dir: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons'
+12:44:20.846   ENGINE       : Available addons:
+12:44:20.846    ENGINE       : gproj: 'D:/ReforgerAgentBuilds/ordinary-outbound-bay-v1/source/ConvoyFollower/addon.gproj' guid: '5A5FB20BD40C7C70'
+12:44:20.846    ENGINE       : gproj: 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons/core/core.gproj' guid: '5614BBCCBB55ED1C' (packed)
+12:44:20.846    ENGINE       : gproj: 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons/data/ArmaReforger.gproj' guid: '58D0FB3206B6F859' (packed)
+12:44:20.846    ENGINE       : gproj: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons/BGM-71 TOW/addon.gproj' guid: '688D360775F53858'
+12:44:20.846    ENGINE       : gproj: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons/BradleyPaintPoC/addon.gproj' guid: '688FCEA2B33D1041'
+12:44:20.846    ENGINE       : gproj: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons/BTR70Command/addon.gproj' guid: '5AF0AFB9CC8DB961'
+12:44:20.846    ENGINE       : gproj: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons/New Enfusion Project/addon.gproj' guid: '68832C144E59F6DD'
+12:44:20.846    ENGINE       : gproj: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons/UAZKornetField/addon.gproj' guid: 'E6A4D7B820F41C39'
+12:44:20.846    ENGINE       : gproj: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons/UralSPG9/addon.gproj' guid: 'DAB46697B2A2D95A'
+12:44:20.846   ENGINE       : FileSystem: Adding relative directory 'D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\source\ConvoyFollower' to filesystem under name ConvoyFollower
+12:44:20.912   ENGINE       : FileSystem: Adding package 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons/data/' (pak count: 14) to filesystem under name ArmaReforger
+12:44:20.915   ENGINE       : FileSystem: Adding package 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons/core/' (pak count: 2) to filesystem under name core
+12:44:20.915   ENGINE       : CPU vendor         : GenuineIntel
+12:44:20.915   ENGINE       : CPU type           : 1
+12:44:20.915   ENGINE       : CPU name           : Intel(R) Core(TM) i7-14700K
+12:44:20.915   ENGINE       : CPU cache info     : L1 [Inst 64KB, Data 48KB], L2 [Unif 4096KB], L3 [Unif 33792KB]
+12:44:20.915   ENGINE       : CPU count logical  : 28
+12:44:20.915   ENGINE       : CPU count physical : 20
+12:44:20.915   ENGINE       : CPU features       : mmx sse sse2 sse3 ssse3 sse4_1 sse4_2 popcnt aesni pclmulqdq osxsave avx sha avx2
+12:44:20.915   RESOURCES    : ResourceDB: loading cache (id=0 name=ConvoyFollower path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\source\ConvoyFollower/resourceDatabase.rdb)
+12:44:20.915   RESOURCES    : ResourceDB: loading cache (id=1 name=ArmaReforger path=D:/SteamLibrary/steamapps/common/Arma Reforger/addons/data/resourceDatabase.rdb)
+12:44:20.995   RESOURCES    : ResourceDB: loading cache (id=2 name=core path=D:/SteamLibrary/steamapps/common/Arma Reforger/addons/core/resourceDatabase.rdb)
+12:44:20.996   RESOURCES    : ResourceDB: loading cache (id=3 name=profile path=C:\Users\marco\Documents\My Games\ArmaReforgerWorkbench\profile/resourceDatabase.rdb)
+12:44:20.996   RESOURCES    : ResourceDB: loading cache (id=4 name=logs path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\workbench\validate/resourceDatabase.rdb)
+12:44:21.070    RESOURCES    : RESOURCES    : ResourceDB: full scan
+12:44:21.072     RESOURCES    : RESOURCES    : scanning...
+12:44:21.072      RESOURCES    : RESOURCES    : scanning @"ConvoyFollower"
+12:44:21.076      RESOURCES    : RESOURCES    : scanning @"ArmaReforger"
+12:44:21.158      RESOURCES    : RESOURCES    : scanning @"core"
+12:44:21.159      RESOURCES    : RESOURCES    : scanning @"profile"
+12:44:21.160      RESOURCES    : RESOURCES    : scanning @"logs"
+12:44:21.160     RESOURCES    : RESOURCES    : processing meta-files...
+12:44:21.214     RESOURCES    : RESOURCES    : processing files...
+12:44:21.217 INIT         : Workbench startup
+12:44:21.217  INIT         : Workbench Init Engine
+12:44:21.217   RESOURCES    : ResourceDB: full scan
+12:44:21.217    RESOURCES    : processing files...
+12:44:21.217     RESOURCES (W): resource not registered: @"$profile:ConvoyFollowerSettings.json". Setting null GUID
+12:44:21.217     RESOURCES    : RESOURCES    : processing folders...
+12:44:21.221     RESOURCES    : RESOURCES    : creating GUID-item mapping...
+12:44:21.226     RESOURCES    : RESOURCES    : building tree...
+12:44:21.255   PROFILING    : ResourceDB: full scan took: 184.903000 ms
+12:44:21.256   RESOURCES    : ResourceDB: saving cache (id=0 name=ConvoyFollower path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\source\ConvoyFollower/resourceDatabase.rdb)
+12:44:21.257   RESOURCES    : ResourceDB: written 35273/35273 bytes
+12:44:21.257   RESOURCES    : ResourceDB: cache successfully saved
+12:44:21.257   RESOURCES    : ResourceDB: saving cache (id=3 name=profile path=C:\Users\marco\Documents\My Games\ArmaReforgerWorkbench\profile/resourceDatabase.rdb)
+12:44:21.258   RESOURCES    : ResourceDB: written 305/305 bytes
+12:44:21.258   RESOURCES    : ResourceDB: cache successfully saved
+12:44:21.258   RESOURCES    : ResourceDB: saving cache (id=4 name=logs path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\workbench\validate/resourceDatabase.rdb)
+12:44:21.259   RESOURCES    : ResourceDB: written 81/81 bytes
+12:44:21.259   RESOURCES    : ResourceDB: cache successfully saved
+12:44:21.259   ENGINE       : GameProject load
+12:44:21.259    ENGINE       : Loaded addons:
+12:44:21.259     ENGINE       : gproj: 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons/core/core.gproj' guid: '5614BBCCBB55ED1C'
+12:44:21.259     ENGINE       : gproj: 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons/data/ArmaReforger.gproj' guid: '58D0FB3206B6F859'
+12:44:21.259     ENGINE       : gproj: 'D:/ReforgerAgentBuilds/ordinary-outbound-bay-v1/source/ConvoyFollower/addon.gproj' guid: '5A5FB20BD40C7C70'
+12:44:21.260   ENGINE       : Loading custom engine user config '$profile:.save/app1874910_user76561198259562475/settings/ReforgerEngineSettings.conf'
+12:44:21.260   INIT         : GameProject engine user settings load @"$profile:.save/app1874910_user76561198259562475/settings/ReforgerEngineSettings.conf"
+12:44:21.260    ENGINE       : Engine user settings config loaded
+12:44:21.260   PROFILING    : Settings changed took: 0.004800 ms
+12:44:21.393   RENDER       : (OK) Adapter 'NVIDIA GeForce RTX 4080 SUPER' supports feature level 12_0
+12:44:21.445   RENDER       : (OK) Adapter 'Intel(R) UHD Graphics 770' supports feature level 12_0
+12:44:21.557   RENDER       : (OK) Adapter 'NVIDIA GeForce RTX 4080 SUPER' supports feature level 12_0
+12:44:21.561   RENDER       : Adapter 1 (Intel(R) UHD Graphics 770) failed to provide some output
+12:44:21.561   RENDER       : Adapter 2 (NVIDIA GeForce RTX 4080 SUPER) failed to provide some output
+12:44:21.561   RENDER       : Basic screen setup:
+12:44:21.561   RENDER       :   Back buffer format	       : TEXFMT_R8G8B8A8_SRGB (29)
+12:44:21.561   RENDER       :   MSAA                      : none
+12:44:21.575   RENDER       : Driver for NVIDIA GeForce RTX 4080 SUPER is from 24.8.2026 (1 month, 7 days old)
+12:44:21.575   RENDER       : GPU_NVIDIA (0x10DE) (NVIDIA GeForce RTX 4080 SUPER) with 1 GPU detected, VRAM 16045MB (fast 0MB), shared 16231MB, driver version 616.64
+12:44:21.575   RENDER       : Detected output devices:
+12:44:21.575   RENDER       :  * 2 device/s connected to NVIDIA GeForce RTX 4080 SUPER:
+12:44:21.575   RENDER       :    Generic PnP Monitor (\\.\DISPLAY2), 1920x1440 (offset 0x0), 240Hz
+12:44:21.575   RENDER       :    Generic PnP Monitor (\\.\DISPLAY1), 3440x1440 (offset 1920x0), 100Hz
+12:44:21.575   RENDER       :  * no output device connected to Intel(R) UHD Graphics 770
+12:44:21.575   RENDER       :  * no output device connected to NVIDIA GeForce RTX 4080 SUPER
+12:44:21.575   RENDER       :   Concurrent frames limit 2
+12:44:21.749   RENDER       : Graphics device features
+12:44:21.749   RENDER       :  Needed:
+12:44:21.749   RENDER       :  * Highest supported shader model: 6.8 (6.0 needed)
+12:44:21.749   RENDER       :  Optional:
+12:44:21.749   RENDER       :  * Allow tearing (VSYNC) : 1
+12:44:21.749   RENDER       :  * 16 bits : 1
+12:44:21.749   RENDER       :  * Resource heap tier : 3
+12:44:21.749   RENDER       :  * Persistent heaps (DRED) : 1
+12:44:21.749   RENDER       :  * DRED 1.2 is supported by compiler
+12:44:21.790   RENDER       : Main RT format setup.
+12:44:21.790   RENDER       :   Main RT format for quality 0	: TEXFMT_R11G11B10_FLOAT (26)
+12:44:21.790   RENDER       :   Main RT format for quality 1	: TEXFMT_R16G16B16A16_FLOAT (10)
+12:44:21.797   ENGINE       : Job system settings: coreCount=28, shortJobContextCount=16, shortJobThreadCount=15, longJobThreadCount=28
+12:44:21.811   PROFILING    : Settings changed took: 0.013200 ms
+12:44:21.828 AUDIO        : Endpoint: Headphones (2- Arctis Nova Pro Wireless)
+12:44:21.828 AUDIO        :  Format: Channels: 2, Sample rate: 48kHz, Avg. bytes: 384kB, Sample bits: 32, Block align: 8B
+12:44:21.830 AUDIO        : Audio client:
+12:44:21.830 AUDIO        :  Format: Channels: 2, Sample rate: 48kHz, Buffer size: 1536B, Frame: 512
+12:44:21.832    RENDER       : RENDER       : Reload shaders
+12:44:21.832    RENDER       : Enfusion shader version 13
+12:44:21.832     INIT         : INIT         : ShaderListReload
+12:44:21.832    PROFILING    : ShaderListReload took: 0.001100 ms
+12:44:21.944 AUDIO        : Endpoint: Headphones (2- Arctis Nova Pro Wireless)
+12:44:21.944 AUDIO        :  Format: Channels: 2, Sample rate: 48kHz, Avg. bytes: 384kB, Sample bits: 32, Block align: 8B
+12:44:21.946 AUDIO        : Audio client:
+12:44:21.946 AUDIO        :  Format: Channels: 2, Sample rate: 48kHz, Buffer size: 1536B, Frame: 512
+12:44:21.964    RENDER       : Loaded 3752 newer shader binaries
+12:44:21.964   PROFILING    : Reload shaders took: 131.922800 ms
+12:44:21.964   ENGINE       : Initializing inputs.
+12:44:21.967   NETWORK      : Initializing networking.
+12:44:21.969   NETWORK      : Using new GameRplScheduler.
+12:44:21.969    SCRIPT       : SCRIPT       : Initializing scripts
+12:44:21.969     SCRIPT       : SCRIPT       : ScriptProjectManager init
+12:44:22.151    PROFILING    : ScriptProjectManager init took: 182.540900 ms
+12:44:22.166   PROFILING    : Initializing scripts took: 196.958400 ms
+12:44:22.175   ENGINE       : Enfusion engine successfully created.
+12:44:22.175  PROFILING    : Workbench Init Engine took: 1331.596300 ms
+12:44:22.175   INIT         : INIT         : Workbench Create Game
+12:44:22.189   GUI          : Using default language (en_us)
+12:44:22.189   GUI          : Loading 'en_us' localization file.
+12:44:22.189    INIT         : INIT         : Loading StringTable
+12:44:22.206   PROFILING    : Loading StringTable took: 17.962700 ms
+12:44:22.206    SCRIPT       : SCRIPT       : Compiling GameLib scripts
+12:44:22.240    SCRIPT       : Module: Workbench; loaded 18x files; 36x classes; used 125K of static memory; defines: "ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE"; CRC32: 90ce0460
+12:44:22.241    SCRIPT       : Module: GameLib; loaded 465x files; 648x classes; used 828K of static memory; defines: "ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE"; CRC32: 4507af04
+12:44:22.241   PROFILING    : Compiling GameLib scripts took: 34.408400 ms
+12:44:22.241    SCRIPT       : SCRIPT       : Compiling Game scripts
+12:44:22.675  INIT         : Workbench Create Game
+12:44:22.675   SCRIPT       : Compiling Game scripts
+12:44:22.675    SCRIPT    (E): @"Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c,29": Variable name 'Sequence' is already used as type name
+12:44:22.847    SCRIPT    (E): Can't compile "Game" script module!
+
+Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): Variable name 'Sequence' is already used as type name
+12:44:22.907    SCRIPT    (W): Failed to load
+12:44:22.907   PROFILING    : Compiling Game scripts took: 665.996000 ms
+12:44:22.907   ENGINE    (E): Unable to initialize a game/gamelib. Some workbench features will not work.
+12:44:22.907   SCRIPT    (W): Initializing default GameLib's game class.
+12:44:22.907   INIT         : Creating game instance(Game), version 1.8.0.13 built 2026-08-21 14:30:18 UTC.
+12:44:22.919   ENGINE       : Game successfully created.
+12:44:22.919  PROFILING    : Workbench Create Game took: 744.065600 ms
+12:44:22.921  SCRIPT       : Validating script for configuration WORKBENCH...
+12:44:23.286  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:23.509  SCRIPT       : Validating script for configuration PC...
+12:44:23.866  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:24.080  SCRIPT       : Validating script for configuration XBOX...
+12:44:24.438  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:24.655  SCRIPT       : Validating script for configuration PS4...
+12:44:25.014  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:25.231  SCRIPT       : Validating script for configuration PS5...
+12:44:25.587  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:25.804  SCRIPT       : Script validation failed.
+12:44:25.805 PROFILING    : Workbench startup took: 5102.655600 ms
+12:44:25.806 RESOURCES    : ResourceDB: saving cache (id=0 name=ConvoyFollower path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\source\ConvoyFollower/resourceDatabase.rdb)
+12:44:25.807 RESOURCES    : ResourceDB: written 35273/35273 bytes
+12:44:25.807 RESOURCES    : ResourceDB: cache successfully saved
+12:44:25.807 RESOURCES    : ResourceDB: saving cache (id=3 name=profile path=C:\Users\marco\Documents\My Games\ArmaReforgerWorkbench\profile/resourceDatabase.rdb)
+12:44:25.808 RESOURCES    : ResourceDB: written 305/305 bytes
+12:44:25.808 RESOURCES    : ResourceDB: cache successfully saved
+12:44:25.808 RESOURCES    : ResourceDB: saving cache (id=4 name=logs path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\workbench\validate/resourceDatabase.rdb)
+12:44:25.809 RESOURCES    : ResourceDB: written 81/81 bytes
+12:44:25.809 RESOURCES    : ResourceDB: cache successfully saved
+12:44:25.813 ENGINE       : Game destroyed.
+12:44:25.813 ENGINE       : Game destroyed.
+12:44:25.832 RESOURCES (E): ==== Resource leaks ====
+12:44:25.832 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1
+12:44:25.832 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1
+12:44:25.832 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1
+12:44:25.832 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1
+12:44:25.832 RESOURCES (E): UI/Imagesets/debugUI.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1
+12:44:25.832 RESOURCES (E): UI/Imagesets/default.edds   1
+12:44:25.832 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1

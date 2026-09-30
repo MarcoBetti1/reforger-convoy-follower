@@ -30,6 +30,15 @@ SCR_ChimeraCharacter : "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_
   }
   ActionsManagerComponent "{520EA1D2F659CE02}" {
    additionalActions + {
+    CF_OpenConvoyCommandsAction "{CF20260929000005}" {
+     ParentContextList {
+      "default"
+     }
+     UIInfo SCR_ActionUIInfo "{CF2026092900000F}" {
+      Name "Convoy commands"
+     }
+     VisibilityRange 2.5
+    }
     CF_FollowOnFootAction "{1EFC34B63D22C013}" {
      ParentContextList {
       "default"

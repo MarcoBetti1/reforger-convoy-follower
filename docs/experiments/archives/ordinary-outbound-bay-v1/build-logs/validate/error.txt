@@ -1,0 +1,47 @@
+---------------------------------------------
+Log D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\workbench\validate\error.log started at 2026-09-30 12:44:21 (2026-09-30 17:44:21 UTC)
+
+12:44:21.217 INIT         : Workbench startup
+12:44:21.217  INIT         : Workbench Init Engine
+12:44:21.217   RESOURCES    : ResourceDB: full scan
+12:44:21.217    RESOURCES    : processing files...
+12:44:21.217     RESOURCES (W): resource not registered: @"$profile:ConvoyFollowerSettings.json". Setting null GUID
+12:44:22.675  INIT         : Workbench Create Game
+12:44:22.675   SCRIPT       : Compiling Game scripts
+12:44:22.675    SCRIPT    (E): @"Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c,29": Variable name 'Sequence' is already used as type name
+12:44:22.847    SCRIPT    (E): Can't compile "Game" script module!
+
+Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): Variable name 'Sequence' is already used as type name
+12:44:22.907    SCRIPT    (W): Failed to load
+12:44:22.907   ENGINE    (E): Unable to initialize a game/gamelib. Some workbench features will not work.
+12:44:22.907   SCRIPT    (W): Initializing default GameLib's game class.
+12:44:23.286  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:23.866  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:24.438  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:25.014  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:25.587  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:25.832 RESOURCES (E): ==== Resource leaks ====
+12:44:25.832 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1
+12:44:25.832 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1
+12:44:25.832 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1
+12:44:25.832 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1
+12:44:25.832 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1
+12:44:25.832 RESOURCES (E): UI/Imagesets/debugUI.edds   1
+12:44:25.832 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1
+12:44:25.832 RESOURCES (E): UI/Imagesets/default.edds   1
+12:44:25.832 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1

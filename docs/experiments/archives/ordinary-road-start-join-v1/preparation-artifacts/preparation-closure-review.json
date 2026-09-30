@@ -1,0 +1,51 @@
+{
+  "status": "PREPARED_UNLAUNCHED_ROAD_START_JOIN_V1",
+  "configurations": [
+    "WORKBENCH",
+    "PC",
+    "XBOX",
+    "PS4",
+    "PS5"
+  ],
+  "validationSuccessful": true,
+  "sourceFiles": 616,
+  "packedText": 238,
+  "changedFiles": [
+    "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck_Layers/default.layer"
+  ],
+  "allScriptsByteIdentical": true,
+  "trio": {
+    "addon.gproj": {
+      "bytes": 135,
+      "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+    },
+    "data.pak": {
+      "bytes": 32848027,
+      "sha256": "B279929DBDA1F2836E9124AF5A071C855E654E319C00B8561AB87EBD53D298B3"
+    },
+    "resourceDatabase.rdb": {
+      "bytes": 35273,
+      "sha256": "E93B54246F7A0B2E9E6D73B95C2859F2BB68F6E58AA225031132BC962CDEAD06"
+    }
+  },
+  "manualV8": [
+    {
+      "file": "data.pak",
+      "sha256": "727B39B942A6325FB343BCA744C5C63CEED4E25B5772F614193CB4347B9BCD55",
+      "matches": true
+    },
+    {
+      "file": "resourceDatabase.rdb",
+      "sha256": "569AA9F3FB2AC691E383FD9735EDEB70FAB874C6D21C9390A297251A3F3CF175",
+      "matches": true
+    },
+    {
+      "file": "addon.gproj",
+      "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579",
+      "matches": true
+    }
+  ],
+  "reviewBeforeLaunch": true,
+  "liveLaunches": 0,
+  "preparationRecovery": "First helper rejected LF/CRLF before any file write; full baseline copy byte-verified before reuse, corrected source preparation completed, no validation/pack on rejected partial edits."
+}

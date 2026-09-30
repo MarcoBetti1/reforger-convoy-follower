@@ -1,0 +1,7 @@
+{
+  "base": "V1 final frozen source",
+  "changedOnly": "Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c",
+  "worldAndRdbUnchangedRelativeToV1": true,
+  "inheritedWorldComponentOnlyChangedField": "Historical V1 vs return-predicate-observer base; not a V2 world change",
+  "frozenBuildUntouched": true
+}

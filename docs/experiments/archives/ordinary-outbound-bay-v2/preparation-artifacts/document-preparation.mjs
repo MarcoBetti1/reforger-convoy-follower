@@ -1,0 +1,28 @@
+import fs from 'node:fs';
+const root='.cache/ordinary-outbound-bay-v2';const r=JSON.parse(fs.readFileSync(root+'/frozen-review.json'));
+const detail=`
+
+## V2 selected-Wait startup correction — prepared September 30, 2026
+
+After the one closed V1 setup failure, the coordinating chat requested a distinct V2 fixture correction for review only. V2 is **frozen, unlaunched**. Its exact source comparison changes only Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c; all other615source files, including production controllers, worlds, geometry, cargo and resource database, are byte-identical to V1. Reversing all declared edits restores the original V1 component exactly. No unchanged V1 replay or production driving/turn hypothesis change occurred.
+
+Startup now requests the original native lead Wait once and enters private phase13. A subsequent bounded poll reads the unchanged handoff conjunction: CanCommandPark, original speed>2 rejection, native lead control and the exact selected owned Wait. It logs each required term and failure before calling the unchanged native seat helper. The selected-Wait poll has a10world-second subbound within the existing95world setup and1650world total, rather than extending either budget. The original helper still performs the authoritative precondition check and native seat action. The readback retains speed comparison/NaN semantics and adds no guard, actor, control or physics writes.
+
+All native seat-handoff calls now emit read-only required-term diagnostics; owner-to-native terms are the existing owner-pilot and native-pilot-onfoot checks. Native seat entry is blocked after terminal. JourneyPhase and inherited BayPhase refuse transitions after terminal; outbound/Resume motion callers stop immediately if motion observation terminates. Source audit confirms other fresh-Wait seams already wait for selected/stopped lead state:180world arrival before the first Hold handoff, resumed-corridor head stop, inherited initial bay stop and both native-clear stops. Original helper seat/parking ownership, success-only first-drive release, later StartCommandRestart releases and return entry predicates remain.
+
+Actual core ready=true and continuous100m goal-axis/net100m/3powered ordinary activity remain mandatory. Exact180world/2m arrival,30world/2m Hold, strictly fresh pre-Resume-sequence20m goal/net20m/3powered Resume, sticky60m spacing, same original native100cargo, production turn/safety,90world parking/return and30world natural close remain. Route/endpoints, authored actor/storage positions, camera code and capture maximum are unchanged. V1's stationary two-truck pixels are retained separately and do not grant V2 a moving camera or gameplay PASS. The proposed5000wall launcher /5100wall watch and existing1525world stage maxima under1650total remain; no launcher has executed for V2.
+
+Final all-five script validation and packaging passed at ${r.validation.logs}. Verified616source files /238packedtext resources and matching deployment trio. Source SHA73A0B43E5D64C054C4F90B6A8C4463AAED70A74126EE195E7C1E226911077A77; original production driver remains224A97D271D9F43820AE4E1B30C3BBC5FF3514C4E5570BC9BB075F1292A5418B. Data SHA${r.trio['data.pak'].sha256}; unchangedRDB SHA${r.trio['resourceDatabase.rdb'].sha256}; unchangedgproj SHA${r.trio['addon.gproj'].sha256}.
+
+Archived source ${r.frozenSource}; isolated one-GUID runtime parent ${r.runtimeParent}; contract ${root}/frozen-review.json; exact diff ${root}/source-diff.patch; reversible source/seam audit ${root}/edit-review.json; source/pack verification ${r.sourceVerification}. No live run, readiness/following/arrival/Hold/Resume, bay/return, normal input, production player-home, video or release PASS is claimed. V2 requires review before execution. ManualV8 data rehashes unchanged727B39B942A6325FB343BCA744C5C63CEED4E25B5772F614193CB4347B9BCD55 and remains closed until Marco's presence after16:00 localCentral. All game/Workbench processes are closed.
+`;
+const doc='docs/experiments/ordinary-outbound-bay-v2-preparation.md';fs.writeFileSync(doc,'# Selected native Wait startup correction\n'+detail,{flag:'wx'});
+for(const file of ['docs/experiments/player-trip-20260929-session.md','docs/operations-playbook.md']){if(fs.readFileSync(file,'utf8').includes('## V2 selected-Wait startup correction'))throw Error('Already documented');fs.appendFileSync(file,detail);}
+const summary=`
+
+## V2 selected-Wait startup correction — prepared September 30, 2026
+
+A distinct V2 fixture is frozen and unlaunched for review after V1's setup failure. It requests the native lead Wait once, then polls exact selected-Wait/stopped/original control/parking preconditions with10world subbound inside unchanged95world setup. Required precondition terms are logged read-only, and terminal failures block further Journey/Bay phase transitions. All other Wait/seat seams were audited; route/cargo/production guards/motion/arrival/Hold/Resume/60m/time gates remain. Exactly one source file differs; other615files andRDB/worlds match V1. All-five validation/pack and616source/238packedtext/trio verify. Data SHA${r.trio['data.pak'].sha256}; runtime ${r.runtimeParent}. See the [V2 preparation](experiments/ordinary-outbound-bay-v2-preparation.md) for the exact diff and hashes. No new live run or gameplay claim; manualV8 remains closed.
+`;
+for(const file of ['docs/convoy-validation-current.md','docs/convoy-feature-courses.md']){if(fs.readFileSync(file,'utf8').includes('## V2 selected-Wait startup correction'))throw Error('Already documented');fs.appendFileSync(file,summary);}
+console.log(JSON.stringify({status:r.status,document:doc,sourceDiff:root+'/source-diff.patch',liveRun:false},null,2));

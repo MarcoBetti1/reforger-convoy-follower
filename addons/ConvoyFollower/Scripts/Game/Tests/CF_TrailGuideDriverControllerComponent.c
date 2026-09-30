@@ -2,8 +2,10 @@ class CF_TrailGuideDriverControllerComponentClass : CF_EntityFollowDriverControl
 {
 }
 
-// NEW private prefab only. Real predecessor remains in the inherited session,
-// stop, spacing, health and cruise paths. Only the moving native target differs.
+// Gameplay base of CF_ConvoyFollowDriverControllerComponent. It selects a
+// recorded guide for later units; Unit One follows the real owner lead.
+// The real predecessor remains in session, stop, spacing, health and cruise
+// paths. Attribute defaults remain opt-in; ordinary prefabs select their policy.
 class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerComponent
 {
 	[Attribute(defvalue: "0", desc: "Private one-follower recorded trail-guide experiment")]
@@ -40,6 +42,10 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 	protected vector m_vTrailEntryTangent;
 	protected float m_fTrailEntryLength;
 	protected bool m_bTrailEntryKnown;
+	protected vector m_vTrailDepartureAnchor;
+	protected vector m_vTrailDepartureForward;
+	protected bool m_bTrailDepartureRecording;
+	protected int m_iTrailDepartureLogs;
 	protected bool m_bTrailEntryApproach;
 	protected bool m_bTrailGuideActive;
 	protected bool m_bTrailPoseInterrupted;
@@ -404,6 +410,11 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 			m_TrailRoute = new CF_TrailGuideRoute();
 		m_TrailGuidance = new CF_DrivenRouteGuidance();
 		m_TrailRoute.Reset(m_iTrailEpoch, target.GetOrigin());
+		m_vTrailDepartureAnchor = target.GetOrigin();
+		m_vTrailDepartureForward = vector.Zero;
+		TryGetVehicleFacing(target, m_vTrailDepartureForward);
+		m_bTrailDepartureRecording = false;
+		m_iTrailDepartureLogs = 0;
 		m_bTrailFollowerPose = false;
 		m_fTrailMeasuredBudget = 0;
 		m_bTrailEntryKnown = false;
@@ -427,6 +438,23 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		m_sTrailBlockReason = reason;
 		Print("[ConvoyFollower] TRAIL_GUIDE_BLOCKED: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
 			" reason=" + reason + " preserved_history=true forced_join=false");
+		if (m_Truck)
+		{
+			CarControllerComponent car = CarControllerComponent.Cast(m_Truck.FindComponent(CarControllerComponent));
+			Physics physics = m_Truck.GetPhysics();
+			if (car && car.GetSimulation() && physics)
+			{
+				VehicleWheeledSimulation sim = car.GetSimulation();
+				vector forward = m_Truck.GetWorldTransformAxis(2);
+				forward[1] = 0;
+				if (forward.Length() > 0.1) forward.Normalize();
+				Print("[ConvoyFollower] TRAIL_BLOCK_PHYSICAL: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
+					" truck=" + m_Truck.GetID() + " origin=" + m_Truck.GetOrigin() + " forward=" + forward +
+					" velocity=" + physics.GetVelocity() + " signed_forward_kmh=" + vector.Dot(physics.GetVelocity(), forward) * 3.6 +
+					" speed_kmh=" + sim.GetSpeedKmh() + " gear=" + sim.GetGear() + " throttle=" + sim.GetThrottle() +
+					" engine=" + sim.EngineIsOn() + " state=" + m_iState + " control_writes=false");
+			}
+		}
 		m_bEntityFallbackFailed = true;
 		// Preserve explicit Hold, boarding and player ownership. Only the live
 		// ordinary native pilot may enter the inherited blocked-arrival path.
@@ -462,6 +490,38 @@ class CF_TrailGuideDriverControllerComponent : CF_EntityFollowDriverControllerCo
 		if (now < m_fTrailNextRecordMs)
 			return;
 		m_fTrailNextRecordMs = now + 200;
+		// A parked predecessor can roll backwards before its first departure.
+		// Do not publish that settling motion as the immutable entry heading.
+		// Keep the actual assignment seed and strict capture/route guards. Once
+		// forward departure is recorded, every subsequent pose is recorded as
+		// before, including reverse motion; no joined history or epoch is reset.
+		if (!m_bTrailDepartureRecording && !m_bTrailEntryKnown && !m_bTrailJoined)
+		{
+			Physics departurePhysics = target.GetPhysics();
+			vector departureFacing;
+			float departureForwardKmh;
+			float departureAdvance;
+			if (departurePhysics && TryGetVehicleFacing(target, departureFacing))
+				departureForwardKmh = 3.6 * vector.Dot(departurePhysics.GetVelocity(), departureFacing);
+			if (m_vTrailDepartureForward != vector.Zero)
+				departureAdvance = vector.Dot(target.GetOrigin() - m_vTrailDepartureAnchor, m_vTrailDepartureForward);
+			if (!(departureAdvance >= 0.5 && departureForwardKmh > 1.5))
+			{
+				if (m_iTrailDepartureLogs == 0)
+				{
+					m_iTrailDepartureLogs++;
+					Print("[ConvoyFollower] TRAIL_DEPARTURE_WAIT: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
+						" advance_m=" + departureAdvance + " forward_kmh=" + departureForwardKmh +
+						" assignment_seed_retained=true history_reset=false movement_credit=false");
+				}
+				return;
+			}
+			m_bTrailDepartureRecording = true;
+			Print("[ConvoyFollower] TRAIL_DEPARTURE_RECORDING: unit=" + m_iUnitNumber + " epoch=" + m_iTrailEpoch +
+				" seed=" + m_vTrailDepartureAnchor + " actual_pose=" + target.GetOrigin() +
+				" advance_m=" + departureAdvance + " forward_kmh=" + departureForwardKmh +
+				" history_reset=false joined=false movement_credit=false");
+		}
 		if (!m_TrailRoute.Record(m_iTrailEpoch, target.GetOrigin()))
 			CF_BlockTrail("history_discontinuous_or_lost");
 		if (!m_bTrailEntryKnown)

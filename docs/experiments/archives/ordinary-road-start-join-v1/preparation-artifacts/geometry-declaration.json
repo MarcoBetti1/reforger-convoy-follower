@@ -1,0 +1,145 @@
+{
+  "status": "DECLARED_BEFORE_AUTHORING",
+  "name": "ordinary-road-start-join-v1",
+  "scope": "One fixed road-aligned-start/join-removal control. Later bends and endpoint retained; shorter route and changed staging/source geometry prevent complete causal isolation. Not straight-road or full acceptance.",
+  "baseline": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source",
+  "buildRoot": "D:/ReforgerAgentBuilds/ordinary-road-start-join-v1",
+  "world": "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent",
+  "authoredFile": "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck_Layers/default.layer",
+  "fixedGeometry": {
+    "lead": {
+      "coords": [
+        7173.61,
+        143.73,
+        2532.75
+      ],
+      "angles": [
+        0,
+        -6.687617,
+        0
+      ],
+      "observedPhysical": {
+        "line": 1975,
+        "text": "13:45:43.996 SCRIPT       : [ConvoyFollower] PACED_SAMPLE: run_id=0x4000000000000005 {}_0 tick=45 seconds=74.9133 leg=1 phase=drive unit=0 truck=CF_SmokeLead truck_id=0x4000000000000005 {} pilot_id=0x600000000000028C {} actual_pilot_id=0x600000000000028C {} predecessor_id=none expected_predecessor_id=none identity_retained=true pilot_seated=true entry_ready=true getting_in=false getting_out=false origin=<7173.61, 143.73, 2532.75> forward=<-0.116015, 0.0869585, 0.989434> step_axis=<-0.109614, 0, 0.993974> step_m=5.28245 signed_step_m=5.26847 path_m=145.696 forward_progress_m=139.544 gap_m=0 peak_gap_m=0 movement_demand=true deliberate_stationary=false powered_sample=true powered_samples=28 simulation=true speed_kmh=19.0098 throttle=0.429183 brake=0 gear=3 engine=true handbrake=false persistent=false fixture_cruise_owned=true fixture_requested_cap_kmh=20 behavior=SCR_AIMoveInFormationBehavior:1 group_action=SCR_AIMoveActivity:1 waypoint_id=0x60000000000002AC {} goal=<7173.8, 139.817, 2917.3> wait_selected=false drift_m=0 max_drift_m=0",
+        "origin": [
+          7173.61,
+          143.73,
+          2532.75
+        ],
+        "forward": [
+          -0.116015,
+          0.0869585,
+          0.989434
+        ]
+      }
+    },
+    "follower": {
+      "coords": [
+        7175.97,
+        142.211,
+        2511.77
+      ],
+      "angles": [
+        0,
+        -6.39791,
+        0
+      ],
+      "observedPhysical": {
+        "line": 1852,
+        "text": "13:45:39.996 SCRIPT       : [ConvoyFollower] PACED_SAMPLE: run_id=0x4000000000000005 {}_0 tick=41 seconds=70.9137 leg=1 phase=drive unit=0 truck=CF_SmokeLead truck_id=0x4000000000000005 {} pilot_id=0x600000000000028C {} actual_pilot_id=0x600000000000028C {} predecessor_id=none expected_predecessor_id=none identity_retained=true pilot_seated=true entry_ready=true getting_in=false getting_out=false origin=<7175.97, 142.211, 2511.77> forward=<-0.111076, 0.0799491, 0.990591> step_axis=<-0.111704, 0, 0.993742> step_m=5.3513 signed_step_m=5.34072 path_m=124.524 forward_progress_m=118.427 gap_m=0 peak_gap_m=0 movement_demand=true deliberate_stationary=false powered_sample=true powered_samples=24 simulation=true speed_kmh=19.1637 throttle=0.371921 brake=0 gear=3 engine=true handbrake=false persistent=false fixture_cruise_owned=true fixture_requested_cap_kmh=20 behavior=SCR_AIMoveInFormationBehavior:1 group_action=SCR_AIMoveActivity:1 waypoint_id=0x60000000000002AC {} goal=<7173.8, 139.817, 2917.3> wait_selected=false drift_m=0 max_drift_m=0",
+        "origin": [
+          7175.97,
+          142.211,
+          2511.77
+        ],
+        "forward": [
+          -0.111076,
+          0.0799491,
+          0.990591
+        ]
+      }
+    },
+    "leadDriverGroup": {
+      "coords": [
+        7167.650825,
+        143.73,
+        2532.051263
+      ]
+    },
+    "followerDriverGroup": {
+      "coords": [
+        7170.007368,
+        142.211,
+        2511.101404
+      ]
+    },
+    "source": {
+      "coords": [
+        7166.03228,
+        141.911,
+        2510.655673
+      ],
+      "angles": [
+        0,
+        173.60209,
+        0
+      ],
+      "basis": "Rotate unchanged source local left-side10m offset and inherited−0.3m source-to-truck authoringY; native terrain/rear reach is mandatory before driving, unverified here."
+    },
+    "spawn": {
+      "coords": [
+        7176.295128,
+        143.73,
+        2527.023737
+      ]
+    },
+    "destination": {
+      "coords": [
+        7175.53,
+        140,
+        2459
+      ],
+      "angles": [
+        0,
+        90,
+        0
+      ],
+      "unchanged": true
+    },
+    "endpoint": [
+      7173.8,
+      139.817,
+      2917.3
+    ],
+    "leadEndpointDistanceM": 384.55004693797673,
+    "initialLinkM": 21.112318678913585,
+    "sourceFollowerHorizontalM": 10.000000173066324,
+    "sourceDestinationHorizontalM": 52.52156926712433
+  },
+  "comparisonAudit": ".cache/ordinary-outbound-bay-v2/geometry-preparation-audit.json",
+  "priorEquivalent": false,
+  "whyNotEquivalent": "AlignedV3 retains grass-to-road join; native pair omits recruited custom follower; Road81/loadedstraight differ route/cargo/backend/source and thresholds. Refined current direct-road-start loaded core/net100 contract has not been tested.",
+  "runtimePoseOrNewControlWriters": false,
+  "scriptSourcesUnchanged": true,
+  "productionTurnUnchanged": true,
+  "actorsAndStoragePrefabsContainersUnchanged": true,
+  "nativeCargoBarrierRetained": true,
+  "guardReset": false,
+  "initialReadyRequired": true,
+  "goalAndNet100ThreePowerRetained": true,
+  "whole60StickyRetained": true,
+  "actualOwnedArrival180TwoDriftRetained": true,
+  "requestedLeadKmh": 20,
+  "authoringClearanceBasis": "Both chosen origins/forward axes are actual powered original M923 lead road poses at different times on the same contiguous road trace; inspected original follower at7172.48/2531.51 is nearby on paved road. No simultaneous placement/settling/collision/road-width/source access PASS from this selection.",
+  "nativePreparationLimits": [
+    "Spawn yaw follows normalized loggedXZforward; pitch/roll left0 as existing authored vehicles, native physics settlement required.",
+    "Group locations keep existing6m local left-side truck offsets. No exact roadside surface/collision proof.",
+    "Source keeps10m local left-side horizontal and−0.3m relative authoringY, but must earn actual native rear range/angle/LOS/queues/actions100cancel3s stability before native lead departure.",
+    "Destination unchanged and distinct; later existing Hold/Resume/bay endpoints/code retained, not acceptance credit from this diagnostic."
+  ],
+  "sourceReachBeforeDrivingRequired": true,
+  "preparationOnly": true,
+  "liveRun": false,
+  "reviewBeforeLaunch": true,
+  "logSha256": "89963DE1015E2B9CCBD045B7154C763B814A512A3E871359FD87C45A9E77236F"
+}

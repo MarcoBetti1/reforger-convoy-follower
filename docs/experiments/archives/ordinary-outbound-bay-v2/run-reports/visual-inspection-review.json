@@ -1,0 +1,61 @@
+{
+  "images": [
+    {
+      "native": {
+        "path": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\logs\\journey-outbound-100m3.bmp",
+        "bytes": 2764854,
+        "sha256": "FF2CED5D582AB42F4A1B70096CF596F228984AD49A21523C0949B7AA595B845C"
+      },
+      "png": {
+        "path": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\journey-outbound-100m3.png",
+        "bytes": 1549247,
+        "sha256": "852505FEA4639A1E6DB13CF4CCBE82746EC029224840C568AE8025A8C188FDC3"
+      },
+      "dimensions": [
+        1280,
+        720
+      ],
+      "rgbPixelEqual": true,
+      "rootInspection": "One follower centered on paved road, grass slopes and nearby fence; leader off-frame under tail-only camera. One moment, not full driving path."
+    },
+    {
+      "native": {
+        "path": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\logs\\journey-outbound-start.bmp",
+        "bytes": 2764854,
+        "sha256": "51FA8900D42FC628E25710FE4F976441492193281269AA385147AA7571AAB841"
+      },
+      "png": {
+        "path": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\journey-outbound-start.png",
+        "bytes": 1630784,
+        "sha256": "A66536ADF7FFCB1E024CDB2F1E57987BC9BA9D893817333E46AA1CF8ABF82C75"
+      },
+      "dimensions": [
+        1280,
+        720
+      ],
+      "rgbPixelEqual": true,
+      "rootInspection": "Both original trucks visible on staging grass with source storage, road/stream/buildings."
+    },
+    {
+      "native": {
+        "path": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\logs\\parking-terminal.bmp",
+        "bytes": 2764854,
+        "sha256": "35357549778E08DE2299325C8AFF2FF7F5FBA13AE0B1DFDBBFF5D004702FA986"
+      },
+      "png": {
+        "path": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\parking-terminal.png",
+        "bytes": 1759204,
+        "sha256": "9DC8BBEF4D51DED7293621507261A5AE60C4EAC030604DFAF57F9306559E95D3"
+      },
+      "dimensions": [
+        1280,
+        720
+      ],
+      "rgbPixelEqual": true,
+      "rootInspection": "Stopped follower on paved road at arrival-timeout terminal; grass slopes/fence visible, lead off-frame. No parking was attempted."
+    }
+  ],
+  "actualPixelsInspected": true,
+  "fullPathTurnSlotVideoInputClaim": false,
+  "overheadEffectIsolated": false
+}

@@ -2595,8 +2595,75 @@ class CF_DriverControllerComponent : ScriptComponent
 		return true;
 	}
 
+	// An owner-admitted bay is a fixed native MOVE, not ordinary predecessor
+	// following. Only this original seated truck relinquishes its explicit Hold.
+	bool CF_AdmitExplicitUnloadBay(vector bay, IEntity leadVehicle)
+	{
+		if (!Replication.IsServer() || !CF_IsPanelHeld() || !CF_IsPanelVehicleSlow(2.0) ||
+			CF_HasPersistentFollowFailure() || !leadVehicle || CF_IsControlBlocked()) return false;
+		CF_SetUnloadSequenceHold(true);
+		if (!CF_SetUnloadBayGoal(bay, leadVehicle.GetOrigin()))
+		{
+			CF_SetUnloadSequenceHold(false);
+			return false;
+		}
+		m_vUnloadAnchor = bay;
+		m_bUnloadAnchorValid = true;
+		m_UnloadAnchorVehicle = leadVehicle;
+		CF_SetPanelHoldRequested(false);
+		m_LeadVehicle = leadVehicle;
+		m_vLastTargetPosition = leadVehicle.GetOrigin();
+		m_vArrivalAnchorPosition = m_vLastTargetPosition;
+		m_fTargetStillSeconds = 0;
+		m_bStopSettleIssued = false;
+		m_bArrivalCloseLogged = false;
+		CF_ResetArrivalRoadRecovery();
+		m_bArrivalTrailMode = false;
+		m_fArrivalTruckStillSeconds = 0;
+		m_vArrivalLastTruckPosition = m_Truck.GetOrigin();
+		m_fStateSeconds = 0;
+		m_fLostSeconds = 0;
+		m_fStuckSeconds = 0;
+		SetState(CF_ARRIVING);
+		if (!MoveWaypoint(m_vUnloadBayGoal) || CF_HasPersistentFollowFailure())
+		{
+			CF_SetUnloadSequenceHold(false);
+			CF_RequestPanelHold();
+			return false;
+		}
+		SCR_AIWaypoint waypoint = SCR_AIWaypoint.Cast(m_Waypoint);
+		if (!waypoint || !HasOwnWaypointInGroup())
+		{
+			CF_SetUnloadSequenceHold(false);
+			CF_RequestPanelHold();
+			return false;
+		}
+		waypoint.SetCompletionRadius(CF_STOPPED_ROAD_GOAL_RADIUS);
+		Print("[ConvoyFollower] EXPLICIT_BAY_MOVE: unit=" + m_iUnitNumber + " truck=" + m_Truck.GetID() +
+			" bay=" + bay + " original_driver=" + m_Driver.GetID() + " goal=" + m_vUnloadBayGoal);
+		return true;
+	}
+
+	bool CF_IsSettledAtExplicitBay(vector bay)
+	{
+		return CF_IsBoarded() && !CF_IsControlBlocked() && m_iState == CF_ARRIVING &&
+			m_bUnloadSequenceHold && m_bUnloadBayGoalValid && m_bUnloadReleaseReady &&
+			vector.Distance(m_Truck.GetOrigin(), bay) <= CF_UNLOAD_BAY_READY_RADIUS && CF_IsPanelVehicleSlow(2.0);
+	}
+
+	bool CF_CancelExplicitBayToHold()
+	{
+		if (!Replication.IsServer() || CF_IsControlBlocked() || !CF_IsBoarded() || !CF_IsPanelVehicleSlow(2.0)) return false;
+		CF_SetUnloadSequenceHold(false);
+		if (m_iState == CF_UNLOAD_QUEUE) SetState(CF_WAITING_FOR_PREDECESSOR);
+		return CF_PanelHold();
+	}
+
 	void CF_HoldForUnloadQueue()
 	{
+		// Explicit Hold already owns the seated driver's stationary Wait. A
+		// parking/queue transition must not replace it with a bare queue state.
+		if (m_bPanelHoldRequested) return;
 		if (!Replication.IsServer() || CF_IsControlBlocked() || !m_Session || !CF_IsBoarded() ||
 			m_iState == CF_UNLOAD_DEPARTING || m_iState == CF_UNLOAD_DEPARTED)
 			return;
@@ -2817,11 +2884,12 @@ class CF_DriverControllerComponent : ScriptComponent
 	// An unreleased outbound truck remains seated while the explicit return
 	// event converts it from unload/arrival duty into a staged homeward turn.
 	// The normal lost-distance rule is suspended until that turn completes.
-	bool CF_AbortUnloadForReturn(IEntity currentLeader, vector homeDirection)
+	bool CF_AbortUnloadForReturn(IEntity currentLeader, vector homeDirection, bool releaseExplicitHold = false)
 	{
 		if (!Replication.IsServer() || !currentLeader || !CF_CanAbortUnloadForReturn() ||
 			homeDirection[0] * homeDirection[0] + homeDirection[2] * homeDirection[2] < 0.5)
 			return false;
+		if (m_bPanelHoldRequested && !releaseExplicitHold) return false;
 		vector facing;
 		if (!TryGetVehicleFacing(m_Truck, facing))
 		{
@@ -2829,6 +2897,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			return false;
 		}
 		m_vOutboundTravelDirection = facing;
+		if (releaseExplicitHold) CF_SetPanelHoldRequested(false);
 		m_Leader = currentLeader;
 		RememberOrderingPlayer(currentLeader);
 		CF_SetUnloadSequenceHold(false);
@@ -4316,6 +4385,8 @@ class CF_DriverControllerComponent : ScriptComponent
 
 		IEntity vehicle = compartment.GetVehicleIn(leader);
 		if (vehicle == m_Truck)
+			return null;
+		if (m_Session && m_Session.CF_UsesOriginalLead() && vehicle != m_Session.CF_GetOriginalLeadVehicle())
 			return null;
 
 		if (vehicle && rememberVehicle)

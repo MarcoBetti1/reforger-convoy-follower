@@ -1,0 +1,233 @@
+---------------------------------------------
+Log D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\workbench\pack\console.log started at 2026-09-30 13:36:50 (2026-09-30 18:36:50 UTC)
+
+13:36:50.705   ENGINE       : FileSystem: Adding relative directory 'D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\workbench\pack' to filesystem under name logs
+13:36:50.705   ENGINE       : FileSystem: Adding relative directory 'C:\Users\marco\Documents\My Games\ArmaReforgerWorkbench\profile' to filesystem under name profile
+13:36:50.705   ENGINE       : FileSystem: Current working directory: 'D:\SteamLibrary\steamapps\common\Arma Reforger Tools\Workbench\'
+13:36:50.706  PROFILING    : Workbench Create Engine took: 3.334400 ms
+13:36:51.722   INIT         : INIT         : Workbench Init Engine
+13:36:51.723   ENGINE       : Initializing engine, version 192142
+13:36:51.723   ENGINE       : CLI Params: -gproj D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\source\ConvoyFollower\addon.gproj -addonsDir D:\SteamLibrary\steamapps\common\Arma Reforger\addons -logsDir D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\workbench\pack -wbModule ResourceManager -packAddon -packAddonDir D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\packed 
+13:36:51.725   ENGINE       : Addon dirs:
+13:36:51.725    ENGINE       : dir: 'D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/source/ConvoyFollower/'
+13:36:51.725    ENGINE       : dir: 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons'
+13:36:51.725    ENGINE       : dir: './addons'
+13:36:51.725    ENGINE       : dir: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons'
+13:36:51.725   ENGINE       : Available addons:
+13:36:51.725    ENGINE       : gproj: 'D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/source/ConvoyFollower/addon.gproj' guid: '5A5FB20BD40C7C70'
+13:36:51.725    ENGINE       : gproj: 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons/core/core.gproj' guid: '5614BBCCBB55ED1C' (packed)
+13:36:51.725    ENGINE       : gproj: 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons/data/ArmaReforger.gproj' guid: '58D0FB3206B6F859' (packed)
+13:36:51.725    ENGINE       : gproj: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons/BGM-71 TOW/addon.gproj' guid: '688D360775F53858'
+13:36:51.725    ENGINE       : gproj: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons/BradleyPaintPoC/addon.gproj' guid: '688FCEA2B33D1041'
+13:36:51.725    ENGINE       : gproj: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons/BTR70Command/addon.gproj' guid: '5AF0AFB9CC8DB961'
+13:36:51.725    ENGINE       : gproj: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons/New Enfusion Project/addon.gproj' guid: '68832C144E59F6DD'
+13:36:51.725    ENGINE       : gproj: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons/UAZKornetField/addon.gproj' guid: 'E6A4D7B820F41C39'
+13:36:51.725    ENGINE       : gproj: 'C:/Users/marco/Documents/My Games/ArmaReforgerWorkbench/addons/UralSPG9/addon.gproj' guid: 'DAB46697B2A2D95A'
+13:36:51.725   ENGINE       : FileSystem: Adding relative directory 'D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\source\ConvoyFollower' to filesystem under name ConvoyFollower
+13:36:51.792   ENGINE       : FileSystem: Adding package 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons/data/' (pak count: 14) to filesystem under name ArmaReforger
+13:36:51.795   ENGINE       : FileSystem: Adding package 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons/core/' (pak count: 2) to filesystem under name core
+13:36:51.795   ENGINE       : CPU vendor         : GenuineIntel
+13:36:51.795   ENGINE       : CPU type           : 1
+13:36:51.795   ENGINE       : CPU name           : Intel(R) Core(TM) i7-14700K
+13:36:51.795   ENGINE       : CPU cache info     : L1 [Inst 64KB, Data 48KB], L2 [Unif 4096KB], L3 [Unif 33792KB]
+13:36:51.795   ENGINE       : CPU count logical  : 28
+13:36:51.795   ENGINE       : CPU count physical : 20
+13:36:51.795   ENGINE       : CPU features       : mmx sse sse2 sse3 ssse3 sse4_1 sse4_2 popcnt aesni pclmulqdq osxsave avx sha avx2
+13:36:51.795   RESOURCES    : ResourceDB: loading cache (id=0 name=ConvoyFollower path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\source\ConvoyFollower/resourceDatabase.rdb)
+13:36:51.795   RESOURCES    : ResourceDB: loading cache (id=1 name=ArmaReforger path=D:/SteamLibrary/steamapps/common/Arma Reforger/addons/data/resourceDatabase.rdb)
+13:36:51.878   RESOURCES    : ResourceDB: loading cache (id=2 name=core path=D:/SteamLibrary/steamapps/common/Arma Reforger/addons/core/resourceDatabase.rdb)
+13:36:51.879   RESOURCES    : ResourceDB: loading cache (id=3 name=profile path=C:\Users\marco\Documents\My Games\ArmaReforgerWorkbench\profile/resourceDatabase.rdb)
+13:36:51.880   RESOURCES    : ResourceDB: loading cache (id=4 name=logs path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\workbench\pack/resourceDatabase.rdb)
+13:36:51.955    RESOURCES    : RESOURCES    : ResourceDB: full scan
+13:36:51.958     RESOURCES    : RESOURCES    : scanning...
+13:36:51.958      RESOURCES    : RESOURCES    : scanning @"ConvoyFollower"
+13:36:51.960      RESOURCES    : RESOURCES    : scanning @"ArmaReforger"
+13:36:52.041      RESOURCES    : RESOURCES    : scanning @"core"
+13:36:52.043      RESOURCES    : RESOURCES    : scanning @"profile"
+13:36:52.043      RESOURCES    : RESOURCES    : scanning @"logs"
+13:36:52.043     RESOURCES    : RESOURCES    : processing meta-files...
+13:36:52.079     RESOURCES    : RESOURCES    : processing files...
+13:36:52.083 INIT         : Workbench startup
+13:36:52.083  INIT         : Workbench Init Engine
+13:36:52.083   RESOURCES    : ResourceDB: full scan
+13:36:52.083    RESOURCES    : processing files...
+13:36:52.083     RESOURCES (W): resource not registered: @"$profile:ConvoyFollowerSettings.json". Setting null GUID
+13:36:52.083     RESOURCES    : RESOURCES    : processing folders...
+13:36:52.086     RESOURCES    : RESOURCES    : creating GUID-item mapping...
+13:36:52.093     RESOURCES    : RESOURCES    : building tree...
+13:36:52.122   PROFILING    : ResourceDB: full scan took: 166.511100 ms
+13:36:52.123   RESOURCES    : ResourceDB: saving cache (id=0 name=ConvoyFollower path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\source\ConvoyFollower/resourceDatabase.rdb)
+13:36:52.124   RESOURCES    : ResourceDB: written 35273/35273 bytes
+13:36:52.124   RESOURCES    : ResourceDB: cache successfully saved
+13:36:52.124   RESOURCES    : ResourceDB: saving cache (id=3 name=profile path=C:\Users\marco\Documents\My Games\ArmaReforgerWorkbench\profile/resourceDatabase.rdb)
+13:36:52.125   RESOURCES    : ResourceDB: written 305/305 bytes
+13:36:52.125   RESOURCES    : ResourceDB: cache successfully saved
+13:36:52.125   RESOURCES    : ResourceDB: saving cache (id=4 name=logs path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\workbench\pack/resourceDatabase.rdb)
+13:36:52.127   RESOURCES    : ResourceDB: written 81/81 bytes
+13:36:52.127   RESOURCES    : ResourceDB: cache successfully saved
+13:36:52.127   ENGINE       : GameProject load
+13:36:52.127    ENGINE       : Loaded addons:
+13:36:52.127     ENGINE       : gproj: 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons/core/core.gproj' guid: '5614BBCCBB55ED1C'
+13:36:52.127     ENGINE       : gproj: 'D:/SteamLibrary/steamapps/common/Arma Reforger/addons/data/ArmaReforger.gproj' guid: '58D0FB3206B6F859'
+13:36:52.127     ENGINE       : gproj: 'D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/source/ConvoyFollower/addon.gproj' guid: '5A5FB20BD40C7C70'
+13:36:52.128   ENGINE       : Loading custom engine user config '$profile:.save/app1874910_user76561198259562475/settings/ReforgerEngineSettings.conf'
+13:36:52.128   INIT         : GameProject engine user settings load @"$profile:.save/app1874910_user76561198259562475/settings/ReforgerEngineSettings.conf"
+13:36:52.128    ENGINE       : Engine user settings config loaded
+13:36:52.128   PROFILING    : Settings changed took: 0.004200 ms
+13:36:52.259   RENDER       : (OK) Adapter 'NVIDIA GeForce RTX 4080 SUPER' supports feature level 12_0
+13:36:52.309   RENDER       : (OK) Adapter 'Intel(R) UHD Graphics 770' supports feature level 12_0
+13:36:52.422   RENDER       : (OK) Adapter 'NVIDIA GeForce RTX 4080 SUPER' supports feature level 12_0
+13:36:52.427   RENDER       : Adapter 1 (Intel(R) UHD Graphics 770) failed to provide some output
+13:36:52.427   RENDER       : Adapter 2 (NVIDIA GeForce RTX 4080 SUPER) failed to provide some output
+13:36:52.427   RENDER       : Basic screen setup:
+13:36:52.427   RENDER       :   Back buffer format	       : TEXFMT_R8G8B8A8_SRGB (29)
+13:36:52.427   RENDER       :   MSAA                      : none
+13:36:52.440   RENDER       : Driver for NVIDIA GeForce RTX 4080 SUPER is from 24.8.2026 (1 month, 7 days old)
+13:36:52.440   RENDER       : GPU_NVIDIA (0x10DE) (NVIDIA GeForce RTX 4080 SUPER) with 1 GPU detected, VRAM 16045MB (fast 0MB), shared 16231MB, driver version 616.64
+13:36:52.440   RENDER       : Detected output devices:
+13:36:52.440   RENDER       :  * 2 device/s connected to NVIDIA GeForce RTX 4080 SUPER:
+13:36:52.440   RENDER       :    Generic PnP Monitor (\\.\DISPLAY2), 1920x1440 (offset 0x0), 240Hz
+13:36:52.440   RENDER       :    Generic PnP Monitor (\\.\DISPLAY1), 3440x1440 (offset 1920x0), 100Hz
+13:36:52.440   RENDER       :  * no output device connected to Intel(R) UHD Graphics 770
+13:36:52.440   RENDER       :  * no output device connected to NVIDIA GeForce RTX 4080 SUPER
+13:36:52.440   RENDER       :   Concurrent frames limit 2
+13:36:52.613   RENDER       : Graphics device features
+13:36:52.613   RENDER       :  Needed:
+13:36:52.613   RENDER       :  * Highest supported shader model: 6.8 (6.0 needed)
+13:36:52.613   RENDER       :  Optional:
+13:36:52.613   RENDER       :  * Allow tearing (VSYNC) : 1
+13:36:52.613   RENDER       :  * 16 bits : 1
+13:36:52.613   RENDER       :  * Resource heap tier : 3
+13:36:52.613   RENDER       :  * Persistent heaps (DRED) : 1
+13:36:52.613   RENDER       :  * DRED 1.2 is supported by compiler
+13:36:52.659   RENDER       : Main RT format setup.
+13:36:52.659   RENDER       :   Main RT format for quality 0	: TEXFMT_R11G11B10_FLOAT (26)
+13:36:52.659   RENDER       :   Main RT format for quality 1	: TEXFMT_R16G16B16A16_FLOAT (10)
+13:36:52.666   ENGINE       : Job system settings: coreCount=28, shortJobContextCount=16, shortJobThreadCount=15, longJobThreadCount=28
+13:36:52.681   PROFILING    : Settings changed took: 0.013800 ms
+13:36:52.696 AUDIO        : Endpoint: Headphones (2- Arctis Nova Pro Wireless)
+13:36:52.696 AUDIO        :  Format: Channels: 2, Sample rate: 48kHz, Avg. bytes: 384kB, Sample bits: 32, Block align: 8B
+13:36:52.698 AUDIO        : Audio client:
+13:36:52.698 AUDIO        :  Format: Channels: 2, Sample rate: 48kHz, Buffer size: 1536B, Frame: 512
+13:36:52.700    RENDER       : RENDER       : Reload shaders
+13:36:52.700    RENDER       : Enfusion shader version 13
+13:36:52.700     INIT         : INIT         : ShaderListReload
+13:36:52.700    PROFILING    : ShaderListReload took: 0.001300 ms
+13:36:52.808 AUDIO        : Endpoint: Headphones (2- Arctis Nova Pro Wireless)
+13:36:52.808 AUDIO        :  Format: Channels: 2, Sample rate: 48kHz, Avg. bytes: 384kB, Sample bits: 32, Block align: 8B
+13:36:52.810 AUDIO        : Audio client:
+13:36:52.810 AUDIO        :  Format: Channels: 2, Sample rate: 48kHz, Buffer size: 1536B, Frame: 512
+13:36:52.830    RENDER       : Loaded 3752 newer shader binaries
+13:36:52.830   PROFILING    : Reload shaders took: 130.859800 ms
+13:36:52.830   ENGINE       : Initializing inputs.
+13:36:52.834   NETWORK      : Initializing networking.
+13:36:52.834   NETWORK      : Using new GameRplScheduler.
+13:36:52.834    SCRIPT       : SCRIPT       : Initializing scripts
+13:36:52.835     SCRIPT       : SCRIPT       : ScriptProjectManager init
+13:36:53.013    PROFILING    : ScriptProjectManager init took: 178.054800 ms
+13:36:53.027   PROFILING    : Initializing scripts took: 191.930600 ms
+13:36:53.035   ENGINE       : Enfusion engine successfully created.
+13:36:53.035  PROFILING    : Workbench Init Engine took: 1313.456300 ms
+13:36:53.035   INIT         : INIT         : Workbench Create Game
+13:36:53.050   GUI          : Using default language (en_us)
+13:36:53.050   GUI          : Loading 'en_us' localization file.
+13:36:53.050    INIT         : INIT         : Loading StringTable
+13:36:53.066   PROFILING    : Loading StringTable took: 15.611300 ms
+13:36:53.066    SCRIPT       : SCRIPT       : Compiling GameLib scripts
+13:36:53.125    SCRIPT       : Module: Workbench; loaded 18x files; 36x classes; used 125K of static memory; defines: "ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE"; CRC32: 90ce0460
+13:36:53.125    SCRIPT       : Module: GameLib; loaded 465x files; 648x classes; used 828K of static memory; defines: "ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE"; CRC32: 4507af04
+13:36:53.125   PROFILING    : Compiling GameLib scripts took: 60.657200 ms
+13:36:53.125    SCRIPT       : SCRIPT       : Compiling Game scripts
+13:36:53.750  INIT         : Workbench Create Game
+13:36:53.750   SCRIPT       : Compiling Game scripts
+13:36:53.750    SCRIPT    (W): @"Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c,785": 'GetPlayerPlatformKind' is obsolete
+13:36:53.750    SCRIPT    (W): @"Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c,786": 'GetPlayerPlatformId' is obsolete
+13:36:53.917    SCRIPT    (W): @"Scripts/Game/Workshop/SCR_AddonManager.c,876": 'GetRefCount' is obsolete: Will be removed
+13:36:53.935    SCRIPT    (W): @"Scripts/Game/Campaign/SCR_PlayerProfileManagerComponent.c,142": 'PlayerData' is obsolete
+13:36:54.001    SCRIPT    (W): @"Scripts/Game/UI/Backend/CareerBackend.c,159": 'GetDSSession' is obsolete
+13:36:54.001    SCRIPT    (W): @"Scripts/Game/UI/Backend/CareerBackend.c,162": 'RoomID' is obsolete
+13:36:54.001    SCRIPT    (W): @"Scripts/Game/UI/Backend/CareerBackend.c,197": 'GetDSSession' is obsolete
+13:36:54.001    SCRIPT    (W): @"Scripts/Game/UI/Backend/CareerBackend.c,201": 'RoomID' is obsolete
+13:36:54.057    SCRIPT    (W): @"Scripts/Game/DataCollection/SCR_DataCollectorComponent.c,481": 'GetStorage' is obsolete
+13:36:54.057    SCRIPT    (W): @"Scripts/Game/DataCollection/SCR_DataCollectorComponent.c,483": 'GetOnlineWritePrivilege' is obsolete
+13:36:54.057    SCRIPT    (W): @"Scripts/Game/Utilities/SCR_PlayerIdentityUtils.c,20": 'GetPlayerIdentityId' is obsolete
+13:36:54.082    SCRIPT    (W): @"Scripts/Game/UI/Menu/MainMenuUI.c,643": 'GetNotifyCount' is obsolete: Will be substitued by Notification Api.
+13:36:54.082    SCRIPT    (W): @"Scripts/Game/UI/Menu/MainMenuUI.c,645": 'GetNotifyItem' is obsolete: Will be substitued by Notification Api.
+13:36:54.119    SCRIPT    (W): @"Scripts/Game/DataCollection/PlayerData/SCR_PlayerData.c,210": 'PlayerData' is obsolete
+13:36:54.268    SCRIPT       : Module: WorkbenchGame; loaded 170x files; 615x classes; used 2477K of static memory; defines: "ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE"; CRC32: 9919a758
+13:36:54.272    SCRIPT       : Module: Game; loaded 5739x files; 11280x classes; used 34000K of static memory; defines: "ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE,ENABLE_BASE_DESTRUCTION,BUDGET_OPTIMIZATION_CHECKS,SHOW_DISCLAIMER,DEBUG,RESPAWN_TIMER_COMPONENT_DEBUG,GAME_MODE_DEBUG,DEBUG_CONFIGURABLE_DIALOGS,DISABLE_WEAPON_SWITCHING,SCRIPTED_AIM_MODIFIER_DEBUG"; CRC32: e775b68f
+13:36:54.309   PROFILING    : Compiling Game scripts took: 1182.907600 ms
+13:36:54.315   INIT         : Creating game instance(ArmaReforgerScripted), version 1.8.0.13 built 2026-08-21 14:30:18 UTC.
+13:36:54.334   ENGINE       : Game successfully created.
+13:36:54.334  PROFILING    : Workbench Create Game took: 1298.771500 ms
+13:36:54.340  DEFAULT      : Using thumbnail cache directory: C:/Users/marco/AppData/Local/Temp/Arma Reforger Workbench/Projects/ConvoyFollower/thumbnails
+13:36:54.747  BACKEND      : Attempting online Game Config instead.
+13:36:54.790  RESOURCES    : ResourceDB: saving cache (id=0 name=ConvoyFollower path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\source\ConvoyFollower/resourceDatabase.rdb)
+13:36:54.791  RESOURCES    : ResourceDB: written 35273/35273 bytes
+13:36:54.792  RESOURCES    : ResourceDB: cache successfully saved
+13:36:54.792  RESOURCES    : ResourceDB: saving cache (id=3 name=profile path=C:\Users\marco\Documents\My Games\ArmaReforgerWorkbench\profile/resourceDatabase.rdb)
+13:36:54.793  RESOURCES    : ResourceDB: written 305/305 bytes
+13:36:54.793  RESOURCES    : ResourceDB: cache successfully saved
+13:36:54.793  RESOURCES    : ResourceDB: saving cache (id=4 name=logs path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\workbench\pack/resourceDatabase.rdb)
+13:36:54.794  RESOURCES    : ResourceDB: written 81/81 bytes
+13:36:54.794  RESOURCES    : ResourceDB: cache successfully saved
+13:36:54.794  RESOURCES    : Packaging project started.
+13:36:54.795  DEFAULT      : DEFAULT      : Scanning source directory
+13:36:54.797 PROFILING    : Scanning source directory took: 2.196900 ms
+13:36:54.797  DEFAULT      : DEFAULT      : Scanning intermediate directory
+13:36:54.799 PROFILING    : Scanning intermediate directory took: 2.091900 ms
+13:36:54.799  DEFAULT      : DEFAULT      : Refreshing intermediate directory
+13:36:54.800  DEFAULT      : Refreshed 1 files in intermediate directory.
+13:36:54.800 PROFILING    : Refreshing intermediate directory took: 0.836200 ms
+13:36:54.800  DEFAULT      : DEFAULT      : Assigning files to selections
+13:36:54.800  DEFAULT      : Selection 'data': 378 files
+13:36:54.800  DEFAULT      : Default/unassigned selection: 0 files
+13:36:54.800 PROFILING    : Assigning files to selections took: 0.022000 ms
+13:36:54.800  DEFAULT      : DEFAULT      : Calculating chunk pak layouts
+13:36:54.800 PROFILING    : Calculating chunk pak layouts took: 0.054100 ms
+13:36:54.800  DEFAULT      : DEFAULT      : Writing pak files
+13:36:54.825 PROFILING    : Writing pak files took: 25.366600 ms
+13:36:54.825  RESOURCES    : Packaging done. Result: 1
+13:36:54.827  RESOURCES    : Gproj file copy successful
+13:36:54.827  RESOURCES    : ResourceDB cache file copy successful
+13:36:54.828  DEFAULT      : Created PAK files:
+13:36:54.828  RESOURCES    : 1: D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/packed/data.pak
+13:36:54.831  RESOURCES    : Packaging project successful
+13:36:54.831  DEFAULT      : Using autosave directory: C:/Users/marco/AppData/Local/Temp/Arma Reforger Workbench/Projects/ConvoyFollower/autosaves
+13:36:54.832 PROFILING    : Workbench startup took: 4265.621900 ms
+13:36:54.877 RESOURCES    : ResourceDB: saving cache (id=0 name=ConvoyFollower path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\source\ConvoyFollower/resourceDatabase.rdb)
+13:36:54.878 RESOURCES    : ResourceDB: written 35273/35273 bytes
+13:36:54.878 RESOURCES    : ResourceDB: cache successfully saved
+13:36:54.878 RESOURCES    : ResourceDB: saving cache (id=3 name=profile path=C:\Users\marco\Documents\My Games\ArmaReforgerWorkbench\profile/resourceDatabase.rdb)
+13:36:54.879 RESOURCES    : ResourceDB: written 305/305 bytes
+13:36:54.879 RESOURCES    : ResourceDB: cache successfully saved
+13:36:54.879 RESOURCES    : ResourceDB: saving cache (id=4 name=logs path=D:\ReforgerAgentBuilds\ordinary-outbound-bay-v2\workbench\pack/resourceDatabase.rdb)
+13:36:54.880 RESOURCES    : ResourceDB: written 81/81 bytes
+13:36:54.880 RESOURCES    : ResourceDB: cache successfully saved
+13:36:54.895 ENGINE       : Game destroyed.
+13:36:54.895 ENGINE       : Game destroyed.
+13:36:54.916 RESOURCES (E): ==== Resource leaks ====
+13:36:54.916 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1
+13:36:54.916 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1
+13:36:54.916 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1
+13:36:54.916 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1
+13:36:54.916 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1
+13:36:54.916 RESOURCES (E): UI/Imagesets/debugUI.edds   1
+13:36:54.916 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1
+13:36:54.916 RESOURCES (E): UI/Imagesets/default.edds   1
+13:36:54.916 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1

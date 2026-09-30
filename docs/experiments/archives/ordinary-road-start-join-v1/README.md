@@ -1,0 +1,3 @@
+# Exact source overlay
+
+Materialize this source set with the adjacent reconstruct-source.py and its manifest, into a new directory after development resumes. It validates every file, including Git line-ending conversion, before writing. The current authored addon is the baseline; source-overlay contains all different/missing resources. Preparation helpers preserve original imports and local paths for audit; use the archived manifest/overlay instead of blindly rerunning helpers. No frozen data.pak or player profile is included. Reports reference original local evidence; those paths are not a GitHub backup claim.

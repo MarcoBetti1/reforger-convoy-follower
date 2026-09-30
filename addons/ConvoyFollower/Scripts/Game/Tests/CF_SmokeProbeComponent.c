@@ -325,6 +325,31 @@ class CF_SmokeProbeComponent : ScriptComponent
 			return false;
 		}
 		RoadNetworkManager roads = aiWorld.GetRoadNetworkManager();
+		if (!CF_SelectAIDriveGoal(roads)) return false;
+		Resource prefab = Resource.Load("{750A8D1695BD6998}Prefabs/AI/Waypoints/AIWaypoint_Move.et");
+		if (!prefab.IsValid())
+			return false;
+		EntitySpawnParams params = EntitySpawnParams();
+		params.TransformMode = ETransformMode.WORLD;
+		params.Transform[3] = m_vRoadGoal;
+		SCR_AIWaypoint waypoint = SCR_AIWaypoint.Cast(GetGame().SpawnEntityPrefabLocal(prefab, null, params));
+		if (!waypoint)
+			return false;
+		waypoint.SetPriorityLevel(SCR_AIActionBase.PRIORITY_LEVEL_GAMEMASTER);
+		waypoint.SetCompletionRadius(5.0);
+		m_PilotWaypoint = waypoint;
+		m_PilotGroup.AddWaypoint(waypoint);
+		CarControllerComponent car = CarControllerComponent.Cast(m_Lead.FindComponent(CarControllerComponent));
+		if (car)
+			car.SetPersistentHandBrake(false);
+		Print("[ConvoyFollower] AUTO_PILOT: AI driving road waypoint=" + params.Transform[3] + " from=" + m_vInitialLeadPosition);
+		return true;
+	}
+
+	// Goal selection hook preserves the existing native pilot, cruise and paced
+	// observation lifecycle for explicit terrain fixtures. Default routes unchanged.
+	protected bool CF_SelectAIDriveGoal(RoadNetworkManager roads)
+	{
 		BaseRoad nearestStartRoad;
 		float startRoadDistance;
 		int startRoadId = roads.GetClosestRoad(m_vInitialLeadPosition, nearestStartRoad, startRoadDistance);
@@ -476,23 +501,6 @@ class CF_SmokeProbeComponent : ScriptComponent
 		}
 		else
 			Print("[ConvoyFollower] AUTO_ROUTE: selected 150 m road goal=" + m_vRoadGoal + " score=" + bestScore);
-		Resource prefab = Resource.Load("{750A8D1695BD6998}Prefabs/AI/Waypoints/AIWaypoint_Move.et");
-		if (!prefab.IsValid())
-			return false;
-		EntitySpawnParams params = EntitySpawnParams();
-		params.TransformMode = ETransformMode.WORLD;
-		params.Transform[3] = m_vRoadGoal;
-		SCR_AIWaypoint waypoint = SCR_AIWaypoint.Cast(GetGame().SpawnEntityPrefabLocal(prefab, null, params));
-		if (!waypoint)
-			return false;
-		waypoint.SetPriorityLevel(SCR_AIActionBase.PRIORITY_LEVEL_GAMEMASTER);
-		waypoint.SetCompletionRadius(5.0);
-		m_PilotWaypoint = waypoint;
-		m_PilotGroup.AddWaypoint(waypoint);
-		CarControllerComponent car = CarControllerComponent.Cast(m_Lead.FindComponent(CarControllerComponent));
-		if (car)
-			car.SetPersistentHandBrake(false);
-		Print("[ConvoyFollower] AUTO_PILOT: AI driving road waypoint=" + params.Transform[3] + " from=" + m_vInitialLeadPosition);
 		return true;
 	}
 

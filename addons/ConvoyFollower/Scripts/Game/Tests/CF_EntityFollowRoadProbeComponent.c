@@ -16,8 +16,9 @@ class CF_EntityFollowUnitEvidence
 	bool GateFailed;
 }
 
-// Same lead, geometry, ownership and physical gates as the matching paced
-// control. Only the separate follower prefab selects the private controller.
+// Test-only evidence observer. Authored worlds choose the follower prefab;
+// ordinary Everon courses use Group_CF_Driver and the normal gameplay backend.
+// This probe supplies setup/commands and assertions, not follower movement.
 class CF_EntityFollowRoadProbeComponent : CF_PacedRoadProbeComponent
 {
 	protected ref array<ref CF_EntityFollowUnitEvidence> m_EntityUnits = {};

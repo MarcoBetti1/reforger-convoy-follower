@@ -1,0 +1,31 @@
+{
+  "sourceProvenance": ".cache/frozen-addons/everon-journey-scene-v8",
+  "sourceArchiveRoot": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-source\\everon-journey-scene-v8\\source",
+  "sourceFiles": 607,
+  "packedText": 230,
+  "parent": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\player-addons\\everon-journey-scene-v8",
+  "containsOnlyOneAddonDirectory": true,
+  "sourceArchivesOutsideRuntimeParent": true,
+  "deployment": [
+    {
+      "file": "addon.gproj",
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\player-addons\\everon-journey-scene-v8\\ConvoyFollower_5A5FB20BD40C7C70\\addon.gproj",
+      "bytes": 135,
+      "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+    },
+    {
+      "file": "data.pak",
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\player-addons\\everon-journey-scene-v8\\ConvoyFollower_5A5FB20BD40C7C70\\data.pak",
+      "bytes": 32821889,
+      "sha256": "727B39B942A6325FB343BCA744C5C63CEED4E25B5772F614193CB4347B9BCD55"
+    },
+    {
+      "file": "resourceDatabase.rdb",
+      "path": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\player-addons\\everon-journey-scene-v8\\ConvoyFollower_5A5FB20BD40C7C70\\resourceDatabase.rdb",
+      "bytes": 34591,
+      "sha256": "569AA9F3FB2AC691E383FD9735EDEB70FAB874C6D21C9390A297251A3F3CF175"
+    }
+  ],
+  "actualPlayerLaunch": false,
+  "scope": "Normal input/cargo/player-led journey candidate; native static render result separate from F8/key/cancel/restored movement/full journey"
+}

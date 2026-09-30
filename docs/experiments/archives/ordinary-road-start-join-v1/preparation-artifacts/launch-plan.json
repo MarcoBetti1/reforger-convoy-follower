@@ -1,0 +1,35 @@
+{
+  "status": "AUTHORIZED_SINGLE_RUN_PREFLIGHT_PASSED",
+  "authorizedBy": "Coordinator frozen review September30; one run, no replay or geometry/gate/source change",
+  "preflightUtc": "2026-09-30T19:58:52.796Z",
+  "runRoot": "D:/ReforgerAgentRuns/ordinary-road-start-join-v1",
+  "world": "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent",
+  "addon": "5A5FB20BD40C7C70",
+  "addonsDir": "D:/ReforgerAgentBuilds/ordinary-road-start-join-v1/frozen-addons",
+  "profile": "D:/ReforgerAgentRuns/ordinary-road-start-join-v1/profile",
+  "durationSeconds": 5000,
+  "snapshotSeconds": 5100,
+  "totalWorldSeconds": 1650,
+  "naturalCloseWorldSeconds": 30,
+  "expectGame": true,
+  "trio": {
+    "addon.gproj": {
+      "bytes": 135,
+      "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+    },
+    "data.pak": {
+      "bytes": 32848027,
+      "sha256": "B279929DBDA1F2836E9124AF5A071C855E654E319C00B8561AB87EBD53D298B3"
+    },
+    "resourceDatabase.rdb": {
+      "bytes": 35273,
+      "sha256": "E93B54246F7A0B2E9E6D73B95C2859F2BB68F6E58AA225031132BC962CDEAD06"
+    }
+  },
+  "sourceFiles": 616,
+  "packedText": 238,
+  "guardReset": false,
+  "sourceAccessNativeBarrierBeforeDriving": true,
+  "candidateEditsAfterFreeze": false,
+  "manualV8Launch": false
+}

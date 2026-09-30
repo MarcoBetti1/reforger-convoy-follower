@@ -1,0 +1,49 @@
+---------------------------------------------
+Log D:\ReforgerAgentBuilds\ordinary-road-start-join-v1\workbench\pack\error.log started at 2026-09-30 14:47:05 (2026-09-30 19:47:05 UTC)
+
+14:47:05.618 INIT         : Workbench startup
+14:47:05.618  INIT         : Workbench Init Engine
+14:47:05.618   RESOURCES    : ResourceDB: full scan
+14:47:05.618    RESOURCES    : processing files...
+14:47:05.618     RESOURCES (W): resource not registered: @"$profile:ConvoyFollowerSettings.json". Setting null GUID
+14:47:07.318  INIT         : Workbench Create Game
+14:47:07.318   SCRIPT       : Compiling Game scripts
+14:47:07.318    SCRIPT    (W): @"Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c,785": 'GetPlayerPlatformKind' is obsolete
+14:47:07.318    SCRIPT    (W): @"Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c,786": 'GetPlayerPlatformId' is obsolete
+14:47:07.488    SCRIPT    (W): @"Scripts/Game/Workshop/SCR_AddonManager.c,876": 'GetRefCount' is obsolete: Will be removed
+14:47:07.505    SCRIPT    (W): @"Scripts/Game/Campaign/SCR_PlayerProfileManagerComponent.c,142": 'PlayerData' is obsolete
+14:47:07.571    SCRIPT    (W): @"Scripts/Game/UI/Backend/CareerBackend.c,159": 'GetDSSession' is obsolete
+14:47:07.571    SCRIPT    (W): @"Scripts/Game/UI/Backend/CareerBackend.c,162": 'RoomID' is obsolete
+14:47:07.571    SCRIPT    (W): @"Scripts/Game/UI/Backend/CareerBackend.c,197": 'GetDSSession' is obsolete
+14:47:07.571    SCRIPT    (W): @"Scripts/Game/UI/Backend/CareerBackend.c,201": 'RoomID' is obsolete
+14:47:07.627    SCRIPT    (W): @"Scripts/Game/DataCollection/SCR_DataCollectorComponent.c,481": 'GetStorage' is obsolete
+14:47:07.627    SCRIPT    (W): @"Scripts/Game/DataCollection/SCR_DataCollectorComponent.c,483": 'GetOnlineWritePrivilege' is obsolete
+14:47:07.628    SCRIPT    (W): @"Scripts/Game/Utilities/SCR_PlayerIdentityUtils.c,20": 'GetPlayerIdentityId' is obsolete
+14:47:07.653    SCRIPT    (W): @"Scripts/Game/UI/Menu/MainMenuUI.c,643": 'GetNotifyCount' is obsolete: Will be substitued by Notification Api.
+14:47:07.653    SCRIPT    (W): @"Scripts/Game/UI/Menu/MainMenuUI.c,645": 'GetNotifyItem' is obsolete: Will be substitued by Notification Api.
+14:47:07.688    SCRIPT    (W): @"Scripts/Game/DataCollection/PlayerData/SCR_PlayerData.c,210": 'PlayerData' is obsolete
+14:47:08.496 RESOURCES (E): ==== Resource leaks ====
+14:47:08.496 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1
+14:47:08.496 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1
+14:47:08.496 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1
+14:47:08.496 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1
+14:47:08.496 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1
+14:47:08.496 RESOURCES (E): UI/Imagesets/debugUI.edds   1
+14:47:08.496 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1
+14:47:08.496 RESOURCES (E): UI/Imagesets/default.edds   1
+14:47:08.496 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1

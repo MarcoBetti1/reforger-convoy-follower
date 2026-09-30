@@ -1,0 +1,68 @@
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 7176.295128 143.73 2527.023737
+ m_Info SCR_UIInfo "{56B4CC4ECACA2C37}" {
+  Name "Convoy supply journey - Regina daylight staging"
+ }
+}
+SCR_AIGroup CF_SmokeGroup1 : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 7170.007368 142.211 2511.101404
+}
+Vehicle CF_SmokeFollower1 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 7175.97 142.211 2511.77
+ angles 0 -6.39791 0
+ components { CF_LoadedTripCargoProbeComponent "{82D316CEF4B3949E}" { m_bEnableScenarioSupplies 1 } }
+}
+Vehicle CF_SmokeLead : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
+ coords 7173.61 143.73 2532.75
+ angles 0 -6.687617 0
+ components { CF_OrdinaryOutboundBayCourse "{93F912826CC547E6}" { m_iExpectedTrucks 1 m_fPacedLeadSpeedKmh 20 m_bPacedAutoExit 1 m_bCommandsAfterSpacingFailure 0 m_sPacedWorld "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent" } }
+}
+GenericEntity CF_JourneySource : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+ coords 7166.03228 141.911 2510.655673
+ angles 0 173.60209 0
+ {
+  GenericEntity CF_CargoActionSource : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+   coords 0 0 0
+   components {
+    SCR_ResourceComponent "{5D247A59598D71AE}" {
+     m_aContainers {
+      SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
+       m_fResourceValueCurrent 1800
+       m_fResourceValueMax 3000
+      }
+     }
+    }
+   }
+  }
+ }
+}
+GenericEntity CF_JourneyDestination : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+ coords 7175.53 140.0 2459.0
+ angles 0 90 0
+ {
+  GenericEntity CF_LoadedTripDestination : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+   coords 0 0 0
+   components {
+    SCR_ResourceComponent "{5D247A59598D71AE}" {
+     m_aContainers {
+      SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
+       m_fResourceValueCurrent 0
+       m_fResourceValueMax 3000
+      }
+     }
+    }
+   }
+  }
+ }
+}
+GenericEntity CF_JourneyScenarioSettings {
+ components {
+  CF_SupplyScenarioSettingsComponent "{DDBFCB46BDFB4C6F}" { }
+  CF_DaylightScenarioSetupComponent "{62B17D2519D7439B}" { }
+  CF_JourneyLedgerProbeComponent "{BCF5BEB89D344F81}" { }
+ }
+}
+
+SCR_AIGroup CF_SmokePilotGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
+ coords 7167.650825 143.73 2532.051263
+}

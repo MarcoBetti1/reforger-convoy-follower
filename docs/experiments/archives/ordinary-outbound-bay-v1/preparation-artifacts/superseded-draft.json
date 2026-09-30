@@ -1,0 +1,9 @@
+{
+  "status": "SUPERSEDED_UNLAUNCHED",
+  "review": ".cache/ordinary-outbound-bay-v1/frozen-review.json",
+  "runtime": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v1/frozen-addons",
+  "dataSha256": "B1FAF12B8E803D0DF8B3E5D250EA823736BF0A98199FBEF539CB9C1DAF023C48",
+  "reason": "Resume baseline omitted stopping/arrival activity sequences; final observer includes all pre-Resume maximum sequences and excludes post-Resume samples.",
+  "replacement": ".cache/ordinary-outbound-bay-v1/frozen-final-review.json",
+  "liveRuns": 0
+}

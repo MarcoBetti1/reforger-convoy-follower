@@ -1,0 +1,11 @@
+{
+  "base": ".cache/frozen-addons/everon-journey-scene-v7",
+  "changed": [
+    "Scripts/Game/CF_ConvoyCommandMenu.c",
+    "Scripts/Game/CF_ConvoySession.c"
+  ],
+  "sourceFiles": 607,
+  "ordinarySceneGeometryUnchanged": true,
+  "privateAutomaticFixtureAbsent": true,
+  "scope": "Only panel field framing and positive-identity consumer guards differ from V7; all ordinary gameplay/world sources preserved. Native static title/instruction/availability rendering qualified separately; normal input/player-led full trip pending."
+}

@@ -16,6 +16,8 @@ class CF_PacedRoadTruckSample
 	float MaxGap;
 	float MaxDrift;
 	int PoweredSamples;
+	bool ControllerFailureObserved;
+	bool ArrivalWaitFailureObserved;
 	// Weak observer handle: the fixture never owns or changes this native action.
 	SCR_AIPilotMoveFromIncomingVehicleBehavior LastDangerBehavior;
 	bool HadDangerBehavior;
@@ -78,7 +80,7 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 	protected static const float PACED_OBSERVATION_MS = 180000.0;
 	protected static const float PACED_TIMEOUT_MS = 480000.0;
 	protected static const int PACED_EXIT_DELAY_MS = 30000;
-	protected static const int PACED_EXIT_RETRY_MS = 100;
+	protected static const int PACED_EXIT_RETRY_MS = 250;
 	protected static const int PACED_EXIT_MAX_DEFERRALS = 1;
 
 	override void OnPostInit(IEntity owner)
@@ -299,6 +301,31 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 			m_sFirstFailure = scope + ":" + reason;
 		Print("[ConvoyFollower] PACED_FAILURE: run_id=" + m_sPacedRun + " tick=" + m_iPacedTick +
 			" seconds=" + PacedSeconds() + " scope=" + scope + " reason=" + reason);
+	}
+
+	// Read-only acceptance checks. A stationary failed driver is not a captured
+	// arrival, and a later hold cannot erase a controller failure during travel.
+	protected void ObserveFollowerHealth()
+	{
+		for (int index = 1; index < m_PacedTrucks.Count(); index++)
+		{
+			CF_PacedRoadTruckSample sample = m_PacedTrucks[index];
+			CF_EntityFollowDriverControllerComponent entityDriver = CF_EntityFollowDriverControllerComponent.Cast(sample.Driver);
+			CF_TrailGuideDriverControllerComponent trailDriver = CF_TrailGuideDriverControllerComponent.Cast(sample.Driver);
+			bool failed = entityDriver && entityDriver.CF_HasEntityFallbackFailure();
+			if (trailDriver && trailDriver.CF_IsTrailGuideBlocked()) failed = true;
+			if (failed && !sample.ControllerFailureObserved)
+			{
+				sample.ControllerFailureObserved = true;
+				NoteFailure("controller", "persistent_follow_failure_unit_" + index);
+			}
+			if (m_bPacedObserving && entityDriver && entityDriver.CF_IsEntityFollowPrototypeEnabled() &&
+				!entityDriver.CF_HasSelectedArrivalWait(m_PacedSession, sample.Truck) && !sample.ArrivalWaitFailureObserved)
+			{
+				sample.ArrivalWaitFailureObserved = true;
+				NoteFailure("arrival", "selected_owned_arrival_wait_missing_unit_" + index);
+			}
+		}
 	}
 
 	protected bool StartBarrier()
@@ -791,8 +818,8 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 		float elapsedMs = GetGame().GetWorld().GetWorldTime() - m_fPacedTerminalMs;
 		if (elapsedMs < PACED_EXIT_DELAY_MS)
 		{
-			// Callqueue/world-clock rounding produced 29999.8 ms in a live
-			// run. Recheck the same ownership gates once after a small margin;
+			// Live callbacks observed 29999.8 ms and 29802.3 ms of world
+			// time. Recheck the same ownership gates once after a small margin;
 			// never shorten the minimum grace or retry a large clock mismatch.
 			float remainingMs = PACED_EXIT_DELAY_MS - elapsedMs;
 			if (remainingMs <= PACED_EXIT_RETRY_MS && m_iPacedExitDeferrals < PACED_EXIT_MAX_DEFERRALS)
@@ -847,6 +874,7 @@ class CF_PacedRoadProbeComponent : CF_SmokeProbeComponent
 		if (!m_PacedTrucks.IsEmpty())
 			MeasurePeaks();
 		LogPacedSamples();
+		if (m_bPacedStarted) ObserveFollowerHealth();
 		if (m_bPacedStarted)
 		{
 			if (!OwnerRetained())

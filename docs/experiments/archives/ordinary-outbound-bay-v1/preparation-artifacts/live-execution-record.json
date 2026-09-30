@@ -1,0 +1,36 @@
+{
+  "status": "ONE_RUN_CLOSED_SETUP_FAIL",
+  "liveLaunches": 1,
+  "runRoot": "D:/ReforgerAgentRuns/ordinary-outbound-bay-v1",
+  "review": "D:/ReforgerAgentRuns/ordinary-outbound-bay-v1/ordinary-course-review.json",
+  "terminal": {
+    "line": 606,
+    "text": "13:22:17.414 SCRIPT       : [ConvoyFollower] PACED_RESULT: FAIL run_id=0x4000000000000005 {}_0 tick=7 seconds=28.7641 expected=1 peak_gap_m=19.9537 observation_samples=0 first_failure=command:seat_transfer_precondition owned_lead_park_retained=true",
+    "marker": "PACED_RESULT",
+    "run_id": "0x4000000000000005 {}_0",
+    "tick": "7",
+    "seconds": "28.7641",
+    "expected": "1",
+    "peak_gap_m": "19.9537",
+    "observation_samples": "0",
+    "first_failure": "command:seat_transfer_precondition",
+    "owned_lead_park_retained": "true"
+  },
+  "fullLog": {
+    "bytes": 125905,
+    "sha256": "74BB69AFEC5DE92E6DA5CBCD69A98AA82235C0908D34DFFBB7A0BD651BEC9578"
+  },
+  "snapshot": {
+    "bytes": 80372,
+    "sha256": "3B7AE24674F53B02BA7C61B0A6926E0004C66A8D7CEEF3E4CB45E98AB6A344E2",
+    "exactPrefix": true
+  },
+  "errors": {
+    "runtime": 19,
+    "post-result": 0,
+    "shutdown": 61
+  },
+  "naturalCloseWorldSeconds": 30.0159,
+  "noReplay": true,
+  "noFrozenEdit": true
+}

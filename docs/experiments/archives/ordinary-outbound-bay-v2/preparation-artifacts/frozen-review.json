@@ -1,0 +1,123 @@
+{
+  "status": "PREPARED_UNLAUNCHED_V2",
+  "buildRoot": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2",
+  "sourceRoot": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/source/ConvoyFollower",
+  "base": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v1/frozen-source-final/source",
+  "world": "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent",
+  "sameAuthoredActorsAndStoragePositions": true,
+  "worldComponentOnlyChanged": true,
+  "newObserver": null,
+  "changedExistingObserverFiles": [
+    "Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c"
+  ],
+  "productionTurnDriverSourceUnchanged": true,
+  "productionControllersUnchanged": true,
+  "ordinaryContinuous100m3Required": true,
+  "coreInitialDepartureReadyTrueRequired": true,
+  "initialGuardClearedRearmedResetByFixture": false,
+  "arrival180s2mRequired": true,
+  "hold30s2mRequired": true,
+  "freshResume20m3Required": true,
+  "spacing60mSticky": true,
+  "stagesWorldSeconds": {
+    "setup": 95,
+    "outbound": 240,
+    "arrivalCapture": 90,
+    "arrivalStable": 180,
+    "firstHoldAndSeats": 75,
+    "resumeCorridor": 240,
+    "secondHoldAndSeats": 75,
+    "bayNativeClear": 90,
+    "bayOwnerSeat": 15,
+    "bayAdmission": 90,
+    "bayOwnerExit": 15,
+    "unload": 30,
+    "parking": 90,
+    "parkStable": 30,
+    "regroupAndReturnSeats": 50,
+    "returnApproach": 90,
+    "homeStable": 30
+  },
+  "stagesBudgetWorldSeconds": 1525,
+  "totalWorldSeconds": 1650,
+  "totalMarginWorldSeconds": 125,
+  "naturalCloseWorldSeconds": 30,
+  "launcherWallSeconds": 5000,
+  "snapshotWallSeconds": 5100,
+  "timingBasis": [
+    "Aligned V3 emitted actual ready=true and continuous original activity 100.052 m / 58 powered at course123.377world seconds; native lead~489.893 m by137.877world; retained spacing384.034m failure.",
+    "Fixed native MOVE comparison powered~361.882 m follower /375.003 m lead in90.189world seconds; runtime route capability, not ordinary following proof.",
+    "Recent short bay/parking runs completed in43.198 or82.132world seconds; 90world parking/return safety limits retained.",
+    "Saved slow world/wall ratio0.38256 and later~1.0 motivate5000wall for1650world +30world close; launcher timeout would censor closure and must be reported."
+  ],
+  "cameraScope": "Anonymous CameraBase/CameraManager only. Lead/tail midpoint when span<=100m; follower-centered at45m height when span>100m, explicitly tail_only=true and no lead framing claim. During parking use actual tail/planned-slot midpoint and actual span. Camera transform/FOV only; rendered visibility/occlusion/overhead remain unqualified.",
+  "normalInputClaim": false,
+  "videoClaim": false,
+  "productionPlayerHomeClaim": false,
+  "liveRun": false,
+  "stopBeforeBayIfMandatoryPrerequisitesFail": true,
+  "noPositionalSweep": true,
+  "setupOwnership": "Actual stopped owner pilot seat lets the unchanged session capture original lead staging; original native pilot then reenters and owner returns passenger before driving. First exact parking lease releases only after successful native first-drive order; later native legs use StartCommandRestart.",
+  "motionProof": "One continuous exact original activity/waypoint/lease and original driver/truck/predecessor. Signed projection onto previous actual NativeTarget goal axis, including negative progress. Independent net approach to the fixed route endpoint must reach 100m outbound or20m fresh Resume within that same continuous activity, each with at least3 powered intervals.",
+  "cameraNativeCaptureMaximum": 15,
+  "inheritedBayAnnotations": "Conservative inherited BAY_FEATURE fields still say full_trip/following/arrival claims false. The new ORDINARY_BAY_PREFIX_RESULT separately owns actual outbound/180s arrival/Hold/Resume evidence. Old lead_bay_approach fields are zero because the old short approach phases are bypassed, not measured by that legacy counter.",
+  "handoffAudit": {
+    "firstDriveReleaseAfterOrder": true,
+    "laterNativeDrivesReleaseViaStartCommandRestart": true,
+    "terminalHandlingUnchanged": true,
+    "failedStartNotReleasedByNewSuccessPath": true
+  },
+  "validation": {
+    "allFiveConfigurationsPassed": true,
+    "packPassed": true,
+    "logs": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/workbench",
+    "packedSource": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/packed"
+  },
+  "frozenSource": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source",
+  "runtimeParent": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-addons",
+  "deployment": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-addons/ConvoyFollower_5A5FB20BD40C7C70",
+  "sourceFiles": 616,
+  "packedTextResources": 238,
+  "trio": {
+    "addon.gproj": {
+      "bytes": 135,
+      "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+    },
+    "data.pak": {
+      "bytes": 32847949,
+      "sha256": "42C50D712F95138E7C904F952127FAB777EB0A62D14A1BCA8AA7AB3DBBC6E67F"
+    },
+    "resourceDatabase.rdb": {
+      "bytes": 35273,
+      "sha256": "E93B54246F7A0B2E9E6D73B95C2859F2BB68F6E58AA225031132BC962CDEAD06"
+    }
+  },
+  "sourceAudit": {
+    "changes": [
+      {
+        "path": "Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c",
+        "bytes": 23108,
+        "sha256": "73A0B43E5D64C054C4F90B6A8C4463AAED70A74126EE195E7C1E226911077A77",
+        "baselineSha256": "2624FD8A4E10E0BECD2F0BC6515AB3A89FCDAFD0EBDE666F0C6D8274CED720BE"
+      }
+    ],
+    "deleted": [],
+    "sourceFileCountUnchanged": true,
+    "restoredV1ByteTextMatches": true,
+    "originalDriverSha256": "224A97D271D9F43820AE4E1B30C3BBC5FF3514C4E5570BC9BB075F1292A5418B",
+    "editAudit": ".cache/ordinary-outbound-bay-v2/edit-review.json",
+    "exactSourceDiff": ".cache/ordinary-outbound-bay-v2/source-diff.patch",
+    "productionAndWorldFilesUnchanged": true
+  },
+  "reviewBeforeLiveExecution": true,
+  "freshResumeEligibility": "Greatest observed sequence across all pre-Resume phases1–6 includes inherited stopping/arrival samples and current exact activity. Frozen immediately before real Resume; post-Resume samples excluded. Resume must be strictly greater and satisfy the same continuous20m/net20m/3powered evidence.",
+  "sourceVerification": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-addons/source-pack-verification.json",
+  "runtimeGuidChildren": [
+    "ConvoyFollower_5A5FB20BD40C7C70"
+  ],
+  "ordinaryV8UnchangedAndClosed": true,
+  "version": 2,
+  "startupCorrection": "Request original lead Wait once, phase13 polls original parking/control/speed/exact-selected-Wait conjunction with10world subbound within unchanged95world setup; then invokes unchanged native handoff. All other Wait/seat seams audited. JourneyPhase/BayPhase/native transfer entry stop after terminal; motion callers return after terminal.",
+  "preconditionDiagnostics": "Read-only original CanCommandPark, speed>2 rejection (sameNaN comparison semantics), owner-direction native-control/selected-Wait or native-direction owner-pilot/native-pilot-onfoot. All required terms, failed terms and original identities logged. Original helper remains the actuator/rejection authority.",
+  "selectedWaitSubboundWorldSeconds": 10
+}

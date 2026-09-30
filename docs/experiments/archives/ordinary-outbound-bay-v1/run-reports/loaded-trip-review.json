@@ -1,0 +1,1557 @@
+{
+  "scope": "Private ordinary Everon native100loaded follower trip attempt; no bay/home/ordinary input/video/repeatability completeness claim. Native proxy endpoints and independent original physical containers are separate.",
+  "fullLog": {
+    "bytes": 125905,
+    "sha256": "74BB69AFEC5DE92E6DA5CBCD69A98AA82235C0908D34DFFBB7A0BD651BEC9578"
+  },
+  "snapshot": {
+    "bytes": 80372,
+    "sha256": "3B7AE24674F53B02BA7C61B0A6926E0004C66A8D7CEEF3E4CB45E98AB6A344E2",
+    "exactPrefix": true
+  },
+  "terminal": {
+    "line": 606,
+    "text": "13:22:17.414 SCRIPT       : [ConvoyFollower] PACED_RESULT: FAIL run_id=0x4000000000000005 {}_0 tick=7 seconds=28.7641 expected=1 peak_gap_m=19.9537 observation_samples=0 first_failure=command:seat_transfer_precondition owned_lead_park_retained=true",
+    "marker": "PACED_RESULT",
+    "run_id": "0x4000000000000005 {}_0",
+    "tick": "7",
+    "seconds": "28.7641",
+    "expected": "1",
+    "peak_gap_m": "19.9537",
+    "observation_samples": "0",
+    "first_failure": "command:seat_transfer_precondition",
+    "owned_lead_park_retained": "true"
+  },
+  "combined": [],
+  "failures": [
+    {
+      "line": 599,
+      "text": "13:22:17.408 SCRIPT       : [ConvoyFollower] PACED_FAILURE: run_id=0x4000000000000005 {}_0 tick=7 seconds=28.7641 scope=command reason=seat_transfer_precondition",
+      "marker": "PACED_FAILURE",
+      "run_id": "0x4000000000000005 {}_0",
+      "tick": "7",
+      "seconds": "28.7641",
+      "scope": "command",
+      "reason": "seat_transfer_precondition"
+    },
+    {
+      "line": 605,
+      "text": "13:22:17.414 SCRIPT       : [ConvoyFollower] PACED_FAILURE: run_id=0x4000000000000005 {}_0 tick=7 seconds=28.7641 scope=fixture_scope reason=bay_feature_inherited_failure_not_full_trip",
+      "marker": "PACED_FAILURE",
+      "run_id": "0x4000000000000005 {}_0",
+      "tick": "7",
+      "seconds": "28.7641",
+      "scope": "fixture_scope",
+      "reason": "bay_feature_inherited_failure_not_full_trip"
+    }
+  ],
+  "cargoFailures": [],
+  "physicalBindings": [
+    {
+      "line": 247,
+      "text": "13:21:48.372   SCRIPT       : [ConvoyFollower] LOADED_TRIP_PHYSICAL_BIND: source_root=0x4000000000000007 {} source_proxy_type=SCR_ResourceContainerVirtual source_physical_owner=0x4000000000000008 {} destination_root=0x400000000000000B {} destination_proxy_type=SCR_ResourceContainerVirtual destination_physical_owner=0x400000000000000C {} read_only=true",
+      "marker": "LOADED_TRIP_PHYSICAL_BIND",
+      "source_root": "0x4000000000000007 {}",
+      "source_proxy_type": "SCR_ResourceContainerVirtual",
+      "source_physical_owner": "0x4000000000000008 {}",
+      "destination_root": "0x400000000000000B {}",
+      "destination_proxy_type": "SCR_ResourceContainerVirtual",
+      "destination_physical_owner": "0x400000000000000C {}",
+      "read_only": "true"
+    }
+  ],
+  "storages": [
+    {
+      "line": 248,
+      "text": "13:21:48.372   SCRIPT       : [ConvoyFollower] LOADED_TRIP_STORAGES: run_id=0x4000000000000003 {}_0 source_id=0x4000000000000007 {} destination_id=0x400000000000000B {} cargo_owner_id=0x60000000000001F1 {} source_origin=<7253, 138.6, 2428> destination_origin=<7175.53, 140, 2459>",
+      "marker": "LOADED_TRIP_STORAGES",
+      "run_id": "0x4000000000000003 {}_0",
+      "source_id": "0x4000000000000007 {}",
+      "destination_id": "0x400000000000000B {}",
+      "cargo_owner_id": "0x60000000000001F1 {}",
+      "source_origin": "<7253, 138.6, 2428>",
+      "destination_origin": "<7175.53, 140, 2459>"
+    }
+  ],
+  "drive": [],
+  "recruit": [
+    {
+      "line": 497,
+      "text": "13:22:09.391 SCRIPT       : [ConvoyFollower] AUTO_ORDER: unit=1 accepted=true",
+      "marker": "AUTO_ORDER",
+      "unit": "1",
+      "accepted": "true"
+    }
+  ],
+  "role": [],
+  "nativeActions": {
+    "starts": [
+      {
+        "line": 411,
+        "text": "13:21:58.609   SCRIPT       : [ConvoyFollower] CARGO_ACTION_START: run_id=0x4000000000000003 {}_0 loading=true action_id=73 owner_id=0x60000000000001F1 {} rear=<7257.53, 139.311, 2438.08> eye=<7258.76, 139.139, 2437.97> native_dispatch=true",
+        "marker": "CARGO_ACTION_START",
+        "run_id": "0x4000000000000003 {}_0",
+        "loading": "true",
+        "action_id": "73",
+        "owner_id": "0x60000000000001F1 {}",
+        "rear": "<7257.53, 139.311, 2438.08>",
+        "eye": "<7258.76, 139.139, 2437.97>",
+        "native_dispatch": "true"
+      }
+    ],
+    "cancels": [
+      {
+        "line": 423,
+        "text": "13:21:59.659   SCRIPT       : [ConvoyFollower] CARGO_ACTION_CANCEL: run_id=0x4000000000000003 {}_0 action_id=73 dispatched=true reason=first_positive_transfer",
+        "marker": "CARGO_ACTION_CANCEL",
+        "run_id": "0x4000000000000003 {}_0",
+        "action_id": "73",
+        "dispatched": "true",
+        "reason": "first_positive_transfer"
+      }
+    ],
+    "queues": [
+      {
+        "line": 409,
+        "text": "13:21:58.609   SCRIPT       : [ConvoyFollower] CARGO_ACTION_QUEUE: run_id=0x4000000000000003 {}_0 queue=load_source count=1 owner_id=0x4000000000000007 {} current=1800 max=3000",
+        "marker": "CARGO_ACTION_QUEUE",
+        "run_id": "0x4000000000000003 {}_0",
+        "queue": "load_source",
+        "count": "1",
+        "owner_id": "0x4000000000000007 {}",
+        "current": "1800",
+        "max": "3000"
+      },
+      {
+        "line": 410,
+        "text": "13:21:58.609   SCRIPT       : [ConvoyFollower] CARGO_ACTION_QUEUE: run_id=0x4000000000000003 {}_0 queue=load_cargo count=1 owner_id=0x60000000000001F1 {} current=0 max=1500",
+        "marker": "CARGO_ACTION_QUEUE",
+        "run_id": "0x4000000000000003 {}_0",
+        "queue": "load_cargo",
+        "count": "1",
+        "owner_id": "0x60000000000001F1 {}",
+        "current": "0",
+        "max": "1500"
+      },
+      {
+        "line": 424,
+        "text": "13:21:59.659   SCRIPT       : [ConvoyFollower] CARGO_ACTION_QUEUE: run_id=0x4000000000000003 {}_0 queue=load_source count=1 owner_id=0x4000000000000007 {} current=1700 max=3000",
+        "marker": "CARGO_ACTION_QUEUE",
+        "run_id": "0x4000000000000003 {}_0",
+        "queue": "load_source",
+        "count": "1",
+        "owner_id": "0x4000000000000007 {}",
+        "current": "1700",
+        "max": "3000"
+      },
+      {
+        "line": 425,
+        "text": "13:21:59.659   SCRIPT       : [ConvoyFollower] CARGO_ACTION_QUEUE: run_id=0x4000000000000003 {}_0 queue=load_cargo count=1 owner_id=0x60000000000001F1 {} current=100 max=1500",
+        "marker": "CARGO_ACTION_QUEUE",
+        "run_id": "0x4000000000000003 {}_0",
+        "queue": "load_cargo",
+        "count": "1",
+        "owner_id": "0x60000000000001F1 {}",
+        "current": "100",
+        "max": "1500"
+      }
+    ],
+    "loadedStable": [
+      {
+        "line": 447,
+        "text": "13:22:02.675   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=loaded_cancel_stable_departure_allowed stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "loaded_cancel_stable_departure_allowed",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      }
+    ],
+    "deliveredStable": []
+  },
+  "ledger": {
+    "bindings": [
+      {
+        "line": 250,
+        "text": "13:21:48.373   SCRIPT       : [ConvoyFollower] JOURNEY_LEDGER_BOUND: slot=0 name=CF_JourneySource root=0x4000000000000007 {} physical_owner=8 container_type=SCR_ResourceContainer native_rear_endpoint=0 virtual_proxy=false read_only=true",
+        "marker": "JOURNEY_LEDGER_BOUND",
+        "slot": "0",
+        "name": "CF_JourneySource",
+        "root": "0x4000000000000007 {}",
+        "physical_owner": "8",
+        "container_type": "SCR_ResourceContainer",
+        "native_rear_endpoint": "0",
+        "virtual_proxy": "false",
+        "read_only": "true"
+      },
+      {
+        "line": 251,
+        "text": "13:21:48.373   SCRIPT       : [ConvoyFollower] JOURNEY_LEDGER_BOUND: slot=1 name=CF_SmokeLead root=0x4000000000000005 {} physical_owner=545 container_type=SCR_ResourceContainer native_rear_endpoint=1 virtual_proxy=false read_only=true",
+        "marker": "JOURNEY_LEDGER_BOUND",
+        "slot": "1",
+        "name": "CF_SmokeLead",
+        "root": "0x4000000000000005 {}",
+        "physical_owner": "545",
+        "container_type": "SCR_ResourceContainer",
+        "native_rear_endpoint": "1",
+        "virtual_proxy": "false",
+        "read_only": "true"
+      },
+      {
+        "line": 252,
+        "text": "13:21:48.373   SCRIPT       : [ConvoyFollower] JOURNEY_LEDGER_BOUND: slot=2 name=CF_SmokeFollower1 root=0x4000000000000003 {} physical_owner=497 container_type=SCR_ResourceContainer native_rear_endpoint=1 virtual_proxy=false read_only=true",
+        "marker": "JOURNEY_LEDGER_BOUND",
+        "slot": "2",
+        "name": "CF_SmokeFollower1",
+        "root": "0x4000000000000003 {}",
+        "physical_owner": "497",
+        "container_type": "SCR_ResourceContainer",
+        "native_rear_endpoint": "1",
+        "virtual_proxy": "false",
+        "read_only": "true"
+      },
+      {
+        "line": 253,
+        "text": "13:21:48.373   SCRIPT       : [ConvoyFollower] JOURNEY_LEDGER_BOUND: slot=3 name=CF_JourneyDestination root=0x400000000000000B {} physical_owner=12 container_type=SCR_ResourceContainer native_rear_endpoint=0 virtual_proxy=false read_only=true",
+        "marker": "JOURNEY_LEDGER_BOUND",
+        "slot": "3",
+        "name": "CF_JourneyDestination",
+        "root": "0x400000000000000B {}",
+        "physical_owner": "12",
+        "container_type": "SCR_ResourceContainer",
+        "native_rear_endpoint": "0",
+        "virtual_proxy": "false",
+        "read_only": "true"
+      }
+    ],
+    "count": 29,
+    "allPhysicalConserved": true,
+    "last": {
+      "line": 590,
+      "text": "13:22:17.042   SCRIPT       : [ConvoyFollower] JOURNEY_LEDGER: source=1700 lead=0 follower=100 destination=0 total=1800 conserved=1 read_only=true resource_writes=false automatic_actions=false journey_completion_claim=false",
+      "marker": "JOURNEY_LEDGER",
+      "source": "1700",
+      "lead": "0",
+      "follower": "100",
+      "destination": "0",
+      "total": "1800",
+      "conserved": "1",
+      "read_only": "true",
+      "resource_writes": "false",
+      "automatic_actions": "false",
+      "journey_completion_claim": "false"
+    },
+    "uniqueCounts": [
+      "1800/0/0/0",
+      "1700/0/100/0"
+    ]
+  },
+  "cargo": {
+    "count": 32,
+    "allOriginalCountsValid": true,
+    "last": {
+      "line": 593,
+      "text": "13:22:17.293   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+      "marker": "LOADED_TRIP_CARGO",
+      "run_id": "0x4000000000000003 {}_0",
+      "phase": "sample",
+      "stage": "3",
+      "valid": "true",
+      "source": "1700",
+      "cargo": "100",
+      "destination": "0",
+      "total": "1800",
+      "source_id": "0x4000000000000007 {}",
+      "truck_id": "0x4000000000000003 {}",
+      "cargo_owner_id": "0x60000000000001F1 {}",
+      "destination_id": "0x400000000000000B {}",
+      "loaded": "true",
+      "delivered": "false",
+      "failed": "false"
+    },
+    "rows": [
+      {
+        "line": 326,
+        "text": "13:21:50.028   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=0 valid=true source=1800 cargo=0 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "0",
+        "valid": "true",
+        "source": "1800",
+        "cargo": "0",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 335,
+        "text": "13:21:51.027   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=0 valid=true source=1800 cargo=0 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "0",
+        "valid": "true",
+        "source": "1800",
+        "cargo": "0",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 353,
+        "text": "13:21:52.042   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=0 valid=true source=1800 cargo=0 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "0",
+        "valid": "true",
+        "source": "1800",
+        "cargo": "0",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 362,
+        "text": "13:21:53.059   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=0 valid=true source=1800 cargo=0 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "0",
+        "valid": "true",
+        "source": "1800",
+        "cargo": "0",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 371,
+        "text": "13:21:54.076   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=0 valid=true source=1800 cargo=0 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "0",
+        "valid": "true",
+        "source": "1800",
+        "cargo": "0",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 380,
+        "text": "13:21:55.092   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=0 valid=true source=1800 cargo=0 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "0",
+        "valid": "true",
+        "source": "1800",
+        "cargo": "0",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 387,
+        "text": "13:21:55.592   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=initial_conserved_counts stage=1 valid=true source=1800 cargo=0 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "initial_conserved_counts",
+        "stage": "1",
+        "valid": "true",
+        "source": "1800",
+        "cargo": "0",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 393,
+        "text": "13:21:56.108   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=1 valid=true source=1800 cargo=0 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "1",
+        "valid": "true",
+        "source": "1800",
+        "cargo": "0",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 399,
+        "text": "13:21:57.108   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=1 valid=true source=1800 cargo=0 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "1",
+        "valid": "true",
+        "source": "1800",
+        "cargo": "0",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 405,
+        "text": "13:21:58.108   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=1 valid=true source=1800 cargo=0 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "1",
+        "valid": "true",
+        "source": "1800",
+        "cargo": "0",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 417,
+        "text": "13:21:59.126   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=2 valid=true source=1800 cargo=0 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "2",
+        "valid": "true",
+        "source": "1800",
+        "cargo": "0",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 426,
+        "text": "13:21:59.659   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=native_transfer_cancelled stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "native_transfer_cancelled",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 432,
+        "text": "13:22:00.142   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 438,
+        "text": "13:22:01.159   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 444,
+        "text": "13:22:02.176   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=false delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "false",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 447,
+        "text": "13:22:02.675   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=loaded_cancel_stable_departure_allowed stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "loaded_cancel_stable_departure_allowed",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 453,
+        "text": "13:22:03.176   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 454,
+        "text": "13:22:03.375 SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=original_course_released stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "original_course_released",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 461,
+        "text": "13:22:04.176   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 468,
+        "text": "13:22:05.175   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 474,
+        "text": "13:22:06.192   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 480,
+        "text": "13:22:07.192   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 486,
+        "text": "13:22:08.209   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 492,
+        "text": "13:22:09.226   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 511,
+        "text": "13:22:10.243   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 519,
+        "text": "13:22:11.242   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 527,
+        "text": "13:22:12.242   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 535,
+        "text": "13:22:13.259   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 543,
+        "text": "13:22:14.276   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 557,
+        "text": "13:22:15.276   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 565,
+        "text": "13:22:16.276   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      },
+      {
+        "line": 593,
+        "text": "13:22:17.293   SCRIPT       : [ConvoyFollower] LOADED_TRIP_CARGO: run_id=0x4000000000000003 {}_0 phase=sample stage=3 valid=true source=1700 cargo=100 destination=0 total=1800 source_id=0x4000000000000007 {} truck_id=0x4000000000000003 {} cargo_owner_id=0x60000000000001F1 {} destination_id=0x400000000000000B {} loaded=true delivered=false failed=false",
+        "marker": "LOADED_TRIP_CARGO",
+        "run_id": "0x4000000000000003 {}_0",
+        "phase": "sample",
+        "stage": "3",
+        "valid": "true",
+        "source": "1700",
+        "cargo": "100",
+        "destination": "0",
+        "total": "1800",
+        "source_id": "0x4000000000000007 {}",
+        "truck_id": "0x4000000000000003 {}",
+        "cargo_owner_id": "0x60000000000001F1 {}",
+        "destination_id": "0x400000000000000B {}",
+        "loaded": "true",
+        "delivered": "false",
+        "failed": "false"
+      }
+    ]
+  },
+  "units": [
+    {
+      "unit": 0,
+      "count": 1,
+      "allOriginalIdentity": true,
+      "last": {
+        "line": 501,
+        "text": "13:22:09.391 SCRIPT       : [ConvoyFollower] PACED_SAMPLE: run_id=0x4000000000000005 {}_0 tick=7 seconds=20.7473 leg=1 phase=setup unit=0 truck=CF_SmokeLead truck_id=0x4000000000000005 {} pilot_id=0x600000000000028C {} actual_pilot_id=0x600000000000028C {} predecessor_id=none expected_predecessor_id=none identity_retained=true pilot_seated=false entry_ready=false getting_in=true getting_out=false origin=<7232.98, 138.606, 2437.98> forward=<-0.999951, 0.00984344, 0.000855029> step_axis=<-1, 0, 0.00085507> step_m=0 signed_step_m=0 path_m=0 forward_progress_m=0 gap_m=0 peak_gap_m=0 movement_demand=false deliberate_stationary=false powered_sample=false powered_samples=0 simulation=true speed_kmh=0 throttle=0 brake=0 gear=1 engine=false handbrake=false persistent=true fixture_cruise_owned=false fixture_requested_cap_kmh=-1 behavior=SCR_AIIdleBehavior_Driver:1 group_action=SCR_AIIdleActivity:1 waypoint_id=none goal=<0, 0, 0> wait_selected=false drift_m=0 max_drift_m=0",
+        "marker": "PACED_SAMPLE",
+        "run_id": "0x4000000000000005 {}_0",
+        "tick": "7",
+        "seconds": "20.7473",
+        "leg": "1",
+        "phase": "setup",
+        "unit": "0",
+        "truck": "CF_SmokeLead",
+        "truck_id": "0x4000000000000005 {}",
+        "pilot_id": "0x600000000000028C {}",
+        "actual_pilot_id": "0x600000000000028C {}",
+        "predecessor_id": "none",
+        "expected_predecessor_id": "none",
+        "identity_retained": "true",
+        "pilot_seated": "false",
+        "entry_ready": "false",
+        "getting_in": "true",
+        "getting_out": "false",
+        "origin": "<7232.98, 138.606, 2437.98>",
+        "forward": "<-0.999951, 0.00984344, 0.000855029>",
+        "step_axis": "<-1, 0, 0.00085507>",
+        "step_m": "0",
+        "signed_step_m": "0",
+        "path_m": "0",
+        "forward_progress_m": "0",
+        "gap_m": "0",
+        "peak_gap_m": "0",
+        "movement_demand": "false",
+        "deliberate_stationary": "false",
+        "powered_sample": "false",
+        "powered_samples": "0",
+        "simulation": "true",
+        "speed_kmh": "0",
+        "throttle": "0",
+        "brake": "0",
+        "gear": "1",
+        "engine": "false",
+        "handbrake": "false",
+        "persistent": "true",
+        "fixture_cruise_owned": "false",
+        "fixture_requested_cap_kmh": "-1",
+        "behavior": "SCR_AIIdleBehavior_Driver:1",
+        "group_action": "SCR_AIIdleActivity:1",
+        "waypoint_id": "none",
+        "goal": "<0, 0, 0>",
+        "wait_selected": "false",
+        "drift_m": "0",
+        "max_drift_m": "0"
+      },
+      "poweredRows": 0
+    },
+    {
+      "unit": 1,
+      "count": 1,
+      "allOriginalIdentity": false,
+      "last": {
+        "line": 502,
+        "text": "13:22:09.391 SCRIPT       : [ConvoyFollower] PACED_SAMPLE: run_id=0x4000000000000005 {}_0 tick=7 seconds=20.7473 leg=1 phase=setup unit=1 truck=CF_SmokeFollower1 truck_id=0x4000000000000003 {} pilot_id=0x6000000000000271 {} actual_pilot_id=none predecessor_id=0x4000000000000005 {} expected_predecessor_id=0x4000000000000005 {} identity_retained=false pilot_seated=false entry_ready=false getting_in=false getting_out=false origin=<7252.93, 138.028, 2437.96> forward=<-0.996446, 0.0841438, -0.00385761> step_axis=<-0.999992, 0, -0.00387134> step_m=0 signed_step_m=-0 path_m=0 forward_progress_m=0 gap_m=19.9537 peak_gap_m=19.9537 movement_demand=false deliberate_stationary=false powered_sample=false powered_samples=0 simulation=true speed_kmh=0 throttle=0 brake=0 gear=1 engine=false handbrake=false persistent=true fixture_cruise_owned=false fixture_requested_cap_kmh=-1 behavior=SCR_AIIdleBehavior:1 group_action=SCR_AIIdleActivity:1 waypoint_id=0x60000000000002A9 {} goal=<7252.93, 138.028, 2437.96> wait_selected=false drift_m=0 max_drift_m=0",
+        "marker": "PACED_SAMPLE",
+        "run_id": "0x4000000000000005 {}_0",
+        "tick": "7",
+        "seconds": "20.7473",
+        "leg": "1",
+        "phase": "setup",
+        "unit": "1",
+        "truck": "CF_SmokeFollower1",
+        "truck_id": "0x4000000000000003 {}",
+        "pilot_id": "0x6000000000000271 {}",
+        "actual_pilot_id": "none",
+        "predecessor_id": "0x4000000000000005 {}",
+        "expected_predecessor_id": "0x4000000000000005 {}",
+        "identity_retained": "false",
+        "pilot_seated": "false",
+        "entry_ready": "false",
+        "getting_in": "false",
+        "getting_out": "false",
+        "origin": "<7252.93, 138.028, 2437.96>",
+        "forward": "<-0.996446, 0.0841438, -0.00385761>",
+        "step_axis": "<-0.999992, 0, -0.00387134>",
+        "step_m": "0",
+        "signed_step_m": "-0",
+        "path_m": "0",
+        "forward_progress_m": "0",
+        "gap_m": "19.9537",
+        "peak_gap_m": "19.9537",
+        "movement_demand": "false",
+        "deliberate_stationary": "false",
+        "powered_sample": "false",
+        "powered_samples": "0",
+        "simulation": "true",
+        "speed_kmh": "0",
+        "throttle": "0",
+        "brake": "0",
+        "gear": "1",
+        "engine": "false",
+        "handbrake": "false",
+        "persistent": "true",
+        "fixture_cruise_owned": "false",
+        "fixture_requested_cap_kmh": "-1",
+        "behavior": "SCR_AIIdleBehavior:1",
+        "group_action": "SCR_AIIdleActivity:1",
+        "waypoint_id": "0x60000000000002A9 {}",
+        "goal": "<7252.93, 138.028, 2437.96>",
+        "wait_selected": "false",
+        "drift_m": "0",
+        "max_drift_m": "0"
+      },
+      "poweredRows": 0
+    }
+  ],
+  "exactFollow": {
+    "gateMet": false,
+    "sequences": [
+      {
+        "sequence": "0",
+        "count": 1,
+        "allExact": false,
+        "maxProgress": 0,
+        "maxPowered": 0,
+        "last": {
+          "line": 500,
+          "text": "13:22:09.391 SCRIPT       : string evidence = '[ConvoyFollower] ENTITY_FOLLOW_SAMPLE: run_id=0x4000000000000005 {}_0 tick=7 seconds=20.7473 unit=1 sequence=0 selected=0 exact=false target_id=none live_selected=false desired_distance=-1 active_private_activities=0 predecessor_id=0x4000000000000005 {} waypoint_id=none related_id=none signed_step_m=-0 powered=false activity_progress_m=0 powered_samples=0 observing=false gate_failed=false unit_gate_failed=false'",
+          "marker": "ENTITY_FOLLOW_SAMPLE",
+          "run_id": "0x4000000000000005 {}_0",
+          "tick": "7",
+          "seconds": "20.7473",
+          "unit": "1",
+          "sequence": "0",
+          "selected": "0",
+          "exact": "false",
+          "target_id": "none",
+          "live_selected": "false",
+          "desired_distance": "-1",
+          "active_private_activities": "0",
+          "predecessor_id": "0x4000000000000005 {}",
+          "waypoint_id": "none",
+          "related_id": "none",
+          "signed_step_m": "-0",
+          "powered": "false",
+          "activity_progress_m": "0",
+          "powered_samples": "0",
+          "observing": "false",
+          "gate_failed": "false",
+          "unit_gate_failed": "false"
+        }
+      }
+    ]
+  },
+  "arrivalMarkers": [
+    {
+      "line": 597,
+      "text": "13:22:17.408 SCRIPT       : [ConvoyFollower] PACED_LEAD_HOLD: run_id=0x4000000000000005 {}_0 tick=7 phase=before_cancel behavior=SCR_AIIdleBehavior_Driver:1 group_action=SCR_AIIdleActivity:1",
+      "marker": "PACED_LEAD_HOLD",
+      "run_id": "0x4000000000000005 {}_0",
+      "tick": "7",
+      "phase": "before_cancel",
+      "behavior": "SCR_AIIdleBehavior_Driver:1",
+      "group_action": "SCR_AIIdleActivity:1"
+    },
+    {
+      "line": 598,
+      "text": "13:22:17.408 SCRIPT       : [ConvoyFollower] PACED_LEAD_HOLD: run_id=0x4000000000000005 {}_0 tick=7 phase=requested wait_owned=true requested_cruise_kmh=0 frame_brake_writes=false",
+      "marker": "PACED_LEAD_HOLD",
+      "run_id": "0x4000000000000005 {}_0",
+      "tick": "7",
+      "phase": "requested",
+      "wait_owned": "true",
+      "requested_cruise_kmh": "0",
+      "frame_brake_writes": "false"
+    }
+  ],
+  "errors": {
+    "counts": {
+      "runtime": 19,
+      "post-result": 0,
+      "shutdown": 61
+    },
+    "all": [
+      {
+        "line": 104,
+        "text": "13:21:34.973   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+        "phase": "runtime"
+      },
+      {
+        "line": 159,
+        "text": "13:21:46.714           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+        "phase": "runtime"
+      },
+      {
+        "line": 164,
+        "text": "13:21:46.745         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+        "phase": "runtime"
+      },
+      {
+        "line": 165,
+        "text": "13:21:46.745         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+        "phase": "runtime"
+      },
+      {
+        "line": 170,
+        "text": "13:21:46.747         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+        "phase": "runtime"
+      },
+      {
+        "line": 171,
+        "text": "13:21:46.747         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+        "phase": "runtime"
+      },
+      {
+        "line": 172,
+        "text": "13:21:46.747         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+        "phase": "runtime"
+      },
+      {
+        "line": 173,
+        "text": "13:21:46.747         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+        "phase": "runtime"
+      },
+      {
+        "line": 243,
+        "text": "13:21:48.356 RESOURCES (E): Failed to load ''",
+        "phase": "runtime"
+      },
+      {
+        "line": 262,
+        "text": "13:21:48.549 RESOURCES (E): Failed to load ''",
+        "phase": "runtime"
+      },
+      {
+        "line": 263,
+        "text": "13:21:48.550 RESOURCES (E): Failed to load ''",
+        "phase": "runtime"
+      },
+      {
+        "line": 264,
+        "text": "13:21:48.552 RESOURCES (E): Failed to load ''",
+        "phase": "runtime"
+      },
+      {
+        "line": 265,
+        "text": "13:21:48.555 RESOURCES (E): Failed to load ''",
+        "phase": "runtime"
+      },
+      {
+        "line": 266,
+        "text": "13:21:48.557 RESOURCES (E): Failed to load ''",
+        "phase": "runtime"
+      },
+      {
+        "line": 267,
+        "text": "13:21:48.557 RESOURCES (E): Failed to load ''",
+        "phase": "runtime"
+      },
+      {
+        "line": 268,
+        "text": "13:21:48.560 RESOURCES (E): Failed to load ''",
+        "phase": "runtime"
+      },
+      {
+        "line": 269,
+        "text": "13:21:48.564 RESOURCES (E): Failed to load ''",
+        "phase": "runtime"
+      },
+      {
+        "line": 270,
+        "text": "13:21:48.564 RESOURCES (E): Failed to load ''",
+        "phase": "runtime"
+      },
+      {
+        "line": 282,
+        "text": "13:21:48.989       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)",
+        "phase": "runtime"
+      },
+      {
+        "line": 926,
+        "text": "13:22:48.533 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+        "phase": "shutdown"
+      },
+      {
+        "line": 927,
+        "text": "13:22:48.537 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+        "phase": "shutdown"
+      },
+      {
+        "line": 929,
+        "text": "13:22:48.866 RESOURCES (E): ==== Resource leaks ====",
+        "phase": "shutdown"
+      },
+      {
+        "line": 930,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 931,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 932,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 933,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 934,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 935,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 936,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 937,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 938,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 939,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 940,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 941,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 942,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 943,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 944,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 945,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 946,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 947,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/VehicleInfo/AnalogGaugeImageset_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 948,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo-750_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 949,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo_Glow-750_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 950,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo_Ammo-800_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 951,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo_Ammo_Glow-800_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 952,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 953,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 954,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 955,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 956,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 957,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 958,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 959,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 960,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 961,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 962,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 963,
+        "text": "13:22:48.866 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 964,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 965,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 966,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 967,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 968,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 969,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 970,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 971,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 972,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 973,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 974,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 975,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 976,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 977,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 978,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 979,
+        "text": "13:22:48.866 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 980,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 981,
+        "text": "13:22:48.866 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 982,
+        "text": "13:22:48.867 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 983,
+        "text": "13:22:48.867 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 984,
+        "text": "13:22:48.867 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 985,
+        "text": "13:22:48.867 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 986,
+        "text": "13:22:48.867 RESOURCES (E): UI/Imagesets/default.edds   1",
+        "phase": "shutdown"
+      },
+      {
+        "line": 987,
+        "text": "13:22:48.867 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1",
+        "phase": "shutdown"
+      }
+    ]
+  },
+  "lifecycle": {
+    "scheduled": [
+      {
+        "line": 607,
+        "text": "13:22:17.414 SCRIPT       : [ConvoyFollower] PACED_EXIT_SCHEDULED: run_id=0x4000000000000005 {}_0 world=Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent delay_s=30 supplemental_capture_only=true terminal_failed=true",
+        "marker": "PACED_EXIT_SCHEDULED",
+        "run_id": "0x4000000000000005 {}_0",
+        "world": "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent",
+        "delay_s": "30",
+        "supplemental_capture_only": "true",
+        "terminal_failed": "true"
+      }
+    ],
+    "refused": [],
+    "deferred": [],
+    "requested": [
+      {
+        "line": 916,
+        "text": "13:22:47.424 SCRIPT       : [ConvoyFollower] PACED_EXIT_REQUESTED: run_id=0x4000000000000005 {}_0 world=Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent elapsed_s=30.0159 terminal_failed=true shutdown_completed=false",
+        "marker": "PACED_EXIT_REQUESTED",
+        "run_id": "0x4000000000000005 {}_0",
+        "world": "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent",
+        "elapsed_s": "30.0159",
+        "terminal_failed": "true",
+        "shutdown_completed": "false"
+      }
+    ],
+    "cleanup": {
+      "line": 921,
+      "text": "13:22:48.187 SCRIPT       : [ConvoyFollower] PACED_CLEANUP: run_id=0x4000000000000005 {}_0 live_owner_reset=false terminal=true world_cleanup=true",
+      "marker": "PACED_CLEANUP",
+      "run_id": "0x4000000000000005 {}_0",
+      "live_owner_reset": "false",
+      "terminal": "true",
+      "world_cleanup": "true"
+    },
+    "destroyed": [
+      "13:22:48.661 ENGINE       : Game destroyed."
+    ],
+    "rootConfirmedNaturalExit": true,
+    "rootForcedStop": false,
+    "shutdownCensored": false
+  }
+}

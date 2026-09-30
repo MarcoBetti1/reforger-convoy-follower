@@ -1,0 +1,107 @@
+diff --git a/D:/ReforgerAgentBuilds/ordinary-outbound-bay-v1/frozen-source-final/source/Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c b/D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source/Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c
+index 482f805..a13d22a 100644
+--- a/D:/ReforgerAgentBuilds/ordinary-outbound-bay-v1/frozen-source-final/source/Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c
++++ b/D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source/Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c
+@@ -55,7 +55,7 @@ class CF_OrdinaryOutboundBayCourse : CF_ExplicitBayFeatureProbeComponent
+  override void OnPostInit(IEntity owner)
+  {
+   super.OnPostInit(owner);
+-  Print("[ConvoyFollower] ORDINARY_BAY_COURSE_INIT: total_world_s=1650 setup_s=95 outbound_s=240 arrival_capture_s=90 arrival_stable_s=180 hold_s=30 hold_drift_m=2 resume_return_leg_s=240 bay_park_return_safety_unchanged=true spacing_60m_sticky=true diagnostic_continuation_after_spacing_only=true real_departure_required=true same_activity_outbound_m=100 powered_min=3 fresh_resume_m=20 camera_only_observer=true normal_input=false video=false");
++  Print("[ConvoyFollower] ORDINARY_BAY_COURSE_INIT: version=2 startup_wait_selection_s=10 total_world_s=1650 setup_s=95 outbound_s=240 arrival_capture_s=90 arrival_stable_s=180 hold_s=30 hold_drift_m=2 resume_return_leg_s=240 bay_park_return_safety_unchanged=true spacing_60m_sticky=true diagnostic_continuation_after_spacing_only=true real_departure_required=true same_activity_outbound_m=100 powered_min=3 fresh_resume_m=20 camera_only_observer=true normal_input=false video=false");
+  }
+  override protected bool CF_SelectAIDriveGoal(RoadNetworkManager roads)
+  {
+@@ -67,9 +67,46 @@ class CF_OrdinaryOutboundBayCourse : CF_ExplicitBayFeatureProbeComponent
+  }
+  protected void JourneyPhase(int phase)
+  {
++  if (m_bPacedTerminal) return;
+   m_iJourneyPhase = phase; m_fJourneyPhaseMs = GetGame().GetWorld().GetWorldTime(); m_fJourneyStableMs = -1;
+   Print("[ConvoyFollower] ORDINARY_BAY_PHASE: phase=" + phase + " world_ms=" + m_fJourneyPhaseMs + " spacing_failure_retained=" + m_bPacedSpacingFailed);
+  }
++ override protected void BayPhase(int phase)
++ {
++  if (m_bPacedTerminal) return;
++  super.BayPhase(phase);
++ }
++ // Copy/read the unchanged native seat-handoff conjunction; no actor/control writes.
++ protected bool JourneyHandoffReadback(bool toOwner, string seam)
++ {
++  bool parkAllowed = CanCommandPark(); float speed = CommandSpeed(m_Lead);
++  bool speedRejected = speed > 2; // Preserve the existing rejection comparison.
++  bool directionReady; bool nativeControl; bool selectedWait; bool ownerPilot; bool nativeOnFoot;
++  if (toOwner)
++  {
++   nativeControl = CanControlLead(); selectedWait = LeadWaitSelected();
++   directionReady = nativeControl && selectedWait;
++  }
++  else
++  {
++   ownerPilot = CommandSeat(m_PacedOwner, true); nativeOnFoot = CommandOnFoot(m_Pilot);
++   directionReady = ownerPilot && nativeOnFoot;
++  }
++  bool accepted = parkAllowed && !speedRejected && directionReady;
++  string line = "[ConvoyFollower] ORDINARY_BAY_HANDOFF_PRECONDITIONS: phase=" + m_iJourneyPhase + " bay_phase=" + m_iBayPhase + " seam=" + seam + " to_owner=" + toOwner;
++  line += " can_command_park=" + parkAllowed + " speed_kmh=" + speed + " speed_over2_rejected=" + speedRejected + " speed_nan=" + (speed != speed);
++  line += " native_control_required=" + toOwner + " native_control=" + nativeControl + " selected_wait_required=" + toOwner + " selected_owned_wait=" + selectedWait;
++  line += " owner_pilot_required=" + !toOwner + " owner_pilot=" + ownerPilot + " native_onfoot_required=" + !toOwner + " native_onfoot=" + nativeOnFoot;
++  line += " unchanged_conjunction_accepted=" + accepted + " original_identities=" + BayIdentities() + " read_only=true";
++  Print(line);
++  return accepted;
++ }
++ override protected void BeginCommandSeatTransfer(bool toOwner)
++ {
++  if (m_bPacedTerminal) return;
++  JourneyHandoffReadback(toOwner, "native_begin_call");
++  super.BeginCommandSeatTransfer(toOwner);
++ }
+  protected void JourneyCapture(string tag)
+  {
+   bool writable = System.MakeScreenshot("$logs:journey-" + tag);
+@@ -210,7 +247,7 @@ class CF_OrdinaryOutboundBayCourse : CF_ExplicitBayFeatureProbeComponent
+   if (!PacedWorldAlive() || m_bPacedTerminal) return;
+   float now = GetGame().GetWorld().GetWorldTime();
+   if (now - m_fPacedStartMs > 1650000) { JourneyFail("1650world_total_timeout"); return; }
+-  if ((m_iJourneyPhase == 0 || m_iJourneyPhase == 11 || m_iJourneyPhase == 12) && PacedSeconds() > 95)
++  if ((m_iJourneyPhase == 0 || m_iJourneyPhase == 13 || m_iJourneyPhase == 11 || m_iJourneyPhase == 12) && PacedSeconds() > 95)
+   { JourneyFail("95world_complete_original_setup_timeout"); return; }
+   if (m_bJourneyPrefixComplete) { super.Poll(); return; }
+   if (!BindTripCargo() || m_TripCargo.TripFailed()) { JourneyFail("native_cargo_binding_or_conservation"); return; }
+@@ -225,10 +262,20 @@ class CF_OrdinaryOutboundBayCourse : CF_ExplicitBayFeatureProbeComponent
+     m_vInitialLeadPosition = m_Lead.GetOrigin();
+     // Let the unchanged session bind original head staging from its real owner
+     // pilot seat while still at recruitment. No staging/guard fields are written.
+-    HoldLeadAtRoadGoal(); BeginCommandSeatTransfer(true); JourneyPhase(11); return;
++    HoldLeadAtRoadGoal();
++    if (m_bPacedTerminal) return;
++    JourneyPhase(13); return;
+    }
+    super.Poll(); return;
+   }
++  if (m_iJourneyPhase == 13)
++  {
++   if (!JourneyHandoffReadback(true, "startup_selected_wait_poll"))
++   { if (now - m_fJourneyPhaseMs > 10000) JourneyFail("startup_selected_owned_wait_handoff_10world_timeout"); return; }
++   BeginCommandSeatTransfer(true);
++   if (m_bPacedTerminal) return;
++   JourneyPhase(11); return;
++  }
+   if (m_iJourneyPhase == 11)
+   {
+    if (!PollCommandSeatTransfer(true) || !ReturnCaptureStaging())
+@@ -261,6 +308,7 @@ class CF_OrdinaryOutboundBayCourse : CF_ExplicitBayFeatureProbeComponent
+   if (m_iJourneyPhase == 1)
+   {
+    JourneyMotion(m_JourneyOutbound, false);
++   if (m_bPacedTerminal) return;
+    if (vector.DistanceXZ(m_Lead.GetOrigin(), m_vRoadGoal) <= 8 && !m_bPacedHoldingLead) HoldLeadAtRoadGoal();
+    if (LeadWaitSelected() && CommandSpeed(m_Lead) <= 2)
+    {
+@@ -340,6 +388,7 @@ class CF_OrdinaryOutboundBayCourse : CF_ExplicitBayFeatureProbeComponent
+   if (m_iJourneyPhase == 8)
+   {
+    JourneyMotion(m_JourneyResumeEvidence, true);
++   if (m_bPacedTerminal) return;
+    if (vector.DistanceXZ(m_Lead.GetOrigin(), m_vRestartGoal) <= 8 && !m_bPacedHoldingLead) HoldLeadAtRoadGoal();
+    if (LeadWaitSelected() && CommandSpeed(m_Lead) <= 2)
+    {

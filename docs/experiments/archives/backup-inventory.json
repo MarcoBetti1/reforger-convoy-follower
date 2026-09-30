@@ -1,0 +1,632 @@
+{
+  "status": "SOURCE_AND_REVIEW_BACKUP_ONLY",
+  "snapshots": [
+    {
+      "name": "manual-v8",
+      "sourceOriginal": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\frozen-source\\everon-journey-scene-v8\\source",
+      "files": 607,
+      "overlayFiles": 5,
+      "changed": [
+        "Prefabs/Characters/Character_CF_Driver.et",
+        "Prefabs/Characters/Character_CF_Driver_USSR.et",
+        "Prefabs/Vehicles/Wheeled/M923A1/VehParts/M923A1_cargo.et",
+        "Prefabs/Vehicles/Wheeled/Ural4320/VehParts/Ural4320_cargo.et",
+        "Scripts/Game/CF_RadioPlayerController.c"
+      ],
+      "exactSourceReconstructableWithCurrentAuthoredBase": true,
+      "additionalExactOverlaysReason": "Mixed source line endings lost by Git normalization; archive exact frozen bytes, never alter original source."
+    },
+    {
+      "name": "ordinary-outbound-bay-v1",
+      "sourceOriginal": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v1\\frozen-source-final\\source",
+      "files": 616,
+      "overlayFiles": 28,
+      "changed": [
+        "Prefabs/Characters/Character_CF_Driver.et",
+        "Prefabs/Characters/Character_CF_Driver_USSR.et",
+        "Prefabs/Vehicles/Wheeled/M923A1/VehParts/M923A1_cargo.et",
+        "Prefabs/Vehicles/Wheeled/Ural4320/VehParts/Ural4320_cargo.et",
+        "Scripts/Game/CF_ConvoyCommandMenu.c",
+        "Scripts/Game/CF_ConvoySession.c",
+        "Scripts/Game/CF_DriverControllerComponent.c",
+        "Scripts/Game/CF_RadioPlayerController.c",
+        "Scripts/Game/Tests/CF_BayStopGuardReadback.c",
+        "Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c",
+        "Scripts/Game/Tests/CF_EntityFollowRoadProbeComponent.c",
+        "Scripts/Game/Tests/CF_EntityFollowWaypoint.c",
+        "Scripts/Game/Tests/CF_EveronLoadedTripProbeComponent.c",
+        "Scripts/Game/Tests/CF_ExplicitBayFeatureProbeComponent.c",
+        "Scripts/Game/Tests/CF_JourneyLedgerProbeComponent.c",
+        "Scripts/Game/Tests/CF_LoadedSupplyTripProbeComponent.c",
+        "Scripts/Game/Tests/CF_NativeCargoActionProbeComponent.c",
+        "Scripts/Game/Tests/CF_NativeParkingVisual.c",
+        "Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c",
+        "Scripts/Game/Tests/CF_OriginalFollowLease.c",
+        "Scripts/Game/Tests/CF_PacedRoadProbeComponent.c",
+        "Scripts/Game/Tests/CF_RecordedTrailLoadedProbeComponent.c",
+        "Scripts/Game/Tests/CF_SmokeProbeComponent.c",
+        "Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c",
+        "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent",
+        "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent.meta",
+        "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck_Layers/default.layer",
+        "resourceDatabase.rdb"
+      ],
+      "exactSourceReconstructableWithCurrentAuthoredBase": true,
+      "additionalExactOverlaysReason": "Mixed source line endings lost by Git normalization; archive exact frozen bytes, never alter original source."
+    },
+    {
+      "name": "ordinary-outbound-bay-v2",
+      "sourceOriginal": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v2\\frozen-source\\source",
+      "files": 616,
+      "overlayFiles": 28,
+      "changed": [
+        "Prefabs/Characters/Character_CF_Driver.et",
+        "Prefabs/Characters/Character_CF_Driver_USSR.et",
+        "Prefabs/Vehicles/Wheeled/M923A1/VehParts/M923A1_cargo.et",
+        "Prefabs/Vehicles/Wheeled/Ural4320/VehParts/Ural4320_cargo.et",
+        "Scripts/Game/CF_ConvoyCommandMenu.c",
+        "Scripts/Game/CF_ConvoySession.c",
+        "Scripts/Game/CF_DriverControllerComponent.c",
+        "Scripts/Game/CF_RadioPlayerController.c",
+        "Scripts/Game/Tests/CF_BayStopGuardReadback.c",
+        "Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c",
+        "Scripts/Game/Tests/CF_EntityFollowRoadProbeComponent.c",
+        "Scripts/Game/Tests/CF_EntityFollowWaypoint.c",
+        "Scripts/Game/Tests/CF_EveronLoadedTripProbeComponent.c",
+        "Scripts/Game/Tests/CF_ExplicitBayFeatureProbeComponent.c",
+        "Scripts/Game/Tests/CF_JourneyLedgerProbeComponent.c",
+        "Scripts/Game/Tests/CF_LoadedSupplyTripProbeComponent.c",
+        "Scripts/Game/Tests/CF_NativeCargoActionProbeComponent.c",
+        "Scripts/Game/Tests/CF_NativeParkingVisual.c",
+        "Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c",
+        "Scripts/Game/Tests/CF_OriginalFollowLease.c",
+        "Scripts/Game/Tests/CF_PacedRoadProbeComponent.c",
+        "Scripts/Game/Tests/CF_RecordedTrailLoadedProbeComponent.c",
+        "Scripts/Game/Tests/CF_SmokeProbeComponent.c",
+        "Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c",
+        "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent",
+        "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent.meta",
+        "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck_Layers/default.layer",
+        "resourceDatabase.rdb"
+      ],
+      "exactSourceReconstructableWithCurrentAuthoredBase": true,
+      "additionalExactOverlaysReason": "Mixed source line endings lost by Git normalization; archive exact frozen bytes, never alter original source."
+    },
+    {
+      "name": "ordinary-road-start-join-v1",
+      "sourceOriginal": "D:\\ReforgerAgentBuilds\\ordinary-road-start-join-v1\\frozen-source\\source",
+      "files": 616,
+      "overlayFiles": 28,
+      "changed": [
+        "Prefabs/Characters/Character_CF_Driver.et",
+        "Prefabs/Characters/Character_CF_Driver_USSR.et",
+        "Prefabs/Vehicles/Wheeled/M923A1/VehParts/M923A1_cargo.et",
+        "Prefabs/Vehicles/Wheeled/Ural4320/VehParts/Ural4320_cargo.et",
+        "Scripts/Game/CF_ConvoyCommandMenu.c",
+        "Scripts/Game/CF_ConvoySession.c",
+        "Scripts/Game/CF_DriverControllerComponent.c",
+        "Scripts/Game/CF_RadioPlayerController.c",
+        "Scripts/Game/Tests/CF_BayStopGuardReadback.c",
+        "Scripts/Game/Tests/CF_EntityFollowDriverControllerComponent.c",
+        "Scripts/Game/Tests/CF_EntityFollowRoadProbeComponent.c",
+        "Scripts/Game/Tests/CF_EntityFollowWaypoint.c",
+        "Scripts/Game/Tests/CF_EveronLoadedTripProbeComponent.c",
+        "Scripts/Game/Tests/CF_ExplicitBayFeatureProbeComponent.c",
+        "Scripts/Game/Tests/CF_JourneyLedgerProbeComponent.c",
+        "Scripts/Game/Tests/CF_LoadedSupplyTripProbeComponent.c",
+        "Scripts/Game/Tests/CF_NativeCargoActionProbeComponent.c",
+        "Scripts/Game/Tests/CF_NativeParkingVisual.c",
+        "Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c",
+        "Scripts/Game/Tests/CF_OriginalFollowLease.c",
+        "Scripts/Game/Tests/CF_PacedRoadProbeComponent.c",
+        "Scripts/Game/Tests/CF_RecordedTrailLoadedProbeComponent.c",
+        "Scripts/Game/Tests/CF_SmokeProbeComponent.c",
+        "Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c",
+        "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent",
+        "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent.meta",
+        "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck_Layers/default.layer",
+        "resourceDatabase.rdb"
+      ],
+      "exactSourceReconstructableWithCurrentAuthoredBase": true,
+      "additionalExactOverlaysReason": "Mixed source line endings lost by Git normalization; archive exact frozen bytes, never alter original source."
+    }
+  ],
+  "copiedReports": [
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\everon-journey-scene-v8\\document.mjs",
+      "archive": "docs/experiments/archives/manual-v8/preparation-artifacts/document.mjs",
+      "bytes": 4364,
+      "sha256": "C19BF55C27B1354F9BD109644E39B1DDA4021E4F5CF067EC1F9176B78BDF4F01"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\everon-journey-scene-v8\\freeze.mjs",
+      "archive": "docs/experiments/archives/manual-v8/preparation-artifacts/freeze.mjs",
+      "bytes": 2321,
+      "sha256": "55B6AF1C21CFB6498CB85B39E495D5F28645FDEDC2C8410C4BF2EE0D8DD8DA0B"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\everon-journey-scene-v8\\manual-output-location-review.json",
+      "archive": "docs/experiments/archives/manual-v8/preparation-artifacts/manual-output-location-review.json",
+      "bytes": 555,
+      "sha256": "E15DD252969FE5864A14A640415CF2C201E568184DCD54552DB94CEEC7415773"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\everon-journey-scene-v8\\player-deployment-review.json",
+      "archive": "docs/experiments/archives/manual-v8/preparation-artifacts/player-deployment-review.json",
+      "bytes": 1598,
+      "sha256": "BBDE074F53FD136E81C9C8762B57165DA354E472FF5A21D118C0CED193A80CEC"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\everon-journey-scene-v8\\preparation-review.json",
+      "archive": "docs/experiments/archives/manual-v8/preparation-artifacts/preparation-review.json",
+      "bytes": 527,
+      "sha256": "77A164404EE87740C6E5A458EDDD15199B6D51AF86239C472504E8432DB6DA84"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\everon-journey-scene-v8\\prepare-player-deployment.mjs",
+      "archive": "docs/experiments/archives/manual-v8/preparation-artifacts/prepare-player-deployment.mjs",
+      "bytes": 1760,
+      "sha256": "3366ACFCABF725E32E8E8B61EC44F37FE674923FA513C7D130B39EED38EA2121"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\everon-journey-scene-v8\\prepare.mjs",
+      "archive": "docs/experiments/archives/manual-v8/preparation-artifacts/prepare.mjs",
+      "bytes": 1921,
+      "sha256": "1A38DD21E28CA2C1E44FEC9EE6673556DDC2E7EB70E36A8E2E8FCCD26518A122"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\CF_OrdinaryOutboundBayCourse.c",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/CF_OrdinaryOutboundBayCourse.c",
+      "bytes": 20742,
+      "sha256": "2624FD8A4E10E0BECD2F0BC6515AB3A89FCDAFD0EBDE666F0C6D8274CED720BE"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\course-contract.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/course-contract.json",
+      "bytes": 7886,
+      "sha256": "D7A0C171EC637DF043FFBF7D04376E9F7597B30BCC0D78A8FD199D67CB07F488"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\document-live.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/document-live.mjs",
+      "bytes": 8765,
+      "sha256": "9C9DDD6464F08316F1C143B26BC887C21A69AECF21044D223F5F8F694D779DD0"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\document-preparation.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/document-preparation.mjs",
+      "bytes": 10954,
+      "sha256": "7902BDBD6EE67E313CEFC856538540B529527D509ADD0BCD2C74B062276CAA0C"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\freeze.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/freeze.mjs",
+      "bytes": 8493,
+      "sha256": "1102812A2DEEBEEE49C2F889FCC7FEDCD00B3B87C8A130BD6CE5917DCF6045D2"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\frozen-final-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/frozen-final-review.json",
+      "bytes": 8156,
+      "sha256": "C45D0CB2EF7937070DD193B1657EAC569702716ED8E3A28F985625399F12DCF5"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\frozen-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/frozen-review.json",
+      "bytes": 7806,
+      "sha256": "5F3A6DFC6FC7C8E845FCAE6F73325983F1D4FE47C978F75140FF629B67396469"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\launch-plan.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/launch-plan.json",
+      "bytes": 1358,
+      "sha256": "A53D799DE2A44E5A8B095C2B0FF8821EAADD74C54CA340CFEB5739791722D83E"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\live-execution-record.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/live-execution-record.json",
+      "bytes": 1243,
+      "sha256": "17A4F318B385E34C8FC8541BFFFCDD32BAB72B3481F017D9F76968F669E2A8E5"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\prepare-v2.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/prepare-v2.mjs",
+      "bytes": 7003,
+      "sha256": "AC9A71C68177C40BCCE80F3B897E4B8235412673413886B10EEE94472FD0C1E1"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\prepare.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/prepare.mjs",
+      "bytes": 4393,
+      "sha256": "FAD737606771AD9373DFAB0D2B7A7A5EC8A693A0906D50F65E1EADBAB5756537"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\review-course.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/review-course.mjs",
+      "bytes": 6639,
+      "sha256": "FDF3A44C604AC983525604E2C89B940ABBEE21F9AF481FC20FE1A45D665AAE43"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\superseded-draft.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/superseded-draft.json",
+      "bytes": 529,
+      "sha256": "0055F30713583F26B93E0D209C96C085BFAD0AC8787367EECD6E174CEFA444E5"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v1\\watch-terminal.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/preparation-artifacts/watch-terminal.mjs",
+      "bytes": 1906,
+      "sha256": "E34D6F3F0A3F7E370E3226C536C4ADFCA3EEE65DA4036BE22C1E4E413A0535A8"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v1\\gameplay-at-terminal.log.provenance.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/run-reports/gameplay-at-terminal.log.provenance.json",
+      "bytes": 1073,
+      "sha256": "F5D99C1693E39886ED25F2AEA657DF7CB7DB948F023DA68EAC1EE97264F33D00"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v1\\loaded-trip-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/run-reports/loaded-trip-review.json",
+      "bytes": 65577,
+      "sha256": "D530A61A1B7913D4A201509D98ABCC78DCF45EF521E919220043EE78CD01B664"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v1\\ordinary-course-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/run-reports/ordinary-course-review.json",
+      "bytes": 77101,
+      "sha256": "22523FC1BF42534E7B4CEA48108CA4C59C8854C016DB339D2F631F3E54B6A5F6"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v1\\postrun-provenance-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/run-reports/postrun-provenance-review.json",
+      "bytes": 412122,
+      "sha256": "15B95E73202369F20576DEB25F5DEB11F5D8CB9588C655A51757F81ADF58DFE1"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v1\\visual-inspection-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/run-reports/visual-inspection-review.json",
+      "bytes": 604,
+      "sha256": "8AF0342B500CAD73CD58EBF87A1640AE7AE85B159C4C9A3DA712ED6021D5DFF8"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v1\\workbench\\validate\\console.log",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/build-logs/validate/console.txt",
+      "bytes": 18446,
+      "sha256": "9FFDD1BE21EFA6BC40EE24414FF45FB0B5000DAF508AA55522185B8BB035EBF8"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v1\\workbench\\validate\\error.log",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/build-logs/validate/error.txt",
+      "bytes": 3863,
+      "sha256": "986B00C919DCEC2E3FF58298F5066CFF622F88BBCD616BF8FA5AD0142F26F2A0"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v1\\workbench\\validate\\script.log",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v1/build-logs/validate/script.txt",
+      "bytes": 2617,
+      "sha256": "2D926C80FFF11D7840A0DE55B82D8619CBDC06A8CF4EB5503B495284BD374673"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\CF_OrdinaryOutboundBayCourse.c",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/CF_OrdinaryOutboundBayCourse.c",
+      "bytes": 23108,
+      "sha256": "73A0B43E5D64C054C4F90B6A8C4463AAED70A74126EE195E7C1E226911077A77"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\comparison-basis-clarification.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/comparison-basis-clarification.json",
+      "bytes": 304,
+      "sha256": "C5968B4A9EAB4DF7E58213E42D363EF7FD6B267FCE3D89BA161D831771866A72"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\document-live.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/document-live.mjs",
+      "bytes": 18745,
+      "sha256": "D517C843573693F9711C97967981C271BE4127BA6674F99C29290CCC20A7C729"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\document-preparation.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/document-preparation.mjs",
+      "bytes": 5703,
+      "sha256": "1E9593A1EBB13EA5FBACA259A3E2AA429B4B8689F104EC0EBDD669A5163B2B88"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\edit-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/edit-review.json",
+      "bytes": 6500,
+      "sha256": "79C7549B3E7A94EC681FD0358FA75B1D8981CB93932EAD8D91765C20E5EA2004"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\finalize-docs.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/finalize-docs.mjs",
+      "bytes": 4222,
+      "sha256": "6FAA9A5326053AC9DBFD85342DB78886E72B7039D925619AC8A6796FB252BE78"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\freeze.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/freeze.mjs",
+      "bytes": 5890,
+      "sha256": "CA12569EB43908A47A36B8D9817257851EF754CA9A3DEA482CC0EB2CCFD8F187"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\frozen-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/frozen-review.json",
+      "bytes": 7155,
+      "sha256": "B65B791018F6F1BD44E594306B1F4FE8A21232C2AE3CFC2B85686D2D5904CE67"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\geometry-preparation-audit.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/geometry-preparation-audit.json",
+      "bytes": 11377,
+      "sha256": "BA796B58F0195C75699AF5D48B7479DF8F7A80911224C26270DECF3CAC262737"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\geometry-preparation-audit.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/geometry-preparation-audit.mjs",
+      "bytes": 13967,
+      "sha256": "2DCEEAF981DB4BE3859934664FAA1E3678D26A93722ABB58651414B6DDEC5C2F"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\live-execution-record.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/live-execution-record.json",
+      "bytes": 2252,
+      "sha256": "23553653F4638441FF72C555E9439ECA6D3E7B4900E00E97A16729D36758E016"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\review-course.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/review-course.mjs",
+      "bytes": 10051,
+      "sha256": "95932D4B847DDE712A0C194A4E008256AD5B8F14D18A7566BEF6AC672D2A0340"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\source-diff.patch",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/source-diff.patch",
+      "bytes": 6695,
+      "sha256": "E517338751AAB9A4C83C6BED946623B72A3FB82DAA928B32736940B336D70CD2"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\timeline.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/timeline.mjs",
+      "bytes": 7481,
+      "sha256": "B6B2E61CE933DB9BC568BC1E38784D045A8FFE4BC3B1BAF0708C2913E40380B7"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-outbound-bay-v2\\watch-terminal.mjs",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/preparation-artifacts/watch-terminal.mjs",
+      "bytes": 1906,
+      "sha256": "13C09157D84F8EE6BCB8AD45C7CFB0575164A1B8D60C3B0F76BB96601283E9BD"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\driving-timeline-review-v2.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/run-reports/driving-timeline-review-v2.json",
+      "bytes": 360767,
+      "sha256": "B3F237393E136C59C98F1864E3475B824A1DECED5F80790E92D53709CF96C2FC"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\driving-timeline-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/run-reports/driving-timeline-review.json",
+      "bytes": 74196,
+      "sha256": "B989B90AF4EDFA3C008311A9BE8961C6FFE1EB3A4954E8D5045A5B16D7D4C811"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\final-live-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/run-reports/final-live-review.json",
+      "bytes": 54908,
+      "sha256": "35333D02BA491218A40983806F44ADFA3F9ADEE7988B59356DE8DD445D1920B2"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\gameplay-at-terminal.log.provenance.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/run-reports/gameplay-at-terminal.log.provenance.json",
+      "bytes": 1080,
+      "sha256": "6F94CDBD29B6EB8614C028FFDBE66728FB151CC5ADED1EA6B85418A49A0896C9"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\loaded-trip-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/run-reports/loaded-trip-review.json",
+      "bytes": 271162,
+      "sha256": "0C4A0402206CB37B58E929C4A1EF76522D9FCBD4125A22A119DB98CA3FD34F31"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\ordinary-course-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/run-reports/ordinary-course-review.json",
+      "bytes": 764117,
+      "sha256": "05E030B4196C465790F4FD90B415970C8C6AFB27DC682E185CA84846F8EB9013"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\postrun-provenance-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/run-reports/postrun-provenance-review.json",
+      "bytes": 407292,
+      "sha256": "B1BBEF69810967AFE5C78F7732CB6FBF1E7006E0A2097F9D4BC78EA958B849D7"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\visual-inspection-review.json",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/run-reports/visual-inspection-review.json",
+      "bytes": 2328,
+      "sha256": "023997B3654E83BCE0822BBE6710AF1EF131C3B924FA049FB199B2589E9D6882"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v2\\workbench\\validate\\console.log",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/build-logs/validate/console.txt",
+      "bytes": 28745,
+      "sha256": "361766FE2889EEE3BDF7F5F3A6D108EC63EB26A85606939865A383BF09DFBF3A"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v2\\workbench\\validate\\error.log",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/build-logs/validate/error.txt",
+      "bytes": 13444,
+      "sha256": "13FF33ED2F71CFD96D95728EFB264C76309472285A222C9591E862773BBCAE53"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v2\\workbench\\validate\\script.log",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/build-logs/validate/script.txt",
+      "bytes": 13005,
+      "sha256": "94299E2B81C5B4F5C540BB7731FBEF4FFDA3D78E45A187C1CEAA020A85355C9B"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v2\\workbench\\pack\\console.log",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/build-logs/pack/console.txt",
+      "bytes": 22049,
+      "sha256": "C8F8247D786127E0FFE3A6149C18AF2EEBEA821691D6BD0B09198808D9042348"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v2\\workbench\\pack\\error.log",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/build-logs/pack/error.txt",
+      "bytes": 4330,
+      "sha256": "87711DD29A0B46423B3A242F442B9E26F22C92DB27102396167F9B7A24755D2A"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-outbound-bay-v2\\workbench\\pack\\script.log",
+      "archive": "docs/experiments/archives/ordinary-outbound-bay-v2/build-logs/pack/script.txt",
+      "bytes": 3460,
+      "sha256": "BC485B7C091DFDF5268A60EDB49E43486BAE16B8E4E6BFFBFF21C87BA923EAE9"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\checkpoint-interrupted.mjs",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/checkpoint-interrupted.mjs",
+      "bytes": 7293,
+      "sha256": "777A819D933552072A2C13A141C75DD16E92C0C5D4C1A342C3DB2AADBECFE987"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\declare.mjs",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/declare.mjs",
+      "bytes": 4900,
+      "sha256": "035AB74A490E446230438A3339990675EF5ADE660D4A11762FFA9ED973F1C923"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\document-preparation.mjs",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/document-preparation.mjs",
+      "bytes": 12555,
+      "sha256": "4003966A01E1A77F545D46961FFB67B4E7DC5066D05A426CC881EA1F8B3CF982"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\edit-review.json",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/edit-review.json",
+      "bytes": 1972,
+      "sha256": "7755A8C448EF7291F9BE172E2514DA10A61F2A85624A5CE53C85A041492C6EBA"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\freeze.mjs",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/freeze.mjs",
+      "bytes": 6483,
+      "sha256": "04E675FACC1682C6FC47DB2453F323479C651CFFF1020009D1AE7C5A1821E5F4"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\frozen-review.json",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/frozen-review.json",
+      "bytes": 8061,
+      "sha256": "0EC25D5303EF4EBB1DEE81349352271628F75F2B3523A3D751F44B523537F126"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\geometry-declaration.json",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/geometry-declaration.json",
+      "bytes": 6704,
+      "sha256": "709074D116B1541438C3ADC19A78D0C33672D4D4D2F7C99287338D927F2DAA78"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\launch-plan.json",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/launch-plan.json",
+      "bytes": 1282,
+      "sha256": "021732A87146E58BFA3CA1DFBAE93558B80B20172E3FAE69368377B0E2656847"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\launch-preflight.mjs",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/launch-preflight.mjs",
+      "bytes": 2223,
+      "sha256": "651E9C24028BA7D53195C5D7A7D6568FA31F54C059D98777505D9FEE00F0A71F"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\live-execution-record.json",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/live-execution-record.json",
+      "bytes": 7892,
+      "sha256": "53697E5E5647D68D6880F1A606E9064A3503A8573DB71AAFBC49615B20172B63"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\prelaunch-source-verification.json",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/prelaunch-source-verification.json",
+      "bytes": 394613,
+      "sha256": "E8FF5617FCC7A7E9663591BA7442B8A14714AD97EE5E8267D2F594D0CF03B19E"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\preparation-closure-review.json",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/preparation-closure-review.json",
+      "bytes": 1520,
+      "sha256": "8A0A1CA4BEB2D04E1297DDF3FA2B64E35398435BB52B8E8250C88FD4B5A65FD5"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\prepare.mjs",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/prepare.mjs",
+      "bytes": 3227,
+      "sha256": "72D1EA6A9BE8ED6F84405CF28FD473FD2D05F2E6ACC77ADDC9C42035EB846EB7"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\source-diff.patch",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/source-diff.patch",
+      "bytes": 2473,
+      "sha256": "2B49CD41B9CAD60D1B753B03E241A5B70B2B2383469D42E55A876562CFF86E86"
+    },
+    {
+      "original": "C:\\Users\\marco\\.codex\\worktrees\\175a\\REFORGER\\.cache\\ordinary-road-start-join-v1\\watch-terminal.mjs",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/preparation-artifacts/watch-terminal.mjs",
+      "bytes": 1909,
+      "sha256": "84BB8CC8C360BEF70DC2C9C794AF1AA50484190C8C7BA9D91DDCD755289D1882"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-road-start-join-v1\\interrupted-run-review.json",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/run-reports/interrupted-run-review.json",
+      "bytes": 7892,
+      "sha256": "53697E5E5647D68D6880F1A606E9064A3503A8573DB71AAFBC49615B20172B63"
+    },
+    {
+      "original": "D:\\ReforgerAgentRuns\\ordinary-road-start-join-v1\\postrun-source-verification.json",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/run-reports/postrun-source-verification.json",
+      "bytes": 394613,
+      "sha256": "E8FF5617FCC7A7E9663591BA7442B8A14714AD97EE5E8267D2F594D0CF03B19E"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-road-start-join-v1\\workbench\\validate\\console.log",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/build-logs/validate/console.txt",
+      "bytes": 28784,
+      "sha256": "B9B59E06C2F552A6E76F8D78E03C590E52876568603A36D208C52A0328F40074"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-road-start-join-v1\\workbench\\validate\\error.log",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/build-logs/validate/error.txt",
+      "bytes": 13447,
+      "sha256": "F2921D852403697F76C2AB65188D313A56993C81D6A69674391B887776BB22EE"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-road-start-join-v1\\workbench\\validate\\script.log",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/build-logs/validate/script.txt",
+      "bytes": 13008,
+      "sha256": "B83F4D8EB221FEF84FD92861A3D0AC69F2E3B6663063108C73F80EB59E022D66"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-road-start-join-v1\\workbench\\pack\\console.log",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/build-logs/pack/console.txt",
+      "bytes": 22103,
+      "sha256": "FDE3E00F0A92D04133BEBAB834B38C130B03678C7C40FF606F9331921E7FF78E"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-road-start-join-v1\\workbench\\pack\\error.log",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/build-logs/pack/error.txt",
+      "bytes": 4333,
+      "sha256": "41FE6B6B9A6457AC049653A560A893F496DC99B16F6A3239CD937BDA7FBAA530"
+    },
+    {
+      "original": "D:\\ReforgerAgentBuilds\\ordinary-road-start-join-v1\\workbench\\pack\\script.log",
+      "archive": "docs/experiments/archives/ordinary-road-start-join-v1/build-logs/pack/script.txt",
+      "bytes": 3463,
+      "sha256": "28EC022E16A5D0286B02FEEC855C1368F3BB4763B752297C713C5E31A4649EE0"
+    }
+  ],
+  "excluded": [
+    "All .pak frozen/runtime builds; root control is separately arranging a draft V8 backup, not yet verified here.",
+    "Raw .cache and D: console/script/error/crash logs, terminal-prefix logs and native BMP/PNG; original local paths retained in reports, root control is separately arranging a draft evidence backup.",
+    "All recordings/videos, dedicated/client profiles, auth data, install/cache/workshop content."
+  ],
+  "separatelyVerifiedDraftBackup": {
+    "releaseId": 400404255,
+    "receipt": "verified-draft-backup-receipt.json",
+    "scope": "Exact V8 trio and seven worktree frozen-source snapshots; selected571 worktree/D: test files. Not all caches, packs or recordings."
+  }
+}

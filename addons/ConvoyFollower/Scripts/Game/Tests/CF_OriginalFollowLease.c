@@ -1,4 +1,6 @@
-// Staged, default-off comparison. Authored orchestration; no copied native tree.
+// Gameplay lease used by ordinary CF_ConvoyFollowDriverControllerComponent
+// prefabs. The Tests path reflects its development origin. Authored orchestration;
+// no copied native tree. Standalone base components still default to opt-in.
 // References are weak except the lease shared by the controller/waypoint/activity.
 class CF_OriginalFollowLease
 {

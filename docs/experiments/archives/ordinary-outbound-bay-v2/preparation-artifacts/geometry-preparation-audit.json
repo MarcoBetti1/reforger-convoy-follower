@@ -1,0 +1,216 @@
+{
+  "status": "PREPARATION_AUDIT_CONSTRAINED_NO_CANDIDATE",
+  "scope": "Root authorized conditional preparation only; current task closes with the documented existing-evidence geometry constraint, not a candidate or launch.",
+  "equivalentPriorTestFound": false,
+  "comparison": [
+    {
+      "family": "Everon aligned ordinary V3",
+      "evidence": ".cache/everon-loaded-ordinary-aligned-v3/contract.json",
+      "difference": "Original loaded direct formation but west-facing inline trucks on identical grass apron; same road join/turn retained. Older controller/heading progress, not current goal-axis/net100 gate. ready=true/100.052m58power; spacing384.034FAIL.",
+      "equivalent": false
+    },
+    {
+      "family": "Matched fixed MOVE / canonical stock Follow",
+      "evidence": ".cache/everon-loaded-native-pair-v1/completed-pair-review.json",
+      "difference": "Same loaded aligned apron/corridor, but no convoy session recruitment or follower FRAME; native fixed MOVE versus stock Follow(useVehicles=false). NativeMOVE361.882m135power positive does not isolate recruited original formation.",
+      "equivalent": false
+    },
+    {
+      "family": "Road81 direct / guide head",
+      "evidence": "docs/experiments/head-guide-road81-v1.md",
+      "difference": "One empty follower, native lead/passenger owner20; direct original versus recorded guide, older source/rear pacing disabled. Travel190.4065/213.9806; spacing128.812/100.092FAIL, arrival180 positive. Different starting route and no native100 cargo or current core/net100 witness.",
+      "equivalent": false
+    },
+    {
+      "family": "Loaded straight V1–V5",
+      "evidence": "docs/experiments/loaded-straight-trip-v1.md",
+      "difference": "Two followers, older guide/cooperation/projection variants, Arland goal about240m from lead.100pertruck; delivery/arrival/Hold positives and spacing/restart/reversal failures. Not current one-loaded direct follower on >350m Everon corridor.",
+      "equivalent": false
+    },
+    {
+      "family": "Integrated Road81",
+      "evidence": "docs/experiments/road81-integrated-trip-v1.md",
+      "difference": "Two loaded followers/older canonical58c36a2 source, destination276.438m away; delivery200/arrival/Hold/Resume positive but head172.483FAIL. Not current one-loaded Everon control with ≥350m endpoint gate.",
+      "equivalent": false
+    },
+    {
+      "family": "Road81 short scripted-owner fixtures",
+      "evidence": "docs/convoy-feature-courses.md",
+      "difference": "No established powered intended pilot movement; held control-write family, 45/35m and8s gates differ. Not usable as a calibrated native-lead original-follow control.",
+      "equivalent": false
+    }
+  ],
+  "prerequisites": [
+    {
+      "name": "Outbound route",
+      "source": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source/Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c",
+      "required": "One reachable native road query radius5; hint resolution≤3m and lead-to-resolved-goal distance≥350m. No search or bound relaxation."
+    },
+    {
+      "name": "Initial geometry and ready",
+      "source": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source/Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c",
+      "required": "Separation dot lead world forward≥5; original two-truck StartBarrier; selected owned startupWait within10world subbound, full setup95world; actual core ready=true, no guard reset/rearm."
+    },
+    {
+      "name": "Native seats/staging",
+      "source": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source/Scripts/Game/Tests/CF_OriginalFollowResumeProbeComponent.c",
+      "required": "Stopped≤2kmh scoped original CanCommandPark; toOwner requires native control+selected exact lead Wait; toNative requires ownerpilot+nativepilotonfoot. Original head staging captured only during real ownerpilot occupancy; transfer subbounds15world. Existing native exit helper TELEPORT flag disclosed; no new actor pose writer."
+    },
+    {
+      "name": "Cargo/rear source reach",
+      "source": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source/Scripts/Game/Tests/CF_LoadedSupplyTripProbeComponent.c",
+      "required": "Original named follower/source/distinct destination; unique physical source/destination containers and unchanged cargo owner; source1800, zero cargo/destination, destinationcapacity≥100 and source/destination separation≥15m. Actual exact rear context range/angle/LOS, native CanBeShown/CanBePerformed and original queues must hold; center-distance placement does not establish reach. Static≤0.5kmh, bounded load/cancel then3world stability; no resource writes."
+    },
+    {
+      "name": "Motion and arrival",
+      "source": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source/Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c",
+      "required": "Nativelead150m/3power and original exact continuous goal-axis100m plus independent fixed-endpoint net100m/3power;240world outbound. Stickywhole60m, actual captured follower ownedarrivalWait and selected leadWait, bothspeed≤2;90world arrival capture then180world/2m and≥180Wait samples."
+    },
+    {
+      "name": "Later inherited course",
+      "source": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source/Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c",
+      "required": "Existing V2 continues into Hold/Resume/bay using fixed reverse corridor/bay/storage geometry. A short arrival-only diagnostic would need an explicitly reviewed scope/terminal seam; relocating staging alone must not imply those later fixed endpoints qualify. No preparation made that edit."
+    }
+  ],
+  "observedGeometry": {
+    "gentlerObservedSection": {
+      "start": [
+        7178.39,
+        141.075,
+        2490.36
+      ],
+      "end": [
+        7143.89,
+        151.249,
+        2705.81
+      ],
+      "straightLineEndpointDistanceM": 218.19475818635038,
+      "observedSamples": 41,
+      "maxPhysicalCenterDistanceFromEndpointChordM": 2.682344456231346,
+      "observedHeadXRange": [
+        7143.89,
+        7178.39
+      ],
+      "basis": "Existing samePoll head physical positions; not road-centerline/native reach, surface material or clearance proof"
+    },
+    "longBendingObservedCorridor": {
+      "start": [
+        7178.39,
+        141.075,
+        2490.36
+      ],
+      "end": [
+        7173.8,
+        139.817,
+        2917.3
+      ],
+      "straightLineEndpointDistanceM": 426.9646726603971,
+      "observedSamples": 81,
+      "maxPhysicalCenterDistanceFromEndpointChordM": 75.55266317234125,
+      "observedHeadXRange": [
+        7099.29,
+        7178.39
+      ],
+      "basis": "Existing samePoll head physical positions; not road-centerline/native reach, surface material or clearance proof"
+    },
+    "unselectedInspectedRoadStartExample": {
+      "inspectedOriginalTailRoadPosition": [
+        7172.48,
+        143.648,
+        2531.51
+      ],
+      "alreadyDrivenHeadExample": [
+        7170.92,
+        145.254,
+        2553.71
+      ],
+      "initialSeparationM": 22.25474331462824,
+      "geometry": {
+        "start": [
+          7170.92,
+          145.254,
+          2553.71
+        ],
+        "end": [
+          7173.8,
+          139.817,
+          2917.3
+        ],
+        "straightLineEndpointDistanceM": 363.6014060753892,
+        "observedSamples": 69,
+        "maxPhysicalCenterDistanceFromEndpointChordM": 73.7734872632433,
+        "observedHeadXRange": [
+          7099.29,
+          7170.92
+        ],
+        "basis": "Existing samePoll head physical positions; not road-centerline/native reach, surface material or clearance proof"
+      },
+      "selectedAsAuthoredGeometry": false
+    }
+  },
+  "constraint": "No evidenced straight≥350m corridor identified within the already-driven V2 Everon route. Gentler bounded span is shorter; the retained-length span includes a substantial bend. This is not a claim that no such road exists anywhere on Everon. Extending into unsurveyed terrain, labeling winding geometry straight, or lowering350m would not satisfy the authorized control.",
+  "nextActionProposal": "Propose one bounded read-only comparison of the already archived Road81 direct-head versus V2 physical pace windows, using existing regular samples and endpoint/heading metrics if those raw logs are available on the original archive. Limit to the first gap recovery, turn/join and aligned-motion windows; record backend/version/cargo differences explicitly. Do not rerun a Road81 fixture or treat unmatched differences as causal. If raw logs are unavailable, retain the published direct-head result as the comparison limit rather than reconstructing unseen controls. No native demand getter, cap/backend/guard sweep or further live launch.",
+  "evidenceHashes": [
+    {
+      "path": "docs/experiments/head-guide-road81-v1.md",
+      "bytes": 4147,
+      "sha256": "035439ABBDAA702501559A17FAC66D6346035C4F8AE4F816236B22D1C5C6B4CB"
+    },
+    {
+      "path": "docs/experiments/road81-integrated-trip-v1.md",
+      "bytes": 4695,
+      "sha256": "67B85E7996ED8AC4DE481D5A8AB738228AB726B04B0FE2CE632476075BBEF3EF"
+    },
+    {
+      "path": "docs/experiments/loaded-straight-trip-v1.md",
+      "bytes": 5237,
+      "sha256": "BDDCC476AF4EF185F453A9EF13AF8A9AFC803BFF2F84399D50C309888FDDBD72"
+    },
+    {
+      "path": "docs/experiments/loaded-straight-trip-v5.md",
+      "bytes": 5070,
+      "sha256": "17D789C8D5A1FF8AF92B8AE9627DE4ADB5E61869AA85317E6FDFEA742D740968"
+    },
+    {
+      "path": ".cache/everon-loaded-ordinary-aligned-v3/contract.json",
+      "bytes": 1036,
+      "sha256": "507FE2529C28EEBBBFE7B7E91DF376309F0AE5230A98FC7870BB6D3C644579B9"
+    },
+    {
+      "path": ".cache/everon-loaded-native-pair-v1/completed-pair-review.json",
+      "bytes": 8705,
+      "sha256": "2EDEF8949CB58DE982CBEAB25C4235FB096F9BE001294C184D6BF882286C69A3"
+    },
+    {
+      "path": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source/Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c",
+      "bytes": 23108,
+      "sha256": "73A0B43E5D64C054C4F90B6A8C4463AAED70A74126EE195E7C1E226911077A77"
+    },
+    {
+      "path": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source/Scripts/Game/Tests/CF_LoadedSupplyTripProbeComponent.c",
+      "bytes": 19779,
+      "sha256": "AF4ABB20F42B9EE0FA61DDB255D4F65212ACC48F32A66653059D8EA409BBF88E"
+    },
+    {
+      "path": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source/Scripts/Game/Tests/CF_NativeCargoActionProbeComponent.c",
+      "bytes": 28287,
+      "sha256": "0533D7F8B843737B0D90DC21D062077CD1DA47B60EDAB7BDA51527DA3E9E8134"
+    },
+    {
+      "path": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-source/source/Scripts/Game/Tests/CF_OriginalFollowResumeProbeComponent.c",
+      "bytes": 27978,
+      "sha256": "9ACE8590B9441F06BCB3960D1D745720F1D90F822EAC6C1B7E7ABB84323CCCD4"
+    },
+    {
+      "path": "D:/ReforgerAgentRuns/ordinary-outbound-bay-v2/driving-timeline-review-v2.json",
+      "bytes": 360767,
+      "sha256": "B3F237393E136C59C98F1864E3475B824A1DECED5F80790E92D53709CF96C2FC"
+    }
+  ],
+  "candidateAuthored": false,
+  "worldOrSourceChanged": false,
+  "newBuildOrPack": false,
+  "newValidationOrLaunch": false,
+  "manualV8Touched": false,
+  "productionTurnCodePreserved": true
+}

@@ -1,0 +1,9 @@
+# Road-start control interrupted for user takeover
+
+September30,2026. Exactly one authorized frozen control client launched at14:59:20Central with the reviewed B279929D…298B3 data and1650world/5000wall/5100watch bounds. Marco then explicitly requested checkpoint, GitHub sync and pause for machine takeover. No new run, source, pose or gate adjustment occurred.
+
+The console initialized the declared world and cargo/course components, then last logged at14:59:34.051. No physical cargo transfer/cancel/stability, paced world-time sample, actual core ready=true, movement, arrival, terminal result or native BMP was recorded. Startup initialization and loaded module text are not a GAME/result witness. Focus and engine clock rate were not observed; no focus/input intervention was attempted and no cause is inferred.
+
+Normal window close requested20:02:02.663UTC/15:02:02.663Central returned true but did not complete after bounded observation. Root stopped only its verified client PID9268, then consumed client exit4294967295/launcher1 and cancelled its watcher83530 (exit1). No PACED terminal snapshot was fabricated. User-abort-console.log is a separate copy equal to the preserved full24676byte console, SHAE909B7676C03ADC7061F51B8AA30CCCDFCCC0F4A1AF5B8CAC286A785243C2227. Natural30world close did not occur; shutdown is censored. 8observed pre-shutdown error rows are retained; post-result classification is inapplicable and unobserved shutdown errors are not zero.
+
+Post-stop616source/238packedtext and all three deployment hashes still verify. The complete interrupted-run-review.json and postrun-source-verification.json are atD:/ReforgerAgentRuns/ordinary-road-start-join-v1. Earlier V1 setupFAIL and V2 strict100m positive/303.235m spacing and arrivalFAIL remain intact. This interruption gives the road-start control no source-reach/clearance/driving/arrival or release result. No replay is authorized while the goal is paused.

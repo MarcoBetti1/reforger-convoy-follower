@@ -1,0 +1,27 @@
+---------------------------------------------
+Log D:\ReforgerAgentBuilds\ordinary-outbound-bay-v1\workbench\validate\script.log started at 2026-09-30 12:44:21 (2026-09-30 17:44:21 UTC)
+
+12:44:21.969    SCRIPT       : SCRIPT       : Initializing scripts
+12:44:21.969     SCRIPT       : SCRIPT       : ScriptProjectManager init
+12:44:22.206    SCRIPT       : SCRIPT       : Compiling GameLib scripts
+12:44:22.240    SCRIPT       : Module: Workbench; loaded 18x files; 36x classes; used 125K of static memory; defines: "ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE"; CRC32: 90ce0460
+12:44:22.241    SCRIPT       : Module: GameLib; loaded 465x files; 648x classes; used 828K of static memory; defines: "ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE"; CRC32: 4507af04
+12:44:22.241    SCRIPT       : SCRIPT       : Compiling Game scripts
+12:44:22.675   SCRIPT       : Compiling Game scripts
+12:44:22.675    SCRIPT    (E): @"Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c,29": Variable name 'Sequence' is already used as type name
+12:44:22.847    SCRIPT    (E): Can't compile "Game" script module!
+
+Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): Variable name 'Sequence' is already used as type name
+12:44:22.907    SCRIPT    (W): Failed to load
+12:44:22.907   SCRIPT    (W): Initializing default GameLib's game class.
+12:44:22.921  SCRIPT       : Validating script for configuration WORKBENCH...
+12:44:23.286  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:23.509  SCRIPT       : Validating script for configuration PC...
+12:44:23.866  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:24.080  SCRIPT       : Validating script for configuration XBOX...
+12:44:24.438  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:24.655  SCRIPT       : Validating script for configuration PS4...
+12:44:25.014  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:25.231  SCRIPT       : Validating script for configuration PS5...
+12:44:25.587  SCRIPT    (E): Scripts/Game/Tests/CF_OrdinaryOutboundBayCourse.c(29): error: Variable name 'Sequence' is already used as type name
+12:44:25.804  SCRIPT       : Script validation failed.

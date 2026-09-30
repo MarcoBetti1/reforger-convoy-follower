@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{6F81C955C37E2F87}Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass XBOX_ONE : PC {
+  }
+  ENTResourceClass XBOX_SERIES : PC {
+  }
+  ENTResourceClass PS4 : PC {
+  }
+  ENTResourceClass PS5 : PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

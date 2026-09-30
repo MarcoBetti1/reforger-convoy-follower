@@ -1,0 +1,13 @@
+{
+  "scope": "Exact frozen source and exported report reconstruction from actual staged Git blobs, including SHA-selected line-ending materialization",
+  "counts": {
+    "manual-v8": 607,
+    "ordinary-outbound-bay-v1": 616,
+    "ordinary-outbound-bay-v2": 616,
+    "ordinary-road-start-join-v1": 616,
+    "report": 81
+  },
+  "uniqueStagedBlobs": 772,
+  "lineEndingMaterializations": 1770,
+  "allExactOrShaQualified": true
+}

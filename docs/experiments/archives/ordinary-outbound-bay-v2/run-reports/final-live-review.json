@@ -1,0 +1,1553 @@
+{
+  "status": "ONE_RUN_CLOSED_ARRIVAL_FAIL",
+  "liveLaunches": 1,
+  "terminal": {
+    "line": 5103,
+    "text": "13:48:27.400 SCRIPT       : [ConvoyFollower] PACED_RESULT: FAIL run_id=0x4000000000000005 {}_0 tick=208 seconds=238.31 expected=1 peak_gap_m=303.235 observation_samples=0 first_failure=spacing:link_over_60m_unit_1 owned_lead_park_retained=true",
+    "marker": "PACED_RESULT",
+    "run_id": "0x4000000000000005 {}_0",
+    "tick": "208",
+    "seconds": "238.31",
+    "expected": "1",
+    "peak_gap_m": "303.235",
+    "observation_samples": "0",
+    "first_failure": "spacing:link_over_60m_unit_1",
+    "owned_lead_park_retained": "true"
+  },
+  "prefix": {
+    "line": 5097,
+    "text": "13:48:27.395 SCRIPT       : string line = '[ConvoyFollower] ORDINARY_BAY_PREFIX_RESULT: reason=ordinary_prefix_90world_owned_arrival_capture_timeout complete=false real_departure=true ordinary_same_activity_100m3=true arrival_180s2m=false hold_30s2m=false fresh_resume_20m3=false peak_gap_m=303.235 whole_run_failed=true original_identities=true guard_reset=false follower_controls_written=false native_lead_passenger_owner=true production_player_home_claim=false'",
+    "marker": "ORDINARY_BAY_PREFIX_RESULT",
+    "reason": "ordinary_prefix_90world_owned_arrival_capture_timeout",
+    "complete": "false",
+    "real_departure": "true",
+    "ordinary_same_activity_100m3": "true",
+    "arrival_180s2m": "false",
+    "hold_30s2m": "false",
+    "fresh_resume_20m3": "false",
+    "peak_gap_m": "303.235",
+    "whole_run_failed": "true",
+    "original_identities": "true",
+    "guard_reset": "false",
+    "follower_controls_written": "false",
+    "native_lead_passenger_owner": "true",
+    "production_player_home_claim": "false"
+  },
+  "actualReady": [
+    {
+      "line": 893,
+      "text": "13:45:13.096   SCRIPT       : [ConvoyFollower] INITIAL_DEPARTURE: Unit 1 ready=true target=Vehicle<0x000002263F75D078> @\"ENTITY:4611686018427387909\" ('CF_SmokeLead', Vehicle) at <7228.992188 138.600784 2438.067139> advance_m=3.98884 forward_kmh=17.834 goal_distance=23.9358 goal_ahead=23.9282 wait_selected=1",
+      "marker": "INITIAL_DEPARTURE",
+      "ready": "true",
+      "target": "Vehicle<0x000002263F75D078> @\"ENTITY:4611686018427387909\" ('CF_SmokeLead', Vehicle) at <7228.992188 138.600784 2438.067139>",
+      "advance_m": "3.98884",
+      "forward_kmh": "17.834",
+      "goal_distance": "23.9358",
+      "goal_ahead": "23.9282",
+      "wait_selected": "1"
+    }
+  ],
+  "firstStrictWitness": {
+    "line": 3074,
+    "text": "13:46:24.117 SCRIPT       : string line = '[ConvoyFollower] ORDINARY_BAY_MOTION: phase=1 resume=false exact_original_activity=true continuous=true sequence=1 waypoint_id=0x60000000000002AD {} origin=<7172.48, 143.648, 2531.51> previous_actual_native_target_goal=<7132.93, 149.391, 2746.49> signed_previous_goal_step_m=2.39215 single_activity_progress_m=152.76 single_activity_powered=37 fixed_route_goal=<7173.8, 139.817, 2917.3> independent_activity_net_route_approach_m=100.042 powered=true qualified=true original_identity=true'",
+    "marker": "ORDINARY_BAY_MOTION",
+    "phase": "1",
+    "resume": "false",
+    "exact_original_activity": "true",
+    "continuous": "true",
+    "sequence": "1",
+    "waypoint_id": "0x60000000000002AD {}",
+    "origin": "<7172.48, 143.648, 2531.51>",
+    "previous_actual_native_target_goal": "<7132.93, 149.391, 2746.49>",
+    "signed_previous_goal_step_m": "2.39215",
+    "single_activity_progress_m": "152.76",
+    "single_activity_powered": "37",
+    "fixed_route_goal": "<7173.8, 139.817, 2917.3>",
+    "independent_activity_net_route_approach_m": "100.042",
+    "powered": "true",
+    "qualified": "true",
+    "original_identity": "true"
+  },
+  "independentMotionSummary": {
+    "continuousIdentityMismatches": 0,
+    "poweredMismatches": 0,
+    "powerCounterMismatches": 0,
+    "firstRecomputedNetM": 100.03364681505701,
+    "maxSignedDifference": 0.009389836385898409,
+    "maxProgressDifference": 0.008066337576792648,
+    "maxNetDifference": 0.00835318494299031
+  },
+  "camera": {
+    "images": [
+      {
+        "native": {
+          "path": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\logs\\journey-outbound-100m3.bmp",
+          "bytes": 2764854,
+          "sha256": "FF2CED5D582AB42F4A1B70096CF596F228984AD49A21523C0949B7AA595B845C"
+        },
+        "png": {
+          "path": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\journey-outbound-100m3.png",
+          "bytes": 1549247,
+          "sha256": "852505FEA4639A1E6DB13CF4CCBE82746EC029224840C568AE8025A8C188FDC3"
+        },
+        "dimensions": [
+          1280,
+          720
+        ],
+        "rgbPixelEqual": true,
+        "rootInspection": "One follower centered on paved road, grass slopes and nearby fence; leader off-frame under tail-only camera. One moment, not full driving path."
+      },
+      {
+        "native": {
+          "path": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\logs\\journey-outbound-start.bmp",
+          "bytes": 2764854,
+          "sha256": "51FA8900D42FC628E25710FE4F976441492193281269AA385147AA7571AAB841"
+        },
+        "png": {
+          "path": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\journey-outbound-start.png",
+          "bytes": 1630784,
+          "sha256": "A66536ADF7FFCB1E024CDB2F1E57987BC9BA9D893817333E46AA1CF8ABF82C75"
+        },
+        "dimensions": [
+          1280,
+          720
+        ],
+        "rgbPixelEqual": true,
+        "rootInspection": "Both original trucks visible on staging grass with source storage, road/stream/buildings."
+      },
+      {
+        "native": {
+          "path": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\logs\\parking-terminal.bmp",
+          "bytes": 2764854,
+          "sha256": "35357549778E08DE2299325C8AFF2FF7F5FBA13AE0B1DFDBBFF5D004702FA986"
+        },
+        "png": {
+          "path": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v2\\parking-terminal.png",
+          "bytes": 1759204,
+          "sha256": "9DC8BBEF4D51DED7293621507261A5AE60C4EAC030604DFAF57F9306559E95D3"
+        },
+        "dimensions": [
+          1280,
+          720
+        ],
+        "rgbPixelEqual": true,
+        "rootInspection": "Stopped follower on paved road at arrival-timeout terminal; grass slopes/fence visible, lead off-frame. No parking was attempted."
+      }
+    ],
+    "actualPixelsInspected": true,
+    "fullPathTurnSlotVideoInputClaim": false,
+    "overheadEffectIsolated": false,
+    "actualPixelsInspectionPending": false,
+    "earlierPendingFieldPreservedIn": "ordinary-course-review.json"
+  },
+  "timeline": {
+    "authoritative": "driving-timeline-review-v2.json",
+    "pairedSamples": 201,
+    "supersededRetained": "driving-timeline-review.json",
+    "scope": "Read-only existingV2 samePoll1Hz head/tail physical samples and nearest emitted path snapshots(with signed time offsets); no query/order/control/source changes. Path log emission is reason/periodic filtered and asymmetric across vehicles, so per-read joined subset means are not representative. Returned path array ordering/coordinates remain as disclosed unverified API output; cannot assert the final point is the native commanded endpoint.",
+    "milestones": [
+      {
+        "name": "First available drive pair",
+        "line": 733,
+        "time": "13:45:06.896",
+        "tick": 8,
+        "driveSeconds": 1.0005999999999986,
+        "courseSeconds": 37.814,
+        "gapXZ": 19.94001003008826,
+        "headOrigin": [
+          7232.98,
+          138.606,
+          2437.98
+        ],
+        "tailOrigin": [
+          7252.92,
+          138.029,
+          2437.96
+        ],
+        "headSpeed": 0,
+        "tailSpeed": 0,
+        "headThrottle": 0,
+        "tailThrottle": 0,
+        "headBrake": 1,
+        "tailBrake": 1,
+        "headGear": 1,
+        "tailGear": 1,
+        "tailEngine": "true",
+        "headRadialAwayKmh": 0,
+        "tailRadialTowardKmh": 0,
+        "intervalGapGrowthMps": 0,
+        "instantGapGrowthMps": 0,
+        "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+        "tailHeadingToHead": 0.99650616566478,
+        "tailBehavior": "CF_InitialDepartureWait:1",
+        "tailActivity": "SCR_AIIdleActivity:1",
+        "tailWaypoint": "none",
+        "pathSnapshotOffsetWorldSeconds": 0.03340000000000032,
+        "controllerRequestedCap": null,
+        "controllerCapRecordAgeLines": null,
+        "carPathCount": 0,
+        "groupPathCount": 0,
+        "carPathFirst": null,
+        "carPathLast": null,
+        "lastReturnedPointGapToLead": null,
+        "rawLoggedCount": null,
+        "rawTruncated": null
+      },
+      {
+        "name": "First gap >25m",
+        "line": 955,
+        "time": "13:45:13.913",
+        "tick": 15,
+        "driveSeconds": 8.017499999999998,
+        "courseSeconds": 44.8309,
+        "gapXZ": 28.24283271911633,
+        "headOrigin": [
+          7224.68,
+          138.61,
+          2438.36
+        ],
+        "tailOrigin": [
+          7252.92,
+          138.029,
+          2437.96
+        ],
+        "headSpeed": 19.3074,
+        "tailSpeed": 0.0513379,
+        "headThrottle": 0,
+        "tailThrottle": 0,
+        "headBrake": 0,
+        "tailBrake": 1,
+        "headGear": 3,
+        "tailGear": 1,
+        "tailEngine": "true",
+        "headRadialAwayKmh": 18.631194851349033,
+        "tailRadialTowardKmh": 0,
+        "intervalGapGrowthMps": 5.17378945373228,
+        "instantGapGrowthMps": 5.175331903152509,
+        "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+        "tailHeadingToHead": 0.9963646346619102,
+        "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+        "tailActivity": "CF_OriginalFollowActivity:1",
+        "tailWaypoint": "0x60000000000002AD {}",
+        "pathSnapshotOffsetWorldSeconds": -0.0666000000000011,
+        "controllerRequestedCap": null,
+        "controllerCapRecordAgeLines": null,
+        "carPathCount": 8,
+        "groupPathCount": 0,
+        "carPathFirst": [
+          7252.08,
+          139.879,
+          2437.51
+        ],
+        "carPathLast": [
+          7227.26,
+          138.612,
+          2438.18
+        ],
+        "lastReturnedPointGapToLead": 2.5862714474702244,
+        "rawLoggedCount": 8,
+        "rawTruncated": "0"
+      },
+      {
+        "name": "First gap >40m",
+        "line": 1022,
+        "time": "13:45:15.929",
+        "tick": 17,
+        "driveSeconds": 10.034300000000002,
+        "courseSeconds": 46.8477,
+        "gapXZ": 40.10768629577123,
+        "headOrigin": [
+          7213.6,
+          138.621,
+          2439.34
+        ],
+        "tailOrigin": [
+          7253.68,
+          137.98,
+          2437.85
+        ],
+        "headSpeed": 20.1742,
+        "tailSpeed": 4.7138,
+        "headThrottle": 0.0845675,
+        "tailThrottle": 1,
+        "headBrake": 0,
+        "tailBrake": 0,
+        "headGear": 3,
+        "tailGear": 2,
+        "tailEngine": "true",
+        "headRadialAwayKmh": 20.037590102458825,
+        "tailRadialTowardKmh": 0.28326889162158303,
+        "intervalGapGrowthMps": 5.486002284590408,
+        "instantGapGrowthMps": 5.48731144745479,
+        "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+        "tailHeadingToHead": 0.991522154101241,
+        "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+        "tailActivity": "CF_OriginalFollowActivity:1",
+        "tailWaypoint": "0x60000000000002AD {}",
+        "pathSnapshotOffsetWorldSeconds": 0.23349999999999937,
+        "controllerRequestedCap": 30.5043,
+        "controllerCapRecordAgeLines": 21,
+        "carPathCount": 16,
+        "groupPathCount": 0,
+        "carPathFirst": [
+          7253.21,
+          139.82,
+          2437.34
+        ],
+        "carPathLast": [
+          7216.75,
+          138.62,
+          2439.04
+        ],
+        "lastReturnedPointGapToLead": 3.1642534664590025,
+        "rawLoggedCount": null,
+        "rawTruncated": null
+      },
+      {
+        "name": "First gap >60m",
+        "line": 1805,
+        "time": "13:45:38.996",
+        "tick": 40,
+        "driveSeconds": 33.100300000000004,
+        "courseSeconds": 69.9137,
+        "gapXZ": 63.357301868056446,
+        "headOrigin": [
+          7176.57,
+          141.875,
+          2506.46
+        ],
+        "tailOrigin": [
+          7180.08,
+          138.848,
+          2443.2
+        ],
+        "headSpeed": 19.3422,
+        "tailSpeed": 8.42951,
+        "headThrottle": 0.325001,
+        "tailThrottle": 0.247227,
+        "headBrake": 0,
+        "tailBrake": 0,
+        "headGear": 3,
+        "tailGear": 0,
+        "tailEngine": "true",
+        "headRadialAwayKmh": 19.382153652398564,
+        "tailRadialTowardKmh": -3.820841753320349,
+        "intervalGapGrowthMps": 6.399377077407553,
+        "instantGapGrowthMps": 6.4452765015885864,
+        "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+        "tailHeadingToHead": 0.7269203643790382,
+        "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+        "tailActivity": "CF_OriginalFollowActivity:1",
+        "tailWaypoint": "0x60000000000002AD {}",
+        "pathSnapshotOffsetWorldSeconds": -0.20020000000000948,
+        "controllerRequestedCap": 42.3898,
+        "controllerCapRecordAgeLines": 18,
+        "carPathCount": 8,
+        "groupPathCount": 0,
+        "carPathFirst": [
+          7178.46,
+          138.902,
+          2443.99
+        ],
+        "carPathLast": [
+          7175.1,
+          141.514,
+          2500.96
+        ],
+        "lastReturnedPointGapToLead": 5.693057175191382,
+        "rawLoggedCount": null,
+        "rawTruncated": null
+      },
+      {
+        "name": "Strict100 witness nearest pair",
+        "line": 3069,
+        "time": "13:46:24.112",
+        "tick": 85,
+        "driveSeconds": 78.2166,
+        "courseSeconds": 115.03,
+        "gapXZ": 224.96537533585007,
+        "headOrigin": [
+          7130.48,
+          148.444,
+          2752.52
+        ],
+        "tailOrigin": [
+          7172.48,
+          143.648,
+          2531.51
+        ],
+        "headSpeed": 24.2357,
+        "tailSpeed": 9.40039,
+        "headThrottle": 0,
+        "tailThrottle": 0.240631,
+        "headBrake": 0.282185,
+        "tailBrake": 0,
+        "headGear": 4,
+        "tailGear": 2,
+        "tailEngine": "true",
+        "headRadialAwayKmh": 22.972980052084846,
+        "tailRadialTowardKmh": 8.608415926713374,
+        "intervalGapGrowthMps": 3.9872938435901517,
+        "instantGapGrowthMps": 3.9901567014920762,
+        "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+        "tailHeadingToHead": 0.996132313274648,
+        "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+        "tailActivity": "CF_OriginalFollowActivity:1",
+        "tailWaypoint": "0x60000000000002AD {}",
+        "pathSnapshotOffsetWorldSeconds": 0,
+        "controllerRequestedCap": 44.8973,
+        "controllerCapRecordAgeLines": 22,
+        "carPathCount": 20,
+        "groupPathCount": 0,
+        "carPathFirst": [
+          7172.84,
+          143.52,
+          2529.84
+        ],
+        "carPathLast": [
+          7130.57,
+          149.169,
+          2746.99
+        ],
+        "lastReturnedPointGapToLead": 5.53073232040769,
+        "rawLoggedCount": null,
+        "rawTruncated": null
+      },
+      {
+        "name": "First gap >275m",
+        "line": 3490,
+        "time": "13:46:39.162",
+        "tick": 100,
+        "driveSeconds": 93.2656,
+        "courseSeconds": 130.079,
+        "gapXZ": 275.31532648946353,
+        "headOrigin": [
+          7102.43,
+          140.599,
+          2843.9
+        ],
+        "tailOrigin": [
+          7166.36,
+          146.861,
+          2576.11
+        ],
+        "headSpeed": 22.9414,
+        "tailSpeed": 6.53738,
+        "headThrottle": 0,
+        "tailThrottle": 0.464916,
+        "headBrake": 0,
+        "tailBrake": 0,
+        "headGear": 4,
+        "tailGear": 2,
+        "tailEngine": "true",
+        "headRadialAwayKmh": 20.546773919351953,
+        "tailRadialTowardKmh": 6.799742310779459,
+        "intervalGapGrowthMps": 3.804748213796681,
+        "instantGapGrowthMps": 3.818619891270137,
+        "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+        "tailHeadingToHead": 0.9930396381708994,
+        "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+        "tailActivity": "CF_OriginalFollowActivity:1",
+        "tailWaypoint": "0x60000000000002AD {}",
+        "pathSnapshotOffsetWorldSeconds": 0.2839999999999918,
+        "controllerRequestedCap": 44.8973,
+        "controllerCapRecordAgeLines": 2,
+        "carPathCount": 26,
+        "groupPathCount": 0,
+        "carPathFirst": [
+          7166.37,
+          146.827,
+          2575.62
+        ],
+        "carPathLast": [
+          7099.43,
+          140.531,
+          2841.67
+        ],
+        "lastReturnedPointGapToLead": 3.738034242753814,
+        "rawLoggedCount": null,
+        "rawTruncated": null
+      },
+      {
+        "name": "Last pair before LOST",
+        "line": 3755,
+        "time": "13:46:48.162",
+        "tick": 109,
+        "driveSeconds": 102.2646,
+        "courseSeconds": 139.078,
+        "gapXZ": 280.9706577206954,
+        "headOrigin": [
+          7135.51,
+          140.278,
+          2886.61
+        ],
+        "tailOrigin": [
+          7159.67,
+          148.97,
+          2606.68
+        ],
+        "headSpeed": 21.287,
+        "tailSpeed": 15.3668,
+        "headThrottle": 0,
+        "tailThrottle": 1,
+        "headBrake": 0,
+        "tailBrake": 0,
+        "headGear": 3,
+        "tailGear": 2,
+        "tailEngine": "true",
+        "headRadialAwayKmh": 12.190987976099773,
+        "tailRadialTowardKmh": 11.153512452695029,
+        "intervalGapGrowthMps": 0.2408273051780889,
+        "instantGapGrowthMps": 0.28818764539020636,
+        "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+        "tailHeadingToHead": 0.9900082777202812,
+        "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+        "tailActivity": "CF_OriginalFollowActivity:1",
+        "tailWaypoint": "0x60000000000002AD {}",
+        "pathSnapshotOffsetWorldSeconds": 0.11699999999999022,
+        "controllerRequestedCap": 44.8973,
+        "controllerCapRecordAgeLines": 20,
+        "carPathCount": 28,
+        "groupPathCount": 0,
+        "carPathFirst": [
+          7159.11,
+          148.785,
+          2604.56
+        ],
+        "carPathLast": [
+          7130.04,
+          140.233,
+          2885.04
+        ],
+        "lastReturnedPointGapToLead": 5.690852308749832,
+        "rawLoggedCount": null,
+        "rawTruncated": null
+      },
+      {
+        "name": "First nativeIdle pair after LOST",
+        "line": 3815,
+        "time": "13:46:49.162",
+        "tick": 110,
+        "driveSeconds": 103.2646,
+        "courseSeconds": 140.078,
+        "gapXZ": 280.4355086289894,
+        "headOrigin": [
+          7140.15,
+          140.256,
+          2890.2
+        ],
+        "tailOrigin": [
+          7158.87,
+          149.194,
+          2610.39
+        ],
+        "headSpeed": 21.0087,
+        "tailSpeed": 10.1456,
+        "headThrottle": 0,
+        "tailThrottle": 0,
+        "headBrake": 0,
+        "tailBrake": 0,
+        "headGear": 3,
+        "tailGear": 2,
+        "tailEngine": "true",
+        "headRadialAwayKmh": 11.780125762783753,
+        "tailRadialTowardKmh": 13.51845912286215,
+        "intervalGapGrowthMps": -0.5351490917059891,
+        "instantGapGrowthMps": -0.48287037779955533,
+        "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+        "tailHeadingToHead": 0.9862814603692747,
+        "tailBehavior": "SCR_AIIdleBehavior_Driver:1",
+        "tailActivity": "SCR_AIIdleActivity:1",
+        "tailWaypoint": "none",
+        "pathSnapshotOffsetWorldSeconds": -0.0660000000000025,
+        "controllerRequestedCap": 44.8973,
+        "controllerCapRecordAgeLines": 54,
+        "carPathCount": 0,
+        "groupPathCount": 0,
+        "carPathFirst": null,
+        "carPathLast": null,
+        "lastReturnedPointGapToLead": null,
+        "rawLoggedCount": 0,
+        "rawTruncated": "0"
+      }
+    ],
+    "windows": [
+      {
+        "label": "0-7.2 drive seconds",
+        "samples": 7,
+        "first": {
+          "line": 733,
+          "time": "13:45:06.896",
+          "tick": 8,
+          "driveSeconds": 1.0005999999999986,
+          "courseSeconds": 37.814,
+          "gapXZ": 19.94001003008826,
+          "headOrigin": [
+            7232.98,
+            138.606,
+            2437.98
+          ],
+          "tailOrigin": [
+            7252.92,
+            138.029,
+            2437.96
+          ],
+          "headSpeed": 0,
+          "tailSpeed": 0,
+          "headThrottle": 0,
+          "tailThrottle": 0,
+          "headBrake": 1,
+          "tailBrake": 1,
+          "headGear": 1,
+          "tailGear": 1,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 0,
+          "tailRadialTowardKmh": 0,
+          "intervalGapGrowthMps": 0,
+          "instantGapGrowthMps": 0,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.99650616566478,
+          "tailBehavior": "CF_InitialDepartureWait:1",
+          "tailActivity": "SCR_AIIdleActivity:1",
+          "tailWaypoint": "none",
+          "pathSnapshotOffsetWorldSeconds": 0.03340000000000032,
+          "controllerRequestedCap": null,
+          "controllerCapRecordAgeLines": null,
+          "carPathCount": 0,
+          "groupPathCount": 0,
+          "carPathFirst": null,
+          "carPathLast": null,
+          "lastReturnedPointGapToLead": null,
+          "rawLoggedCount": null,
+          "rawTruncated": null
+        },
+        "last": {
+          "line": 886,
+          "time": "13:45:12.913",
+          "tick": 14,
+          "driveSeconds": 7.017699999999998,
+          "courseSeconds": 43.8311,
+          "gapXZ": 23.070078023274792,
+          "headOrigin": [
+            7229.85,
+            138.597,
+            2438.02
+          ],
+          "tailOrigin": [
+            7252.92,
+            138.029,
+            2437.96
+          ],
+          "headSpeed": 15.3899,
+          "tailSpeed": 0,
+          "headThrottle": 1,
+          "tailThrottle": 0,
+          "headBrake": 0,
+          "tailBrake": 1,
+          "headGear": 2,
+          "tailGear": 1,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 9.896476066515898,
+          "tailRadialTowardKmh": 0,
+          "intervalGapGrowthMps": 2.7489759722564107,
+          "instantGapGrowthMps": 2.7490211295877494,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.9964979872199143,
+          "tailBehavior": "CF_InitialDepartureWait:1",
+          "tailActivity": "SCR_AIIdleActivity:1",
+          "tailWaypoint": "none",
+          "pathSnapshotOffsetWorldSeconds": 0.30000000000000426,
+          "controllerRequestedCap": null,
+          "controllerCapRecordAgeLines": null,
+          "carPathCount": 0,
+          "groupPathCount": 0,
+          "carPathFirst": null,
+          "carPathLast": null,
+          "lastReturnedPointGapToLead": null,
+          "rawLoggedCount": 0,
+          "rawTruncated": "0"
+        },
+        "meanHeadKmh": 2.7672339714285714,
+        "meanTailKmh": 0,
+        "meanHeadRadialAwayKmh": 1.6093246579538012,
+        "meanTailRadialTowardKmh": 0,
+        "meanGapGrowthMps": 0.4470346272093892,
+        "tailBrakeOverPointOne": 7,
+        "tailThrottleUnderPoint05": 7,
+        "tailPowerHigh": 0,
+        "tailSpeedAboveLead": 0,
+        "tailNoCarPath": 7,
+        "tailNoGroupPath": 7
+      },
+      {
+        "label": "7.2-20 drive seconds",
+        "samples": 12,
+        "first": {
+          "line": 955,
+          "time": "13:45:13.913",
+          "tick": 15,
+          "driveSeconds": 8.017499999999998,
+          "courseSeconds": 44.8309,
+          "gapXZ": 28.24283271911633,
+          "headOrigin": [
+            7224.68,
+            138.61,
+            2438.36
+          ],
+          "tailOrigin": [
+            7252.92,
+            138.029,
+            2437.96
+          ],
+          "headSpeed": 19.3074,
+          "tailSpeed": 0.0513379,
+          "headThrottle": 0,
+          "tailThrottle": 0,
+          "headBrake": 0,
+          "tailBrake": 1,
+          "headGear": 3,
+          "tailGear": 1,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 18.631194851349033,
+          "tailRadialTowardKmh": 0,
+          "intervalGapGrowthMps": 5.17378945373228,
+          "instantGapGrowthMps": 5.175331903152509,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.9963646346619102,
+          "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+          "tailActivity": "CF_OriginalFollowActivity:1",
+          "tailWaypoint": "0x60000000000002AD {}",
+          "pathSnapshotOffsetWorldSeconds": -0.0666000000000011,
+          "controllerRequestedCap": null,
+          "controllerCapRecordAgeLines": null,
+          "carPathCount": 8,
+          "groupPathCount": 0,
+          "carPathFirst": [
+            7252.08,
+            139.879,
+            2437.51
+          ],
+          "carPathLast": [
+            7227.26,
+            138.612,
+            2438.18
+          ],
+          "lastReturnedPointGapToLead": 2.5862714474702244,
+          "rawLoggedCount": 8,
+          "rawTruncated": "0"
+        },
+        "last": {
+          "line": 1344,
+          "time": "13:45:24.996",
+          "tick": 26,
+          "driveSeconds": 19.100299999999997,
+          "courseSeconds": 55.9137,
+          "gapXZ": 32.146584577525864,
+          "headOrigin": [
+            7185.25,
+            138.524,
+            2441.85
+          ],
+          "tailOrigin": [
+            7217.35,
+            138.631,
+            2440.12
+          ],
+          "headSpeed": 4.12673,
+          "tailSpeed": 21.7254,
+          "headThrottle": 1,
+          "tailThrottle": 0.692663,
+          "headBrake": 0,
+          "tailBrake": 0,
+          "headGear": 2,
+          "tailGear": 2,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 2.000506304030046,
+          "tailRadialTowardKmh": 16.854133670822897,
+          "intervalGapGrowthMps": -4.12835342323094,
+          "instantGapGrowthMps": -4.1260076018869025,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.9995197875379802,
+          "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+          "tailActivity": "CF_OriginalFollowActivity:1",
+          "tailWaypoint": "0x60000000000002AD {}",
+          "pathSnapshotOffsetWorldSeconds": -0.46629999999999683,
+          "controllerRequestedCap": 25.3331,
+          "controllerCapRecordAgeLines": 13,
+          "carPathCount": 7,
+          "groupPathCount": 0,
+          "carPathFirst": [
+            7224.69,
+            140.346,
+            2439.59
+          ],
+          "carPathLast": [
+            7180.78,
+            138.684,
+            2441.27
+          ],
+          "lastReturnedPointGapToLead": 4.507471575063141,
+          "rawLoggedCount": null,
+          "rawTruncated": null
+        },
+        "meanHeadKmh": 14.618071666666667,
+        "meanTailKmh": 12.157379408333334,
+        "meanHeadRadialAwayKmh": 13.333939383779258,
+        "meanTailRadialTowardKmh": 10.605398155263925,
+        "meanGapGrowthMps": 0.7579281190320377,
+        "tailBrakeOverPointOne": 4,
+        "tailThrottleUnderPoint05": 4,
+        "tailPowerHigh": 6,
+        "tailSpeedAboveLead": 5,
+        "tailNoCarPath": 0,
+        "tailNoGroupPath": 12
+      },
+      {
+        "label": "20-33 drive seconds",
+        "samples": 13,
+        "first": {
+          "line": 1374,
+          "time": "13:45:25.995",
+          "tick": 27,
+          "driveSeconds": 20.1006,
+          "courseSeconds": 56.914,
+          "gapXZ": 27.08706148699043,
+          "headOrigin": [
+            7184.23,
+            138.751,
+            2442.55
+          ],
+          "tailOrigin": [
+            7211.23,
+            138.596,
+            2440.38
+          ],
+          "headSpeed": 6.13424,
+          "tailSpeed": 22.2467,
+          "headThrottle": 1,
+          "tailThrottle": 0,
+          "headBrake": 0,
+          "tailBrake": 0,
+          "headGear": 2,
+          "tailGear": 3,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 3.8609217815142367,
+          "tailRadialTowardKmh": 22.029562175104246,
+          "intervalGapGrowthMps": -5.058005688828772,
+          "instantGapGrowthMps": -5.046844553775002,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.9992888395443087,
+          "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+          "tailActivity": "CF_OriginalFollowActivity:1",
+          "tailWaypoint": "0x60000000000002AD {}",
+          "pathSnapshotOffsetWorldSeconds": -0.41620000000000346,
+          "controllerRequestedCap": 22.6378,
+          "controllerCapRecordAgeLines": 13,
+          "carPathCount": 7,
+          "groupPathCount": 0,
+          "carPathFirst": [
+            7224.69,
+            140.346,
+            2439.59
+          ],
+          "carPathLast": [
+            7180.78,
+            138.684,
+            2441.27
+          ],
+          "lastReturnedPointGapToLead": 3.679796190008253,
+          "rawLoggedCount": null,
+          "rawTruncated": null
+        },
+        "last": {
+          "line": 1781,
+          "time": "13:45:37.996",
+          "tick": 39,
+          "driveSeconds": 32.1001,
+          "courseSeconds": 68.9135,
+          "gapXZ": 56.95664491523337,
+          "headOrigin": [
+            7177.17,
+            141.587,
+            2501.1
+          ],
+          "tailOrigin": [
+            7178.04,
+            138.911,
+            2444.15
+          ],
+          "headSpeed": 19.4082,
+          "tailSpeed": 5.22015,
+          "headThrottle": 0.305221,
+          "tailThrottle": 1,
+          "headBrake": 0,
+          "tailBrake": 0,
+          "headGear": 3,
+          "tailGear": 0,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 19.25337527984748,
+          "tailRadialTowardKmh": -0.9245476829781853,
+          "intervalGapGrowthMps": 5.5957339022354295,
+          "instantGapGrowthMps": 5.604978600784906,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.5488791649600577,
+          "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+          "tailActivity": "CF_OriginalFollowActivity:1",
+          "tailWaypoint": "0x60000000000002AD {}",
+          "pathSnapshotOffsetWorldSeconds": -0.24970000000000425,
+          "controllerRequestedCap": 38.8311,
+          "controllerCapRecordAgeLines": 48,
+          "carPathCount": 8,
+          "groupPathCount": 0,
+          "carPathFirst": [
+            7177.65,
+            138.927,
+            2444.35
+          ],
+          "carPathLast": [
+            7178.06,
+            141.218,
+            2494.99
+          ],
+          "lastReturnedPointGapToLead": 6.174479735168149,
+          "rawLoggedCount": 8,
+          "rawTruncated": "0"
+        },
+        "meanHeadKmh": 17.443549230769232,
+        "meanTailKmh": 11.567166846153842,
+        "meanHeadRadialAwayKmh": 14.977488082057793,
+        "meanTailRadialTowardKmh": 7.035177181328521,
+        "meanGapGrowthMps": 2.2061974724247966,
+        "tailBrakeOverPointOne": 4,
+        "tailThrottleUnderPoint05": 6,
+        "tailPowerHigh": 4,
+        "tailSpeedAboveLead": 4,
+        "tailNoCarPath": 3,
+        "tailNoGroupPath": 13
+      },
+      {
+        "label": "33-55 drive seconds",
+        "samples": 22,
+        "first": {
+          "line": 1805,
+          "time": "13:45:38.996",
+          "tick": 40,
+          "driveSeconds": 33.100300000000004,
+          "courseSeconds": 69.9137,
+          "gapXZ": 63.357301868056446,
+          "headOrigin": [
+            7176.57,
+            141.875,
+            2506.46
+          ],
+          "tailOrigin": [
+            7180.08,
+            138.848,
+            2443.2
+          ],
+          "headSpeed": 19.3422,
+          "tailSpeed": 8.42951,
+          "headThrottle": 0.325001,
+          "tailThrottle": 0.247227,
+          "headBrake": 0,
+          "tailBrake": 0,
+          "headGear": 3,
+          "tailGear": 0,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 19.382153652398564,
+          "tailRadialTowardKmh": -3.820841753320349,
+          "intervalGapGrowthMps": 6.399377077407553,
+          "instantGapGrowthMps": 6.4452765015885864,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.7269203643790382,
+          "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+          "tailActivity": "CF_OriginalFollowActivity:1",
+          "tailWaypoint": "0x60000000000002AD {}",
+          "pathSnapshotOffsetWorldSeconds": -0.20020000000000948,
+          "controllerRequestedCap": 42.3898,
+          "controllerCapRecordAgeLines": 18,
+          "carPathCount": 8,
+          "groupPathCount": 0,
+          "carPathFirst": [
+            7178.46,
+            138.902,
+            2443.99
+          ],
+          "carPathLast": [
+            7175.1,
+            141.514,
+            2500.96
+          ],
+          "lastReturnedPointGapToLead": 5.693057175191382,
+          "rawLoggedCount": null,
+          "rawTruncated": null
+        },
+        "last": {
+          "line": 2432,
+          "time": "13:46:00.045",
+          "tick": 61,
+          "driveSeconds": 54.150099999999995,
+          "courseSeconds": 90.9635,
+          "gapXZ": 137.1953078643725,
+          "headOrigin": [
+            7158.62,
+            149.58,
+            2616.95
+          ],
+          "tailOrigin": [
+            7178.55,
+            140.755,
+            2481.21
+          ],
+          "headSpeed": 19.5331,
+          "tailSpeed": 8.14742,
+          "headThrottle": 0.360212,
+          "tailThrottle": 0,
+          "headBrake": 0,
+          "tailBrake": 0,
+          "headGear": 3,
+          "tailGear": 2,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 19.46024040098246,
+          "tailRadialTowardKmh": 7.79221406069146,
+          "intervalGapGrowthMps": 3.2399786638224812,
+          "instantGapGrowthMps": 3.241118427858611,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.9949633669173599,
+          "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+          "tailActivity": "CF_OriginalFollowActivity:1",
+          "tailWaypoint": "0x60000000000002AD {}",
+          "pathSnapshotOffsetWorldSeconds": 0.34960000000000946,
+          "controllerRequestedCap": 44.8973,
+          "controllerCapRecordAgeLines": 8,
+          "carPathCount": 14,
+          "groupPathCount": 0,
+          "carPathFirst": [
+            7178.6,
+            140.721,
+            2480.32
+          ],
+          "carPathLast": [
+            7157.25,
+            149.314,
+            2613.33
+          ],
+          "lastReturnedPointGapToLead": 3.8705684337056887,
+          "rawLoggedCount": null,
+          "rawTruncated": null
+        },
+        "meanHeadKmh": 19.21301818181818,
+        "meanTailKmh": 8.822441363636365,
+        "meanHeadRadialAwayKmh": 19.137861014246315,
+        "meanTailRadialTowardKmh": 6.013782612039662,
+        "meanGapGrowthMps": 3.645577333946292,
+        "tailBrakeOverPointOne": 5,
+        "tailThrottleUnderPoint05": 12,
+        "tailPowerHigh": 6,
+        "tailSpeedAboveLead": 0,
+        "tailNoCarPath": 1,
+        "tailNoGroupPath": 22
+      },
+      {
+        "label": "55-78.3 drive seconds",
+        "samples": 24,
+        "first": {
+          "line": 2459,
+          "time": "13:46:01.046",
+          "tick": 62,
+          "driveSeconds": 55.150099999999995,
+          "courseSeconds": 91.9635,
+          "gapXZ": 140.21968050170406,
+          "headOrigin": [
+            7157.54,
+            149.911,
+            2622.25
+          ],
+          "tailOrigin": [
+            7178.66,
+            140.841,
+            2483.63
+          ],
+          "headSpeed": 19.5238,
+          "tailSpeed": 9.38067,
+          "headThrottle": 0.365394,
+          "tailThrottle": 0,
+          "headBrake": 0,
+          "tailBrake": 0,
+          "headGear": 3,
+          "tailGear": 2,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 19.447941617346235,
+          "tailRadialTowardKmh": 8.55296428938508,
+          "intervalGapGrowthMps": 3.0243726373315667,
+          "instantGapGrowthMps": 3.0263825911003206,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.9855865169962386,
+          "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+          "tailActivity": "CF_OriginalFollowActivity:1",
+          "tailWaypoint": "0x60000000000002AD {}",
+          "pathSnapshotOffsetWorldSeconds": 0.38290000000000646,
+          "controllerRequestedCap": 44.8973,
+          "controllerCapRecordAgeLines": 5,
+          "carPathCount": 15,
+          "groupPathCount": 0,
+          "carPathFirst": [
+            7178.58,
+            140.804,
+            2482.48
+          ],
+          "carPathLast": [
+            7156.17,
+            149.623,
+            2618.47
+          ],
+          "lastReturnedPointGapToLead": 4.020609406545383,
+          "rawLoggedCount": null,
+          "rawTruncated": null
+        },
+        "last": {
+          "line": 3069,
+          "time": "13:46:24.112",
+          "tick": 85,
+          "driveSeconds": 78.2166,
+          "courseSeconds": 115.03,
+          "gapXZ": 224.96537533585007,
+          "headOrigin": [
+            7130.48,
+            148.444,
+            2752.52
+          ],
+          "tailOrigin": [
+            7172.48,
+            143.648,
+            2531.51
+          ],
+          "headSpeed": 24.2357,
+          "tailSpeed": 9.40039,
+          "headThrottle": 0,
+          "tailThrottle": 0.240631,
+          "headBrake": 0.282185,
+          "tailBrake": 0,
+          "headGear": 4,
+          "tailGear": 2,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 22.972980052084846,
+          "tailRadialTowardKmh": 8.608415926713374,
+          "intervalGapGrowthMps": 3.9872938435901517,
+          "instantGapGrowthMps": 3.9901567014920762,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.996132313274648,
+          "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+          "tailActivity": "CF_OriginalFollowActivity:1",
+          "tailWaypoint": "0x60000000000002AD {}",
+          "pathSnapshotOffsetWorldSeconds": 0,
+          "controllerRequestedCap": 44.8973,
+          "controllerCapRecordAgeLines": 22,
+          "carPathCount": 20,
+          "groupPathCount": 0,
+          "carPathFirst": [
+            7172.84,
+            143.52,
+            2529.84
+          ],
+          "carPathLast": [
+            7130.57,
+            149.169,
+            2746.99
+          ],
+          "lastReturnedPointGapToLead": 5.53073232040769,
+          "rawLoggedCount": null,
+          "rawTruncated": null
+        },
+        "meanHeadKmh": 20.915816666666668,
+        "meanTailKmh": 8.081604583333332,
+        "meanHeadRadialAwayKmh": 20.704112809426125,
+        "meanTailRadialTowardKmh": 7.574301146710635,
+        "meanGapGrowthMps": 3.6471699063098595,
+        "tailBrakeOverPointOne": 2,
+        "tailThrottleUnderPoint05": 4,
+        "tailPowerHigh": 7,
+        "tailSpeedAboveLead": 0,
+        "tailNoCarPath": 2,
+        "tailNoGroupPath": 24
+      },
+      {
+        "label": "78.3-103.15 drive seconds",
+        "samples": 24,
+        "first": {
+          "line": 3103,
+          "time": "13:46:25.129",
+          "tick": 86,
+          "driveSeconds": 79.2326,
+          "courseSeconds": 116.046,
+          "gapXZ": 227.80485376742988,
+          "headOrigin": [
+            7127.76,
+            147.357,
+            2758.82
+          ],
+          "tailOrigin": [
+            7172.09,
+            143.931,
+            2535.37
+          ],
+          "headSpeed": 24.775,
+          "tailSpeed": 18.2531,
+          "headThrottle": 0,
+          "tailThrottle": 1,
+          "headBrake": 0.31689,
+          "tailBrake": 0,
+          "headGear": 4,
+          "tailGear": 2,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 23.771578070370307,
+          "tailRadialTowardKmh": 13.684615231402457,
+          "intervalGapGrowthMps": 2.794762235806881,
+          "instantGapGrowthMps": 2.8019341219355134,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.9923468985028322,
+          "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+          "tailActivity": "CF_OriginalFollowActivity:1",
+          "tailWaypoint": "0x60000000000002AD {}",
+          "pathSnapshotOffsetWorldSeconds": 0.04999999999999716,
+          "controllerRequestedCap": 44.8973,
+          "controllerCapRecordAgeLines": 26,
+          "carPathCount": 20,
+          "groupPathCount": 0,
+          "carPathFirst": [
+            7171.23,
+            143.859,
+            2535.25
+          ],
+          "carPathLast": [
+            7126.44,
+            147.473,
+            2756.83
+          ],
+          "lastReturnedPointGapToLead": 2.3879907872524493,
+          "rawLoggedCount": null,
+          "rawTruncated": null
+        },
+        "last": {
+          "line": 3755,
+          "time": "13:46:48.162",
+          "tick": 109,
+          "driveSeconds": 102.2646,
+          "courseSeconds": 139.078,
+          "gapXZ": 280.9706577206954,
+          "headOrigin": [
+            7135.51,
+            140.278,
+            2886.61
+          ],
+          "tailOrigin": [
+            7159.67,
+            148.97,
+            2606.68
+          ],
+          "headSpeed": 21.287,
+          "tailSpeed": 15.3668,
+          "headThrottle": 0,
+          "tailThrottle": 1,
+          "headBrake": 0,
+          "tailBrake": 0,
+          "headGear": 3,
+          "tailGear": 2,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 12.190987976099773,
+          "tailRadialTowardKmh": 11.153512452695029,
+          "intervalGapGrowthMps": 0.2408273051780889,
+          "instantGapGrowthMps": 0.28818764539020636,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.9900082777202812,
+          "tailBehavior": "SCR_AIMoveInFormationBehavior:1",
+          "tailActivity": "CF_OriginalFollowActivity:1",
+          "tailWaypoint": "0x60000000000002AD {}",
+          "pathSnapshotOffsetWorldSeconds": 0.11699999999999022,
+          "controllerRequestedCap": 44.8973,
+          "controllerCapRecordAgeLines": 20,
+          "carPathCount": 28,
+          "groupPathCount": 0,
+          "carPathFirst": [
+            7159.11,
+            148.785,
+            2604.56
+          ],
+          "carPathLast": [
+            7130.04,
+            140.233,
+            2885.04
+          ],
+          "lastReturnedPointGapToLead": 5.690852308749832,
+          "rawLoggedCount": null,
+          "rawTruncated": null
+        },
+        "meanHeadKmh": 23.06629166666667,
+        "meanTailKmh": 11.528212916666668,
+        "meanHeadRadialAwayKmh": 19.826451776212817,
+        "meanTailRadialTowardKmh": 11.382861910456498,
+        "meanGapGrowthMps": 2.3454416293767557,
+        "tailBrakeOverPointOne": 4,
+        "tailThrottleUnderPoint05": 8,
+        "tailPowerHigh": 9,
+        "tailSpeedAboveLead": 0,
+        "tailNoCarPath": 1,
+        "tailNoGroupPath": 24
+      },
+      {
+        "label": "103.15-120 drive seconds",
+        "samples": 17,
+        "first": {
+          "line": 3815,
+          "time": "13:46:49.162",
+          "tick": 110,
+          "driveSeconds": 103.2646,
+          "courseSeconds": 140.078,
+          "gapXZ": 280.4355086289894,
+          "headOrigin": [
+            7140.15,
+            140.256,
+            2890.2
+          ],
+          "tailOrigin": [
+            7158.87,
+            149.194,
+            2610.39
+          ],
+          "headSpeed": 21.0087,
+          "tailSpeed": 10.1456,
+          "headThrottle": 0,
+          "tailThrottle": 0,
+          "headBrake": 0,
+          "tailBrake": 0,
+          "headGear": 3,
+          "tailGear": 2,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 11.780125762783753,
+          "tailRadialTowardKmh": 13.51845912286215,
+          "intervalGapGrowthMps": -0.5351490917059891,
+          "instantGapGrowthMps": -0.48287037779955533,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.9862814603692747,
+          "tailBehavior": "SCR_AIIdleBehavior_Driver:1",
+          "tailActivity": "SCR_AIIdleActivity:1",
+          "tailWaypoint": "none",
+          "pathSnapshotOffsetWorldSeconds": -0.0660000000000025,
+          "controllerRequestedCap": 44.8973,
+          "controllerCapRecordAgeLines": 54,
+          "carPathCount": 0,
+          "groupPathCount": 0,
+          "carPathFirst": null,
+          "carPathLast": null,
+          "lastReturnedPointGapToLead": null,
+          "rawLoggedCount": 0,
+          "rawTruncated": "0"
+        },
+        "last": {
+          "line": 4176,
+          "time": "13:47:05.229",
+          "tick": 126,
+          "driveSeconds": 119.33160000000001,
+          "courseSeconds": 156.145,
+          "gapXZ": 303.0892345498273,
+          "headOrigin": [
+            7170.74,
+            139.933,
+            2914.03
+          ],
+          "tailOrigin": [
+            7158.7,
+            149.244,
+            2611.18
+          ],
+          "headSpeed": 0,
+          "tailSpeed": 0,
+          "headThrottle": 0,
+          "tailThrottle": 0,
+          "headBrake": 1,
+          "tailBrake": 1,
+          "headGear": 2,
+          "tailGear": 2,
+          "tailEngine": "true",
+          "headRadialAwayKmh": 0,
+          "tailRadialTowardKmh": 0,
+          "intervalGapGrowthMps": 0,
+          "instantGapGrowthMps": 0,
+          "radialBasis": "Finite differences of samePoll1Hz positions projected onto current head-tail axis; not native internal demand/instant velocity",
+          "tailHeadingToHead": 0.9649514483561091,
+          "tailBehavior": "SCR_AIIdleBehavior_Driver:1",
+          "tailActivity": "SCR_AIIdleActivity:1",
+          "tailWaypoint": "none",
+          "pathSnapshotOffsetWorldSeconds": -0.15000000000000568,
+          "controllerRequestedCap": 44.8973,
+          "controllerCapRecordAgeLines": 415,
+          "carPathCount": 0,
+          "groupPathCount": 0,
+          "carPathFirst": null,
+          "carPathLast": null,
+          "lastReturnedPointGapToLead": null,
+          "rawLoggedCount": null,
+          "rawTruncated": null
+        },
+        "meanHeadKmh": 8.92949248235294,
+        "meanTailKmh": 0.6180865882352942,
+        "meanHeadRadialAwayKmh": 5.672316272833235,
+        "meanTailRadialTowardKmh": 0.9612005660995449,
+        "meanGapGrowthMps": 1.308643251870469,
+        "tailBrakeOverPointOne": 16,
+        "tailThrottleUnderPoint05": 17,
+        "tailPowerHigh": 0,
+        "tailSpeedAboveLead": 0,
+        "tailNoCarPath": 17,
+        "tailNoGroupPath": 17
+      }
+    ]
+  },
+  "errors": {
+    "runtime": 19,
+    "post-result": 0,
+    "shutdown": 59
+  },
+  "lifecycle": {
+    "scheduled": [
+      {
+        "line": 5104,
+        "text": "13:48:27.400 SCRIPT       : [ConvoyFollower] PACED_EXIT_SCHEDULED: run_id=0x4000000000000005 {}_0 world=Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent delay_s=30 supplemental_capture_only=true terminal_failed=true",
+        "marker": "PACED_EXIT_SCHEDULED",
+        "run_id": "0x4000000000000005 {}_0",
+        "world": "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent",
+        "delay_s": "30",
+        "supplemental_capture_only": "true",
+        "terminal_failed": "true"
+      }
+    ],
+    "refused": [],
+    "deferred": [],
+    "requested": [
+      {
+        "line": 5321,
+        "text": "13:48:57.412 SCRIPT       : [ConvoyFollower] PACED_EXIT_REQUESTED: run_id=0x4000000000000005 {}_0 world=Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent elapsed_s=30.0157 terminal_failed=true shutdown_completed=false",
+        "marker": "PACED_EXIT_REQUESTED",
+        "run_id": "0x4000000000000005 {}_0",
+        "world": "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent",
+        "elapsed_s": "30.0157",
+        "terminal_failed": "true",
+        "shutdown_completed": "false"
+      }
+    ],
+    "cleanup": {
+      "line": 5329,
+      "text": "13:48:58.169 SCRIPT       : [ConvoyFollower] PACED_CLEANUP: run_id=0x4000000000000005 {}_0 live_owner_reset=false terminal=true world_cleanup=true",
+      "marker": "PACED_CLEANUP",
+      "run_id": "0x4000000000000005 {}_0",
+      "live_owner_reset": "false",
+      "terminal": "true",
+      "world_cleanup": "true"
+    },
+    "destroyed": [
+      "13:48:58.728 ENGINE       : Game destroyed."
+    ],
+    "rootConfirmedNaturalExit": true,
+    "rootForcedStop": false,
+    "shutdownCensored": false
+  },
+  "ledger": {
+    "preterminal": 236,
+    "fullLifecycle": 266,
+    "allPreterminalConserved": true,
+    "fullLifecycleIndependentAudit": {
+      "count": 266,
+      "allPhysicalConserved": true,
+      "last": {
+        "source": 1700,
+        "lead": 0,
+        "follower": 100,
+        "destination": 0,
+        "total": 1800,
+        "conserved": 1
+      },
+      "basis": "Every full console JOURNEY_LEDGER row, including after terminal; quantities independently summed"
+    }
+  },
+  "sourceFiles": 616,
+  "packedText": 238,
+  "trio": [
+    {
+      "file": "addon.gproj",
+      "path": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-addons/ConvoyFollower_5A5FB20BD40C7C70/addon.gproj",
+      "bytes": 135,
+      "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579",
+      "matches": true
+    },
+    {
+      "file": "data.pak",
+      "path": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-addons/ConvoyFollower_5A5FB20BD40C7C70/data.pak",
+      "bytes": 32847949,
+      "sha256": "42C50D712F95138E7C904F952127FAB777EB0A62D14A1BCA8AA7AB3DBBC6E67F",
+      "matches": true
+    },
+    {
+      "file": "resourceDatabase.rdb",
+      "path": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v2/frozen-addons/ConvoyFollower_5A5FB20BD40C7C70/resourceDatabase.rdb",
+      "bytes": 35273,
+      "sha256": "E93B54246F7A0B2E9E6D73B95C2859F2BB68F6E58AA225031132BC962CDEAD06",
+      "matches": true
+    }
+  ],
+  "fullLog": {
+    "bytes": 1615162,
+    "sha256": "89963DE1015E2B9CCBD045B7154C763B814A512A3E871359FD87C45A9E77236F"
+  },
+  "snapshot": {
+    "bytes": 1581787,
+    "sha256": "E6B789C03533B44F6DA64876A080A031492B61C6C87AB2BFA8A67574B67436D1",
+    "exactPrefix": true
+  },
+  "reportProvenance": [
+    {
+      "file": "ordinary-course-review.json",
+      "bytes": 764117,
+      "sha256": "05E030B4196C465790F4FD90B415970C8C6AFB27DC682E185CA84846F8EB9013"
+    },
+    {
+      "file": "visual-inspection-review.json",
+      "bytes": 2328,
+      "sha256": "023997B3654E83BCE0822BBE6710AF1EF131C3B924FA049FB199B2589E9D6882"
+    },
+    {
+      "file": "postrun-provenance-review.json",
+      "bytes": 407292,
+      "sha256": "B1BBEF69810967AFE5C78F7732CB6FBF1E7006E0A2097F9D4BC78EA958B849D7"
+    },
+    {
+      "file": "driving-timeline-review.json",
+      "bytes": 74196,
+      "sha256": "B989B90AF4EDFA3C008311A9BE8961C6FFE1EB3A4954E8D5045A5B16D7D4C811"
+    },
+    {
+      "file": "driving-timeline-review-v2.json",
+      "bytes": 360767,
+      "sha256": "B3F237393E136C59C98F1864E3475B824A1DECED5F80790E92D53709CF96C2FC"
+    },
+    {
+      "file": "loaded-trip-review.json",
+      "bytes": 271162,
+      "sha256": "0C4A0402206CB37B58E929C4A1EF76522D9FCBD4125A22A119DB98CA3FD34F31"
+    }
+  ],
+  "demonstrated": "V1 private Wait/seat sequencing defect fixed and exercised. V2 loaded ordinary-follow behavior fails spacing and loses its predecessor before arrival; no specific production-code cause isolated.",
+  "unknowns": [
+    "Native formation demand, braking and gear selection internals",
+    "Initial turn/join contribution versus later aligned-road underpace",
+    "Anonymous-camera observer overhead"
+  ],
+  "nextActionProposal": "For review only: one fixed loaded ordinary-follow control on an already driven paved straight segment, with both original trucks initially aligned along the road, removing the staging grass-to-road turn. Retain the original native lead/passenger owner, production formation backend, native100 load/cancel and conservation, requested20kmh lead pace, original identities/guards, continuous100m goal-axis plus independent net100m/3powered, sticky60m spacing and bounded owned-arrival gates. Declare one geometry and reachable endpoint before any candidate/run; no sweep, speed/cap/backend/guard changes or runtime pose/control writes. Compare early gap growth and continued straight-road underpace with this run. Passing would support a join/turn contribution only; failing would show that removing this join does not solve formation underpace. It would not qualify varied driving, UI, delivery or the full trip. No candidate or launch is authorized by this proposal.",
+  "noReplay": true,
+  "noFrozenEdit": true,
+  "noNewCandidate": true,
+  "noSourceEdit": true,
+  "normalInputClaim": false,
+  "videoClaim": false,
+  "fullTripClaim": false,
+  "releaseClaim": false
+}

@@ -1,0 +1,33 @@
+{
+  "description": "One private retained-arrival OFF_ROUTE controller increment; apply to canonical143e091 with core.autocrlf=false. Same world, observer, profile and physical gates. Branch unexercised; no promotion. Patch regenerated from frozen bytes to retain CRLF context.",
+  "baseline": {
+    "commit": "143e091",
+    "sourceManifestSha256": "32C66F7B49BDC169F2F99EFCA4D369DBB0384AEA87AAAE7A0E31C1420F40702F",
+    "files": 590
+  },
+  "world": "Worlds/Tests/ConvoyFollower_Arland_OpenRoad_OrdinaryMixed_3Trucks.ent",
+  "terminalMarker": "PACED_RESULT:",
+  "sourceManifestSha256": "754E38D29607ABC32365DF98072DCB035A22C2BE23910340157C0CE5CB5F444E",
+  "sourceFiles": 590,
+  "unchangedFiles": 589,
+  "packSha256": "B707B02622C6493B187868EE5733CFF01865E73012F56F83BC4BE91F44DA6A86",
+  "files": [
+    {
+      "file": "addons/ConvoyFollower/Scripts/Game/Tests/CF_TrailGuideDriverControllerComponent.c",
+      "bytes": 64476,
+      "sha256": "F10061A5EFC2B68A7469583F2619B6086E66BB008122FE1B6C2C77B40B3A1477",
+      "baselineSha256": "23713B0E57634BD09AA989A8F4959B7D76F0B47D54E1191BF8008CE3BFC9F0DE"
+    }
+  ],
+  "patch": {
+    "file": "retained-arrival-offroute-v1-source.patch",
+    "bytes": 9544,
+    "sha256": "A389F8A327FE2997F5F314E70DC124C999F83D1CBB753E12E5EE99081778D186"
+  },
+  "isolatedReplay": {
+    "gitApplyCheck": true,
+    "changedFilesReproduced": 1,
+    "unexpectedPaths": [],
+    "sha256": "F10061A5EFC2B68A7469583F2619B6086E66BB008122FE1B6C2C77B40B3A1477"
+  }
+}

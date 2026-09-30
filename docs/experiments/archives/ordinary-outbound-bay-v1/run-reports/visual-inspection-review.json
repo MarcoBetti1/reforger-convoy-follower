@@ -1,0 +1,12 @@
+{
+  "native": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v1\\logs\\parking-terminal.bmp",
+  "losslessPng": "D:\\ReforgerAgentRuns\\ordinary-outbound-bay-v1\\parking-terminal.png",
+  "rgbPixelEqual": true,
+  "dimensions": [
+    1280,
+    720
+  ],
+  "nativeSha256": "DAF72EE03F6BB1BC33D702A5CB68F4A750C8E8536F23BD82798D540B93ED9D19",
+  "pngSha256": "8C49CA7BC9D94E5F0C9EC35A2239A2752E249B6AFB122BF2688EA7A2906BD4BA",
+  "rootVisualInspection": "Both trucks visible from above at recruitment on grass; road/stream/buildings/storage in frame. No motion or bay/parking/slot visibility claim."
+}

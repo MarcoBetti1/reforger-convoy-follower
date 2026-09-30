@@ -35,3 +35,11 @@ natural-recovery-trip-v1-source.json -text
 natural-retrace-trip-v1-source.patch -text
 
 natural-retrace-trip-v1-source.json -text
+
+retained-arrival-offroute-v1-source.patch -text
+
+retained-arrival-offroute-v1-source.json -text
+
+# Preserve original source overlay and archived evidence bytes.
+archives/** -text whitespace=cr-at-eol,-trailing-space,-space-before-tab,-blank-at-eof
+retained-arrival-offroute-v1-source.patch -text whitespace=cr-at-eol,-trailing-space,-space-before-tab,-blank-at-eof

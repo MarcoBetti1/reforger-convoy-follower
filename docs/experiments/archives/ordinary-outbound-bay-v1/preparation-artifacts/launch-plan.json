@@ -1,0 +1,39 @@
+{
+  "status": "PREPARED_NOT_EXECUTED",
+  "reviewBeforeLiveExecution": true,
+  "runRoot": "D:/ReforgerAgentRuns/ordinary-outbound-bay-v1",
+  "world": "Worlds/Tests/ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent",
+  "addon": "5A5FB20BD40C7C70",
+  "addonsDir": "D:/ReforgerAgentBuilds/ordinary-outbound-bay-v1/frozen-addons-final",
+  "profile": "D:/ReforgerAgentRuns/ordinary-outbound-bay-v1/profile",
+  "durationSeconds": 5000,
+  "expectGame": true,
+  "sourceContract": ".cache/ordinary-outbound-bay-v1/frozen-final-review.json",
+  "terminalSnapshot": {
+    "required": true,
+    "marker": "PACED_RESULT:",
+    "pollMs": 50,
+    "timeoutSeconds": 5100,
+    "keepFullLog": true
+  },
+  "nativeImages": {
+    "maximum": 15,
+    "boolWritableIsNotPixelProof": true,
+    "decodeAndInspectActualFiles": true
+  },
+  "independentReview": {
+    "required": true,
+    "realCoreInitialDepartureReadyTrue": true,
+    "continuous100mGoalProgressAndNet100mWith3Powered": true,
+    "freshSequenceStrictlyGreaterThanEmittedPreResumeMaximum": true,
+    "arrivalOwnedWait180s2m": true,
+    "hold30s2m": true,
+    "resumeSameActivity20mGoalAndNet20m3Powered": true,
+    "allRun60mSpacingSticky": true,
+    "gameplayAndShutdownErrorsSeparate": true,
+    "naturalClose30WorldSeconds": true
+  },
+  "inputClaim": false,
+  "videoClaim": false,
+  "productionPlayerHomeClaim": false
+}

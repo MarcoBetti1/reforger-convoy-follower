@@ -3,6 +3,15 @@ GenericEntity : "{278E487E19D82680}Prefabs/Vehicles/Core/Vehicle_Cargo_Base.et" 
  components {
   ActionsManagerComponent "{2CD4A765B4482F53}" {
    additionalActions + {
+    CF_OpenConvoyCommandsAction "{CF20260929000008}" {
+     ParentContextList {
+      "door_rear"
+     }
+     UIInfo SCR_ActionUIInfo "{CF20260929000012}" {
+      Name "Convoy commands"
+     }
+     VisibilityRange 2.5
+    }
     CF_ReleaseAtUnloadAction "{73E1D5CF0C754478}" {
      ParentContextList {
       "door_rear"
