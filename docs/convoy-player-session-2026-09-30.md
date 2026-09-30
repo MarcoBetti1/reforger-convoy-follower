@@ -1,5 +1,7 @@
 # Open player test — September 30, 2026
 
+**Superseding status:** the V8 human session ended normally at15:48:46.055 after failed F8/rebind opening and poor following. Marco authorized a narrow quick menu candidate, now running untimed with player deployment complete. Current handoff: `C:/Users/marco/.codex/worktrees/175a/REFORGER/docs/convoy-player-menu-retest-2026-09-30.md`. Source/docs and the frozen candidate plus closed human log are synced to GitHub. Long development goals remain paused; no ordinary key/menu or driving fix is yet established. The setup narrative below records the earlier V8 session.
+
 Marco requested the ordinary V8 Everon Regina supply journey. It was launched with the recorded `client:run --keep-open --expect-game --execute` command, with no timer or automatic exit. Development goals remain paused. The player owns this session: do not close, replace or inject further input unless Marco asks.
 
 Working checkout: `C:/Users/marco/.codex/worktrees/175a/REFORGER`. Profile/log/run root: `D:/ReforgerAgentRuns/everon-journey-manual-v8`. Launcher tool session1816. World: `Worlds/Showcase/ConvoyFollower_Everon_ReginaSupplyDay_1Truck.ent`. GUID: `5A5FB20BD40C7C70`. Runtime parent: that worktree's `.cache/player-addons/everon-journey-scene-v8`. All three deployment hashes matched the [saved V8 checkpoint](convoy-coordinator-handoff-2026-09-30.md) before launch. The helper set the game's executable working directory.
