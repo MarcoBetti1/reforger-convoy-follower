@@ -38,3 +38,9 @@ Marco owns deployment, placement and input. Startup and a rendered HUD are not b
 ## Backup coverage
 
 Code/checkpoint will be pushed before handoff. New archive includes exact frozen source/runtime/provenance, build logs, previous complete human console and profile override; full entry decompression and GitHub digest will be verified. Earlier archives stay retained.221raw videos (~68.4GB) remain local, outside the GitHub backup. Preparation is complete; startup/human result to be appended after launch.
+
+## Remote backup and open retest
+
+Code/checkpoint pushed as241bff9/d528362. The draft takeover release contains `convoy-debug-bay-v1.zip`:618 full-readback-verified payloads,56922653bytes, SHA-256 `0AB99C0EABE31458B58E47A1109FAEBEC61010911361CAF259301A71232CD984`; uploaded size/digest matched. It includes the complete previous human console (normal closure/retained errors), final successful build logs, exact source/runtime/provenance and profile override. Earlier artifacts remain.
+
+Untimed client launched17:24:01 and reached GAME17:24:15.636; command listener17:24:15.639. Launcher session45042, client PID36616. Full live log `D:/ReforgerAgentRuns/player-debug-bay-v1/logs/console.log`. Exact frozen project/package/RDB mount confirmed and all three hashes rechecked unchanged after startup. Read-only native window capture showed rendered Regina Game Master scenario-properties UI; no automated deployment or input. Owner HUD requires controlled character, so no rendered HUD/path/control result is claimed yet. Profile override is selected on disk; runtime SETTINGS_PROFILE_APPLIED/voice playback awaits convoy settings initialization. Human bay/driving/warnings/voices/debug validation remains pending. Marco retains full control.

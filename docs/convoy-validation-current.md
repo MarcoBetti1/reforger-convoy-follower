@@ -4,7 +4,7 @@ Updated September 30, 2026. **The mod is not release ready.** This page separate
 
 ## Player debug and bay correction — September 30, 2026
 
-The previous human run closed normally but failed bay readiness and retained general stop/restart braking. Focused `player-debug-bay-v1` aligns existing bay centers and preserves4m MOVE radius, reduces cohesion speech/rearming, and adds a read-only native path/control HUD. Alternate voices are selected only in the isolated retest profile. All-five scripts/pack and607source/230packedtext/trio verify; data SHA `F0E5F10FA5AAA4479D427AFDAD6BB73DF2661F56EFA1D47990EEF5F3339C2E49`. Native braking remains unresolved. Marco authorized an untimed launch and owns the test. See [current player debug checkpoint](convoy-player-debug-bay-2026-09-30.md). Earlier open/prepared statements below are historical.
+The previous human run closed normally but failed bay readiness and retained general stop/restart braking. Focused `player-debug-bay-v1` aligns existing bay centers and preserves4m MOVE radius, reduces cohesion speech/rearming, and adds a read-only native path/control HUD. Alternate voices are selected only in the isolated retest profile. All-five scripts/pack and607source/230packedtext/trio verify; data SHA `F0E5F10FA5AAA4479D427AFDAD6BB73DF2661F56EFA1D47990EEF5F3339C2E49`. Native braking remains unresolved. Untimed retest reached GAME17:24:15.636 with exact trio and listener; Marco owns deployment and input. HUD/rendered route, alternate playback, bay and driving remain pending human validation. See [current player debug checkpoint](convoy-player-debug-bay-2026-09-30.md). Earlier open/prepared statements below are historical.
 
 ## Player Start and recovery candidate — September 30, 2026
 
