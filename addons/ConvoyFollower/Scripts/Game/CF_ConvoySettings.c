@@ -20,7 +20,7 @@ class CF_ConvoySettings : ScriptAndConfig
 	float m_fStoppedGap;
 	[Attribute(defvalue: "35", params: "5 100 1", category: "Formation", desc: "Search radius in metres for the closest empty wheeled vehicle when assigning a driver.")]
 	float m_fTruckSearchRadius;
-	[Attribute(defvalue: "5", params: "1 5 1", category: "Formation", desc: "Hard maximum number of driver vehicles in one player's convoy (one through five).")]
+	[Attribute(defvalue: "5", params: "1 10 1", category: "Formation", desc: "Maximum driver vehicles per owner. Default five; larger fleets require separate validation.")]
 	int m_iMaxConvoyUnits;
 
 	[Attribute(defvalue: "1", category: "Cohesion advice", desc: "Show whole-chain pace advice with separate varied spacing calls. Never controls the player's vehicle.")]
@@ -237,7 +237,7 @@ class CF_ConvoySettings : ScriptAndConfig
 			m_fMoveCompletionRadius = ClampFloat(m_fMoveCompletionRadius, 2.0, 20.0);
 		m_fStoppedGap = ClampFloat(m_fStoppedGap, 4.0, m_fMovingGap);
 		m_fTruckSearchRadius = ClampFloat(m_fTruckSearchRadius, 5.0, 100.0);
-		m_iMaxConvoyUnits = ClampInt(m_iMaxConvoyUnits, 1, 5);
+		m_iMaxConvoyUnits = ClampInt(m_iMaxConvoyUnits, 1, 10);
 
 		m_fRangeWarningDistance = ClampFloat(m_fRangeWarningDistance, 40.0, 900.0);
 		m_fRangeWarningSeconds = ClampFloat(m_fRangeWarningSeconds, 1.0, 30.0);

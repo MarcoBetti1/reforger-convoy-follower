@@ -192,7 +192,7 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 			truck.AddEntry(CF_NewCommand(CF_ConvoyPanelOrder.PULL_REAR, identity, "Pull off / regroup", "Selected Unit " + identity + ": drive to the rear return line.", CF_Field(fields, 8, "waiting for server eligibility")));
 			truck.AddEntry(CF_NewCommand(CF_ConvoyPanelOrder.WAIT_AHEAD, identity, "Pull ahead / wait", "Selected Unit " + identity + ": drive ahead and remain seated.", CF_Field(fields, 9, "waiting for server eligibility")));
 			truck.AddEntry(CF_NewCommand(CF_ConvoyPanelOrder.REBOARD_SELECTED, identity, "Reboard original truck", "Selected Unit " + identity + ": retry boarding; preserve Hold.", CF_Field(fields, 5, "select an active held driver")));
-			truck.AddEntry(CF_NewCommand(CF_ConvoyPanelOrder.REGROUP_RETURN, identity, "Regroup for return", "Return line: regroup behind your original lead. You drive home.", CF_Field(fields, 10, "truck is not parked in the return line")));
+
 			foreach (SCR_SelectionMenuEntry child : truck.GetEntries())
 				m_CFTruckCommands.Insert(CF_ConvoyCommandEntry.Cast(child));
 			m_CFTruckCategories.Insert(truck);
@@ -201,7 +201,7 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 		}
 		entries.Insert(units);
 		SCR_SelectionMenuCategoryEntry options = new SCR_SelectionMenuCategoryEntry();
-		options.SetName("Maneuver options");
+		options.SetName("Options / recovery");
 		options.SetDescription("Whole convoy or waiting line commands. " + m_sCFOrderState);
 		options.SetIcon("{A4A692135635424E}UI/Imagesets/Commanding/Commanding_Icons.imageset", "patrol");
 		options.Enable(true);
@@ -218,19 +218,26 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 		entries.Insert(options);
 		SCR_SelectionMenuCategoryEntry bay = new SCR_SelectionMenuCategoryEntry();
 		bay.SetName("Unload bay");
-		bay.SetDescription("Set bay saves the stopped lead's position. Unload, drive clear and stop, then Admit next truck. No separate clear-bay order. " + m_sCFOrderState);
+		bay.SetDescription("Save bay, unload your lead, choose a clear waiting area, then admit and unload each truck. Park each unloaded truck. Depart / return recalls the whole convoy. " + m_sCFOrderState);
 		bay.SetIcon("{39726705E9706337}UI/Textures/RadialMenu/Radial-Menu-icons.imageset", "Ressuply");
 		bay.Enable(true);
-		CF_ConvoyCommandEntry setup = CF_NewCommand(CF_ConvoyPanelOrder.SET_UNLOAD_BAY, 0, "Set bay / Hold queue", "Record your stopped original lead's position as the bay. Wait for all trucks to Hold before unloading your lead.", m_sCFBaySetupReason);
-		CF_ConvoyCommandEntry admit = CF_NewCommand(CF_ConvoyPanelOrder.ADMIT_NEXT, 0, "Admit next truck", "The bay is already saved. Unload your lead, drive clear and stop while seated in it, then Admit. Clearance is checked automatically; Resume is blocked during bay operations.", m_sCFBayAdmitReason);
-		CF_ConvoyCommandEntry park = CF_NewCommand(CF_ConvoyPanelOrder.PARK_BAY_TRUCK, 0, "Unloaded / park truck", "After unloading supplies at the admitted truck's rear, send that truck to the rear waiting line. You can give this order on foot. Wait until it parks, then Admit next truck. After the last truck, use Units > Regroup for return.", m_sCFBayParkReason);
+		CF_ConvoyCommandEntry setup = CF_NewCommand(CF_ConvoyPanelOrder.SET_UNLOAD_BAY, 0, "1. Save bay / Hold queue", "Record your stopped original lead's position as the bay. Wait for all trucks to Hold before unloading your lead.", m_sCFBaySetupReason);
+		CF_ConvoyCommandEntry admit = CF_NewCommand(CF_ConvoyPanelOrder.ADMIT_NEXT, 0, "3. Admit next truck", "The bay and waiting area are saved. Stand near your stopped lead or enter it, then Admit. The next original truck approaches; the queue stays held.", m_sCFBayAdmitReason);
+		CF_ConvoyCommandEntry park = CF_NewCommand(CF_ConvoyPanelOrder.PARK_BAY_TRUCK, 0, "4. Park unloaded truck", "Use the native Unload supplies action at the rear. Then send this truck to the saved waiting area. You can stay on foot. After parking, Admit next truck; after the last choose Depart / return convoy.", m_sCFBayParkReason);
 		m_CFBayCommands.Insert(park);
 		m_CFBayCommands.Insert(setup);
 		m_CFBayCommands.Insert(admit);
 		bay.AddEntry(setup);
+		CF_ConvoyCommandEntry waiting = CF_NewCommand(CF_ConvoyPanelOrder.SET_WAITING_AREA, 0, "2. Set waiting area", "After unloading your lead, stop in a wide clear turnout. With five trucks, leave about 70 metres from the bay; every future slot is checked before saving. Parked trucks use two columns 14 metres beside and 15 metres apart behind this position. Keep the area clear; it is fixed after the first truck parks.", m_sCFWaitingReason);
+		m_CFBayCommands.Insert(waiting);
+		bay.AddEntry(waiting);
 		bay.AddEntry(admit);
 		bay.AddEntry(park);
 		entries.Insert(bay);
+		CF_ConvoyCommandEntry depart = CF_NewCommand(CF_ConvoyPanelOrder.DEPART_BAY, 0, "Depart / return convoy", "After every truck is unloaded and parked, enter your original lead and release the whole convoy. Drive forward safely to establish following, then lead the return trip. Original drivers, trucks and cargo are retained.", m_sCFDepartReason);
+		m_CFBayCommands.Insert(depart);
+		entries.Insert(depart);
+		options.AddEntry(CF_NewCommand(CF_ConvoyPanelOrder.FINISH, 0, "Finish trip / Hold", "At the end of your trip, stop the original lead and Hold the convoy. Drivers stay seated; Resume starts another leg. This does not dismiss drivers or move supplies."));
 		AddEntries(entries, true);
 	}
 
@@ -240,6 +247,8 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 		return fallback;
 	}
 
+	protected string m_sCFWaitingReason = "waiting for server eligibility";
+	protected string m_sCFDepartReason = "waiting for server eligibility";
 	protected string m_sCFBayParkReason = "waiting for server eligibility";
 	protected void CF_ReadBayMenuState(array<string> fields)
 	{
@@ -249,6 +258,8 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 		m_sCFBayParkReason = "Set an unload bay first";
 		if (m_bCFExplicitBay) m_sCFBayParkReason = CF_Field(fields, 8, "wait for the admitted truck to settle");
 		m_sCFStartReason = CF_Field(fields, 15, "waiting for server eligibility");
+		m_sCFWaitingReason = CF_Field(fields, 16, "waiting for server eligibility");
+		m_sCFDepartReason = CF_Field(fields, 17, "waiting for server eligibility");
 	}
 
 	protected string CF_TruckDescription(array<string> fields)
@@ -311,6 +322,8 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 			if (bayCommand.Command == CF_ConvoyPanelOrder.SET_UNLOAD_BAY) availability = m_sCFBaySetupReason;
 			else if (bayCommand.Command == CF_ConvoyPanelOrder.ADMIT_NEXT) availability = m_sCFBayAdmitReason;
 			else if (bayCommand.Command == CF_ConvoyPanelOrder.PARK_BAY_TRUCK) availability = m_sCFBayParkReason;
+			else if (bayCommand.Command == CF_ConvoyPanelOrder.SET_WAITING_AREA) availability = m_sCFWaitingReason;
+			else if (bayCommand.Command == CF_ConvoyPanelOrder.DEPART_BAY) availability = m_sCFDepartReason;
 			else if (bayCommand.Command == CF_ConvoyPanelOrder.CANCEL_UNLOAD)
 			{
 				bayCommand.SetName("Cancel unload / follow");

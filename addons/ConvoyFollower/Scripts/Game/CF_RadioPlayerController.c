@@ -10,6 +10,14 @@ class CF_RadioEvent
 	static const int LOST = 6;
 	static const int REJOINED = 7;
 	static const int UNDER_FIRE = 8;
+	static const int START = 10;
+	static const int RESUME = 11;
+	static const int BAY_SET = 12;
+	static const int BAY_READY = 13;
+	static const int PARK = 14;
+	static const int PARKED = 15;
+	static const int DEPART = 16;
+	static const int FINISH = 17;
 	static const int COHESION = 9; // Separate spacing advice; shares repeat suppression with range warnings.
 }
 
@@ -249,6 +257,12 @@ modded class SCR_PlayerController
 			accepted = CF_ConvoySession.CF_PanelSetUnloadBay(user);
 		else if (command == CF_ConvoyPanelOrder.PARK_BAY_TRUCK)
 			accepted = CF_ConvoySession.CF_PanelParkBayTruck(user);
+		else if (command == CF_ConvoyPanelOrder.SET_WAITING_AREA)
+			accepted = CF_ConvoySession.CF_PanelSetWaitingArea(user);
+		else if (command == CF_ConvoyPanelOrder.DEPART_BAY)
+			accepted = CF_ConvoySession.CF_PanelDepartBay(user);
+		else if (command == CF_ConvoyPanelOrder.FINISH)
+			accepted = CF_ConvoySession.CF_PanelFinishConvoy(user);
 		else if (command == CF_ConvoyPanelOrder.ADMIT_NEXT)
 			accepted = CF_ConvoySession.CF_PanelAdmitNextTruck(user);
 		if (!accepted)
@@ -280,7 +294,7 @@ modded class SCR_PlayerController
 	// a lower limit, but every configuration is clamped to five units.
 	bool CF_IsAtHardConvoyLimit()
 	{
-		return m_iCFConvoyMemberCount >= 5;
+		return m_iCFConvoyMemberCount >= 10;
 	}
 
 	void CF_SetConvoyMemberCount(int count)
@@ -460,7 +474,7 @@ modded class SCR_PlayerController
 
 		string resourceName;
 		int delayMs;
-		if (!CF_GetRadioClip(eventId, unitNumber, resourceName, delayMs))
+		if (!CF_GetGeneratedRadioClip(eventId, unitNumber, 0, resourceName, delayMs) && !CF_GetRadioClip(eventId, unitNumber, resourceName, delayMs))
 		{
 			Print("[ConvoyFollower] RADIO_NO_CLIP: event " + eventId + ", unit " + unitNumber);
 			return;
@@ -542,7 +556,7 @@ modded class SCR_PlayerController
 		int delayMs;
 		bool found = false;
 		int variant = -1;
-		if (voicePack == 1)
+		if (voicePack == 1 || eventId >= CF_RadioEvent.START)
 		{
 			variant = CF_NextGeneratedVariant(eventId, unitNumber);
 			found = CF_GetGeneratedRadioClip(eventId, unitNumber, variant, resourceName, delayMs);
@@ -802,6 +816,198 @@ modded class SCR_PlayerController
 		{
 			resourceName = "{917F30C54D989465}Sounds/LeaderGenerated/leader_cohesion_e.wav";
 			delayMs = 3435;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.START && variant == 0)
+		{
+			resourceName = "{D7E0C00A09F3BE95}Sounds/LeaderGenerated/leader_start_b.wav";
+			delayMs = 3463;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.START && variant == 1)
+		{
+			resourceName = "{CADDA33054B71773}Sounds/LeaderGenerated/leader_start_c.wav";
+			delayMs = 3132;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.START && variant == 2)
+		{
+			resourceName = "{F7810D6BE8406043}Sounds/LeaderGenerated/leader_start_d.wav";
+			delayMs = 2836;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.START && variant == 3)
+		{
+			resourceName = "{D2B2C443BFCAD4A2}Sounds/LeaderGenerated/leader_start_e.wav";
+			delayMs = 2833;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.RESUME && variant == 0)
+		{
+			resourceName = "{04DBAF49DE87802D}Sounds/LeaderGenerated/leader_resume_b.wav";
+			delayMs = 3325;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.RESUME && variant == 1)
+		{
+			resourceName = "{97B321F38934548E}Sounds/LeaderGenerated/leader_resume_c.wav";
+			delayMs = 2775;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.RESUME && variant == 2)
+		{
+			resourceName = "{9A725FA42A385B6F}Sounds/LeaderGenerated/leader_resume_d.wav";
+			delayMs = 2715;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.RESUME && variant == 3)
+		{
+			resourceName = "{E1D8725AB9755472}Sounds/LeaderGenerated/leader_resume_e.wav";
+			delayMs = 3132;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.BAY_SET && variant == 0)
+		{
+			resourceName = "{38C6E9495DD5D029}Sounds/LeaderGenerated/leader_bay_set_b.wav";
+			delayMs = 3126;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.BAY_SET && variant == 1)
+		{
+			resourceName = "{106E427E565ADDDA}Sounds/LeaderGenerated/leader_bay_set_c.wav";
+			delayMs = 4075;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.BAY_SET && variant == 2)
+		{
+			resourceName = "{E7FD3E95E60BD52F}Sounds/LeaderGenerated/leader_bay_set_d.wav";
+			delayMs = 3398;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.BAY_SET && variant == 3)
+		{
+			resourceName = "{CBA5A27D34F54863}Sounds/LeaderGenerated/leader_bay_set_e.wav";
+			delayMs = 3603;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.BAY_READY && variant == 0)
+		{
+			resourceName = "{832880BDB6ECC7BE}Sounds/LeaderGenerated/leader_bay_ready_b.wav";
+			delayMs = 2923;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.BAY_READY && variant == 1)
+		{
+			resourceName = "{0D1E67242AB630E3}Sounds/LeaderGenerated/leader_bay_ready_c.wav";
+			delayMs = 3598;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.BAY_READY && variant == 2)
+		{
+			resourceName = "{AF870AF244E6E1CA}Sounds/LeaderGenerated/leader_bay_ready_d.wav";
+			delayMs = 4318;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.BAY_READY && variant == 3)
+		{
+			resourceName = "{F097013161D81BC8}Sounds/LeaderGenerated/leader_bay_ready_e.wav";
+			delayMs = 3223;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.PARK && variant == 0)
+		{
+			resourceName = "{C5882765353476ED}Sounds/LeaderGenerated/leader_park_b.wav";
+			delayMs = 3709;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.PARK && variant == 1)
+		{
+			resourceName = "{32EA3B6B6A4874EF}Sounds/LeaderGenerated/leader_park_c.wav";
+			delayMs = 4231;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.PARK && variant == 2)
+		{
+			resourceName = "{070458C429442245}Sounds/LeaderGenerated/leader_park_d.wav";
+			delayMs = 2491;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.PARK && variant == 3)
+		{
+			resourceName = "{43388EBCD3A00D34}Sounds/LeaderGenerated/leader_park_e.wav";
+			delayMs = 3462;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.PARKED && variant == 0)
+		{
+			resourceName = "{F8EA81E205F32F77}Sounds/LeaderGenerated/leader_parked_b.wav";
+			delayMs = 2866;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.PARKED && variant == 1)
+		{
+			resourceName = "{5CE0F3C3DA6372EB}Sounds/LeaderGenerated/leader_parked_c.wav";
+			delayMs = 3351;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.PARKED && variant == 2)
+		{
+			resourceName = "{5F0D9E5CDF9F0E65}Sounds/LeaderGenerated/leader_parked_d.wav";
+			delayMs = 3104;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.PARKED && variant == 3)
+		{
+			resourceName = "{052EA9637A01202B}Sounds/LeaderGenerated/leader_parked_e.wav";
+			delayMs = 3058;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.DEPART && variant == 0)
+		{
+			resourceName = "{25D31608840322F2}Sounds/LeaderGenerated/leader_depart_b.wav";
+			delayMs = 4027;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.DEPART && variant == 1)
+		{
+			resourceName = "{701194DBB0B8A123}Sounds/LeaderGenerated/leader_depart_c.wav";
+			delayMs = 3510;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.DEPART && variant == 2)
+		{
+			resourceName = "{0FF1B23D1E02D2FE}Sounds/LeaderGenerated/leader_depart_d.wav";
+			delayMs = 4060;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.DEPART && variant == 3)
+		{
+			resourceName = "{EC08278068966047}Sounds/LeaderGenerated/leader_depart_e.wav";
+			delayMs = 3035;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.FINISH && variant == 0)
+		{
+			resourceName = "{85453AF704250EE8}Sounds/LeaderGenerated/leader_finish_b.wav";
+			delayMs = 3489;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.FINISH && variant == 1)
+		{
+			resourceName = "{A76FDBA82DF90F37}Sounds/LeaderGenerated/leader_finish_c.wav";
+			delayMs = 3782;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.FINISH && variant == 2)
+		{
+			resourceName = "{88C0DDB424B00364}Sounds/LeaderGenerated/leader_finish_d.wav";
+			delayMs = 4301;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.FINISH && variant == 3)
+		{
+			resourceName = "{47FD41712E2A00AA}Sounds/LeaderGenerated/leader_finish_e.wav";
+			delayMs = 3112;
 			return true;
 		}
 		if (unitNumber == 1 && eventId == CF_RadioEvent.FAR_WARNING && variant == 0)
@@ -1162,6 +1368,366 @@ modded class SCR_PlayerController
 		{
 			resourceName = "{7518ED987CC6424D}Sounds/LeaderGenerated/unit_5_under_fire_c.wav";
 			delayMs = 2615;
+			return true;
+		}
+		if (unitNumber == 6 && eventId == CF_RadioEvent.FAR_WARNING && variant == 0)
+		{
+			resourceName = "{9B084CC22AD045F9}Sounds/LeaderGenerated/unit_6_far_warning_b.wav";
+			delayMs = 2451;
+			return true;
+		}
+		if (unitNumber == 6 && eventId == CF_RadioEvent.FAR_WARNING && variant == 1)
+		{
+			resourceName = "{F033AB09059BD3C2}Sounds/LeaderGenerated/unit_6_far_warning_c.wav";
+			delayMs = 2231;
+			return true;
+		}
+		if (unitNumber == 6 && eventId == CF_RadioEvent.FAR_WARNING && variant == 2)
+		{
+			resourceName = "{61A3F724BA50BB64}Sounds/LeaderGenerated/unit_6_far_warning_d.wav";
+			delayMs = 3111;
+			return true;
+		}
+		if (unitNumber == 6 && eventId == CF_RadioEvent.FAR_WARNING && variant == 3)
+		{
+			resourceName = "{3B9FFB8FBDE5566F}Sounds/LeaderGenerated/unit_6_far_warning_e.wav";
+			delayMs = 4200;
+			return true;
+		}
+		if (unitNumber == 6 && eventId == CF_RadioEvent.STUCK && variant == 0)
+		{
+			resourceName = "{478ACEBDE1EE344B}Sounds/LeaderGenerated/unit_6_stuck_b.wav";
+			delayMs = 3167;
+			return true;
+		}
+		if (unitNumber == 6 && eventId == CF_RadioEvent.STUCK && variant == 1)
+		{
+			resourceName = "{CC9F2A8043017B29}Sounds/LeaderGenerated/unit_6_stuck_c.wav";
+			delayMs = 3255;
+			return true;
+		}
+		if (unitNumber == 6 && eventId == CF_RadioEvent.LOST && variant == 0)
+		{
+			resourceName = "{926CFEA1C40FEA28}Sounds/LeaderGenerated/unit_6_lost_b.wav";
+			delayMs = 2686;
+			return true;
+		}
+		if (unitNumber == 6 && eventId == CF_RadioEvent.LOST && variant == 1)
+		{
+			resourceName = "{C94EA7A66466CA63}Sounds/LeaderGenerated/unit_6_lost_c.wav";
+			delayMs = 3171;
+			return true;
+		}
+		if (unitNumber == 6 && eventId == CF_RadioEvent.REJOINED && variant == 0)
+		{
+			resourceName = "{484A25EE1ABB9956}Sounds/LeaderGenerated/unit_6_rejoined_b.wav";
+			delayMs = 2640;
+			return true;
+		}
+		if (unitNumber == 6 && eventId == CF_RadioEvent.REJOINED && variant == 1)
+		{
+			resourceName = "{07E867A4B0A797EA}Sounds/LeaderGenerated/unit_6_rejoined_c.wav";
+			delayMs = 2965;
+			return true;
+		}
+		if (unitNumber == 6 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 0)
+		{
+			resourceName = "{27445414076A35E9}Sounds/LeaderGenerated/unit_6_under_fire_b.wav";
+			delayMs = 1829;
+			return true;
+		}
+		if (unitNumber == 6 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 1)
+		{
+			resourceName = "{3A0B1218DC3438F2}Sounds/LeaderGenerated/unit_6_under_fire_c.wav";
+			delayMs = 2698;
+			return true;
+		}
+		if (unitNumber == 7 && eventId == CF_RadioEvent.FAR_WARNING && variant == 0)
+		{
+			resourceName = "{11F7795252711324}Sounds/LeaderGenerated/unit_7_far_warning_b.wav";
+			delayMs = 2523;
+			return true;
+		}
+		if (unitNumber == 7 && eventId == CF_RadioEvent.FAR_WARNING && variant == 1)
+		{
+			resourceName = "{1A1ADCD5E26F62BE}Sounds/LeaderGenerated/unit_7_far_warning_c.wav";
+			delayMs = 2364;
+			return true;
+		}
+		if (unitNumber == 7 && eventId == CF_RadioEvent.FAR_WARNING && variant == 2)
+		{
+			resourceName = "{4C575B009846F8C7}Sounds/LeaderGenerated/unit_7_far_warning_d.wav";
+			delayMs = 3332;
+			return true;
+		}
+		if (unitNumber == 7 && eventId == CF_RadioEvent.FAR_WARNING && variant == 3)
+		{
+			resourceName = "{5E7AFBD039180F7A}Sounds/LeaderGenerated/unit_7_far_warning_e.wav";
+			delayMs = 4320;
+			return true;
+		}
+		if (unitNumber == 7 && eventId == CF_RadioEvent.STUCK && variant == 0)
+		{
+			resourceName = "{37EB5C5D090E6888}Sounds/LeaderGenerated/unit_7_stuck_b.wav";
+			delayMs = 3241;
+			return true;
+		}
+		if (unitNumber == 7 && eventId == CF_RadioEvent.STUCK && variant == 1)
+		{
+			resourceName = "{0A94ED7954EF7BCE}Sounds/LeaderGenerated/unit_7_stuck_c.wav";
+			delayMs = 3323;
+			return true;
+		}
+		if (unitNumber == 7 && eventId == CF_RadioEvent.LOST && variant == 0)
+		{
+			resourceName = "{41917D2753054910}Sounds/LeaderGenerated/unit_7_lost_b.wav";
+			delayMs = 2818;
+			return true;
+		}
+		if (unitNumber == 7 && eventId == CF_RadioEvent.LOST && variant == 1)
+		{
+			resourceName = "{5D3027360326EA28}Sounds/LeaderGenerated/unit_7_lost_c.wav";
+			delayMs = 3268;
+			return true;
+		}
+		if (unitNumber == 7 && eventId == CF_RadioEvent.REJOINED && variant == 0)
+		{
+			resourceName = "{0A88E9882FCBF2AC}Sounds/LeaderGenerated/unit_7_rejoined_b.wav";
+			delayMs = 2746;
+			return true;
+		}
+		if (unitNumber == 7 && eventId == CF_RadioEvent.REJOINED && variant == 1)
+		{
+			resourceName = "{7392645C7465E3C3}Sounds/LeaderGenerated/unit_7_rejoined_c.wav";
+			delayMs = 2994;
+			return true;
+		}
+		if (unitNumber == 7 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 0)
+		{
+			resourceName = "{30DD905B70FC276C}Sounds/LeaderGenerated/unit_7_under_fire_b.wav";
+			delayMs = 1901;
+			return true;
+		}
+		if (unitNumber == 7 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 1)
+		{
+			resourceName = "{B68F769A7C1C2F02}Sounds/LeaderGenerated/unit_7_under_fire_c.wav";
+			delayMs = 2815;
+			return true;
+		}
+		if (unitNumber == 8 && eventId == CF_RadioEvent.FAR_WARNING && variant == 0)
+		{
+			resourceName = "{15F0404BF75AB86B}Sounds/LeaderGenerated/unit_8_far_warning_b.wav";
+			delayMs = 2359;
+			return true;
+		}
+		if (unitNumber == 8 && eventId == CF_RadioEvent.FAR_WARNING && variant == 1)
+		{
+			resourceName = "{0A8D2190243FF3BD}Sounds/LeaderGenerated/unit_8_far_warning_c.wav";
+			delayMs = 2236;
+			return true;
+		}
+		if (unitNumber == 8 && eventId == CF_RadioEvent.FAR_WARNING && variant == 2)
+		{
+			resourceName = "{4B9E96AAB3C4DD4B}Sounds/LeaderGenerated/unit_8_far_warning_d.wav";
+			delayMs = 3029;
+			return true;
+		}
+		if (unitNumber == 8 && eventId == CF_RadioEvent.FAR_WARNING && variant == 3)
+		{
+			resourceName = "{982F3B0DFC3B62B4}Sounds/LeaderGenerated/unit_8_far_warning_e.wav";
+			delayMs = 4145;
+			return true;
+		}
+		if (unitNumber == 8 && eventId == CF_RadioEvent.STUCK && variant == 0)
+		{
+			resourceName = "{1FF4A04ECD3B97F0}Sounds/LeaderGenerated/unit_8_stuck_b.wav";
+			delayMs = 3185;
+			return true;
+		}
+		if (unitNumber == 8 && eventId == CF_RadioEvent.STUCK && variant == 1)
+		{
+			resourceName = "{FF803B44B60BB9B2}Sounds/LeaderGenerated/unit_8_stuck_c.wav";
+			delayMs = 3233;
+			return true;
+		}
+		if (unitNumber == 8 && eventId == CF_RadioEvent.LOST && variant == 0)
+		{
+			resourceName = "{61D101BE2E339030}Sounds/LeaderGenerated/unit_8_lost_b.wav";
+			delayMs = 2570;
+			return true;
+		}
+		if (unitNumber == 8 && eventId == CF_RadioEvent.LOST && variant == 1)
+		{
+			resourceName = "{57ACE713ACF2806F}Sounds/LeaderGenerated/unit_8_lost_c.wav";
+			delayMs = 3231;
+			return true;
+		}
+		if (unitNumber == 8 && eventId == CF_RadioEvent.REJOINED && variant == 0)
+		{
+			resourceName = "{6211D8F936FCAD62}Sounds/LeaderGenerated/unit_8_rejoined_b.wav";
+			delayMs = 2450;
+			return true;
+		}
+		if (unitNumber == 8 && eventId == CF_RadioEvent.REJOINED && variant == 1)
+		{
+			resourceName = "{BF429B60739BBA41}Sounds/LeaderGenerated/unit_8_rejoined_c.wav";
+			delayMs = 2793;
+			return true;
+		}
+		if (unitNumber == 8 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 0)
+		{
+			resourceName = "{FB92E1F89B96B027}Sounds/LeaderGenerated/unit_8_under_fire_b.wav";
+			delayMs = 1899;
+			return true;
+		}
+		if (unitNumber == 8 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 1)
+		{
+			resourceName = "{4CF6C56C3102D4EC}Sounds/LeaderGenerated/unit_8_under_fire_c.wav";
+			delayMs = 2594;
+			return true;
+		}
+		if (unitNumber == 9 && eventId == CF_RadioEvent.FAR_WARNING && variant == 0)
+		{
+			resourceName = "{CBB095F6AD9C7CB0}Sounds/LeaderGenerated/unit_9_far_warning_b.wav";
+			delayMs = 2416;
+			return true;
+		}
+		if (unitNumber == 9 && eventId == CF_RadioEvent.FAR_WARNING && variant == 1)
+		{
+			resourceName = "{B72184F313768EA8}Sounds/LeaderGenerated/unit_9_far_warning_c.wav";
+			delayMs = 2304;
+			return true;
+		}
+		if (unitNumber == 9 && eventId == CF_RadioEvent.FAR_WARNING && variant == 2)
+		{
+			resourceName = "{689404AED8CFAD00}Sounds/LeaderGenerated/unit_9_far_warning_d.wav";
+			delayMs = 3186;
+			return true;
+		}
+		if (unitNumber == 9 && eventId == CF_RadioEvent.FAR_WARNING && variant == 3)
+		{
+			resourceName = "{CF56D47C665797E9}Sounds/LeaderGenerated/unit_9_far_warning_e.wav";
+			delayMs = 4289;
+			return true;
+		}
+		if (unitNumber == 9 && eventId == CF_RadioEvent.STUCK && variant == 0)
+		{
+			resourceName = "{37529218A9641DDA}Sounds/LeaderGenerated/unit_9_stuck_b.wav";
+			delayMs = 3283;
+			return true;
+		}
+		if (unitNumber == 9 && eventId == CF_RadioEvent.STUCK && variant == 1)
+		{
+			resourceName = "{A1FD975BEABD38C1}Sounds/LeaderGenerated/unit_9_stuck_c.wav";
+			delayMs = 3285;
+			return true;
+		}
+		if (unitNumber == 9 && eventId == CF_RadioEvent.LOST && variant == 0)
+		{
+			resourceName = "{C8961EA869765646}Sounds/LeaderGenerated/unit_9_lost_b.wav";
+			delayMs = 2692;
+			return true;
+		}
+		if (unitNumber == 9 && eventId == CF_RadioEvent.LOST && variant == 1)
+		{
+			resourceName = "{D01B48A3AD3F1736}Sounds/LeaderGenerated/unit_9_lost_c.wav";
+			delayMs = 3256;
+			return true;
+		}
+		if (unitNumber == 9 && eventId == CF_RadioEvent.REJOINED && variant == 0)
+		{
+			resourceName = "{F8A4150697C90DCF}Sounds/LeaderGenerated/unit_9_rejoined_b.wav";
+			delayMs = 2542;
+			return true;
+		}
+		if (unitNumber == 9 && eventId == CF_RadioEvent.REJOINED && variant == 1)
+		{
+			resourceName = "{ADDDE1710A4C861E}Sounds/LeaderGenerated/unit_9_rejoined_c.wav";
+			delayMs = 2912;
+			return true;
+		}
+		if (unitNumber == 9 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 0)
+		{
+			resourceName = "{E2D3FBA8FC9270B2}Sounds/LeaderGenerated/unit_9_under_fire_b.wav";
+			delayMs = 1983;
+			return true;
+		}
+		if (unitNumber == 9 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 1)
+		{
+			resourceName = "{DC39C00AF79B60A0}Sounds/LeaderGenerated/unit_9_under_fire_c.wav";
+			delayMs = 2644;
+			return true;
+		}
+		if (unitNumber == 10 && eventId == CF_RadioEvent.FAR_WARNING && variant == 0)
+		{
+			resourceName = "{8571EFD25C557544}Sounds/LeaderGenerated/unit_10_far_warning_b.wav";
+			delayMs = 2396;
+			return true;
+		}
+		if (unitNumber == 10 && eventId == CF_RadioEvent.FAR_WARNING && variant == 1)
+		{
+			resourceName = "{948088AD7875491F}Sounds/LeaderGenerated/unit_10_far_warning_c.wav";
+			delayMs = 2255;
+			return true;
+		}
+		if (unitNumber == 10 && eventId == CF_RadioEvent.FAR_WARNING && variant == 2)
+		{
+			resourceName = "{2E103D8E1D006DD2}Sounds/LeaderGenerated/unit_10_far_warning_d.wav";
+			delayMs = 3150;
+			return true;
+		}
+		if (unitNumber == 10 && eventId == CF_RadioEvent.FAR_WARNING && variant == 3)
+		{
+			resourceName = "{90D2C46A8741E288}Sounds/LeaderGenerated/unit_10_far_warning_e.wav";
+			delayMs = 4220;
+			return true;
+		}
+		if (unitNumber == 10 && eventId == CF_RadioEvent.STUCK && variant == 0)
+		{
+			resourceName = "{9254E71A22176699}Sounds/LeaderGenerated/unit_10_stuck_b.wav";
+			delayMs = 3211;
+			return true;
+		}
+		if (unitNumber == 10 && eventId == CF_RadioEvent.STUCK && variant == 1)
+		{
+			resourceName = "{0F4AE3CFC273F634}Sounds/LeaderGenerated/unit_10_stuck_c.wav";
+			delayMs = 3307;
+			return true;
+		}
+		if (unitNumber == 10 && eventId == CF_RadioEvent.LOST && variant == 0)
+		{
+			resourceName = "{0F64C4DEE56B7214}Sounds/LeaderGenerated/unit_10_lost_b.wav";
+			delayMs = 2716;
+			return true;
+		}
+		if (unitNumber == 10 && eventId == CF_RadioEvent.LOST && variant == 1)
+		{
+			resourceName = "{C11343A5FFAEFB71}Sounds/LeaderGenerated/unit_10_lost_c.wav";
+			delayMs = 3242;
+			return true;
+		}
+		if (unitNumber == 10 && eventId == CF_RadioEvent.REJOINED && variant == 0)
+		{
+			resourceName = "{63CDF66B4B3659AA}Sounds/LeaderGenerated/unit_10_rejoined_b.wav";
+			delayMs = 2504;
+			return true;
+		}
+		if (unitNumber == 10 && eventId == CF_RadioEvent.REJOINED && variant == 1)
+		{
+			resourceName = "{E7B2085352B1A276}Sounds/LeaderGenerated/unit_10_rejoined_c.wav";
+			delayMs = 2898;
+			return true;
+		}
+		if (unitNumber == 10 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 0)
+		{
+			resourceName = "{1D6A08D1DD110764}Sounds/LeaderGenerated/unit_10_under_fire_b.wav";
+			delayMs = 1950;
+			return true;
+		}
+		if (unitNumber == 10 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 1)
+		{
+			resourceName = "{0AC7AC01367D53BA}Sounds/LeaderGenerated/unit_10_under_fire_c.wav";
+			delayMs = 2663;
 			return true;
 		}
 		// END GENERATED RADIO MAPPING

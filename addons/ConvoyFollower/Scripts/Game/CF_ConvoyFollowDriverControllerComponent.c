@@ -29,6 +29,8 @@ class CF_ConvoyFollowDriverControllerComponentClass : CF_TrailGuideDriverControl
 // selects the existing direct/head or recorded/tail moving-order path.
 class CF_ConvoyFollowDriverControllerComponent : CF_TrailGuideDriverControllerComponent
 {
+	[Attribute(defvalue: "0", desc: "Experimental recorded-route tail. Ordinary trucks follow their real predecessor, including off road.")]
+	protected bool m_bUseRecordedTailGuide;
 	protected CF_ConvoySession m_RoleSession;
 	protected CF_DriverControllerComponent m_RolePredecessor;
 	protected IEntity m_RoleTarget;
@@ -332,7 +334,7 @@ class CF_ConvoyFollowDriverControllerComponent : CF_TrailGuideDriverControllerCo
 		IEntity target;
 		return m_bRoleBound && CF_ReadRoleTarget(target) && m_RoleSession == m_Session &&
 			m_RolePredecessor == m_Predecessor && m_RoleTarget == target &&
-			m_bTrailGuidePrototype == (m_Predecessor != null);
+			m_bTrailGuidePrototype == (m_bUseRecordedTailGuide && m_Predecessor != null);
 	}
 
 	protected bool CF_RoleTransitionBlocks()
@@ -391,11 +393,11 @@ class CF_ConvoyFollowDriverControllerComponent : CF_TrailGuideDriverControllerCo
 		if (!CF_OriginalResumePilotReady(pilotReason))
 			return false;
 
-		bool tail = m_Predecessor != null;
+		bool tail = m_bUseRecordedTailGuide && m_Predecessor != null;
 		string oldFailure = m_sTrailBlockReason;
 		CF_ClearRetiredRoleTrail();
 		m_bTrailGuidePrototype = tail;
-		m_bEntityRearPacing = !tail; // Match the two-truck comparison policy.
+		m_bEntityRearPacing = !m_Predecessor; // Preserve leader pacing; every link follows its original truck.
 		m_RoleSession = m_Session;
 		m_RolePredecessor = m_Predecessor;
 		m_RoleTarget = target;

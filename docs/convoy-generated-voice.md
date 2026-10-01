@@ -8,24 +8,11 @@ the server passes the chosen pack to each convoy owner's private radio RPC. The
 driver interaction menu does not expose this choice. All calls within a convoy
 use one voice timbre.
 
-The generated pack contains 96 clips: four alternatives for each of nine
-whole-convoy events, four range warnings for each of Units One through Five,
-and two alternatives for each other numbered event. It contains 48 kHz mono WAV resources in
-`addons/ConvoyFollower/Sounds/LeaderGenerated/`. The original pack and source
-recordings were not modified. Alternate phrasing is selected only when a call
-plays; it does not affect admission, cooldowns, or the urgency of a report. A
-client cycles phrasings per event and unit after a random first choice, without
-consecutive repeats. Spacing advice uses distinct wording from true range warnings.
+The generated pack now contains **188 clips**: the prior 96 remain byte-identical, 32 add four phrasings for each of Start, Resume, Bay saved, Bay ready, Park, Parked, Depart and Finish, and 60 provide numbered-event wording for configurable Units Six through Ten. The default and active test fleet is five. Capacity and voice assets do not establish larger-fleet validation.
 
-September 30 screening verified all 96 WAV formats, hashes and unclipped peaks;
-the existing 66 generated clips remain byte-identical. Local Whisper screened
-all 30 new lines with similarity 0.917–1.000 (numerals versus spelled-out unit
-numbers explain most lower scores). This is a readability screen, not player
-hearing evidence. A private native dispatch check played all four spacing
-variants with valid handles and logged their exact resources. Its synthetic
-dispatch does not prove real warning timing; a separate production debounce
-check accepted the first spacing call and suppressed the immediate range call
-from another unit. See the current bay/voice validation record for run results.
+All clips are mono, 16-bit, 48 kHz WAV resources. The local level audit checked all 188 for empty audio, clipping and edge pops. Local Whisper screened the 92 new clips (raw text similarity 0.840–1.000, including spoken numbers versus numeral transcriptions); this is a readability screen, not confirmation that a player heard each call. Existing recordings remain selectable. New command acknowledgements rotate per event; physical Bay ready and Parked calls wait for their actual completion callbacks.
+
+Spacing advice has separate wording from actual range warnings. Sustained-pressure admission, episode hysteresis and a shared 90-second spacing/range cooldown keep stopping and accelerating from immediately repeating a warning. Native under-fire reports still require positive qualifying damage; nearby gunshots alone are not a confirmed hit.
 
 ## Source and license
 

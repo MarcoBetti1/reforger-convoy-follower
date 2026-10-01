@@ -43,6 +43,9 @@ class CF_EntityCapturedWait : SCR_AIWaitBehavior
 		SetPriorityLevel(SCR_AIActionBase.PRIORITY_LEVEL_GAMEMASTER + 100);
 	}
 
+	protected bool m_bCaptureParked;
+	bool IsParked() { return m_bCaptureParked; }
+	void BindParked() { if (m_bCaptureBound) m_bCaptureParked = true; }
 	bool IsPanelHold() { return m_bCapturePanelHold; }
 	bool IsExplicitBay() { return m_bCaptureExplicitBay; }
 	void BindExplicitBay(vector bay, vector truckAnchor)
@@ -837,7 +840,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		World world = GetGame().GetWorld();
 		if (driver.GetWorld() != world || truck.GetWorld() != world || group.GetWorld() != world || group.GetAgentsCount() != 1)
 			return false;
-		if (!m_Session || m_Session.GetUnitNumber(this) <= 0 || !CF_IsLiveAIPilot(driver, truck) ||
+		if (!m_Session || (m_Session.GetUnitNumber(this) <= 0 && (!CF_IsExplicitWaitingParked() || !m_Session.IsOwnedRadioMember(this))) || !CF_IsLiveAIPilot(driver, truck) ||
 			IsDriverDestroyed(driver) || IsAssignedTruckDestroyed())
 			return false;
 		PlayerManager players = GetGame().GetPlayerManager();
@@ -900,6 +903,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			return false;
 		// Explicit Hold owns the stationary pilot independently of a moving,
 		// replaced or absent predecessor. Speed limits acquisition, not tenure.
+		if (action.IsParked()) return CF_IsExplicitWaitingParked() && !m_Waypoint;
 		if (action.IsPanelHold()) return CF_IsPanelWaitContext() && !m_bEntityPanelWaitFailed;
 		if (action.IsExplicitBay())
 		{
@@ -915,9 +919,16 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		SCR_DamageManagerComponent targetDamage = SCR_DamageManagerComponent.GetDamageManager(m_EntityWaitTarget);
 		if (m_EntityWaitTarget == truck || (targetDamage && targetDamage.IsDestroyed()))
 			return false;
-		float targetSpeed;
-		return CF_EntitySpeed(m_EntityWaitTarget, targetSpeed) && targetSpeed <= CF_ENTITY_STOP_SPEED_KMH &&
-			vector.Distance(m_vEntityWaitTargetAnchor, m_EntityWaitTarget.GetOrigin()) < CF_STOP_DETECT_DISTANCE;
+		// Acquisition still requires a measured slow, stable stop. Once held,
+		// retain this seated Wait through predecessor settling/physics nudges.
+		// Retire it on the same actual departure geometry as UpdateFollowing,
+		// instead of losing it on a 1m shift and leaving native Idle driving.
+		ChimeraCharacter leader = ChimeraCharacter.Cast(m_Leader);
+		if (!leader) return false;
+		bool departure = leader.IsInVehicle() && !m_bUnloadSequenceHold &&
+			vector.Distance(m_vArrivalAnchorPosition, m_EntityWaitTarget.GetOrigin()) >= CF_ARRIVAL_RESUME_DISTANCE &&
+			vector.Distance(truck.GetOrigin(), m_EntityWaitTarget.GetOrigin()) >= CF_ConvoySettings.Get().m_fMovingGap + CF_ARRIVAL_RESUME_GAP_BUFFER;
+		return !departure;
 	}
 
 	// Read-only handoff evidence. A slow or explicitly held predecessor is
@@ -1216,6 +1227,39 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		}
 	}
 
+	protected void CF_AcquireParkedWait()
+	{
+		if (!m_bEntityCapturedWait || m_EntityCapturedWait || !CF_IsExplicitWaitingParked() || m_Waypoint || !CF_IsPanelVehicleSlow(2.0)) return;
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		if (!CF_CapturedWaitOwnershipReady(driver, m_Truck, m_Group)) return;
+		SCR_AIUtilityComponent utility = SCR_AIUtilityComponent.Cast(driver.GetAIControlComponent().GetAIAgent().FindComponent(SCR_AIUtilityComponent));
+		if (!utility) return;
+		m_EntityCapturedWait = new CF_EntityCapturedWait(utility, null);
+		m_EntityCapturedWait.Bind(this, driver, m_Truck, m_Group, m_Session, m_Leader, m_iOrderingPlayerId, false);
+		m_EntityCapturedWait.BindParked();
+		utility.AddAction(m_EntityCapturedWait);
+		Print("[ConvoyFollower] WAITING_AREA_WAIT_BIND: unit=" + m_iUnitNumber + " original_pilot=true");
+	}
+
+	override void CF_CompleteUnloadDeparture()
+	{
+		if (m_bExplicitWaitingParking && CF_IsAtUnloadWaitingPoint() && m_Waypoint && CF_ShouldRemainSeated())
+		{
+			SCR_AIGroupUtilityComponent utility = SCR_AIGroupUtilityComponent.Cast(m_Group.FindComponent(SCR_AIGroupUtilityComponent));
+			if (!utility) return;
+			utility.CancelActivitiesRelatedToWaypoint(m_Waypoint, SCR_AIMoveActivity, true);
+		}
+		super.CF_CompleteUnloadDeparture();
+		CF_AcquireParkedWait();
+	}
+
+	override bool CF_ResumeWaitingArea()
+	{
+		if (!CF_CanDepartWaitingArea()) return false;
+		CF_ReleaseCapturedWait("explicit_departure_from_waiting_area");
+		return super.CF_ResumeWaitingArea();
+	}
+
 	override void EOnFrame(IEntity owner, float timeSlice)
 	{
 		CF_ObserveOriginalFollow();
@@ -1223,6 +1267,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		super.EOnFrame(owner, timeSlice);
 		CF_AcquireCapturedWait(true);
 		CF_ObserveExplicitBayStop();
+		CF_AcquireParkedWait();
 	}
 
 	override protected void SetState(int state)
@@ -1238,6 +1283,7 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 		{
 			bool keep = state == CF_ARRIVING && !m_EntityCapturedWait.IsPanelHold();
 			if (m_EntityCapturedWait.IsPanelHold()) keep = state == CF_PANEL_HOLD;
+			if (m_EntityCapturedWait.IsParked()) keep = state == CF_UNLOAD_DEPARTED;
 			if (!keep) CF_ReleaseCapturedWait("state_change");
 		}
 		if (m_iState == CF_PANEL_HOLD && state != CF_PANEL_HOLD)

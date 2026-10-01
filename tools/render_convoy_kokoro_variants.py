@@ -48,7 +48,7 @@ MEMBER = {
     "rejoined": ("has found the line again.", "is moving back into line."),
     "under_fire": ("took a hit.", "reports taking a hit."),
 }
-WORDS = ("One", "Two", "Three", "Four", "Five")
+WORDS = ("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten")
 
 # Preserve the existing alternatives and add distinct language for the next
 # iteration. Cohesion advice has its own phrases rather than range audio.
@@ -69,6 +69,17 @@ LEADER["cohesion"] = (
     "Give the convoy a little room to close up.",
     "We're stretching the line. Take it steady up front.",
 )
+LEADER.update({
+ "start": ("Start order received. We'll roll when you move out.", "Convoy ready to depart. Lead us out.", "You've got the convoy. Let's get rolling.", "Drivers ready. Moving on your lead."),
+ "resume": ("Resume received. We're ready to move again.", "Hold released. Lead us forward.", "Ready for the next leg. We're with you.", "Convoy resuming. We'll follow your lead."),
+ "bay_set": ("Unloading bay recorded. Holding the queue.", "Bay saved. Unload your lead, then pick our waiting area.", "Queue holding. We'll come in one truck at a time.", "Unload position saved. Waiting for admission."),
+ "bay_ready": ("Truck's in the bay. Ready for unloading.", "We've stopped in the loading area. Come round to the rear.", "In position. Unload us, then send us to the waiting area.", "Bay approach complete. Ready to unload."),
+ "park": ("Parking order received. Moving to the waiting area.", "Unloaded truck moving clear. Keep the waiting area open.", "We're clearing the bay for the next truck.", "Heading to the waiting area. The queue stays held."),
+ "parked": ("Truck parked and waiting. Bay's clear.", "We're in the waiting area. Ready for the next truck.", "Parked up. Admit the next truck when you're ready.", "Bay cleared. We'll wait here for departure."),
+ "depart": ("Unload line released. Lead the convoy out safely.", "Ready for the return leg. We'll follow your lead.", "All trucks released from the waiting area. Let's head back.", "Convoy ready to depart. Lead us home."),
+ "finish": ("Finish order received. Holding the convoy here.", "End of this leg. We'll hold until you need us again.", "Convoy holding at the finish. Drivers staying with the trucks.", "Trip finished. Holding for your next order."),
+})
+
 MEMBER["far_warning"] += ("needs time to close the gap.", "is a long way behind. Wait somewhere safe.")
 
 

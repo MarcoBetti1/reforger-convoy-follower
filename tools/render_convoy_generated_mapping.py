@@ -16,8 +16,10 @@ END = "\t\t// END GENERATED RADIO MAPPING"
 def main():
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     clips = manifest["clips"]
-    if len(clips) != 96:
-        raise ValueError(f"Expected 96 synthetic clips, found {len(clips)}")
+    from render_convoy_kokoro_variants import source_lines
+    expected = len(list(source_lines()))
+    if len(clips) != expected:
+        raise ValueError(f"Expected {expected} synthetic clips, found {len(clips)}")
     lines = []
     seen = set()
     for clip in clips:

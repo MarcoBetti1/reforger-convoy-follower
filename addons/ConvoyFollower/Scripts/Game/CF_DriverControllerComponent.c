@@ -208,6 +208,7 @@ class CF_DriverControllerComponent : ScriptComponent
 	[RplProp()]
 	protected bool m_bControlBoardingTimedOut;
 	protected ref CF_ControlHandoverWatch m_ControlHandoverWatch;
+	protected bool m_bExplicitWaitingParking;
 	protected bool m_bUnloadSlotBrakeCaptured;
 	protected bool m_bForwardWaitDeparture;
 	protected bool m_bUnloadBayGoalValid;
@@ -848,7 +849,7 @@ class CF_DriverControllerComponent : ScriptComponent
 					CF_ConvoySettings.Get().m_fStoppedGap + 4.0;
 			if (!m_bArrivalRoadHold && m_LeadVehicle &&
 				m_fTargetStillSeconds >= CF_STOP_DETECT_SECONDS &&
-				withinArrivalGoal && CF_IsTruckNearMappedRoad())
+				withinArrivalGoal && (m_bUnloadSequenceHold || CF_IsTruckNearMappedRoad()))
 			{
 				m_bArrivalRoadHold = true;
 				// The explicit bay observer owns its three-second MOVE-to-Wait
@@ -869,10 +870,10 @@ class CF_DriverControllerComponent : ScriptComponent
 			brakeCaptureRadius = CF_FORWARD_SLOT_BRAKE_RADIUS;
 		if (!m_bUnloadSlotBrakeCaptured &&
 			vector.Distance(m_Truck.GetOrigin(), m_vUnloadWaitingPoint) <= brakeCaptureRadius &&
-			(m_bReleaseRouteHistoryFallback || CF_IsTruckNearMappedRoad()))
+			(m_bExplicitWaitingParking || m_bReleaseRouteHistoryFallback || CF_IsTruckNearMappedRoad()))
 		{
 			m_bUnloadSlotBrakeCaptured = true;
-			ClearWaypoints();
+			if (!m_bExplicitWaitingParking) ClearWaypoints();
 			Print("[ConvoyFollower] UNLOAD_SLOT_BRAKE_CAPTURED: Unit " + m_iUnitNumber +
 				" stopping at validated return slot " + m_vUnloadWaitingPoint);
 			if (m_bForwardWaitDeparture)
@@ -1789,13 +1790,15 @@ class CF_DriverControllerComponent : ScriptComponent
 	// Keep the existing road reach and saved-position tolerances unchanged.
 	string CF_GetUnloadBayRoadReason(vector bay, out vector roadGoal)
 	{
-		if (!m_Truck) return "original queued truck is unavailable";
+		if (!m_Truck || !GetGame() || !GetGame().GetWorld()) return "original queued truck is unavailable";
+		// A bay is the lead's physically occupied position. Road projection is
+		// optional; native vehicle path planning still decides actual reachability.
+		roadGoal = bay;
 		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
-		if (!aiWorld || !aiWorld.GetRoadNetworkManager()) return "road network is unavailable";
-		if (!aiWorld.GetRoadNetworkManager().GetReachableWaypointInRoad(m_Truck.GetOrigin(), bay, 8.0, roadGoal))
-			return "no road route from the queued truck to this bay; move both trucks onto a connected road and set the bay again";
-		if (vector.Distance(roadGoal, bay) > 5.0)
-			return "bay is too far from its reachable road goal; choose a position on that road";
+		vector mapped;
+		if (aiWorld && aiWorld.GetRoadNetworkManager() &&
+			aiWorld.GetRoadNetworkManager().GetReachableWaypointInRoad(m_Truck.GetOrigin(), bay, 8.0, mapped) &&
+			vector.DistanceXZ(mapped, bay) <= 5.0) roadGoal = mapped;
 		return string.Empty;
 	}
 
@@ -1896,7 +1899,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			CF_IsBoarded() && m_Truck && m_iUnloadTurnPhase == 2 &&
 			(!m_bForwardWaitDeparture || m_bUnloadSlotBrakeCaptured) &&
 			vector.Distance(m_Truck.GetOrigin(), m_vUnloadWaitingPoint) <= CF_UNLOAD_SLOT_RADIUS + 4.0 &&
-			(m_bReleaseRouteHistoryFallback || CF_IsTruckNearMappedRoad()) &&
+			(m_bExplicitWaitingParking || m_bReleaseRouteHistoryFallback || CF_IsTruckNearMappedRoad()) &&
 			m_fUnloadSlotStillSeconds >= requiredStillSeconds;
 	}
 
@@ -2535,7 +2538,31 @@ class CF_DriverControllerComponent : ScriptComponent
 		return CF_BeginDeparture(waitingPoint, true);
 	}
 
-	protected bool CF_BeginDeparture(vector waitingPoint, bool forwardWait)
+	bool CF_BeginExplicitWaitingParking(vector point) { return CF_BeginDeparture(point, false, true); }
+	bool CF_IsExplicitWaitingParked() { return m_bExplicitWaitingParking && m_iState == CF_UNLOAD_DEPARTED && CF_IsBoarded(); }
+	bool CF_CanDepartWaitingArea() { return CF_IsExplicitWaitingParked() && CF_IsAtUnloadWaitingPoint() && CF_IsPanelVehicleSlow(2.0); }
+	bool CF_ResumeWaitingArea()
+	{
+		if (!Replication.IsServer() || !CF_CanDepartWaitingArea()) return false;
+		// Depart is an explicit movement authorization, including a bay set before Start.
+		m_bManualStartPending = false;
+		CF_ResetInitialDeparture();
+		m_bExplicitWaitingParking = false;
+		m_bUnloadSequenceHold = false;
+		m_bUnloadAnchorValid = false;
+		m_bUnloadBayGoalValid = false;
+		m_bUnloadReleaseReady = false;
+		m_bUnloadSlotBrakeCaptured = false;
+		m_bUnloadClearReported = false;
+		m_fStateSeconds = 0;
+		m_fStuckSeconds = 0;
+		m_fLostSeconds = 0;
+		ResetLeadTrail(null);
+		SetState(CF_WAITING_FOR_PREDECESSOR);
+		return true;
+	}
+
+	protected bool CF_BeginDeparture(vector waitingPoint, bool forwardWait, bool explicitWaiting = false)
 	{
 		if (!Replication.IsServer() || !CF_CanReleaseAtUnload() || !m_Session || !m_Truck ||
 			(!m_bUnloadAnchorValid && !m_LastPlayerVehicle))
@@ -2544,18 +2571,18 @@ class CF_DriverControllerComponent : ScriptComponent
 		vector anchor = CF_GetUnloadAnchor();
 		vector current = m_Truck.GetOrigin();
 		vector travel;
-		if (!TryGetOutboundTravelDirection(travel))
-			return false;
+		if (explicitWaiting) { travel = m_Truck.GetWorldTransformAxis(2); travel[1] = 0; travel.Normalize(); }
+		else if (!TryGetOutboundTravelDirection(travel)) return false;
 		float behindCurrent = (current[0] - waitingPoint[0]) * travel[0] +
 			(current[2] - waitingPoint[2]) * travel[2];
-		if ((!forwardWait && behindCurrent < 12.0) ||
+		if ((!explicitWaiting && !forwardWait && behindCurrent < 12.0) ||
 			(forwardWait && behindCurrent > -CF_UNLOAD_BAY_CLEAR_DISTANCE) ||
 			vector.Distance(waitingPoint, anchor) < CF_UNLOAD_BAY_CLEAR_DISTANCE)
 			return false;
 		vector stage;
 		string side;
-		bool stagedTurn = !forwardWait && TryChooseTurnStage(travel, stage, side);
-		if (!forwardWait && !stagedTurn && !m_bReleaseRouteHistoryFallback)
+		bool stagedTurn = !explicitWaiting && !forwardWait && TryChooseTurnStage(travel, stage, side);
+		if (!explicitWaiting && !forwardWait && !stagedTurn && !m_bReleaseRouteHistoryFallback)
 		{
 			float currentWidth;
 			float slotWidth;
@@ -2570,6 +2597,7 @@ class CF_DriverControllerComponent : ScriptComponent
 			}
 		}
 
+		m_bExplicitWaitingParking = explicitWaiting;
 		m_bForwardWaitDeparture = forwardWait;
 		m_vUnloadAnchor = anchor;
 		m_bUnloadAnchorValid = true;
@@ -3819,10 +3847,24 @@ class CF_DriverControllerComponent : ScriptComponent
 		StartFollowing(targetVehicle, false, true);
 	}
 
+	bool CF_ShouldRemainSeated()
+	{
+		if (!Replication.IsServer() || !m_Session || CF_ConvoySession.CF_IsWorldCleanup() ||
+			CF_IsControlBlocked() || !CF_IsBoarded() || !m_Group || m_Group.GetAgentsCount() != 1 ||
+			IsDriverDestroyed(ChimeraCharacter.Cast(m_Driver)) || IsAssignedTruckDestroyed()) return false;
+		ChimeraCharacter driver = ChimeraCharacter.Cast(m_Driver);
+		return driver && driver.GetCharacterController() && !driver.GetCharacterController().IsUnconscious();
+	}
+
 	void StandDown()
 	{
-		if (!Replication.IsServer() || !CanStandDown())
+		if (!Replication.IsServer() || !CanStandDown()) return;
+		if (CF_ShouldRemainSeated())
+		{
+			CF_RequestPanelHold();
+			Print("[ConvoyFollower] AUTOMATIC_STAND_DOWN_HELD: unit=" + m_iUnitNumber + " original_driver_retained=true retry=Hold_then_Resume");
 			return;
+		}
 		if (CF_IsControlBlocked())
 		{
 			CF_SuspendForPlayerControl("dismissed_during_player_control", false);
@@ -5286,6 +5328,9 @@ class CF_DriverControllerComponent : ScriptComponent
 			CF_TryCompleteForwardOutboundHold();
 		if (m_iState == CF_FORWARD_OUTBOUND_HOLD)
 			return;
+		vector heldBay;
+		if (m_Session && m_bUnloadReleaseReady && m_Session.CF_GetAdmittedExplicitBay(this, m_Truck, m_LeadVehicle, heldBay) &&
+			CF_IsSettledAtExplicitBay(heldBay)) { m_fStuckSeconds = 0; m_fLostSeconds = 0; return; }
 		SampleTruckRoute();
 		if (m_iState == CF_UNLOAD_QUEUE)
 			return;
@@ -5887,7 +5932,7 @@ class CF_DriverControllerComponent : ScriptComponent
 				withinArrivalGate = CF_IsInsideUnloadBay(CF_UNLOAD_BAY_READY_RADIUS);
 				if (m_bArrivalCloseLogged && CF_IsInsideUnloadBay(CF_UNLOAD_BAY_READY_EXIT_RADIUS))
 					withinArrivalGate = true;
-				withinArrivalGate = withinArrivalGate && CF_IsTruckNearMappedRoad();
+				// Explicit bay readiness is physical and may be off road.
 			}
 			else if (m_bArrivalCloseLogged &&
 				separation <= CF_ConvoySettings.Get().m_fStoppedGap + CF_ARRIVAL_RELEASE_EXIT_BUFFER)

@@ -13,6 +13,9 @@ class CF_ConvoyPanelOrder
 	static const int ADMIT_NEXT = 10;
 	static const int START = 11;
 	static const int PARK_BAY_TRUCK = 13;
+	static const int SET_WAITING_AREA = 14;
+	static const int DEPART_BAY = 15;
+	static const int FINISH = 16;
 	static const int DEBUG = 12; // Local overlay only; never a server order.
 }
 

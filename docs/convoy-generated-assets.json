@@ -371,6 +371,326 @@
       "sha256": "2f0a485c955bc09a57821463b7b5e15b487572a25be1f40a47207ebdb41744f9"
     },
     {
+      "stem": "leader_start_b",
+      "event": "start",
+      "unit": 0,
+      "variant": "b",
+      "text": "Start order received. We'll roll when you move out.",
+      "resource": "{D7E0C00A09F3BE95}Sounds/LeaderGenerated/leader_start_b.wav",
+      "duration_seconds": 3.213,
+      "sha256": "4ec811b4afeeb8efe0895a0b2c6300fa272ed58ff2c1d2fa84a8c8d3582ab566"
+    },
+    {
+      "stem": "leader_start_c",
+      "event": "start",
+      "unit": 0,
+      "variant": "c",
+      "text": "Convoy ready to depart. Lead us out.",
+      "resource": "{CADDA33054B71773}Sounds/LeaderGenerated/leader_start_c.wav",
+      "duration_seconds": 2.882,
+      "sha256": "19e3e5799e265fc44ca2ef0fc04f2838fdfce045c766acbbc11fa76ad5f2d99d"
+    },
+    {
+      "stem": "leader_start_d",
+      "event": "start",
+      "unit": 0,
+      "variant": "d",
+      "text": "You've got the convoy. Let's get rolling.",
+      "resource": "{F7810D6BE8406043}Sounds/LeaderGenerated/leader_start_d.wav",
+      "duration_seconds": 2.586,
+      "sha256": "5bfa19735bc033c00d5e890052857519acd28748ec35a61a93133bc353511daa"
+    },
+    {
+      "stem": "leader_start_e",
+      "event": "start",
+      "unit": 0,
+      "variant": "e",
+      "text": "Drivers ready. Moving on your lead.",
+      "resource": "{D2B2C443BFCAD4A2}Sounds/LeaderGenerated/leader_start_e.wav",
+      "duration_seconds": 2.583,
+      "sha256": "9ac938a825e313761c9d7abb44132e8fbd40bdd53a9c919c11b69a9e95186b85"
+    },
+    {
+      "stem": "leader_resume_b",
+      "event": "resume",
+      "unit": 0,
+      "variant": "b",
+      "text": "Resume received. We're ready to move again.",
+      "resource": "{04DBAF49DE87802D}Sounds/LeaderGenerated/leader_resume_b.wav",
+      "duration_seconds": 3.075,
+      "sha256": "7c68908b604bbdbe4bc0e2606f891976a3eae78f73210aeb89e86d82dedc0274"
+    },
+    {
+      "stem": "leader_resume_c",
+      "event": "resume",
+      "unit": 0,
+      "variant": "c",
+      "text": "Hold released. Lead us forward.",
+      "resource": "{97B321F38934548E}Sounds/LeaderGenerated/leader_resume_c.wav",
+      "duration_seconds": 2.525,
+      "sha256": "e00564d565c2958359aebde278c0a6dc4b022e00b22e30c48f4a54606bc4305e"
+    },
+    {
+      "stem": "leader_resume_d",
+      "event": "resume",
+      "unit": 0,
+      "variant": "d",
+      "text": "Ready for the next leg. We're with you.",
+      "resource": "{9A725FA42A385B6F}Sounds/LeaderGenerated/leader_resume_d.wav",
+      "duration_seconds": 2.465,
+      "sha256": "cc07a0437f8cd7df1795835615694e4db683f84d6e6ea8731961d8661b1a7601"
+    },
+    {
+      "stem": "leader_resume_e",
+      "event": "resume",
+      "unit": 0,
+      "variant": "e",
+      "text": "Convoy resuming. We'll follow your lead.",
+      "resource": "{E1D8725AB9755472}Sounds/LeaderGenerated/leader_resume_e.wav",
+      "duration_seconds": 2.882,
+      "sha256": "e5bf25cca8d33bcda5fc3d44150db69eacc7ed5ca5b26a053d9eca42efcdf357"
+    },
+    {
+      "stem": "leader_bay_set_b",
+      "event": "bay_set",
+      "unit": 0,
+      "variant": "b",
+      "text": "Unloading bay recorded. Holding the queue.",
+      "resource": "{38C6E9495DD5D029}Sounds/LeaderGenerated/leader_bay_set_b.wav",
+      "duration_seconds": 2.876,
+      "sha256": "07de1f0fa6896b9f9a6b63a29aece632a9ef4d10962435bd9a50d77f1944d1bc"
+    },
+    {
+      "stem": "leader_bay_set_c",
+      "event": "bay_set",
+      "unit": 0,
+      "variant": "c",
+      "text": "Bay saved. Unload your lead, then pick our waiting area.",
+      "resource": "{106E427E565ADDDA}Sounds/LeaderGenerated/leader_bay_set_c.wav",
+      "duration_seconds": 3.825,
+      "sha256": "4df050772692595409af6db8596b4734b6f79407e704b52c373f5c361879aed3"
+    },
+    {
+      "stem": "leader_bay_set_d",
+      "event": "bay_set",
+      "unit": 0,
+      "variant": "d",
+      "text": "Queue holding. We'll come in one truck at a time.",
+      "resource": "{E7FD3E95E60BD52F}Sounds/LeaderGenerated/leader_bay_set_d.wav",
+      "duration_seconds": 3.148,
+      "sha256": "7cc0863ed61371d921a1254ea98baa5bf32ae4749d97612dafa1b544bd34f5b0"
+    },
+    {
+      "stem": "leader_bay_set_e",
+      "event": "bay_set",
+      "unit": 0,
+      "variant": "e",
+      "text": "Unload position saved. Waiting for admission.",
+      "resource": "{CBA5A27D34F54863}Sounds/LeaderGenerated/leader_bay_set_e.wav",
+      "duration_seconds": 3.353,
+      "sha256": "a40584a3c57450bb153135f8bf56e492cb9365967284f81af179edb394324c57"
+    },
+    {
+      "stem": "leader_bay_ready_b",
+      "event": "bay_ready",
+      "unit": 0,
+      "variant": "b",
+      "text": "Truck's in the bay. Ready for unloading.",
+      "resource": "{832880BDB6ECC7BE}Sounds/LeaderGenerated/leader_bay_ready_b.wav",
+      "duration_seconds": 2.673,
+      "sha256": "bad393df26be407c3d1ebc52ae8513c30232f8aee94668f26a609025017c91c9"
+    },
+    {
+      "stem": "leader_bay_ready_c",
+      "event": "bay_ready",
+      "unit": 0,
+      "variant": "c",
+      "text": "We've stopped in the loading area. Come round to the rear.",
+      "resource": "{0D1E67242AB630E3}Sounds/LeaderGenerated/leader_bay_ready_c.wav",
+      "duration_seconds": 3.348,
+      "sha256": "3d91d5db35ffd3fd5450407b47cf1bdd44927891b2cb876451694ce7090a77ac"
+    },
+    {
+      "stem": "leader_bay_ready_d",
+      "event": "bay_ready",
+      "unit": 0,
+      "variant": "d",
+      "text": "In position. Unload us, then send us to the waiting area.",
+      "resource": "{AF870AF244E6E1CA}Sounds/LeaderGenerated/leader_bay_ready_d.wav",
+      "duration_seconds": 4.068,
+      "sha256": "0bd490471b0c0bfa26bc3bd6d399a2ac22e67b9af7046cb5530c7761b7a86c35"
+    },
+    {
+      "stem": "leader_bay_ready_e",
+      "event": "bay_ready",
+      "unit": 0,
+      "variant": "e",
+      "text": "Bay approach complete. Ready to unload.",
+      "resource": "{F097013161D81BC8}Sounds/LeaderGenerated/leader_bay_ready_e.wav",
+      "duration_seconds": 2.973,
+      "sha256": "6d561b167b22ce1ccf1c66e7c39d0b2bc9d488b0d72794ea354676b56ea91b83"
+    },
+    {
+      "stem": "leader_park_b",
+      "event": "park",
+      "unit": 0,
+      "variant": "b",
+      "text": "Parking order received. Moving to the waiting area.",
+      "resource": "{C5882765353476ED}Sounds/LeaderGenerated/leader_park_b.wav",
+      "duration_seconds": 3.459,
+      "sha256": "e6281f3ec4828af44823da5636e78bfaf9b9724936518cf2439a7997c2219814"
+    },
+    {
+      "stem": "leader_park_c",
+      "event": "park",
+      "unit": 0,
+      "variant": "c",
+      "text": "Unloaded truck moving clear. Keep the waiting area open.",
+      "resource": "{32EA3B6B6A4874EF}Sounds/LeaderGenerated/leader_park_c.wav",
+      "duration_seconds": 3.981,
+      "sha256": "56733df841366ce23b6f17c5542acd4d88ed2e08db2a8517dce0d7dafa8474f5"
+    },
+    {
+      "stem": "leader_park_d",
+      "event": "park",
+      "unit": 0,
+      "variant": "d",
+      "text": "We're clearing the bay for the next truck.",
+      "resource": "{070458C429442245}Sounds/LeaderGenerated/leader_park_d.wav",
+      "duration_seconds": 2.241,
+      "sha256": "c30509ecf9773a7c7d3f2778c1d3eed4ae41a36d793844273860d86ad9dd399c"
+    },
+    {
+      "stem": "leader_park_e",
+      "event": "park",
+      "unit": 0,
+      "variant": "e",
+      "text": "Heading to the waiting area. The queue stays held.",
+      "resource": "{43388EBCD3A00D34}Sounds/LeaderGenerated/leader_park_e.wav",
+      "duration_seconds": 3.212,
+      "sha256": "10fae19db03f6e3d07fe333776e9abdafde8d1eccbf9241f7780a63b369c60b2"
+    },
+    {
+      "stem": "leader_parked_b",
+      "event": "parked",
+      "unit": 0,
+      "variant": "b",
+      "text": "Truck parked and waiting. Bay's clear.",
+      "resource": "{F8EA81E205F32F77}Sounds/LeaderGenerated/leader_parked_b.wav",
+      "duration_seconds": 2.616,
+      "sha256": "48f7c4897f363fad154e46284effedaf28d0145c7c6195585276da463e171231"
+    },
+    {
+      "stem": "leader_parked_c",
+      "event": "parked",
+      "unit": 0,
+      "variant": "c",
+      "text": "We're in the waiting area. Ready for the next truck.",
+      "resource": "{5CE0F3C3DA6372EB}Sounds/LeaderGenerated/leader_parked_c.wav",
+      "duration_seconds": 3.101,
+      "sha256": "86bf4a86c24bbff69e9a2700cd9f7bf36e014d9c9e1bafef63755da99d1d9ed6"
+    },
+    {
+      "stem": "leader_parked_d",
+      "event": "parked",
+      "unit": 0,
+      "variant": "d",
+      "text": "Parked up. Admit the next truck when you're ready.",
+      "resource": "{5F0D9E5CDF9F0E65}Sounds/LeaderGenerated/leader_parked_d.wav",
+      "duration_seconds": 2.854,
+      "sha256": "addd93ac879ecb58c380619ebd013acae7239080898dd0e2d1136a498b912645"
+    },
+    {
+      "stem": "leader_parked_e",
+      "event": "parked",
+      "unit": 0,
+      "variant": "e",
+      "text": "Bay cleared. We'll wait here for departure.",
+      "resource": "{052EA9637A01202B}Sounds/LeaderGenerated/leader_parked_e.wav",
+      "duration_seconds": 2.808,
+      "sha256": "afda035f3d6fd563336e4f2491e40ebbb0c03980fd0b21b86a3f3a6a0c2ab33b"
+    },
+    {
+      "stem": "leader_depart_b",
+      "event": "depart",
+      "unit": 0,
+      "variant": "b",
+      "text": "Unload line released. Lead the convoy out safely.",
+      "resource": "{25D31608840322F2}Sounds/LeaderGenerated/leader_depart_b.wav",
+      "duration_seconds": 3.777,
+      "sha256": "8bfa9001a3191d5c59261134009edba21e928891a79906c40d4f9a9e61cf21ad"
+    },
+    {
+      "stem": "leader_depart_c",
+      "event": "depart",
+      "unit": 0,
+      "variant": "c",
+      "text": "Ready for the return leg. We'll follow your lead.",
+      "resource": "{701194DBB0B8A123}Sounds/LeaderGenerated/leader_depart_c.wav",
+      "duration_seconds": 3.26,
+      "sha256": "9ca927dc7852415d0be9380a0b6b897f0ac21646223666ff61b85d7a72f643a2"
+    },
+    {
+      "stem": "leader_depart_d",
+      "event": "depart",
+      "unit": 0,
+      "variant": "d",
+      "text": "All trucks released from the waiting area. Let's head back.",
+      "resource": "{0FF1B23D1E02D2FE}Sounds/LeaderGenerated/leader_depart_d.wav",
+      "duration_seconds": 3.81,
+      "sha256": "f4d7e6c80fdadfef1ba17edaf0a3b9260e9428c1c92c3fa9427f85e13668f321"
+    },
+    {
+      "stem": "leader_depart_e",
+      "event": "depart",
+      "unit": 0,
+      "variant": "e",
+      "text": "Convoy ready to depart. Lead us home.",
+      "resource": "{EC08278068966047}Sounds/LeaderGenerated/leader_depart_e.wav",
+      "duration_seconds": 2.785,
+      "sha256": "235aba132b7093cee72ef71204829f14e9c65f46093f2fbfb02fd4b61ab25daa"
+    },
+    {
+      "stem": "leader_finish_b",
+      "event": "finish",
+      "unit": 0,
+      "variant": "b",
+      "text": "Finish order received. Holding the convoy here.",
+      "resource": "{85453AF704250EE8}Sounds/LeaderGenerated/leader_finish_b.wav",
+      "duration_seconds": 3.239,
+      "sha256": "4f974133b1e32a3202cc53c37b6f994dffb889328047a80bb2895169fb807c63"
+    },
+    {
+      "stem": "leader_finish_c",
+      "event": "finish",
+      "unit": 0,
+      "variant": "c",
+      "text": "End of this leg. We'll hold until you need us again.",
+      "resource": "{A76FDBA82DF90F37}Sounds/LeaderGenerated/leader_finish_c.wav",
+      "duration_seconds": 3.532,
+      "sha256": "71c7ce8d6dc3e38e83363c5d1ec4403beb66fc7f15bd0b5e815d85824c5c511f"
+    },
+    {
+      "stem": "leader_finish_d",
+      "event": "finish",
+      "unit": 0,
+      "variant": "d",
+      "text": "Convoy holding at the finish. Drivers staying with the trucks.",
+      "resource": "{88C0DDB424B00364}Sounds/LeaderGenerated/leader_finish_d.wav",
+      "duration_seconds": 4.051,
+      "sha256": "4e98dc164c7eff2599afba78ac39d0398a1eeb8a678118fdd1151fea7b3591fc"
+    },
+    {
+      "stem": "leader_finish_e",
+      "event": "finish",
+      "unit": 0,
+      "variant": "e",
+      "text": "Trip finished. Holding for your next order.",
+      "resource": "{47FD41712E2A00AA}Sounds/LeaderGenerated/leader_finish_e.wav",
+      "duration_seconds": 2.862,
+      "sha256": "4dc7dd4574b892d630453702b06f12762f413fcd4f5f78044d11c19e5e007c33"
+    },
+    {
       "stem": "unit_1_far_warning_b",
       "event": "far_warning",
       "unit": 1,
@@ -969,6 +1289,606 @@
       "resource": "{7518ED987CC6424D}Sounds/LeaderGenerated/unit_5_under_fire_c.wav",
       "duration_seconds": 2.365,
       "sha256": "989e92a6960d18c9e593eae755fdb7685383e5048597b21cd52b36cb36f8cde6"
+    },
+    {
+      "stem": "unit_6_far_warning_b",
+      "event": "far_warning",
+      "unit": 6,
+      "variant": "b",
+      "text": "Unit Six is dropping back.",
+      "resource": "{9B084CC22AD045F9}Sounds/LeaderGenerated/unit_6_far_warning_b.wav",
+      "duration_seconds": 2.201,
+      "sha256": "bb2794e7152f263725efa569ba3c0bf225bb2da462c94035d375a27bd8ac7068"
+    },
+    {
+      "stem": "unit_6_far_warning_c",
+      "event": "far_warning",
+      "unit": 6,
+      "variant": "c",
+      "text": "Unit Six can't keep pace.",
+      "resource": "{F033AB09059BD3C2}Sounds/LeaderGenerated/unit_6_far_warning_c.wav",
+      "duration_seconds": 1.981,
+      "sha256": "fd2720030b38adcfb012955f8cd3978c60baec6333be8b9e892d69340b36b5b3"
+    },
+    {
+      "stem": "unit_6_far_warning_d",
+      "event": "far_warning",
+      "unit": 6,
+      "variant": "d",
+      "text": "Unit Six needs time to close the gap.",
+      "resource": "{61A3F724BA50BB64}Sounds/LeaderGenerated/unit_6_far_warning_d.wav",
+      "duration_seconds": 2.861,
+      "sha256": "9ff43f75fc25bb620da903fac725a6451b1034eedfbc433258299dacb1b82850"
+    },
+    {
+      "stem": "unit_6_far_warning_e",
+      "event": "far_warning",
+      "unit": 6,
+      "variant": "e",
+      "text": "Unit Six is a long way behind. Wait somewhere safe.",
+      "resource": "{3B9FFB8FBDE5566F}Sounds/LeaderGenerated/unit_6_far_warning_e.wav",
+      "duration_seconds": 3.95,
+      "sha256": "d0ecc52d2687d9ae68ea027c14826801eb58f4628c334de0ee5fcfb29a6b2a18"
+    },
+    {
+      "stem": "unit_6_stuck_b",
+      "event": "stuck",
+      "unit": 6,
+      "variant": "b",
+      "text": "Unit Six is hung up. Give them a moment.",
+      "resource": "{478ACEBDE1EE344B}Sounds/LeaderGenerated/unit_6_stuck_b.wav",
+      "duration_seconds": 2.917,
+      "sha256": "6f0f6273be1bc030f9cd9314e3c4160602fe5c65ce24620b6f49ed092a35690f"
+    },
+    {
+      "stem": "unit_6_stuck_c",
+      "event": "stuck",
+      "unit": 6,
+      "variant": "c",
+      "text": "Unit Six isn't moving. They're working clear.",
+      "resource": "{CC9F2A8043017B29}Sounds/LeaderGenerated/unit_6_stuck_c.wav",
+      "duration_seconds": 3.005,
+      "sha256": "72d5022554aaa2effb469b6d2ec3bf56b0b5ae3bf161100a4df2fd1d90b87a20"
+    },
+    {
+      "stem": "unit_6_lost_b",
+      "event": "lost",
+      "unit": 6,
+      "variant": "b",
+      "text": "Unit Six has fallen out of the line.",
+      "resource": "{926CFEA1C40FEA28}Sounds/LeaderGenerated/unit_6_lost_b.wav",
+      "duration_seconds": 2.436,
+      "sha256": "031a229ebaab56338b57806637e0ae54c39c9788614b808d5e871c34b3c9e8d7"
+    },
+    {
+      "stem": "unit_6_lost_c",
+      "event": "lost",
+      "unit": 6,
+      "variant": "c",
+      "text": "Unit Six is too far back. They're holding.",
+      "resource": "{C94EA7A66466CA63}Sounds/LeaderGenerated/unit_6_lost_c.wav",
+      "duration_seconds": 2.921,
+      "sha256": "b4c73ab5b42efce0292dd29a248621b29df7b5ab4c56573038a9bc2ac32f495b"
+    },
+    {
+      "stem": "unit_6_rejoined_b",
+      "event": "rejoined",
+      "unit": 6,
+      "variant": "b",
+      "text": "Unit Six has found the line again.",
+      "resource": "{484A25EE1ABB9956}Sounds/LeaderGenerated/unit_6_rejoined_b.wav",
+      "duration_seconds": 2.39,
+      "sha256": "93417f604c6446926c863c180bf92913ef7fd3282043f66c59d64d873bc78609"
+    },
+    {
+      "stem": "unit_6_rejoined_c",
+      "event": "rejoined",
+      "unit": 6,
+      "variant": "c",
+      "text": "Unit Six is moving back into line.",
+      "resource": "{07E867A4B0A797EA}Sounds/LeaderGenerated/unit_6_rejoined_c.wav",
+      "duration_seconds": 2.715,
+      "sha256": "ac2a1691aa20a108a11745a4b07d17ba4e6d5c5f77fb1217e2d7869fc0df24aa"
+    },
+    {
+      "stem": "unit_6_under_fire_b",
+      "event": "under_fire",
+      "unit": 6,
+      "variant": "b",
+      "text": "Unit Six took a hit.",
+      "resource": "{27445414076A35E9}Sounds/LeaderGenerated/unit_6_under_fire_b.wav",
+      "duration_seconds": 1.579,
+      "sha256": "35e68b9743eb08bfa3d176d0a7d03e6b1c686115d6971dc457694b5e4192d1b1"
+    },
+    {
+      "stem": "unit_6_under_fire_c",
+      "event": "under_fire",
+      "unit": 6,
+      "variant": "c",
+      "text": "Unit Six reports taking a hit.",
+      "resource": "{3A0B1218DC3438F2}Sounds/LeaderGenerated/unit_6_under_fire_c.wav",
+      "duration_seconds": 2.448,
+      "sha256": "12662219186495e1f6bc43af8c2fa3f2fb83690deba191efd4ed0fb891d1e04c"
+    },
+    {
+      "stem": "unit_7_far_warning_b",
+      "event": "far_warning",
+      "unit": 7,
+      "variant": "b",
+      "text": "Unit Seven is dropping back.",
+      "resource": "{11F7795252711324}Sounds/LeaderGenerated/unit_7_far_warning_b.wav",
+      "duration_seconds": 2.273,
+      "sha256": "04f9e73a0d1e39d6c572c0f18ccfeba79413305267a0c2501ec4c5878c05b39b"
+    },
+    {
+      "stem": "unit_7_far_warning_c",
+      "event": "far_warning",
+      "unit": 7,
+      "variant": "c",
+      "text": "Unit Seven can't keep pace.",
+      "resource": "{1A1ADCD5E26F62BE}Sounds/LeaderGenerated/unit_7_far_warning_c.wav",
+      "duration_seconds": 2.114,
+      "sha256": "52b5b7ae7bec96d94d3d3790ea510d9aa6143c60bb92df3874782657b72684e7"
+    },
+    {
+      "stem": "unit_7_far_warning_d",
+      "event": "far_warning",
+      "unit": 7,
+      "variant": "d",
+      "text": "Unit Seven needs time to close the gap.",
+      "resource": "{4C575B009846F8C7}Sounds/LeaderGenerated/unit_7_far_warning_d.wav",
+      "duration_seconds": 3.082,
+      "sha256": "d431d3c85237c342db282abc4e981bcd6ea197a02f2385855132026077b59097"
+    },
+    {
+      "stem": "unit_7_far_warning_e",
+      "event": "far_warning",
+      "unit": 7,
+      "variant": "e",
+      "text": "Unit Seven is a long way behind. Wait somewhere safe.",
+      "resource": "{5E7AFBD039180F7A}Sounds/LeaderGenerated/unit_7_far_warning_e.wav",
+      "duration_seconds": 4.07,
+      "sha256": "313c86e9b117550adb5810efa1819041d68b5465e19edaf779078f080ce384b5"
+    },
+    {
+      "stem": "unit_7_stuck_b",
+      "event": "stuck",
+      "unit": 7,
+      "variant": "b",
+      "text": "Unit Seven is hung up. Give them a moment.",
+      "resource": "{37EB5C5D090E6888}Sounds/LeaderGenerated/unit_7_stuck_b.wav",
+      "duration_seconds": 2.991,
+      "sha256": "2ba275b61ef938f525bb8e3c07b44c32bd33a59ead86138d67c992e6e0a59a0b"
+    },
+    {
+      "stem": "unit_7_stuck_c",
+      "event": "stuck",
+      "unit": 7,
+      "variant": "c",
+      "text": "Unit Seven isn't moving. They're working clear.",
+      "resource": "{0A94ED7954EF7BCE}Sounds/LeaderGenerated/unit_7_stuck_c.wav",
+      "duration_seconds": 3.073,
+      "sha256": "a525911cdd57b04bf72b40afca4b5ffcc91143618a5cee47cde329014eb3a376"
+    },
+    {
+      "stem": "unit_7_lost_b",
+      "event": "lost",
+      "unit": 7,
+      "variant": "b",
+      "text": "Unit Seven has fallen out of the line.",
+      "resource": "{41917D2753054910}Sounds/LeaderGenerated/unit_7_lost_b.wav",
+      "duration_seconds": 2.568,
+      "sha256": "6299bbf538430a78b06425350ce60580f2a9541ad90a59600fd6609ec893bb93"
+    },
+    {
+      "stem": "unit_7_lost_c",
+      "event": "lost",
+      "unit": 7,
+      "variant": "c",
+      "text": "Unit Seven is too far back. They're holding.",
+      "resource": "{5D3027360326EA28}Sounds/LeaderGenerated/unit_7_lost_c.wav",
+      "duration_seconds": 3.018,
+      "sha256": "ba7b95475e87ddf3e7c24f224689c6dea2cc984c43afd5e7a74db9e93e952f2f"
+    },
+    {
+      "stem": "unit_7_rejoined_b",
+      "event": "rejoined",
+      "unit": 7,
+      "variant": "b",
+      "text": "Unit Seven has found the line again.",
+      "resource": "{0A88E9882FCBF2AC}Sounds/LeaderGenerated/unit_7_rejoined_b.wav",
+      "duration_seconds": 2.496,
+      "sha256": "e45669c4e8f30f1bd5a7bc29a2b7c1fd687cf0183956297f3fd8ab091917d971"
+    },
+    {
+      "stem": "unit_7_rejoined_c",
+      "event": "rejoined",
+      "unit": 7,
+      "variant": "c",
+      "text": "Unit Seven is moving back into line.",
+      "resource": "{7392645C7465E3C3}Sounds/LeaderGenerated/unit_7_rejoined_c.wav",
+      "duration_seconds": 2.744,
+      "sha256": "cbbcc7f0b6d63cf16f20399d4ca691cb5afdd15cb088004267a71f18fc02582a"
+    },
+    {
+      "stem": "unit_7_under_fire_b",
+      "event": "under_fire",
+      "unit": 7,
+      "variant": "b",
+      "text": "Unit Seven took a hit.",
+      "resource": "{30DD905B70FC276C}Sounds/LeaderGenerated/unit_7_under_fire_b.wav",
+      "duration_seconds": 1.651,
+      "sha256": "69985d97c29d8e3d634d2645f1700dfe366e5f5b92042b2734913de572d33e33"
+    },
+    {
+      "stem": "unit_7_under_fire_c",
+      "event": "under_fire",
+      "unit": 7,
+      "variant": "c",
+      "text": "Unit Seven reports taking a hit.",
+      "resource": "{B68F769A7C1C2F02}Sounds/LeaderGenerated/unit_7_under_fire_c.wav",
+      "duration_seconds": 2.565,
+      "sha256": "43fbce501af80be71eb16f62c832644f1233789b22f5b01ef6e74b9bb845ed1d"
+    },
+    {
+      "stem": "unit_8_far_warning_b",
+      "event": "far_warning",
+      "unit": 8,
+      "variant": "b",
+      "text": "Unit Eight is dropping back.",
+      "resource": "{15F0404BF75AB86B}Sounds/LeaderGenerated/unit_8_far_warning_b.wav",
+      "duration_seconds": 2.109,
+      "sha256": "f6b7311751b08f2501dfcef410958ab19878731c39cb8eb7db4eac0b6de6e26e"
+    },
+    {
+      "stem": "unit_8_far_warning_c",
+      "event": "far_warning",
+      "unit": 8,
+      "variant": "c",
+      "text": "Unit Eight can't keep pace.",
+      "resource": "{0A8D2190243FF3BD}Sounds/LeaderGenerated/unit_8_far_warning_c.wav",
+      "duration_seconds": 1.986,
+      "sha256": "cb405c54c34736ee5204b4c9cc1dc833fda9a27779a0ab25282587ed207f51d7"
+    },
+    {
+      "stem": "unit_8_far_warning_d",
+      "event": "far_warning",
+      "unit": 8,
+      "variant": "d",
+      "text": "Unit Eight needs time to close the gap.",
+      "resource": "{4B9E96AAB3C4DD4B}Sounds/LeaderGenerated/unit_8_far_warning_d.wav",
+      "duration_seconds": 2.779,
+      "sha256": "ba7b9c5eb2658f83762f0d832699ffc6b732b65796c248d8194e0ec8194faefe"
+    },
+    {
+      "stem": "unit_8_far_warning_e",
+      "event": "far_warning",
+      "unit": 8,
+      "variant": "e",
+      "text": "Unit Eight is a long way behind. Wait somewhere safe.",
+      "resource": "{982F3B0DFC3B62B4}Sounds/LeaderGenerated/unit_8_far_warning_e.wav",
+      "duration_seconds": 3.895,
+      "sha256": "f2ed9f340483f03580bc7cfdd44e6637bb933d1f0bd6f8460306c4f8056f2706"
+    },
+    {
+      "stem": "unit_8_stuck_b",
+      "event": "stuck",
+      "unit": 8,
+      "variant": "b",
+      "text": "Unit Eight is hung up. Give them a moment.",
+      "resource": "{1FF4A04ECD3B97F0}Sounds/LeaderGenerated/unit_8_stuck_b.wav",
+      "duration_seconds": 2.935,
+      "sha256": "30d236a7763dd5466a3d4f6de27c118d8abe4485998f64c0f76558952bae4006"
+    },
+    {
+      "stem": "unit_8_stuck_c",
+      "event": "stuck",
+      "unit": 8,
+      "variant": "c",
+      "text": "Unit Eight isn't moving. They're working clear.",
+      "resource": "{FF803B44B60BB9B2}Sounds/LeaderGenerated/unit_8_stuck_c.wav",
+      "duration_seconds": 2.983,
+      "sha256": "0fb8113e7d453ab17264faaafb47d73ecfba89a95521695593de8a06d742b56e"
+    },
+    {
+      "stem": "unit_8_lost_b",
+      "event": "lost",
+      "unit": 8,
+      "variant": "b",
+      "text": "Unit Eight has fallen out of the line.",
+      "resource": "{61D101BE2E339030}Sounds/LeaderGenerated/unit_8_lost_b.wav",
+      "duration_seconds": 2.32,
+      "sha256": "34dd8ebb8a8b13540e7703bbac39833260d5905ca67ac603bc8510295e686507"
+    },
+    {
+      "stem": "unit_8_lost_c",
+      "event": "lost",
+      "unit": 8,
+      "variant": "c",
+      "text": "Unit Eight is too far back. They're holding.",
+      "resource": "{57ACE713ACF2806F}Sounds/LeaderGenerated/unit_8_lost_c.wav",
+      "duration_seconds": 2.981,
+      "sha256": "2f8117caa956f4e7bfb41d3737eb4703e7e4e9663cb5f72d879ed228a6d6bb2b"
+    },
+    {
+      "stem": "unit_8_rejoined_b",
+      "event": "rejoined",
+      "unit": 8,
+      "variant": "b",
+      "text": "Unit Eight has found the line again.",
+      "resource": "{6211D8F936FCAD62}Sounds/LeaderGenerated/unit_8_rejoined_b.wav",
+      "duration_seconds": 2.2,
+      "sha256": "0b9befffe9786ad911f399bd31ad327c037438802c5d0801855e5d3417988390"
+    },
+    {
+      "stem": "unit_8_rejoined_c",
+      "event": "rejoined",
+      "unit": 8,
+      "variant": "c",
+      "text": "Unit Eight is moving back into line.",
+      "resource": "{BF429B60739BBA41}Sounds/LeaderGenerated/unit_8_rejoined_c.wav",
+      "duration_seconds": 2.543,
+      "sha256": "4508261ac4a3ecfe789456cbadf5f5cab121d47aab335d71299bb47c5d348855"
+    },
+    {
+      "stem": "unit_8_under_fire_b",
+      "event": "under_fire",
+      "unit": 8,
+      "variant": "b",
+      "text": "Unit Eight took a hit.",
+      "resource": "{FB92E1F89B96B027}Sounds/LeaderGenerated/unit_8_under_fire_b.wav",
+      "duration_seconds": 1.649,
+      "sha256": "eb7c2ff29a2714b64424fde87a096513ed874640d137a3b218f1c465cbdf284a"
+    },
+    {
+      "stem": "unit_8_under_fire_c",
+      "event": "under_fire",
+      "unit": 8,
+      "variant": "c",
+      "text": "Unit Eight reports taking a hit.",
+      "resource": "{4CF6C56C3102D4EC}Sounds/LeaderGenerated/unit_8_under_fire_c.wav",
+      "duration_seconds": 2.344,
+      "sha256": "c6f02fc325e0b141c0ba9a04614de4fdb0799bd5c0c5dfed061f4958e55f8afb"
+    },
+    {
+      "stem": "unit_9_far_warning_b",
+      "event": "far_warning",
+      "unit": 9,
+      "variant": "b",
+      "text": "Unit Nine is dropping back.",
+      "resource": "{CBB095F6AD9C7CB0}Sounds/LeaderGenerated/unit_9_far_warning_b.wav",
+      "duration_seconds": 2.166,
+      "sha256": "ac77f9fb61ee631649267f4a33730cbc64f68566e7e4dc36ca97faaf4bc94c65"
+    },
+    {
+      "stem": "unit_9_far_warning_c",
+      "event": "far_warning",
+      "unit": 9,
+      "variant": "c",
+      "text": "Unit Nine can't keep pace.",
+      "resource": "{B72184F313768EA8}Sounds/LeaderGenerated/unit_9_far_warning_c.wav",
+      "duration_seconds": 2.054,
+      "sha256": "c7968f66e72ce1b713f880a86fd097aaa954b9048860101950c1e2cf42027dae"
+    },
+    {
+      "stem": "unit_9_far_warning_d",
+      "event": "far_warning",
+      "unit": 9,
+      "variant": "d",
+      "text": "Unit Nine needs time to close the gap.",
+      "resource": "{689404AED8CFAD00}Sounds/LeaderGenerated/unit_9_far_warning_d.wav",
+      "duration_seconds": 2.936,
+      "sha256": "f31e53a8514b16f5826f9d83e3e997eab6a1577424f8d374398c2ae2f80beb07"
+    },
+    {
+      "stem": "unit_9_far_warning_e",
+      "event": "far_warning",
+      "unit": 9,
+      "variant": "e",
+      "text": "Unit Nine is a long way behind. Wait somewhere safe.",
+      "resource": "{CF56D47C665797E9}Sounds/LeaderGenerated/unit_9_far_warning_e.wav",
+      "duration_seconds": 4.039,
+      "sha256": "3815e5ed629226039a9f03f1c043d323f170061bd0ddf8baf80046fce2abded4"
+    },
+    {
+      "stem": "unit_9_stuck_b",
+      "event": "stuck",
+      "unit": 9,
+      "variant": "b",
+      "text": "Unit Nine is hung up. Give them a moment.",
+      "resource": "{37529218A9641DDA}Sounds/LeaderGenerated/unit_9_stuck_b.wav",
+      "duration_seconds": 3.033,
+      "sha256": "8cc590a2d7081cb6a7622a2c5f99cb4255c47ec458ac90d84c3912a537304c30"
+    },
+    {
+      "stem": "unit_9_stuck_c",
+      "event": "stuck",
+      "unit": 9,
+      "variant": "c",
+      "text": "Unit Nine isn't moving. They're working clear.",
+      "resource": "{A1FD975BEABD38C1}Sounds/LeaderGenerated/unit_9_stuck_c.wav",
+      "duration_seconds": 3.035,
+      "sha256": "72c0d7a3bc191911a78cf8554fed54f78f2d24ef24a58158ec9278553ffba75d"
+    },
+    {
+      "stem": "unit_9_lost_b",
+      "event": "lost",
+      "unit": 9,
+      "variant": "b",
+      "text": "Unit Nine has fallen out of the line.",
+      "resource": "{C8961EA869765646}Sounds/LeaderGenerated/unit_9_lost_b.wav",
+      "duration_seconds": 2.442,
+      "sha256": "6649c6bf3bdb7155abfc8d0bc7c0f566c509f4d1ab1acdcbbe018ad103d9d208"
+    },
+    {
+      "stem": "unit_9_lost_c",
+      "event": "lost",
+      "unit": 9,
+      "variant": "c",
+      "text": "Unit Nine is too far back. They're holding.",
+      "resource": "{D01B48A3AD3F1736}Sounds/LeaderGenerated/unit_9_lost_c.wav",
+      "duration_seconds": 3.006,
+      "sha256": "f63aeaf6934313186e98d2b7264bcc5d575ee4ab4180c1840414fe18e982cab1"
+    },
+    {
+      "stem": "unit_9_rejoined_b",
+      "event": "rejoined",
+      "unit": 9,
+      "variant": "b",
+      "text": "Unit Nine has found the line again.",
+      "resource": "{F8A4150697C90DCF}Sounds/LeaderGenerated/unit_9_rejoined_b.wav",
+      "duration_seconds": 2.292,
+      "sha256": "6fde76b7c924cd8d2f7bbac31f1f45df2b152eee31cbbbbff266a17e4c05ae4d"
+    },
+    {
+      "stem": "unit_9_rejoined_c",
+      "event": "rejoined",
+      "unit": 9,
+      "variant": "c",
+      "text": "Unit Nine is moving back into line.",
+      "resource": "{ADDDE1710A4C861E}Sounds/LeaderGenerated/unit_9_rejoined_c.wav",
+      "duration_seconds": 2.662,
+      "sha256": "cce59a45027e5d9722b1d0c2d96605c97623fae26c32d4b2471563b8763ee614"
+    },
+    {
+      "stem": "unit_9_under_fire_b",
+      "event": "under_fire",
+      "unit": 9,
+      "variant": "b",
+      "text": "Unit Nine took a hit.",
+      "resource": "{E2D3FBA8FC9270B2}Sounds/LeaderGenerated/unit_9_under_fire_b.wav",
+      "duration_seconds": 1.733,
+      "sha256": "898fe01aba1f25f5aba9d454740c5aa7fa5a55a7a1ea20d4b6203b7914570031"
+    },
+    {
+      "stem": "unit_9_under_fire_c",
+      "event": "under_fire",
+      "unit": 9,
+      "variant": "c",
+      "text": "Unit Nine reports taking a hit.",
+      "resource": "{DC39C00AF79B60A0}Sounds/LeaderGenerated/unit_9_under_fire_c.wav",
+      "duration_seconds": 2.394,
+      "sha256": "0af6a473042e9b941e2cab8cb03cd9a9a139bbcc9297d3b00254097e398c0f06"
+    },
+    {
+      "stem": "unit_10_far_warning_b",
+      "event": "far_warning",
+      "unit": 10,
+      "variant": "b",
+      "text": "Unit Ten is dropping back.",
+      "resource": "{8571EFD25C557544}Sounds/LeaderGenerated/unit_10_far_warning_b.wav",
+      "duration_seconds": 2.146,
+      "sha256": "bc5bcf5641fb8265416928ab1a577edb61f5ebe27ffa818f4313c60258bd79b8"
+    },
+    {
+      "stem": "unit_10_far_warning_c",
+      "event": "far_warning",
+      "unit": 10,
+      "variant": "c",
+      "text": "Unit Ten can't keep pace.",
+      "resource": "{948088AD7875491F}Sounds/LeaderGenerated/unit_10_far_warning_c.wav",
+      "duration_seconds": 2.005,
+      "sha256": "f15e35cc09b29b93b9b2e5cd5a6927c53c092b1ef9bbfa8e854c0c783ebc17d8"
+    },
+    {
+      "stem": "unit_10_far_warning_d",
+      "event": "far_warning",
+      "unit": 10,
+      "variant": "d",
+      "text": "Unit Ten needs time to close the gap.",
+      "resource": "{2E103D8E1D006DD2}Sounds/LeaderGenerated/unit_10_far_warning_d.wav",
+      "duration_seconds": 2.9,
+      "sha256": "c8e64a86b90c526250b2a49c341257cb7fc9f3ffbc381fa04927b110524770c8"
+    },
+    {
+      "stem": "unit_10_far_warning_e",
+      "event": "far_warning",
+      "unit": 10,
+      "variant": "e",
+      "text": "Unit Ten is a long way behind. Wait somewhere safe.",
+      "resource": "{90D2C46A8741E288}Sounds/LeaderGenerated/unit_10_far_warning_e.wav",
+      "duration_seconds": 3.97,
+      "sha256": "5d9672b6a3146c91782ae8f221da362c5d3480972a4c398bb6ec17d8eddb59da"
+    },
+    {
+      "stem": "unit_10_stuck_b",
+      "event": "stuck",
+      "unit": 10,
+      "variant": "b",
+      "text": "Unit Ten is hung up. Give them a moment.",
+      "resource": "{9254E71A22176699}Sounds/LeaderGenerated/unit_10_stuck_b.wav",
+      "duration_seconds": 2.961,
+      "sha256": "a1e6d026013d6d5817d6f2e241440b57994d4c02302f865bfe30fc350a8d46f9"
+    },
+    {
+      "stem": "unit_10_stuck_c",
+      "event": "stuck",
+      "unit": 10,
+      "variant": "c",
+      "text": "Unit Ten isn't moving. They're working clear.",
+      "resource": "{0F4AE3CFC273F634}Sounds/LeaderGenerated/unit_10_stuck_c.wav",
+      "duration_seconds": 3.057,
+      "sha256": "e897159f3aff9ff7611bacf9e069d265f09847715c8d43a4774184643653688a"
+    },
+    {
+      "stem": "unit_10_lost_b",
+      "event": "lost",
+      "unit": 10,
+      "variant": "b",
+      "text": "Unit Ten has fallen out of the line.",
+      "resource": "{0F64C4DEE56B7214}Sounds/LeaderGenerated/unit_10_lost_b.wav",
+      "duration_seconds": 2.466,
+      "sha256": "78e1eef582721a704df4a0ae88c2dbdc9623479325aec522960390f6a83fcb00"
+    },
+    {
+      "stem": "unit_10_lost_c",
+      "event": "lost",
+      "unit": 10,
+      "variant": "c",
+      "text": "Unit Ten is too far back. They're holding.",
+      "resource": "{C11343A5FFAEFB71}Sounds/LeaderGenerated/unit_10_lost_c.wav",
+      "duration_seconds": 2.992,
+      "sha256": "b85efc1ac34e535a49e4d45396db9427f0e33b8ccb97908334fdf5ec8a90659a"
+    },
+    {
+      "stem": "unit_10_rejoined_b",
+      "event": "rejoined",
+      "unit": 10,
+      "variant": "b",
+      "text": "Unit Ten has found the line again.",
+      "resource": "{63CDF66B4B3659AA}Sounds/LeaderGenerated/unit_10_rejoined_b.wav",
+      "duration_seconds": 2.254,
+      "sha256": "890eb1a18b61a9ddd564580e25cc959f10f06cfbe2b27f939b2501987ec8ea7d"
+    },
+    {
+      "stem": "unit_10_rejoined_c",
+      "event": "rejoined",
+      "unit": 10,
+      "variant": "c",
+      "text": "Unit Ten is moving back into line.",
+      "resource": "{E7B2085352B1A276}Sounds/LeaderGenerated/unit_10_rejoined_c.wav",
+      "duration_seconds": 2.648,
+      "sha256": "df5e7eac30d6ee660fd35dc228d72319c0b6613b84eabe467d042cd14821174b"
+    },
+    {
+      "stem": "unit_10_under_fire_b",
+      "event": "under_fire",
+      "unit": 10,
+      "variant": "b",
+      "text": "Unit Ten took a hit.",
+      "resource": "{1D6A08D1DD110764}Sounds/LeaderGenerated/unit_10_under_fire_b.wav",
+      "duration_seconds": 1.7,
+      "sha256": "5a99d8631dc76f592ede0581977d4a1151778f322c3e698ee4d82d93ae175aef"
+    },
+    {
+      "stem": "unit_10_under_fire_c",
+      "event": "under_fire",
+      "unit": 10,
+      "variant": "c",
+      "text": "Unit Ten reports taking a hit.",
+      "resource": "{0AC7AC01367D53BA}Sounds/LeaderGenerated/unit_10_under_fire_c.wav",
+      "duration_seconds": 2.413,
+      "sha256": "6f093e667c4e5a0d2cd75f6164436c6e5bb4da40f1b518ba0c9c7587c34cef3b"
     }
   ]
 }
