@@ -1,0 +1,56 @@
+{
+  "scope": "Focused one-truck native bay course; no full-trip/following/player-input claim",
+  "fullLog": {
+    "bytes": 586677,
+    "sha256": "7B41105C6221A2BA30BFF12F410427C179D9CF5CDA2A49D777DB345E0C2AD24E"
+  },
+  "terminalSnapshot": {
+    "bytes": 560018,
+    "sha256": "AEFF0EB5994A052A0980655BDD3DB64388CD3791DCA0D1255EF2EED047CDC89C",
+    "matchesPrefix": true
+  },
+  "gameplayBeforeResult": {
+    "errors": 19,
+    "scriptErrors": 0
+  },
+  "postResultBeforeShutdown": {
+    "errors": 0,
+    "scriptErrors": 0
+  },
+  "shutdown": {
+    "errors": 61,
+    "scriptErrors": 2
+  },
+  "production": [
+    {
+      "file": "CF_ConvoySession.c",
+      "sha256": "183B31BD3954E785F9F9C856AF70C2DF73295A49431C7F5FF7F155A083836A41"
+    },
+    {
+      "file": "CF_DriverControllerComponent.c",
+      "sha256": "E47FE62D126DADE6AF603561C51F385CD6C8B3D561F3A21E1833000F68D5E35C"
+    },
+    {
+      "file": "CF_RadioPlayerController.c",
+      "sha256": "82C56989898FD3EF52791CCB1B09CDA4D57985576CC2919F1CA17B6D8668368C"
+    },
+    {
+      "file": "CF_ConvoyCommandMenu.c",
+      "sha256": "0D4617907266975E41A65ED09592B040B04FFA57794F7B012186DF5BE70F12C1"
+    },
+    {
+      "file": "CF_ConvoyMapPanel.c",
+      "sha256": "BBB9AE8F2F13E87D2A5036B1050CEB24BA5DF5769EA3DC75CACAEC4D51E6BC67"
+    },
+    {
+      "file": "CF_ConvoySettings.c",
+      "sha256": "467A4C56CFC7B7B5B2424611B82B9378C6E70594DA114DAF845332633D553E30"
+    },
+    {
+      "file": "Tests/CF_EntityFollowDriverControllerComponent.c",
+      "sha256": "4B79175E68E1F544452EC8C6E7D72CFAE512884D076217863E20214880ED3D5E"
+    }
+  ],
+  "result": "19:05:58.858 SCRIPT       : [ConvoyFollower] BAY_FEATURE_RESULT: feature_pass=true reason=focused_feature_complete moving_guard_attempted=false moving_guard_qualified=false moving_guard_preserved=false recorded=true admitted=true settled=true native_unload=true commanded_park=true parked=true lead_clear_signed_m=38.1789 lead_clear_powered=8 lead_bay_approach_m=62.7342 lead_bay_approach_powered=14 bay_signed_m=82.6974 bay_powered=12 park_signed_m=28.1209 park_powered=8 hold_max_drift_m=0.00390625 park_max_drift_m=0 physical_originals=true full_trip=false following_pass=false arrival_180s_claim=false input_claim=false",
+  "normalExit": true
+}

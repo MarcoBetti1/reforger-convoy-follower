@@ -1,6 +1,10 @@
 # Current validation checkpoint
 
-Updated September 27, 2026. **The mod is not release ready.** This page separates completed evidence from work still in progress.
+Updated September 30, 2026. **The mod is not release ready.** This page separates completed evidence from work still in progress.
+
+## Bay unloading, infantry clothing and voice variety — September 30, 2026
+
+The focused one-truck bay course passed native approach, seated Wait, 100-supply unloading, the new on-foot **Unloaded / park truck** command and 30 seconds parked without drift. The patch retires only its own native bay MOVE after the stable stop and accepts a bounded 10 m loading area. Driver uniforms use ground infantry assets; the default generated pack now has 96 clips with sustained pressure, episode hysteresis and a shared 90-second spacing/range cooldown. All-five configurations and ordinary-player packaging passed; frozen data SHA `17C6DC348C252F1627002A301E6367662A2404AE6BA6BADBAB5EF3F579130DDF`. Retained errors:19 before result/0 post-result/61 shutdown (SCRIPT0/0/2). Ordinary wheel input, natural voice timing, Soviet visual check, subsequent truck admission and return regroup remain pending. Full-trip/five-truck/video acceptance and general AI braking remain unproven. See [exact build and focused result](convoy-bay-voices-uniform-2026-09-30.md). Earlier current-build descriptions below are historical.
 
 ## Current product checkpoint
 

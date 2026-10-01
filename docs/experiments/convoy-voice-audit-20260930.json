@@ -1,0 +1,668 @@
+[
+  {
+    "stem": "leader_ready_b",
+    "sha256": "eb575ab42d75ea8791f6fefbe20b89d1cd6d29c50a9b3f33ee281d587b3f3bb4",
+    "duration": 2.136875,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_ready_c",
+    "sha256": "44a5b8e79a61e254e02adacfe5378c5798cb43193de3ea6c88ad9385857670b1",
+    "duration": 2.0727291666666665,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_ready_d",
+    "sha256": "f4d6bd4573a02c61e1e6686d14e1212310ad6ac440444728b5ae48d6eda08c45",
+    "duration": 3.0519166666666666,
+    "unchanged": false,
+    "expected": "Convoy ready. We'll wait for your start order.",
+    "heard": "Convoy ready. We'll wait for your start order.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_ready_e",
+    "sha256": "018fc822cf39dc9a4a96fe81b8a375129a2eb45aecd04fd0bda8dddf795d0cb3",
+    "duration": 2.3781875,
+    "unchanged": false,
+    "expected": "Driver ready. Give us the word.",
+    "heard": "driver ready give us the word",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_following_b",
+    "sha256": "f6dc2df9c405abb2eb6f037f538974a6dc8f8796842b0a167e46a119825412cb",
+    "duration": 1.5317083333333332,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_following_c",
+    "sha256": "786d003e72a2beeea016cbf0c7391213f837bc37fbc88ff4db91a5e690864b63",
+    "duration": 2.552125,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_following_d",
+    "sha256": "1a6ee08d1a5540fbba5d776bfaa222927b8b806a6aa858541c869b8fbe35ce79",
+    "duration": 3.0976875,
+    "unchanged": false,
+    "expected": "Convoy rolling. We'll keep the line together.",
+    "heard": "Convoy rolling will keep the line together.",
+    "similarity": 0.965
+  },
+  {
+    "stem": "leader_following_e",
+    "sha256": "641baa5ac23b7fb097ce61e3a079fafc6367bf44d452df76747b55d844db6772",
+    "duration": 2.528958333333333,
+    "unchanged": false,
+    "expected": "We're on the move. Following your lead.",
+    "heard": "We're on the move following your lead.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_holding_b",
+    "sha256": "fe2435152e87ec9f2900e7559842b15d6fd2d142f218d83f11ce74dcb953bc89",
+    "duration": 1.7047916666666667,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_holding_c",
+    "sha256": "5f202b6ea38109fb81644431019e302f8f3f69fdd4d038e6d63c44ce5c0e4a02",
+    "duration": 1.5177083333333334,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_holding_d",
+    "sha256": "865008c8aea3385a056c7aa8aadbf7e7607398e43c0a8986be49c01ac13a2d4e",
+    "duration": 2.9575625,
+    "unchanged": false,
+    "expected": "Stopping here. We'll wait for your resume order.",
+    "heard": "Stopping here will wait for your resume order.",
+    "similarity": 0.967
+  },
+  {
+    "stem": "leader_holding_e",
+    "sha256": "5a8cd6d87618fdc9f51ff0a1c79c2cd30e340ec4f784634b9ab1a88c95c0b8ca",
+    "duration": 3.0623958333333334,
+    "unchanged": false,
+    "expected": "Convoy holding. Let us know when to move.",
+    "heard": "Convoy holding. Let us know when to move.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_far_warning_b",
+    "sha256": "ebdd2cea6e4d206daeaf6e5d2e373399671e7807a6ea38fe73e61cb2291ea90a",
+    "duration": 2.5025833333333334,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_far_warning_c",
+    "sha256": "35f7458f0ab13fd8b9111e1e377e9c2a0b7d53bebd77e86a046ff1c3d7430dd8",
+    "duration": 2.3427708333333332,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_far_warning_d",
+    "sha256": "dfcf406202449fc95bb7a1b967d43f99b11f2572420cee6126011da181eebff3",
+    "duration": 3.673604166666667,
+    "unchanged": false,
+    "expected": "We're a long way behind. Wait somewhere safe for us.",
+    "heard": "We're a long way behind. Wait somewhere safe for us.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_far_warning_e",
+    "sha256": "63d89edcd13d01ed7c002ea146dc7b6e72d2e3647bee4dcf0a6f98b9585abb4d",
+    "duration": 3.5805833333333332,
+    "unchanged": false,
+    "expected": "The convoy's spread out. Let the rear trucks close up.",
+    "heard": "The convoy spread out. Let the rear trucks close up.",
+    "similarity": 0.98
+  },
+  {
+    "stem": "leader_stuck_b",
+    "sha256": "10ec635beb3a9208a258a0c583453ce2411e7c1fe988c3aa66d7b5e24cf77d24",
+    "duration": 2.949145833333333,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_stuck_c",
+    "sha256": "54bd6df759a274878a674f01b13765f60024cf9623622b2e8d55a3ed865848ed",
+    "duration": 2.2844583333333333,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_stuck_d",
+    "sha256": "8aecd678b35455b73cba9f8763eba2c6a59abbcf1b232c77f3ec42aea516981b",
+    "duration": 2.8931458333333335,
+    "unchanged": false,
+    "expected": "We've hit a snag. Trying to get moving again.",
+    "heard": "We've hit a snag trying to get moving again.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_stuck_e",
+    "sha256": "6ab56e47281eb5dc55cdb62e8ab0506147d836da577955ded3fc3347cdc4113a",
+    "duration": 2.7556875,
+    "unchanged": false,
+    "expected": "Truck's stopped short. We're checking the route.",
+    "heard": "Truck stop short, we're checking the route.",
+    "similarity": 0.943
+  },
+  {
+    "stem": "leader_lost_b",
+    "sha256": "637d8f4cd17146c75aad34d5a402e52a0111047f50f5440dbd5be4a24c6b09ec",
+    "duration": 2.60475,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_lost_c",
+    "sha256": "29b4afa49bfffb9ddca39b7efae50afe40c7c173ff85908b341f0ef49a61ec25",
+    "duration": 2.5716041666666665,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_lost_d",
+    "sha256": "fdba49b3ec26bfc79cc9171dc181578297084cdb564d76144779fa82590d06a0",
+    "duration": 2.8502916666666667,
+    "unchanged": false,
+    "expected": "We're out of contact. Holding our position.",
+    "heard": "We're out of contact, holding our position.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_lost_e",
+    "sha256": "d6607108e8c59a04a39f96358c73115536ed9e0d95805058aa10b2f39c796ca9",
+    "duration": 3.404333333333333,
+    "unchanged": false,
+    "expected": "We've lost the lead truck. Come back into range.",
+    "heard": "We've lost the lead truck, come back into range.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_rejoined_b",
+    "sha256": "dd4f05aec28999458c124ae597de12db54b9af13efc886a26cb3e34ce7ae4a23",
+    "duration": 1.3497291666666666,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_rejoined_c",
+    "sha256": "f0b766bd917ff0890e48d318ba7a5c24669f3f39553b5e132e276ff3ada10a6c",
+    "duration": 1.9061458333333334,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_rejoined_d",
+    "sha256": "4999d167f6c47ae1c57f4f78beef18526a9d75c2bb53b5dda31cd4d1fc88e947",
+    "duration": 2.589541666666667,
+    "unchanged": false,
+    "expected": "We've closed up. Ready to keep moving.",
+    "heard": "We've closed up, ready to keep moving.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_rejoined_e",
+    "sha256": "057f2c743852a40c92f78bfd48ee1d353270a58cc6d6d753c3f9f9f56a767675",
+    "duration": 2.727895833333333,
+    "unchanged": false,
+    "expected": "Back with the convoy. We're following again.",
+    "heard": "Back with the convoy, we're following again.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_under_fire_b",
+    "sha256": "793e415a90dec65436f0f0897eb01b50c5675f1cec0b4ef45a7a5338605188a4",
+    "duration": 2.377854166666667,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_under_fire_c",
+    "sha256": "10a0f0fc219e4e617527011c2429ae35292cab0527c3e3e3de7a3490ac49a2d3",
+    "duration": 2.121020833333333,
+    "unchanged": true
+  },
+  {
+    "stem": "leader_under_fire_d",
+    "sha256": "e3ceb330caee21071f0b9cf6065c2aae632800e57f13873d960d2153a8d28545",
+    "duration": 2.6672083333333334,
+    "unchanged": false,
+    "expected": "Truck's been hit. Watch the road ahead.",
+    "heard": "Truck's been hit. Watch the road ahead.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_under_fire_e",
+    "sha256": "83823f8ffcce61f48f9193f3f50495a8decb82903f0edc586b8ecb2f585d75e6",
+    "duration": 3.348125,
+    "unchanged": false,
+    "expected": "Contact on the convoy. We've taken damage.",
+    "heard": "Contact on the convoy. We've taken damage.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_cohesion_b",
+    "sha256": "b7dfd02ad63349a35e8f4b8d4392ffe46c76be348234ab7bac65cc1956d47bf6",
+    "duration": 3.0192916666666667,
+    "unchanged": false,
+    "expected": "Ease the pace a little. We're closing the gap.",
+    "heard": "Ease the pace a little. We're closing the gap.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_cohesion_c",
+    "sha256": "2c50881ddffb1b7f5b58c606b2f5dcafaba8602f74461ec3022deb50ea156326",
+    "duration": 2.894375,
+    "unchanged": false,
+    "expected": "Let the rear trucks catch up. We'll keep moving.",
+    "heard": "Let the rear trucks catch up. We'll keep moving.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_cohesion_d",
+    "sha256": "e56ab7a32c83d8606cb457c1c7583f0338703f00a7bbbf8fc120fa1de98cf3ff",
+    "duration": 2.8545,
+    "unchanged": false,
+    "expected": "Give the convoy a little room to close up.",
+    "heard": "Give the convoy a little room to close up.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "leader_cohesion_e",
+    "sha256": "2f0a485c955bc09a57821463b7b5e15b487572a25be1f40a47207ebdb41744f9",
+    "duration": 3.1849375,
+    "unchanged": false,
+    "expected": "We're stretching the line. Take it steady up front.",
+    "heard": "We're stretching the line. Take it steady up front.",
+    "similarity": 1.0
+  },
+  {
+    "stem": "unit_1_far_warning_b",
+    "sha256": "faf8ede13a757672490f8ee585adc594aa71f5ca881b68a2f4403382d3416b13",
+    "duration": 2.102708333333333,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_1_far_warning_c",
+    "sha256": "57bd95ec2caa412fa6d6d9d49e9f3fbc3a8430f8feedd7613bd3060b1f8fa884",
+    "duration": 1.9556458333333333,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_1_far_warning_d",
+    "sha256": "d5bf872082d060f48ce17619e1f18b3bc0010b2c5fbc08284d80f83f4b72c9ae",
+    "duration": 2.8745208333333334,
+    "unchanged": false,
+    "expected": "Unit One needs time to close the gap.",
+    "heard": "Unit 1 needs time to close the gap.",
+    "similarity": 0.943
+  },
+  {
+    "stem": "unit_1_far_warning_e",
+    "sha256": "71cf4f6f68bb35ec319a8e3b6c448c044d4c833e0d8a3c0c9df5aa110cbcd0fd",
+    "duration": 3.8969583333333335,
+    "unchanged": false,
+    "expected": "Unit One is a long way behind. Wait somewhere safe.",
+    "heard": "Unit 1 is a long way behind. Wait somewhere safe.",
+    "similarity": 0.958
+  },
+  {
+    "stem": "unit_1_stuck_b",
+    "sha256": "b5b9a293eb964262f512e92ea9c433bdd8342002239585e88c0be1caf14a01ab",
+    "duration": 2.8375208333333335,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_1_stuck_c",
+    "sha256": "951bdcc539d6e37da8dbd2bbec2f53be4adf579406b27bedf2e53d3fe0ca3b08",
+    "duration": 2.98275,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_1_lost_b",
+    "sha256": "c894280e4dec7e857890b5c9f83420618c7137f080c66ad0423b3c96ad1fde97",
+    "duration": 2.3913333333333333,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_1_lost_c",
+    "sha256": "97ccda531b3cf8b3037a67b3b392a2e5f913f03aa4a31e2f22ab7e8a5e6edf95",
+    "duration": 2.842791666666667,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_1_rejoined_b",
+    "sha256": "6b3f96f016dab1203545913156433874e81ef17891aed71412eff75c37e84783",
+    "duration": 2.2746041666666668,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_1_rejoined_c",
+    "sha256": "5758297e9e15f4c9746de8c6d75ad108f6d3e8a1ea1340c7c0e017f567167135",
+    "duration": 2.6142291666666666,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_1_under_fire_b",
+    "sha256": "18bc3c29b6abbf413056778efca376697ea20825c051085201ad6f6dbef708f4",
+    "duration": 1.613,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_1_under_fire_c",
+    "sha256": "7c26ab59819ae889cb9ed91b603bdd0168194241ded2c009935622c3d1881c4b",
+    "duration": 2.3676041666666667,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_2_far_warning_b",
+    "sha256": "c70823735711f2063cb1012067b71145a89b9b83099d8bd7d6c0d910cb5250dc",
+    "duration": 2.0971875,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_2_far_warning_c",
+    "sha256": "6342fca8414da5afa2e91e87a7a12ebfd6a73b79df610d8da9b4214d0450c5c4",
+    "duration": 1.9827291666666667,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_2_far_warning_d",
+    "sha256": "80bf14e7ae216db07220b76437730e55baebccbd188e9df59ed52202b393d064",
+    "duration": 2.8542916666666667,
+    "unchanged": false,
+    "expected": "Unit Two needs time to close the gap.",
+    "heard": "Unit 2 needs time to close the gap.",
+    "similarity": 0.943
+  },
+  {
+    "stem": "unit_2_far_warning_e",
+    "sha256": "6aef159b09dced67cd5e16443bf5c5f6e5ac9fce6ddd679753d94963429dff36",
+    "duration": 3.92275,
+    "unchanged": false,
+    "expected": "Unit Two is a long way behind. Wait somewhere safe.",
+    "heard": "Unit 2 is a long way behind. Wait somewhere safe.",
+    "similarity": 0.958
+  },
+  {
+    "stem": "unit_2_stuck_b",
+    "sha256": "3ecd5017d28174e9d6886f4a6b3d94aa61e379d0598a6500073c6e62d62d69b8",
+    "duration": 2.8850625,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_2_stuck_c",
+    "sha256": "939c0ed78d90b16b6eb32810269def5c213f9c35ad8d0d6e47c64acdf549dff4",
+    "duration": 2.9820625,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_2_lost_b",
+    "sha256": "e11b105fb878e40cabf1630142c97b0ceec1105400507d13fca335480e3d44e5",
+    "duration": 2.4559583333333332,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_2_lost_c",
+    "sha256": "ff53365d44c184cd75df7cb4d01a6868d6ffe0ec71fb32aa0028ba33c79887d6",
+    "duration": 2.9277083333333334,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_2_rejoined_b",
+    "sha256": "607fe2c4995906b3518c59c887defb34731bd8d29d14af4101354057872f4dbb",
+    "duration": 2.308104166666667,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_2_rejoined_c",
+    "sha256": "cdeeb756ef879aedef03cfd403221ca75541631f0d7720bf119cb4edbac72fa1",
+    "duration": 2.59875,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_2_under_fire_b",
+    "sha256": "1ebce49cae950a44ced131af731cc1fe54774d94a69c276ff20c6a8878d35d75",
+    "duration": 1.6708541666666668,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_2_under_fire_c",
+    "sha256": "ed56845257a9c66f71e78f101c6536d62b748c1d890ce190b80f617f09385bd9",
+    "duration": 2.2424583333333334,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_3_far_warning_b",
+    "sha256": "a27bb98ffbfddc742d32aa324ea0ef576b97ddd8c972cc2a746cdc058eb1c59c",
+    "duration": 2.1459791666666668,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_3_far_warning_c",
+    "sha256": "1edb476767a7d04af1e6dc4be0864eeeb72a1dc4419a658b604fc772540033af",
+    "duration": 1.9831458333333334,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_3_far_warning_d",
+    "sha256": "6d3f43a54353deca65ee06a47a11ded51b1a0d9a077a978aafde69984165f947",
+    "duration": 2.8747083333333334,
+    "unchanged": false,
+    "expected": "Unit Three needs time to close the gap.",
+    "heard": "Unit 3 needs time to close the gap.",
+    "similarity": 0.917
+  },
+  {
+    "stem": "unit_3_far_warning_e",
+    "sha256": "0d0256f47114c99c7fa4def10bd9a3706518fc15a50a749582e9a5448ccae479",
+    "duration": 4.016583333333333,
+    "unchanged": false,
+    "expected": "Unit Three is a long way behind. Wait somewhere safe.",
+    "heard": "Unit 3 is a long way behind, wait somewhere safe.",
+    "similarity": 0.939
+  },
+  {
+    "stem": "unit_3_stuck_b",
+    "sha256": "40f998b49c4cdfae8e8532f592eeb5c0d31dec36cbae71d765b5b8419f142f82",
+    "duration": 2.983375,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_3_stuck_c",
+    "sha256": "180d133bdd3d1ffa95fd547f9781987c16ea8fad56a187b2e366bfec06a8d0f3",
+    "duration": 2.99675,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_3_lost_b",
+    "sha256": "44eb640a7fe1338c6b17d9ec0ec56ad463d6a7497092fcfcd33936ab18a64bf7",
+    "duration": 2.4588125,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_3_lost_c",
+    "sha256": "d19a784292a2287693138ddb403765e6fc117e2467442f3d1ecf52241d0f23d3",
+    "duration": 3.0238125,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_3_rejoined_b",
+    "sha256": "6668fe823f17c624d4fb89ff9ece0637149b38f9b01179d0facd9791501e34c7",
+    "duration": 2.3372291666666665,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_3_rejoined_c",
+    "sha256": "9b67f6b519782ad58679c037d2a19960747a33094dc7e997414756c272b2539a",
+    "duration": 2.597729166666667,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_3_under_fire_b",
+    "sha256": "f8d0baecd78b261549c2d25150ea8046248f94ac5663c2fd96bf03a594c0ccfd",
+    "duration": 1.7325,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_3_under_fire_c",
+    "sha256": "f37fefdb062327323c45c53f3b34ed98b4627ed0d99bcc0b538568d4d950ab3e",
+    "duration": 2.3648125,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_4_far_warning_b",
+    "sha256": "669a67471e6aca8604e119d2890cb53388699e7b95ed00fecb7734a55f87d592",
+    "duration": 2.1796041666666666,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_4_far_warning_c",
+    "sha256": "bdd153f880622d0a44be57d1941a1f8e6ec3409ab62294cfdf93bf342afb2bca",
+    "duration": 2.0028958333333335,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_4_far_warning_d",
+    "sha256": "3c5e90b2d93c58656b37f9ebd4e1a2bc38c6943ef58ea3f3b42d797189b49b16",
+    "duration": 3.0402708333333335,
+    "unchanged": false,
+    "expected": "Unit Four needs time to close the gap.",
+    "heard": "Unit 4 needs time to close the gap.",
+    "similarity": 0.93
+  },
+  {
+    "stem": "unit_4_far_warning_e",
+    "sha256": "81fcf7603780ed45ba3e996f1fbdda33bdaf05f5d51a50f6420b1a86e7d55c47",
+    "duration": 3.970375,
+    "unchanged": false,
+    "expected": "Unit Four is a long way behind. Wait somewhere safe.",
+    "heard": "Unit 4 is a long way behind. Wait somewhere safe.",
+    "similarity": 0.948
+  },
+  {
+    "stem": "unit_4_stuck_b",
+    "sha256": "9e5b7dcd15f4a746b7ee547e7f76a7e821ef8c1757b25b821934194af410cfc6",
+    "duration": 3.0519166666666666,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_4_stuck_c",
+    "sha256": "549491dcc70025a5da38a37beedce372eade4c9bf78dfdc15bcb370d88093102",
+    "duration": 3.0585833333333334,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_4_lost_b",
+    "sha256": "f2fda251103cf3ccb46f83c7d8a44d79fe55ed98b752ee770798d3c92ccd80a4",
+    "duration": 2.482125,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_4_lost_c",
+    "sha256": "a70b1f71163a29e5dd859445039c5ee57bd1ee0c7f441acc55737d687f196a06",
+    "duration": 2.972020833333333,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_4_rejoined_b",
+    "sha256": "66ece94889072882003ab7b9a030196f1383436c2013d19690f88a8d33bc8d4e",
+    "duration": 2.3191458333333332,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_4_rejoined_c",
+    "sha256": "fcfcc26602ad319bb054325c0ca3d0f58151ea30c0d6659ab893259a73fd6f06",
+    "duration": 2.659875,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_4_under_fire_b",
+    "sha256": "b0dc756da4bddc6042b9c29ffd518f28605a1484470e0327291b64138a14330c",
+    "duration": 1.7089583333333334,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_4_under_fire_c",
+    "sha256": "9ceed3ee01612f3bb8da13b3420949bb5048a6a4ffd6bbd7ec221367462ac3af",
+    "duration": 2.3213958333333333,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_5_far_warning_b",
+    "sha256": "1b6befabfb7a490da848040d051df22a5cfb0d9c93c07b8eb011b04dc64a6827",
+    "duration": 2.1295208333333333,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_5_far_warning_c",
+    "sha256": "144be0bfb99573b5c5068f09ee94dc0ab25333929fda219d37139c20d76c0cec",
+    "duration": 2.0582708333333333,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_5_far_warning_d",
+    "sha256": "80101db6514f9da7fd3517bccc303eb2e831cc103d0b51e6b5ea98a7441c2c56",
+    "duration": 2.9244375,
+    "unchanged": false,
+    "expected": "Unit Five needs time to close the gap.",
+    "heard": "Unit 5 needs time to close the gap.",
+    "similarity": 0.93
+  },
+  {
+    "stem": "unit_5_far_warning_e",
+    "sha256": "1f584d82fe415a16bb1744895098b8cbc2c014cecf917f9f0bf0ec31813a13fa",
+    "duration": 4.07775,
+    "unchanged": false,
+    "expected": "Unit Five is a long way behind. Wait somewhere safe.",
+    "heard": "Unit 5 is a long way behind, wait somewhere safe.",
+    "similarity": 0.948
+  },
+  {
+    "stem": "unit_5_stuck_b",
+    "sha256": "acc86f6930fa5857bc59e20c350e3461016bd45ab805d4759382de037734f2be",
+    "duration": 3.0298958333333332,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_5_stuck_c",
+    "sha256": "33e5c5fd24b58a0b23838abcb1574783946e8e62f51e404b3468a3aaf447e652",
+    "duration": 3.0644791666666666,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_5_lost_b",
+    "sha256": "463bd4e1f2191f5326eec5c9266b121ac4026281ce36f5f851c80500bba8fc39",
+    "duration": 2.404333333333333,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_5_lost_c",
+    "sha256": "377c08e6acded2bfa2d617993fb81312119593767b60c97345015df0e1dd769c",
+    "duration": 3.032979166666667,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_5_rejoined_b",
+    "sha256": "98b8b879d1fae8ec2c4d56e8d8dd61e60d9fcf2809c9d2d8b8ea84fc55c3449f",
+    "duration": 2.3066875,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_5_rejoined_c",
+    "sha256": "46656e7e9cee8cf14e87e50daeab4d2343e6ac6ec9b8cc963b027130378f0c3e",
+    "duration": 2.5892291666666667,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_5_under_fire_b",
+    "sha256": "d588795af7f14a3cfe88f587f51efd3d96b627c419f20fecfe5c810d9f9a1fc7",
+    "duration": 1.6458958333333333,
+    "unchanged": true
+  },
+  {
+    "stem": "unit_5_under_fire_c",
+    "sha256": "989e92a6960d18c9e593eae755fdb7685383e5048597b21cd52b36cb36f8cde6",
+    "duration": 2.364708333333333,
+    "unchanged": true
+  }
+]
