@@ -149,7 +149,7 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 		if (command == CF_ConvoyPanelOrder.HOLD) symbol = "halt";
 		else if (command == CF_ConvoyPanelOrder.FOLLOW || command == CF_ConvoyPanelOrder.RESUME_AHEAD_LINE) symbol = "follow";
 		else if (command == CF_ConvoyPanelOrder.REBOARD_SELECTED) symbol = "get-in";
-		else if (command == CF_ConvoyPanelOrder.REGROUP_RETURN || command == CF_ConvoyPanelOrder.PULL_REAR) symbol = "patrol";
+		else if (command == CF_ConvoyPanelOrder.REGROUP_RETURN || command == CF_ConvoyPanelOrder.PULL_REAR || command == CF_ConvoyPanelOrder.PARK_BAY_TRUCK) symbol = "patrol";
 		else if (command == CF_ConvoyPanelOrder.CANCEL_UNLOAD) symbol = "halt";
 		if (command == CF_ConvoyPanelOrder.SET_UNLOAD_BAY || command == CF_ConvoyPanelOrder.ADMIT_NEXT)
 			entry.SetIcon("{39726705E9706337}UI/Textures/RadialMenu/Radial-Menu-icons.imageset", "Ressuply");
@@ -221,10 +221,13 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 		bay.Enable(true);
 		CF_ConvoyCommandEntry setup = CF_NewCommand(CF_ConvoyPanelOrder.SET_UNLOAD_BAY, 0, "Set bay / Hold queue", "Record your stopped original lead's position as the bay. Wait for all trucks to Hold before unloading your lead.", m_sCFBaySetupReason);
 		CF_ConvoyCommandEntry admit = CF_NewCommand(CF_ConvoyPanelOrder.ADMIT_NEXT, 0, "Admit next truck", "The bay is already saved. Unload your lead, drive clear and stop while seated in it, then Admit. Clearance is checked automatically; Resume is blocked during bay operations.", m_sCFBayAdmitReason);
+		CF_ConvoyCommandEntry park = CF_NewCommand(CF_ConvoyPanelOrder.PARK_BAY_TRUCK, 0, "Unloaded / park truck", "After unloading supplies at the admitted truck's rear, send that truck to the rear waiting line. You can give this order on foot. Wait until it parks, then Admit next truck. After the last truck, use Units > Regroup for return.", m_sCFBayParkReason);
+		m_CFBayCommands.Insert(park);
 		m_CFBayCommands.Insert(setup);
 		m_CFBayCommands.Insert(admit);
 		bay.AddEntry(setup);
 		bay.AddEntry(admit);
+		bay.AddEntry(park);
 		entries.Insert(bay);
 		AddEntries(entries, true);
 	}
@@ -235,11 +238,14 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 		return fallback;
 	}
 
+	protected string m_sCFBayParkReason = "waiting for server eligibility";
 	protected void CF_ReadBayMenuState(array<string> fields)
 	{
 		m_sCFBaySetupReason = CF_Field(fields, 11, "waiting for server eligibility");
 		m_sCFBayAdmitReason = CF_Field(fields, 12, "waiting for server eligibility");
 		m_bCFExplicitBay = CF_Field(fields, 13, "false") == "true";
+		m_sCFBayParkReason = "Set an unload bay first";
+		if (m_bCFExplicitBay) m_sCFBayParkReason = CF_Field(fields, 8, "wait for the admitted truck to settle");
 		m_sCFStartReason = CF_Field(fields, 15, "waiting for server eligibility");
 	}
 
@@ -302,6 +308,7 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 			string availability = "ready";
 			if (bayCommand.Command == CF_ConvoyPanelOrder.SET_UNLOAD_BAY) availability = m_sCFBaySetupReason;
 			else if (bayCommand.Command == CF_ConvoyPanelOrder.ADMIT_NEXT) availability = m_sCFBayAdmitReason;
+			else if (bayCommand.Command == CF_ConvoyPanelOrder.PARK_BAY_TRUCK) availability = m_sCFBayParkReason;
 			else if (bayCommand.Command == CF_ConvoyPanelOrder.CANCEL_UNLOAD)
 			{
 				bayCommand.SetName("Cancel unload / follow");

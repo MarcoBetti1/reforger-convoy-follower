@@ -10,7 +10,7 @@ class CF_RadioEvent
 	static const int LOST = 6;
 	static const int REJOINED = 7;
 	static const int UNDER_FIRE = 8;
-	static const int COHESION = 9; // Existing range-warning audio, separately cancellable advice.
+	static const int COHESION = 9; // Separate spacing advice; shares repeat suppression with range warnings.
 }
 
 // These are control failures, not claims that a vehicle was hit or stuck.
@@ -247,6 +247,8 @@ modded class SCR_PlayerController
 			accepted = CF_ConvoySession.CF_PanelRegroupReturn(user, unitIdentity);
 		else if (command == CF_ConvoyPanelOrder.SET_UNLOAD_BAY)
 			accepted = CF_ConvoySession.CF_PanelSetUnloadBay(user);
+		else if (command == CF_ConvoyPanelOrder.PARK_BAY_TRUCK)
+			accepted = CF_ConvoySession.CF_PanelParkBayTruck(user);
 		else if (command == CF_ConvoyPanelOrder.ADMIT_NEXT)
 			accepted = CF_ConvoySession.CF_PanelAdmitNextTruck(user);
 		if (!accepted)
@@ -323,6 +325,22 @@ modded class SCR_PlayerController
 			return false;
 		}
 
+		// Spacing advice and true range warnings describe the same separation
+		// episode. Debounce the whole family across all convoy members.
+		if (eventId == CF_RadioEvent.COHESION || eventId == CF_RadioEvent.FAR_WARNING)
+		{
+			for (int warningIndex = 0; warningIndex < m_CFSentRadioEvents.Count(); warningIndex++)
+			{
+				int sentEvent = m_CFSentRadioEvents[warningIndex];
+				if (sentEvent != CF_RadioEvent.COHESION && sentEvent != CF_RadioEvent.FAR_WARNING) continue;
+				float age = nowMs - m_CFSentRadioTimes[warningIndex];
+				if (age >= 0 && age < settings.m_fCohesionCooldownSeconds * 1000.0)
+				{
+					Print("[ConvoyFollower] RADIO_REPEAT_SUPPRESSED: spacing/range family, event " + eventId);
+					return false;
+				}
+			}
+		}
 		// Preserve every stuck, lost, and under-fire report. The range and
 		// recovered messages can oscillate at their distance thresholds.
 		float repeatMs = 0.0;
@@ -523,8 +541,12 @@ modded class SCR_PlayerController
 		string resourceName;
 		int delayMs;
 		bool found = false;
+		int variant = -1;
 		if (voicePack == 1)
-			found = CF_GetGeneratedRadioClip(eventId, unitNumber, CF_NextGeneratedVariant(eventId, unitNumber), resourceName, delayMs);
+		{
+			variant = CF_NextGeneratedVariant(eventId, unitNumber);
+			found = CF_GetGeneratedRadioClip(eventId, unitNumber, variant, resourceName, delayMs);
+		}
 		if (!found)
 			found = CF_GetRadioClip(eventId, unitNumber, resourceName, delayMs);
 		if (found)
@@ -533,7 +555,7 @@ modded class SCR_PlayerController
 			if (handle == AudioHandle.Invalid)
 				Print("[ConvoyFollower] RADIO_PLAY_FAILED: event " + eventId + ", unit " + unitNumber);
 			else
-				Print("[ConvoyFollower] RADIO_PLAY: event " + eventId + ", unit " + unitNumber);
+				Print("[ConvoyFollower] RADIO_PLAY: event " + eventId + ", unit " + unitNumber + ", pack=" + voicePack + ", variant=" + variant + ", clip=" + resourceName);
 		}
 
 		// Each generated WAV has its measured duration plus a small gap. The
@@ -544,14 +566,16 @@ modded class SCR_PlayerController
 	protected int CF_NextGeneratedVariant(int eventId, int unitNumber)
 	{
 		int key = eventId * 16 + unitNumber;
+		int count = 2;
+		if (unitNumber == 0 || eventId == CF_RadioEvent.FAR_WARNING) count = 4;
 		for (int i = 0; i < m_CFVariantKeys.Count(); i++)
 		{
 			if (m_CFVariantKeys[i] != key)
 				continue;
-			m_CFVariantValues[i] = 1 - m_CFVariantValues[i];
+			m_CFVariantValues[i] = (m_CFVariantValues[i] + 1) % count;
 			return m_CFVariantValues[i];
 		}
-		int first = Math.RandomInt(0, 2);
+		int first = Math.RandomInt(0, count);
 		m_CFVariantKeys.Insert(key);
 		m_CFVariantValues.Insert(first);
 		return first;
@@ -561,7 +585,6 @@ modded class SCR_PlayerController
 	// This method is filled by tools/render_convoy_generated_mapping.py.
 	protected bool CF_GetGeneratedRadioClip(int eventId, int unitNumber, int variant, out string resourceName, out int delayMs)
 	{
-		if (eventId == CF_RadioEvent.COHESION) eventId = CF_RadioEvent.FAR_WARNING;
 		resourceName = string.Empty;
 		delayMs = 250;
 		// BEGIN GENERATED RADIO MAPPING
@@ -577,6 +600,18 @@ modded class SCR_PlayerController
 			delayMs = 2323;
 			return true;
 		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.READY && variant == 2)
+		{
+			resourceName = "{1EA6038F3B38381E}Sounds/LeaderGenerated/leader_ready_d.wav";
+			delayMs = 3302;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.READY && variant == 3)
+		{
+			resourceName = "{46EFE00FDFF00C39}Sounds/LeaderGenerated/leader_ready_e.wav";
+			delayMs = 2628;
+			return true;
+		}
 		if (unitNumber == 0 && eventId == CF_RadioEvent.FOLLOWING && variant == 0)
 		{
 			resourceName = "{255BCB060CCAF405}Sounds/LeaderGenerated/leader_following_b.wav";
@@ -587,6 +622,18 @@ modded class SCR_PlayerController
 		{
 			resourceName = "{58D25EC3581B5998}Sounds/LeaderGenerated/leader_following_c.wav";
 			delayMs = 2802;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.FOLLOWING && variant == 2)
+		{
+			resourceName = "{813DD3C6427E9BE5}Sounds/LeaderGenerated/leader_following_d.wav";
+			delayMs = 3348;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.FOLLOWING && variant == 3)
+		{
+			resourceName = "{89064AD06014D513}Sounds/LeaderGenerated/leader_following_e.wav";
+			delayMs = 2779;
 			return true;
 		}
 		if (unitNumber == 0 && eventId == CF_RadioEvent.HOLDING && variant == 0)
@@ -601,6 +648,18 @@ modded class SCR_PlayerController
 			delayMs = 1768;
 			return true;
 		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.HOLDING && variant == 2)
+		{
+			resourceName = "{3CCFC0AACB615E1B}Sounds/LeaderGenerated/leader_holding_d.wav";
+			delayMs = 3208;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.HOLDING && variant == 3)
+		{
+			resourceName = "{65479D461A6629B0}Sounds/LeaderGenerated/leader_holding_e.wav";
+			delayMs = 3312;
+			return true;
+		}
 		if (unitNumber == 0 && eventId == CF_RadioEvent.FAR_WARNING && variant == 0)
 		{
 			resourceName = "{3D471EF94EBFAA17}Sounds/LeaderGenerated/leader_far_warning_b.wav";
@@ -611,6 +670,18 @@ modded class SCR_PlayerController
 		{
 			resourceName = "{A68828D938FD2BAE}Sounds/LeaderGenerated/leader_far_warning_c.wav";
 			delayMs = 2593;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.FAR_WARNING && variant == 2)
+		{
+			resourceName = "{DB94273AF4C09292}Sounds/LeaderGenerated/leader_far_warning_d.wav";
+			delayMs = 3924;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.FAR_WARNING && variant == 3)
+		{
+			resourceName = "{8B01B1E3152E0FD0}Sounds/LeaderGenerated/leader_far_warning_e.wav";
+			delayMs = 3831;
 			return true;
 		}
 		if (unitNumber == 0 && eventId == CF_RadioEvent.STUCK && variant == 0)
@@ -625,6 +696,18 @@ modded class SCR_PlayerController
 			delayMs = 2534;
 			return true;
 		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.STUCK && variant == 2)
+		{
+			resourceName = "{65501B92416F7CF0}Sounds/LeaderGenerated/leader_stuck_d.wav";
+			delayMs = 3143;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.STUCK && variant == 3)
+		{
+			resourceName = "{FBB21834EA40EF49}Sounds/LeaderGenerated/leader_stuck_e.wav";
+			delayMs = 3006;
+			return true;
+		}
 		if (unitNumber == 0 && eventId == CF_RadioEvent.LOST && variant == 0)
 		{
 			resourceName = "{FAC1417273E906B7}Sounds/LeaderGenerated/leader_lost_b.wav";
@@ -635,6 +718,18 @@ modded class SCR_PlayerController
 		{
 			resourceName = "{C5FA1D3120E78C30}Sounds/LeaderGenerated/leader_lost_c.wav";
 			delayMs = 2822;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.LOST && variant == 2)
+		{
+			resourceName = "{E30085FC1A49DAD6}Sounds/LeaderGenerated/leader_lost_d.wav";
+			delayMs = 3100;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.LOST && variant == 3)
+		{
+			resourceName = "{5D7F094409F660D2}Sounds/LeaderGenerated/leader_lost_e.wav";
+			delayMs = 3654;
 			return true;
 		}
 		if (unitNumber == 0 && eventId == CF_RadioEvent.REJOINED && variant == 0)
@@ -649,6 +744,18 @@ modded class SCR_PlayerController
 			delayMs = 2156;
 			return true;
 		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.REJOINED && variant == 2)
+		{
+			resourceName = "{B4C831843671465D}Sounds/LeaderGenerated/leader_rejoined_d.wav";
+			delayMs = 2840;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.REJOINED && variant == 3)
+		{
+			resourceName = "{5A10C8333EF5CC89}Sounds/LeaderGenerated/leader_rejoined_e.wav";
+			delayMs = 2978;
+			return true;
+		}
 		if (unitNumber == 0 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 0)
 		{
 			resourceName = "{29768D589306EAED}Sounds/LeaderGenerated/leader_under_fire_b.wav";
@@ -661,6 +768,42 @@ modded class SCR_PlayerController
 			delayMs = 2371;
 			return true;
 		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 2)
+		{
+			resourceName = "{1141602D7C3DDBEF}Sounds/LeaderGenerated/leader_under_fire_d.wav";
+			delayMs = 2917;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.UNDER_FIRE && variant == 3)
+		{
+			resourceName = "{44632B1ED515BAE0}Sounds/LeaderGenerated/leader_under_fire_e.wav";
+			delayMs = 3598;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.COHESION && variant == 0)
+		{
+			resourceName = "{38321F2F8B18B13A}Sounds/LeaderGenerated/leader_cohesion_b.wav";
+			delayMs = 3269;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.COHESION && variant == 1)
+		{
+			resourceName = "{AFB89A06C639003F}Sounds/LeaderGenerated/leader_cohesion_c.wav";
+			delayMs = 3144;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.COHESION && variant == 2)
+		{
+			resourceName = "{B50777F3D4762398}Sounds/LeaderGenerated/leader_cohesion_d.wav";
+			delayMs = 3104;
+			return true;
+		}
+		if (unitNumber == 0 && eventId == CF_RadioEvent.COHESION && variant == 3)
+		{
+			resourceName = "{917F30C54D989465}Sounds/LeaderGenerated/leader_cohesion_e.wav";
+			delayMs = 3435;
+			return true;
+		}
 		if (unitNumber == 1 && eventId == CF_RadioEvent.FAR_WARNING && variant == 0)
 		{
 			resourceName = "{E1F27F6AB0EA6B33}Sounds/LeaderGenerated/unit_1_far_warning_b.wav";
@@ -671,6 +814,18 @@ modded class SCR_PlayerController
 		{
 			resourceName = "{6B9A2057E2E8D2E8}Sounds/LeaderGenerated/unit_1_far_warning_c.wav";
 			delayMs = 2206;
+			return true;
+		}
+		if (unitNumber == 1 && eventId == CF_RadioEvent.FAR_WARNING && variant == 2)
+		{
+			resourceName = "{74BC4B2BCECB89D5}Sounds/LeaderGenerated/unit_1_far_warning_d.wav";
+			delayMs = 3125;
+			return true;
+		}
+		if (unitNumber == 1 && eventId == CF_RadioEvent.FAR_WARNING && variant == 3)
+		{
+			resourceName = "{FEFB5AF98AE61077}Sounds/LeaderGenerated/unit_1_far_warning_e.wav";
+			delayMs = 4147;
 			return true;
 		}
 		if (unitNumber == 1 && eventId == CF_RadioEvent.STUCK && variant == 0)
@@ -733,6 +888,18 @@ modded class SCR_PlayerController
 			delayMs = 2233;
 			return true;
 		}
+		if (unitNumber == 2 && eventId == CF_RadioEvent.FAR_WARNING && variant == 2)
+		{
+			resourceName = "{20D5E99547E6FEA4}Sounds/LeaderGenerated/unit_2_far_warning_d.wav";
+			delayMs = 3104;
+			return true;
+		}
+		if (unitNumber == 2 && eventId == CF_RadioEvent.FAR_WARNING && variant == 3)
+		{
+			resourceName = "{44655AC91ECB65B7}Sounds/LeaderGenerated/unit_2_far_warning_e.wav";
+			delayMs = 4173;
+			return true;
+		}
 		if (unitNumber == 2 && eventId == CF_RadioEvent.STUCK && variant == 0)
 		{
 			resourceName = "{21525FFB9B1C2E79}Sounds/LeaderGenerated/unit_2_stuck_b.wav";
@@ -791,6 +958,18 @@ modded class SCR_PlayerController
 		{
 			resourceName = "{858A3C55AED35AC3}Sounds/LeaderGenerated/unit_3_far_warning_c.wav";
 			delayMs = 2233;
+			return true;
+		}
+		if (unitNumber == 3 && eventId == CF_RadioEvent.FAR_WARNING && variant == 2)
+		{
+			resourceName = "{82E794CE26458A01}Sounds/LeaderGenerated/unit_3_far_warning_d.wav";
+			delayMs = 3125;
+			return true;
+		}
+		if (unitNumber == 3 && eventId == CF_RadioEvent.FAR_WARNING && variant == 3)
+		{
+			resourceName = "{BC994436281F65DB}Sounds/LeaderGenerated/unit_3_far_warning_e.wav";
+			delayMs = 4267;
 			return true;
 		}
 		if (unitNumber == 3 && eventId == CF_RadioEvent.STUCK && variant == 0)
@@ -853,6 +1032,18 @@ modded class SCR_PlayerController
 			delayMs = 2253;
 			return true;
 		}
+		if (unitNumber == 4 && eventId == CF_RadioEvent.FAR_WARNING && variant == 2)
+		{
+			resourceName = "{55CD2BFEA40DFB69}Sounds/LeaderGenerated/unit_4_far_warning_d.wav";
+			delayMs = 3290;
+			return true;
+		}
+		if (unitNumber == 4 && eventId == CF_RadioEvent.FAR_WARNING && variant == 3)
+		{
+			resourceName = "{4AA8073555C5122F}Sounds/LeaderGenerated/unit_4_far_warning_e.wav";
+			delayMs = 4220;
+			return true;
+		}
 		if (unitNumber == 4 && eventId == CF_RadioEvent.STUCK && variant == 0)
 		{
 			resourceName = "{FC1A992AAE5A309A}Sounds/LeaderGenerated/unit_4_stuck_b.wav";
@@ -911,6 +1102,18 @@ modded class SCR_PlayerController
 		{
 			resourceName = "{36EB2D694CDF7999}Sounds/LeaderGenerated/unit_5_far_warning_c.wav";
 			delayMs = 2308;
+			return true;
+		}
+		if (unitNumber == 5 && eventId == CF_RadioEvent.FAR_WARNING && variant == 2)
+		{
+			resourceName = "{133DB9B5B446A623}Sounds/LeaderGenerated/unit_5_far_warning_d.wav";
+			delayMs = 3174;
+			return true;
+		}
+		if (unitNumber == 5 && eventId == CF_RadioEvent.FAR_WARNING && variant == 3)
+		{
+			resourceName = "{8DD0D014DCC8C2B7}Sounds/LeaderGenerated/unit_5_far_warning_e.wav";
+			delayMs = 4328;
 			return true;
 		}
 		if (unitNumber == 5 && eventId == CF_RadioEvent.STUCK && variant == 0)

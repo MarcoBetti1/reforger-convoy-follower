@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{1141602D7C3DDBEF}Sounds/LeaderGenerated/leader_under_fire_d.wav"
+ Configurations {
+  WAVResourceClass PC {
+  }
+  WAVResourceClass XBOX_ONE : PC {
+  }
+  WAVResourceClass XBOX_SERIES : PC {
+  }
+  WAVResourceClass PS4 : PC {
+  }
+  WAVResourceClass PS5 : PC {
+  }
+  WAVResourceClass HEADLESS : PC {
+  }
+ }
+}

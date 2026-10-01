@@ -23,17 +23,17 @@ class CF_ConvoySettings : ScriptAndConfig
 	[Attribute(defvalue: "5", params: "1 5 1", category: "Formation", desc: "Hard maximum number of driver vehicles in one player's convoy (one through five).")]
 	int m_iMaxConvoyUnits;
 
-	[Attribute(defvalue: "1", category: "Cohesion advice", desc: "Show early whole-chain pace advice and reuse leader range-warning audio. Never controls the player's vehicle.")]
+	[Attribute(defvalue: "1", category: "Cohesion advice", desc: "Show whole-chain pace advice with separate varied spacing calls. Never controls the player's vehicle.")]
 	bool m_bCohesionAdviceEnabled;
-	[Attribute(defvalue: "60", params: "10 900 1", category: "Cohesion advice", desc: "Projected adjacent gap for Ease up advice; sustained for two seconds. Server validated relative to moving gap and range warning.")]
+	[Attribute(defvalue: "90", params: "10 900 1", category: "Cohesion advice", desc: "Projected adjacent gap for Ease up advice; sustained for five seconds. Server validated relative to moving gap and range warning.")]
 	float m_fCohesionEaseDistance;
-	[Attribute(defvalue: "90", params: "15 900 1", category: "Cohesion advice", desc: "Projected adjacent gap for Wait safely advice; does not issue Hold or change following distance.")]
+	[Attribute(defvalue: "140", params: "15 900 1", category: "Cohesion advice", desc: "Projected adjacent gap for Wait safely advice; does not issue Hold or change following distance.")]
 	float m_fCohesionWaitDistance;
-	[Attribute(defvalue: "40", params: "5 850 1", category: "Cohesion advice", desc: "Every projected adjacent gap must return below this distance to clear advice.")]
+	[Attribute(defvalue: "60", params: "5 850 1", category: "Cohesion advice", desc: "Every projected adjacent gap must return below this distance to clear advice.")]
 	float m_fCohesionClearDistance;
 	[Attribute(defvalue: "1.5", params: "0 5 0.5", category: "Cohesion advice", desc: "Seconds of actual opening velocity used for advice only; never extrapolates a driving target.")]
 	float m_fCohesionLookAheadSeconds;
-	[Attribute(defvalue: "60", params: "10 180 1", category: "Cohesion advice", desc: "Minimum seconds between leader cohesion calls, including a new pressure episode.")]
+	[Attribute(defvalue: "90", params: "10 180 1", category: "Cohesion advice", desc: "Minimum seconds between leader cohesion calls, including a new pressure episode.")]
 	float m_fCohesionCooldownSeconds;
 
 	[Attribute(defvalue: "180", params: "40 900 1", category: "Separation", desc: "Distance in metres from the preceding vehicle that starts a sustained range warning.")]
@@ -62,7 +62,7 @@ class CF_ConvoySettings : ScriptAndConfig
 
 	[Attribute(defvalue: "1", category: "Radio", desc: "Enable private convoy voice calls for every player. Dedicated server owners can override this from the server profile JSON without rebuilding the addon.")]
 	bool m_bVoiceEnabled;
-	[Attribute(defvalue: "0", params: "0 1 1", category: "Radio", desc: "Convoy leader voice pack: 0 = original player-recorded voice, 1 = generated alternate leader. Dedicated servers can override from the profile JSON.")]
+	[Attribute(defvalue: "1", params: "0 1 1", category: "Radio", desc: "Convoy leader voice pack: 0 = original player-recorded voice, 1 = generated alternate leader. Dedicated servers can override from the profile JSON.")]
 	int m_iVoicePack;
 	[Attribute(defvalue: "40", params: "0 100 1", category: "Radio", desc: "Percent chance to play each routine Unit One ready, following, or holding call. First exception reports do not use this chance.")]
 	int m_iRoutineCallChancePercent;
@@ -180,11 +180,11 @@ class CF_ConvoySettings : ScriptAndConfig
 		m_fTruckSearchRadius = 35.0;
 		m_iMaxConvoyUnits = 5;
 		m_bCohesionAdviceEnabled = true;
-		m_fCohesionEaseDistance = 60.0;
-		m_fCohesionWaitDistance = 90.0;
-		m_fCohesionClearDistance = 40.0;
+		m_fCohesionEaseDistance = 90.0;
+		m_fCohesionWaitDistance = 140.0;
+		m_fCohesionClearDistance = 60.0;
 		m_fCohesionLookAheadSeconds = 1.5;
-		m_fCohesionCooldownSeconds = 60.0;
+		m_fCohesionCooldownSeconds = 90.0;
 		m_fRangeWarningDistance = 180.0;
 		m_fRangeWarningSeconds = 3.0;
 		m_fRangeWarningRearmDistance = 140.0;
@@ -197,7 +197,7 @@ class CF_ConvoySettings : ScriptAndConfig
 		m_fReboardRetrySeconds = 12.0;
 		m_iReboardMaxAttempts = 3;
 		m_bVoiceEnabled = true;
-		m_iVoicePack = 0;
+		m_iVoicePack = 1;
 		m_iRoutineCallChancePercent = 40;
 		m_fRoutineRepeatSeconds = 45.0;
 		m_fRoutineSpacingSeconds = 15.0;

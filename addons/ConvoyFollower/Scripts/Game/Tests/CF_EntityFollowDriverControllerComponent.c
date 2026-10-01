@@ -1099,9 +1099,15 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			if (m_Waypoint != m_ExplicitBayMove) return;
 			Print("[ConvoyFollower] EXPLICIT_BAY_MOVE_RETIRE: unit=" + m_iUnitNumber + " waypoint_id=" + m_ExplicitBayMove.GetID() +
 				" bay=" + bay + " stopped_anchor=" + m_vExplicitBayStableTruck + " stable_world_s=" + (now - m_fExplicitBayStableStartMs) / 1000 + " foreign_orders_preserved=true");
-			ClearWaypoints(); // Only the exact controller-owned bay MOVE; never clear the group.
+			SCR_AIGroupUtilityComponent groupUtility = SCR_AIGroupUtilityComponent.Cast(m_Group.FindComponent(SCR_AIGroupUtilityComponent));
+			if (!groupUtility) return;
+			// Native cancellation retires only MOVE activities bound to our exact
+			// waypoint. Do not mark the waypoint completed or cancel seat/foreign
+			// work. Physical arrival/stability above is the readiness evidence.
+			groupUtility.CancelActivitiesRelatedToWaypoint(m_ExplicitBayMove, SCR_AIMoveActivity, true);
+			ClearWaypoints();
 		}
-		CF_AcquireCapturedWait(false, true); // Waits for native retirement; it never completes a movement action.
+		CF_AcquireCapturedWait(false, true);
 	}
 
 	override bool CF_AdmitExplicitUnloadBay(vector bay, IEntity leadVehicle)

@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{5D7F094409F660D2}Sounds/LeaderGenerated/leader_lost_e.wav"
+ Configurations {
+  WAVResourceClass PC {
+  }
+  WAVResourceClass XBOX_ONE : PC {
+  }
+  WAVResourceClass XBOX_SERIES : PC {
+  }
+  WAVResourceClass PS4 : PC {
+  }
+  WAVResourceClass PS5 : PC {
+  }
+  WAVResourceClass HEADLESS : PC {
+  }
+ }
+}

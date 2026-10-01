@@ -16,14 +16,14 @@ END = "\t\t// END GENERATED RADIO MAPPING"
 def main():
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     clips = manifest["clips"]
-    if len(clips) != 66:
-        raise ValueError(f"Expected 66 synthetic clips, found {len(clips)}")
+    if len(clips) != 96:
+        raise ValueError(f"Expected 96 synthetic clips, found {len(clips)}")
     lines = []
     seen = set()
     for clip in clips:
         event = clip["event"].upper()
         unit = clip["unit"]
-        variant = 0 if clip["variant"] == "b" else 1
+        variant = "bcde".index(clip["variant"])
         key = (event, unit, variant)
         if key in seen:
             raise ValueError(f"Duplicate mapping: {key}")

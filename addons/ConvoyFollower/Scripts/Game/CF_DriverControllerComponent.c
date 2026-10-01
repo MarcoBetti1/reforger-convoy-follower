@@ -75,8 +75,11 @@ class CF_DriverControllerComponent : ScriptComponent
 	protected static const float CF_STOPPED_ROAD_GOAL_RADIUS = 4.0;
 	// A successor can stop a few metres before its saved cargo-bay MOVE goal
 	// while still being close enough to unload at the same road position.
-	protected static const float CF_UNLOAD_BAY_READY_RADIUS = 8.0;
-	protected static const float CF_UNLOAD_BAY_READY_EXIT_RADIUS = 12.0;
+	// A loading area, not an exact truck-origin/heading match. Native MOVE
+	// stopped the long M923 nine metres short in the player course. Keep a
+	// bounded 10 m horizontal area and the slow/stable/road ownership gates.
+	protected static const float CF_UNLOAD_BAY_READY_RADIUS = 10.0;
+	protected static const float CF_UNLOAD_BAY_READY_EXIT_RADIUS = 14.0;
 	protected static const float CF_STOPPED_ROAD_CLOSE_DISTANCE = 5.0;
 	protected static const float CF_STOPPED_ROAD_MAX_DISTANCE = 6.0;
 	protected static const float CF_STOPPED_ROAD_SHOULDER_BUFFER = 2.0;
@@ -848,7 +851,12 @@ class CF_DriverControllerComponent : ScriptComponent
 				withinArrivalGoal && CF_IsTruckNearMappedRoad())
 			{
 				m_bArrivalRoadHold = true;
-				ClearWaypoints();
+				// The explicit bay observer owns its three-second MOVE-to-Wait
+				// handoff. Retain that waypoint here so it can cancel the exact
+				// native activity before removing it; other arrivals are unchanged.
+				vector admittedBay;
+				bool explicitBay = m_Session && m_Session.CF_GetAdmittedExplicitBay(this, m_Truck, m_LeadVehicle, admittedBay);
+				if (!explicitBay) ClearWaypoints();
 				Print("[ConvoyFollower] ARRIVAL_ROAD_HOLD: Unit " + m_iUnitNumber +
 					" stopped on mapped road behind predecessor");
 			}
@@ -2679,10 +2687,10 @@ class CF_DriverControllerComponent : ScriptComponent
 	// Do not brake at one center while readiness waits at the other.
 	protected bool CF_IsInsideUnloadBay(float radius)
 	{
-		if (!m_Truck || !m_bUnloadBayGoalValid || vector.Distance(m_Truck.GetOrigin(), m_vUnloadBayGoal) > radius) return false;
+		if (!m_Truck || !m_bUnloadBayGoalValid || vector.DistanceXZ(m_Truck.GetOrigin(), m_vUnloadBayGoal) > radius) return false;
 		vector savedBay;
 		if (m_Session && m_Session.CF_GetAdmittedExplicitBay(this, m_Truck, m_LeadVehicle, savedBay))
-			return vector.Distance(m_Truck.GetOrigin(), savedBay) <= radius;
+			return vector.DistanceXZ(m_Truck.GetOrigin(), savedBay) <= radius;
 		return true;
 	}
 
@@ -2727,7 +2735,8 @@ class CF_DriverControllerComponent : ScriptComponent
 	{
 		return CF_IsBoarded() && !CF_IsControlBlocked() && m_iState == CF_ARRIVING &&
 			m_bUnloadSequenceHold && m_bUnloadBayGoalValid && m_bUnloadReleaseReady &&
-			vector.Distance(m_Truck.GetOrigin(), bay) <= CF_UNLOAD_BAY_READY_RADIUS && CF_IsPanelVehicleSlow(2.0);
+			vector.DistanceXZ(m_Truck.GetOrigin(), bay) <= CF_UNLOAD_BAY_READY_RADIUS &&
+			CF_IsInsideUnloadBay(CF_UNLOAD_BAY_READY_RADIUS) && CF_IsPanelVehicleSlow(2.0);
 	}
 
 	bool CF_CancelExplicitBayToHold()

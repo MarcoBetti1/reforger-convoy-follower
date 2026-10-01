@@ -641,3 +641,10 @@ One fixed on-road pair was declared from actual powered V2 road poses before aut
 ## User takeover: road-start control interrupted — September30,2026
 
 The single reviewed road-start client launched14:59:20Central, then was interrupted under Marco's explicit checkpoint/sync/pause request. Last console14:59:34.051 contains component initialization, no cargo/motion/terminal/native-image witness. Normal close did not complete; only owned PID9268 stopped, client/watch sessions consumed. No terminal snapshot fabricated; full/user-abort console and post-stop616/238/trio retained. Shutdown censored, no candidate outcome or auto-replay. See [the interruption record](experiments/ordinary-road-start-join-v1-interrupted.md). Previous V2 failure/positive evidence remains.
+
+
+## September 30: explicit bay MOVE-to-Wait handoff
+
+Deleting the bay waypoint after a stable stop was insufficient: its SCR_AIMoveActivity remained active, and the original driver rolled and exited. Defer explicit-bay arrival clearing until the three-second stop observer; cancel only activities bound to that exact waypoint with SCR_AIGroupUtilityComponent.CancelActivitiesRelatedToWaypoint(waypoint, SCR_AIMoveActivity, true), then clear and acquire seated Wait. The no-completion flag preserves honest physical readiness. The one-truck course passed native 100-supply unload and on-foot parking with30 seconds zero parked drift; general arrivals retain their old path. See the [focused evidence](convoy-bay-voices-uniform-2026-09-30.md).
+
+A private diagnostic stalled in frame progress during seat transfer. Focus/click did not restore it, and only its verified owned PID was terminated. Repeating with --force-update advanced through the same phase; use that flag for bounded diagnostics, but do not infer a focus-only cause. Confirm a prior client has actually exited before launching another. Full logs and interrupted result are retained; successful startup does not imply course completion.

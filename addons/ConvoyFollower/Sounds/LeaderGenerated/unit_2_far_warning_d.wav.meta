@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{20D5E99547E6FEA4}Sounds/LeaderGenerated/unit_2_far_warning_d.wav"
+ Configurations {
+  WAVResourceClass PC {
+  }
+  WAVResourceClass XBOX_ONE : PC {
+  }
+  WAVResourceClass XBOX_SERIES : PC {
+  }
+  WAVResourceClass PS4 : PC {
+  }
+  WAVResourceClass PS5 : PC {
+  }
+  WAVResourceClass HEADLESS : PC {
+  }
+ }
+}

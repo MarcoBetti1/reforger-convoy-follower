@@ -171,6 +171,7 @@ class CF_ConvoySession
 	protected float m_fCohesionLastRadioMs = -1;
 	protected bool m_bCohesionRadioPending;
 	protected int m_iCohesionAnnouncedLevel;
+	protected float m_fCohesionSpeechPressureSinceMs = -1;
 	protected float m_fCohesionClearSinceMs = -1;
 
 	static bool CF_IsWorldCleanup()
@@ -385,6 +386,7 @@ class CF_ConvoySession
 		m_iCohesionCandidate = 0;
 		m_fCohesionCandidateSinceMs = -1;
 		m_fCohesionClearSinceMs = -1;
+		m_fCohesionSpeechPressureSinceMs = -1;
 		CF_CancelCohesionRadio();
 	}
 
@@ -468,7 +470,7 @@ class CF_ConvoySession
 			m_iCohesionCandidate = wanted;
 			m_fCohesionCandidateSinceMs = now;
 		}
-		if (wanted != level && now - m_fCohesionCandidateSinceMs >= 2000) level = wanted;
+		if (wanted != level && now - m_fCohesionCandidateSinceMs >= 5000) level = wanted;
 		sample.Level = level;
 		sample.Text = "Pace: assessed - keep convoy in sight";
 		string pace = "Unit " + sample.UnitIdentity + ": " + Math.Round(sample.FollowerForwardKmh) + " km/h";
@@ -488,17 +490,22 @@ class CF_ConvoySession
 		if (level == 0 || !sample.LeadMoving) CF_CancelCohesionRadio();
 		bool radioDue = m_fCohesionLastRadioMs < 0 || now - m_fCohesionLastRadioMs >= settings.m_fCohesionCooldownSeconds * 1000;
 		// Brief stops do not rearm speech. A pressure episode ends only after
-		// five measured seconds together; prediction alone cannot trigger audio.
+		// ten measured seconds together; a steady moderate gap stays quiet.
 		if (sample.ProjectedGapMeters <= settings.m_fCohesionClearDistance)
 		{
 			if (m_fCohesionClearSinceMs < 0) m_fCohesionClearSinceMs = now;
-			if (now - m_fCohesionClearSinceMs >= 5000) m_iCohesionAnnouncedLevel = 0;
+			if (now - m_fCohesionClearSinceMs >= 10000) m_iCohesionAnnouncedLevel = 0;
 		}
 		else m_fCohesionClearSinceMs = -1;
-		if (level > m_iCohesionAnnouncedLevel && sample.GapMeters >= settings.m_fCohesionEaseDistance && sample.LeadMoving && controller && radioDue)
+		bool speechPressure = sample.LeadMoving && sample.GapMeters >= settings.m_fCohesionEaseDistance &&
+			(sample.OpeningMps > 0.75 || sample.GapMeters >= settings.m_fCohesionWaitDistance);
+		if (!speechPressure) m_fCohesionSpeechPressureSinceMs = -1;
+		else if (m_fCohesionSpeechPressureSinceMs < 0) m_fCohesionSpeechPressureSinceMs = now;
+		if (level > 0 && m_iCohesionAnnouncedLevel == 0 && speechPressure &&
+			now - m_fCohesionSpeechPressureSinceMs >= 5000 && controller && radioDue)
 		{
-			// One spokesperson and one whole-chain call. Existing range audio
-			// fits both advice levels; precise current advice stays in the panel.
+			// One spacing call per pressure episode, including escalation.
+			// True separation remains a distinct warning with shared debounce.
 			controller.CF_DiscardQueuedConvoyRadioEvent(CF_RadioEvent.FAR_WARNING);
 			controller.CF_SendConvoyRadioCall(CF_RadioEvent.COHESION, 0);
 			m_fCohesionLastRadioMs = now;
@@ -788,6 +795,21 @@ class CF_ConvoySession
 		return m_sExplicitBayBlocker;
 	}
 
+	// A discoverable bay step uses the exact admitted truck and the same rear
+	// parking planner as its physical cargo action. No automatic cargo transfer.
+	static bool CF_PanelParkBayTruck(IEntity user)
+	{
+		if (!Replication.IsServer()) return false;
+		CF_ConvoySession session = GetForPlayer(user);
+		if (!session) return false;
+		if (!session.m_bExplicitBay || !session.m_ExplicitBayUnit || !session.m_bExplicitBayUnitReady)
+		{
+			session.m_sPanelOrderState = "blocked: admit a truck and wait for it to stop in the loading area before parking";
+			return false;
+		}
+		return CF_PanelPullBack(user, session.GetIdentityNumber(session.m_ExplicitBayUnit));
+	}
+
 	static bool CF_PanelAdmitNextTruck(IEntity user)
 	{
 		if (!Replication.IsServer()) return false;
@@ -838,7 +860,7 @@ class CF_ConvoySession
 		CF_EntityFollowDriverControllerComponent ordinary = CF_EntityFollowDriverControllerComponent.Cast(m_ExplicitBayUnit);
 		if (!ordinary || !ordinary.CF_HasSelectedExplicitBayWait(this, m_ExplicitBayUnit.CF_GetAssignedVehicle())) return;
 		m_bExplicitBayUnitReady = true;
-		m_sPanelOrderState = "completed: Unit " + GetIdentityNumber(m_ExplicitBayUnit) + " stopped in the bay; unload using the truck's native supply action, then command parking";
+		m_sPanelOrderState = "completed: Unit " + GetIdentityNumber(m_ExplicitBayUnit) + " stopped in the loading area; unload at the truck rear, then Unload bay > Unloaded / park truck. After it parks, Admit next truck; after the last, Regroup for return";
 		Print("[ConvoyFollower] EXPLICIT_BAY_SETTLED: identity=" + GetIdentityNumber(m_ExplicitBayUnit) +
 			" truck=" + m_ExplicitBayUnit.CF_GetAssignedVehicle().GetID() + " bay=" + m_vUnloadBayPosition + " automatic_parking=false");
 	}

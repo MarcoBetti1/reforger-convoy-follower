@@ -1,20 +1,31 @@
-# Optional generated convoy voice pack
+# Varied convoy voice pack
 
-The recorded leader voice remains the default. `Configs/CF_ConvoySettings.conf` has
-`m_iVoicePack 0` for the original recording and `m_iVoicePack 1` for the optional
-generated leader. A dedicated server can instead set `"m_iVoicePack": 1` in
+The September 30 candidate selects the varied generated voice by default.
+`m_iVoicePack 0` retains the original player recording; `m_iVoicePack 1` selects
+the expanded alternatives. A dedicated server can set `"m_iVoicePack": 0` or 1 in
 `$profile:ConvoyFollowerSettings.json` and restart without rebuilding the addon;
 the server passes the chosen pack to each convoy owner's private radio RPC. The
 driver interaction menu does not expose this choice. All calls within a convoy
 use one voice timbre.
 
-The generated pack has two alternate phrasings for each of the 33 active call
-positions: eight whole-convoy events and five numbered events for Units One
-through Five. It contains 66 48 kHz mono WAV resources in
+The generated pack contains 96 clips: four alternatives for each of nine
+whole-convoy events, four range warnings for each of Units One through Five,
+and two alternatives for each other numbered event. It contains 48 kHz mono WAV resources in
 `addons/ConvoyFollower/Sounds/LeaderGenerated/`. The original pack and source
 recordings were not modified. Alternate phrasing is selected only when a call
 plays; it does not affect admission, cooldowns, or the urgency of a report. A
-client alternates phrasings per event and unit after a random first choice.
+client cycles phrasings per event and unit after a random first choice, without
+consecutive repeats. Spacing advice uses distinct wording from true range warnings.
+
+September 30 screening verified all 96 WAV formats, hashes and unclipped peaks;
+the existing 66 generated clips remain byte-identical. Local Whisper screened
+all 30 new lines with similarity 0.917–1.000 (numerals versus spelled-out unit
+numbers explain most lower scores). This is a readability screen, not player
+hearing evidence. A private native dispatch check played all four spacing
+variants with valid handles and logged their exact resources. Its synthetic
+dispatch does not prove real warning timing; a separate production debounce
+check accepted the first spacing call and suppressed the immediate range call
+from another unit. See the current bay/voice validation record for run results.
 
 ## Source and license
 

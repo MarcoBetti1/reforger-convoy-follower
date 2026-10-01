@@ -2,6 +2,10 @@
 
 Updated September 30, 2026. **The mod is not release ready.** This page separates completed evidence from work still in progress.
 
+## Bay unloading, infantry clothing and voice variety — September 30, 2026
+
+The focused one-truck bay course passed native approach, seated Wait, 100-supply unloading, the new on-foot **Unloaded / park truck** command and 30 seconds parked without drift. The patch retires only its own native bay MOVE after the stable stop and accepts a bounded 10 m loading area. Driver uniforms use ground infantry assets; the default generated pack now has 96 clips with sustained pressure, episode hysteresis and a shared 90-second spacing/range cooldown. All-five configurations and ordinary-player packaging passed; frozen data SHA `A254287244B25FE8677D53C49F9BE5E0603299BD38B64FCD067880E75C249614`. Retained errors:19 before result/0 post-result/61 shutdown (SCRIPT0/0/2). Ordinary wheel input, natural voice timing, Soviet visual check, subsequent truck admission and return regroup remain pending. Full-trip/five-truck/video acceptance and general AI braking remain unproven. See [exact build and focused result](convoy-bay-voices-uniform-2026-09-30.md). Earlier current-build descriptions below are historical.
+
 ## Closed human checkpoint and storage cleanup — September 30, 2026
 
 Human-confirmed debug HUD, persistent bay readiness/native braking failures and original-only voice calls. Normal17:42:22.790 closure/exit0 retains21gameplay/69cleanup-shutdown errors (0/2SCRIPT). Wrong voice override location corrected for next startup only. Current and rollback trios unchanged after user-authorized cleanup removing71.88GB of206 exact package duplicates/195 superseded raw videos.25 useful clips/baselines, full logs and source remain. Historical raw-video-retention statements are superseded by [the deletion audit](cleanup/convoy-storage-audit-2026-09-30.md). Next product focus: on-foot unload/park/next-admit workflow, voice variety and driver clothing; no new launch or driving fix. See [the closed player checkpoint](convoy-player-debug-bay-2026-09-30.md).

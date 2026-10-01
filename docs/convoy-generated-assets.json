@@ -1,5 +1,5 @@
 {
-  "description": "Optional generated leader voice pack; original recorded pack is default",
+  "description": "Varied convoy voice pack; original player recordings remain selectable as pack 0",
   "generator": "Kokoro-82M via kokoro-onnx, voice am_michael, local inference",
   "license": "Kokoro-82M model and voices Apache-2.0; kokoro-onnx MIT; all spoken scripts authored for this addon",
   "model_url": "https://huggingface.co/hexgrad/Kokoro-82M",
@@ -31,6 +31,26 @@
       "sha256": "44a5b8e79a61e254e02adacfe5378c5798cb43193de3ea6c88ad9385857670b1"
     },
     {
+      "stem": "leader_ready_d",
+      "event": "ready",
+      "unit": 0,
+      "variant": "d",
+      "text": "Convoy ready. We'll wait for your start order.",
+      "resource": "{1EA6038F3B38381E}Sounds/LeaderGenerated/leader_ready_d.wav",
+      "duration_seconds": 3.052,
+      "sha256": "f4d6bd4573a02c61e1e6686d14e1212310ad6ac440444728b5ae48d6eda08c45"
+    },
+    {
+      "stem": "leader_ready_e",
+      "event": "ready",
+      "unit": 0,
+      "variant": "e",
+      "text": "Driver ready. Give us the word.",
+      "resource": "{46EFE00FDFF00C39}Sounds/LeaderGenerated/leader_ready_e.wav",
+      "duration_seconds": 2.378,
+      "sha256": "018fc822cf39dc9a4a96fe81b8a375129a2eb45aecd04fd0bda8dddf795d0cb3"
+    },
+    {
       "stem": "leader_following_b",
       "event": "following",
       "unit": 0,
@@ -49,6 +69,26 @@
       "resource": "{58D25EC3581B5998}Sounds/LeaderGenerated/leader_following_c.wav",
       "duration_seconds": 2.552,
       "sha256": "786d003e72a2beeea016cbf0c7391213f837bc37fbc88ff4db91a5e690864b63"
+    },
+    {
+      "stem": "leader_following_d",
+      "event": "following",
+      "unit": 0,
+      "variant": "d",
+      "text": "Convoy rolling. We'll keep the line together.",
+      "resource": "{813DD3C6427E9BE5}Sounds/LeaderGenerated/leader_following_d.wav",
+      "duration_seconds": 3.098,
+      "sha256": "1a6ee08d1a5540fbba5d776bfaa222927b8b806a6aa858541c869b8fbe35ce79"
+    },
+    {
+      "stem": "leader_following_e",
+      "event": "following",
+      "unit": 0,
+      "variant": "e",
+      "text": "We're on the move. Following your lead.",
+      "resource": "{89064AD06014D513}Sounds/LeaderGenerated/leader_following_e.wav",
+      "duration_seconds": 2.529,
+      "sha256": "641baa5ac23b7fb097ce61e3a079fafc6367bf44d452df76747b55d844db6772"
     },
     {
       "stem": "leader_holding_b",
@@ -71,6 +111,26 @@
       "sha256": "5f202b6ea38109fb81644431019e302f8f3f69fdd4d038e6d63c44ce5c0e4a02"
     },
     {
+      "stem": "leader_holding_d",
+      "event": "holding",
+      "unit": 0,
+      "variant": "d",
+      "text": "Stopping here. We'll wait for your resume order.",
+      "resource": "{3CCFC0AACB615E1B}Sounds/LeaderGenerated/leader_holding_d.wav",
+      "duration_seconds": 2.958,
+      "sha256": "865008c8aea3385a056c7aa8aadbf7e7607398e43c0a8986be49c01ac13a2d4e"
+    },
+    {
+      "stem": "leader_holding_e",
+      "event": "holding",
+      "unit": 0,
+      "variant": "e",
+      "text": "Convoy holding. Let us know when to move.",
+      "resource": "{65479D461A6629B0}Sounds/LeaderGenerated/leader_holding_e.wav",
+      "duration_seconds": 3.062,
+      "sha256": "5a8cd6d87618fdc9f51ff0a1c79c2cd30e340ec4f784634b9ab1a88c95c0b8ca"
+    },
+    {
       "stem": "leader_far_warning_b",
       "event": "far_warning",
       "unit": 0,
@@ -89,6 +149,26 @@
       "resource": "{A68828D938FD2BAE}Sounds/LeaderGenerated/leader_far_warning_c.wav",
       "duration_seconds": 2.343,
       "sha256": "35f7458f0ab13fd8b9111e1e377e9c2a0b7d53bebd77e86a046ff1c3d7430dd8"
+    },
+    {
+      "stem": "leader_far_warning_d",
+      "event": "far_warning",
+      "unit": 0,
+      "variant": "d",
+      "text": "We're a long way behind. Wait somewhere safe for us.",
+      "resource": "{DB94273AF4C09292}Sounds/LeaderGenerated/leader_far_warning_d.wav",
+      "duration_seconds": 3.674,
+      "sha256": "dfcf406202449fc95bb7a1b967d43f99b11f2572420cee6126011da181eebff3"
+    },
+    {
+      "stem": "leader_far_warning_e",
+      "event": "far_warning",
+      "unit": 0,
+      "variant": "e",
+      "text": "The convoy's spread out. Let the rear trucks close up.",
+      "resource": "{8B01B1E3152E0FD0}Sounds/LeaderGenerated/leader_far_warning_e.wav",
+      "duration_seconds": 3.581,
+      "sha256": "63d89edcd13d01ed7c002ea146dc7b6e72d2e3647bee4dcf0a6f98b9585abb4d"
     },
     {
       "stem": "leader_stuck_b",
@@ -111,6 +191,26 @@
       "sha256": "54bd6df759a274878a674f01b13765f60024cf9623622b2e8d55a3ed865848ed"
     },
     {
+      "stem": "leader_stuck_d",
+      "event": "stuck",
+      "unit": 0,
+      "variant": "d",
+      "text": "We've hit a snag. Trying to get moving again.",
+      "resource": "{65501B92416F7CF0}Sounds/LeaderGenerated/leader_stuck_d.wav",
+      "duration_seconds": 2.893,
+      "sha256": "8aecd678b35455b73cba9f8763eba2c6a59abbcf1b232c77f3ec42aea516981b"
+    },
+    {
+      "stem": "leader_stuck_e",
+      "event": "stuck",
+      "unit": 0,
+      "variant": "e",
+      "text": "Truck's stopped short. We're checking the route.",
+      "resource": "{FBB21834EA40EF49}Sounds/LeaderGenerated/leader_stuck_e.wav",
+      "duration_seconds": 2.756,
+      "sha256": "6ab56e47281eb5dc55cdb62e8ab0506147d836da577955ded3fc3347cdc4113a"
+    },
+    {
       "stem": "leader_lost_b",
       "event": "lost",
       "unit": 0,
@@ -129,6 +229,26 @@
       "resource": "{C5FA1D3120E78C30}Sounds/LeaderGenerated/leader_lost_c.wav",
       "duration_seconds": 2.572,
       "sha256": "29b4afa49bfffb9ddca39b7efae50afe40c7c173ff85908b341f0ef49a61ec25"
+    },
+    {
+      "stem": "leader_lost_d",
+      "event": "lost",
+      "unit": 0,
+      "variant": "d",
+      "text": "We're out of contact. Holding our position.",
+      "resource": "{E30085FC1A49DAD6}Sounds/LeaderGenerated/leader_lost_d.wav",
+      "duration_seconds": 2.85,
+      "sha256": "fdba49b3ec26bfc79cc9171dc181578297084cdb564d76144779fa82590d06a0"
+    },
+    {
+      "stem": "leader_lost_e",
+      "event": "lost",
+      "unit": 0,
+      "variant": "e",
+      "text": "We've lost the lead truck. Come back into range.",
+      "resource": "{5D7F094409F660D2}Sounds/LeaderGenerated/leader_lost_e.wav",
+      "duration_seconds": 3.404,
+      "sha256": "d6607108e8c59a04a39f96358c73115536ed9e0d95805058aa10b2f39c796ca9"
     },
     {
       "stem": "leader_rejoined_b",
@@ -151,6 +271,26 @@
       "sha256": "f0b766bd917ff0890e48d318ba7a5c24669f3f39553b5e132e276ff3ada10a6c"
     },
     {
+      "stem": "leader_rejoined_d",
+      "event": "rejoined",
+      "unit": 0,
+      "variant": "d",
+      "text": "We've closed up. Ready to keep moving.",
+      "resource": "{B4C831843671465D}Sounds/LeaderGenerated/leader_rejoined_d.wav",
+      "duration_seconds": 2.59,
+      "sha256": "4999d167f6c47ae1c57f4f78beef18526a9d75c2bb53b5dda31cd4d1fc88e947"
+    },
+    {
+      "stem": "leader_rejoined_e",
+      "event": "rejoined",
+      "unit": 0,
+      "variant": "e",
+      "text": "Back with the convoy. We're following again.",
+      "resource": "{5A10C8333EF5CC89}Sounds/LeaderGenerated/leader_rejoined_e.wav",
+      "duration_seconds": 2.728,
+      "sha256": "057f2c743852a40c92f78bfd48ee1d353270a58cc6d6d753c3f9f9f56a767675"
+    },
+    {
       "stem": "leader_under_fire_b",
       "event": "under_fire",
       "unit": 0,
@@ -171,6 +311,66 @@
       "sha256": "10a0f0fc219e4e617527011c2429ae35292cab0527c3e3e3de7a3490ac49a2d3"
     },
     {
+      "stem": "leader_under_fire_d",
+      "event": "under_fire",
+      "unit": 0,
+      "variant": "d",
+      "text": "Truck's been hit. Watch the road ahead.",
+      "resource": "{1141602D7C3DDBEF}Sounds/LeaderGenerated/leader_under_fire_d.wav",
+      "duration_seconds": 2.667,
+      "sha256": "e3ceb330caee21071f0b9cf6065c2aae632800e57f13873d960d2153a8d28545"
+    },
+    {
+      "stem": "leader_under_fire_e",
+      "event": "under_fire",
+      "unit": 0,
+      "variant": "e",
+      "text": "Contact on the convoy. We've taken damage.",
+      "resource": "{44632B1ED515BAE0}Sounds/LeaderGenerated/leader_under_fire_e.wav",
+      "duration_seconds": 3.348,
+      "sha256": "83823f8ffcce61f48f9193f3f50495a8decb82903f0edc586b8ecb2f585d75e6"
+    },
+    {
+      "stem": "leader_cohesion_b",
+      "event": "cohesion",
+      "unit": 0,
+      "variant": "b",
+      "text": "Ease the pace a little. We're closing the gap.",
+      "resource": "{38321F2F8B18B13A}Sounds/LeaderGenerated/leader_cohesion_b.wav",
+      "duration_seconds": 3.019,
+      "sha256": "b7dfd02ad63349a35e8f4b8d4392ffe46c76be348234ab7bac65cc1956d47bf6"
+    },
+    {
+      "stem": "leader_cohesion_c",
+      "event": "cohesion",
+      "unit": 0,
+      "variant": "c",
+      "text": "Let the rear trucks catch up. We'll keep moving.",
+      "resource": "{AFB89A06C639003F}Sounds/LeaderGenerated/leader_cohesion_c.wav",
+      "duration_seconds": 2.894,
+      "sha256": "2c50881ddffb1b7f5b58c606b2f5dcafaba8602f74461ec3022deb50ea156326"
+    },
+    {
+      "stem": "leader_cohesion_d",
+      "event": "cohesion",
+      "unit": 0,
+      "variant": "d",
+      "text": "Give the convoy a little room to close up.",
+      "resource": "{B50777F3D4762398}Sounds/LeaderGenerated/leader_cohesion_d.wav",
+      "duration_seconds": 2.854,
+      "sha256": "e56ab7a32c83d8606cb457c1c7583f0338703f00a7bbbf8fc120fa1de98cf3ff"
+    },
+    {
+      "stem": "leader_cohesion_e",
+      "event": "cohesion",
+      "unit": 0,
+      "variant": "e",
+      "text": "We're stretching the line. Take it steady up front.",
+      "resource": "{917F30C54D989465}Sounds/LeaderGenerated/leader_cohesion_e.wav",
+      "duration_seconds": 3.185,
+      "sha256": "2f0a485c955bc09a57821463b7b5e15b487572a25be1f40a47207ebdb41744f9"
+    },
+    {
       "stem": "unit_1_far_warning_b",
       "event": "far_warning",
       "unit": 1,
@@ -189,6 +389,26 @@
       "resource": "{6B9A2057E2E8D2E8}Sounds/LeaderGenerated/unit_1_far_warning_c.wav",
       "duration_seconds": 1.956,
       "sha256": "57bd95ec2caa412fa6d6d9d49e9f3fbc3a8430f8feedd7613bd3060b1f8fa884"
+    },
+    {
+      "stem": "unit_1_far_warning_d",
+      "event": "far_warning",
+      "unit": 1,
+      "variant": "d",
+      "text": "Unit One needs time to close the gap.",
+      "resource": "{74BC4B2BCECB89D5}Sounds/LeaderGenerated/unit_1_far_warning_d.wav",
+      "duration_seconds": 2.875,
+      "sha256": "d5bf872082d060f48ce17619e1f18b3bc0010b2c5fbc08284d80f83f4b72c9ae"
+    },
+    {
+      "stem": "unit_1_far_warning_e",
+      "event": "far_warning",
+      "unit": 1,
+      "variant": "e",
+      "text": "Unit One is a long way behind. Wait somewhere safe.",
+      "resource": "{FEFB5AF98AE61077}Sounds/LeaderGenerated/unit_1_far_warning_e.wav",
+      "duration_seconds": 3.897,
+      "sha256": "71cf4f6f68bb35ec319a8e3b6c448c044d4c833e0d8a3c0c9df5aa110cbcd0fd"
     },
     {
       "stem": "unit_1_stuck_b",
@@ -291,6 +511,26 @@
       "sha256": "6342fca8414da5afa2e91e87a7a12ebfd6a73b79df610d8da9b4214d0450c5c4"
     },
     {
+      "stem": "unit_2_far_warning_d",
+      "event": "far_warning",
+      "unit": 2,
+      "variant": "d",
+      "text": "Unit Two needs time to close the gap.",
+      "resource": "{20D5E99547E6FEA4}Sounds/LeaderGenerated/unit_2_far_warning_d.wav",
+      "duration_seconds": 2.854,
+      "sha256": "80bf14e7ae216db07220b76437730e55baebccbd188e9df59ed52202b393d064"
+    },
+    {
+      "stem": "unit_2_far_warning_e",
+      "event": "far_warning",
+      "unit": 2,
+      "variant": "e",
+      "text": "Unit Two is a long way behind. Wait somewhere safe.",
+      "resource": "{44655AC91ECB65B7}Sounds/LeaderGenerated/unit_2_far_warning_e.wav",
+      "duration_seconds": 3.923,
+      "sha256": "6aef159b09dced67cd5e16443bf5c5f6e5ac9fce6ddd679753d94963429dff36"
+    },
+    {
       "stem": "unit_2_stuck_b",
       "event": "stuck",
       "unit": 2,
@@ -389,6 +629,26 @@
       "resource": "{858A3C55AED35AC3}Sounds/LeaderGenerated/unit_3_far_warning_c.wav",
       "duration_seconds": 1.983,
       "sha256": "1edb476767a7d04af1e6dc4be0864eeeb72a1dc4419a658b604fc772540033af"
+    },
+    {
+      "stem": "unit_3_far_warning_d",
+      "event": "far_warning",
+      "unit": 3,
+      "variant": "d",
+      "text": "Unit Three needs time to close the gap.",
+      "resource": "{82E794CE26458A01}Sounds/LeaderGenerated/unit_3_far_warning_d.wav",
+      "duration_seconds": 2.875,
+      "sha256": "6d3f43a54353deca65ee06a47a11ded51b1a0d9a077a978aafde69984165f947"
+    },
+    {
+      "stem": "unit_3_far_warning_e",
+      "event": "far_warning",
+      "unit": 3,
+      "variant": "e",
+      "text": "Unit Three is a long way behind. Wait somewhere safe.",
+      "resource": "{BC994436281F65DB}Sounds/LeaderGenerated/unit_3_far_warning_e.wav",
+      "duration_seconds": 4.017,
+      "sha256": "0d0256f47114c99c7fa4def10bd9a3706518fc15a50a749582e9a5448ccae479"
     },
     {
       "stem": "unit_3_stuck_b",
@@ -491,6 +751,26 @@
       "sha256": "bdd153f880622d0a44be57d1941a1f8e6ec3409ab62294cfdf93bf342afb2bca"
     },
     {
+      "stem": "unit_4_far_warning_d",
+      "event": "far_warning",
+      "unit": 4,
+      "variant": "d",
+      "text": "Unit Four needs time to close the gap.",
+      "resource": "{55CD2BFEA40DFB69}Sounds/LeaderGenerated/unit_4_far_warning_d.wav",
+      "duration_seconds": 3.04,
+      "sha256": "3c5e90b2d93c58656b37f9ebd4e1a2bc38c6943ef58ea3f3b42d797189b49b16"
+    },
+    {
+      "stem": "unit_4_far_warning_e",
+      "event": "far_warning",
+      "unit": 4,
+      "variant": "e",
+      "text": "Unit Four is a long way behind. Wait somewhere safe.",
+      "resource": "{4AA8073555C5122F}Sounds/LeaderGenerated/unit_4_far_warning_e.wav",
+      "duration_seconds": 3.97,
+      "sha256": "81fcf7603780ed45ba3e996f1fbdda33bdaf05f5d51a50f6420b1a86e7d55c47"
+    },
+    {
       "stem": "unit_4_stuck_b",
       "event": "stuck",
       "unit": 4,
@@ -589,6 +869,26 @@
       "resource": "{36EB2D694CDF7999}Sounds/LeaderGenerated/unit_5_far_warning_c.wav",
       "duration_seconds": 2.058,
       "sha256": "144be0bfb99573b5c5068f09ee94dc0ab25333929fda219d37139c20d76c0cec"
+    },
+    {
+      "stem": "unit_5_far_warning_d",
+      "event": "far_warning",
+      "unit": 5,
+      "variant": "d",
+      "text": "Unit Five needs time to close the gap.",
+      "resource": "{133DB9B5B446A623}Sounds/LeaderGenerated/unit_5_far_warning_d.wav",
+      "duration_seconds": 2.924,
+      "sha256": "80101db6514f9da7fd3517bccc303eb2e831cc103d0b51e6b5ea98a7441c2c56"
+    },
+    {
+      "stem": "unit_5_far_warning_e",
+      "event": "far_warning",
+      "unit": 5,
+      "variant": "e",
+      "text": "Unit Five is a long way behind. Wait somewhere safe.",
+      "resource": "{8DD0D014DCC8C2B7}Sounds/LeaderGenerated/unit_5_far_warning_e.wav",
+      "duration_seconds": 4.078,
+      "sha256": "1f584d82fe415a16bb1744895098b8cbc2c014cecf917f9f0bf0ec31813a13fa"
     },
     {
       "stem": "unit_5_stuck_b",
