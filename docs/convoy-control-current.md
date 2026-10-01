@@ -17,6 +17,6 @@ Next, verify ordinary wheel input, a second admission without cancellation, retu
 | Correct voice override | `D:/ReforgerAgentRuns/everon-journey-manual-v8/profile/profile/ConvoyFollowerSettings.json` |
 | GitHub-verified exact package/log archives | `D:/ConvoyTakeoverBackups/2026-09-30` and the repository's draft takeover release |
 
-No game or Workbench source session is open. Keep one uniquely named candidate and one frozen runtime for each new user handoff; use an untimed client and let Marco control deployment and testing. Do not edit frozen runtime files.
+An untimed V4 frozen player retest is open at Regina (GAME20:09:03.321); Marco owns deployment and controls. No source Workbench session is open. Keep one uniquely named candidate and one frozen runtime for each new user handoff; use an untimed client and let Marco control deployment and testing. Do not edit frozen runtime files.
 
 Start with [current validation](convoy-validation-current.md), then [the exact player checkpoint](convoy-bay-voices-uniform-2026-09-30.md) in the implementation checkout. Earlier dated pages are historical, not current launch directions. The [storage audit](cleanup/convoy-storage-audit-2026-09-30.md) records71.88GB removed and provides the complete deletion/restoration index. Historical raw videos were deliberately retired; retained summaries/images are not a substitute for deleted full footage.
