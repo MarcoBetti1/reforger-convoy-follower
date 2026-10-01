@@ -1,0 +1,15 @@
+{
+  "asset": "convoy-fleet-unload-v2.zip",
+  "bytes": 878464333,
+  "sha256": "CD352EBFDF99495AC808E12198E20A78B56C20DB74EC66E13C8F947B0FA31C07",
+  "logical_files": 12312,
+  "distinct_verified_blobs": 975,
+  "all_payload_hashes_match": true,
+  "remote_payload_sha256": "CD352EBFDF99495AC808E12198E20A78B56C20DB74EC66E13C8F947B0FA31C07",
+  "remote_payload_bytes": 878464333,
+  "remote_payload_verified": true,
+  "release_draft": true,
+  "release_url": "https://github.com/MarcoBetti1/reforger-convoy-follower/releases/tag/untagged-92cd715b1ebbf43e8666",
+  "asset_api_url": "https://api.github.com/repos/MarcoBetti1/reforger-convoy-follower/releases/assets/603638843",
+  "verified_utc": "2026-10-01T16:20:51.472890+00:00"
+}

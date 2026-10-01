@@ -1,0 +1,2570 @@
+{
+  "date": "2026-10-01",
+  "test_fleet_limit": 5,
+  "larger_fleet_validation": false,
+  "results": [
+    {
+      "run": "fleet-bay-v4",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-bay-v4\\logs\\console.log",
+      "full_log": {
+        "bytes": 553462,
+        "sha256": "6E2506EB3AAD2EF0362664FFC19096B77E763208DA24796A1B616BA1E327930A"
+      },
+      "terminal_prefix": {
+        "bytes": 521569,
+        "sha256": "228832EDF731BCD01C39A12AF83085472CD29522C36F2BF1FD89552C7FB1342B"
+      },
+      "prefix_exact": true,
+      "terminal": "21:05:36.256 SCRIPT       : [ConvoyFollower] BAY_FEATURE_RESULT: feature_pass=false reason=inherited_failure moving_guard_attempted=false moving_guard_qualified=false moving_guard_preserved=false recorded=true admitted=true settled=true native_unload=true commanded_park=true parked=true lead_clear_signed_m=38.0336 lead_clear_powered=8 lead_bay_approach_m=64.9195 lead_bay_approach_powered=14 bay_signed_m=83.5264 bay_powered=14 park_signed_m=45.4579 park_powered=9 hold_max_drift_m=0.00440131 park_max_drift_m=0 physical_originals=true full_trip=false following_pass=false arrival_180s_claim=false input_claim=false",
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 19,
+          "script": 0,
+          "lines": [
+            "21:01:47.120   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "21:01:59.827           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "21:01:59.861         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "21:01:59.861         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "21:01:59.862         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "21:01:59.862         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "21:01:59.862         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "21:01:59.862         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "21:02:01.783 RESOURCES (E): Failed to load ''",
+            "21:02:01.784 RESOURCES (E): Failed to load ''",
+            "21:02:01.787 RESOURCES (E): Failed to load ''",
+            "21:02:01.789 RESOURCES (E): Failed to load ''",
+            "21:02:01.791 RESOURCES (E): Failed to load ''",
+            "21:02:01.791 RESOURCES (E): Failed to load ''",
+            "21:02:01.793 RESOURCES (E): Failed to load ''",
+            "21:02:01.799 RESOURCES (E): Failed to load ''",
+            "21:02:01.799 RESOURCES (E): Failed to load ''",
+            "21:02:01.806 RESOURCES (E): Failed to load ''",
+            "21:02:02.160         WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 61,
+          "script": 2,
+          "lines": [
+            "21:06:07.415 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:06:07.418 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:06:07.743 RESOURCES (E): ==== Resource leaks ====",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/VehicleInfo/AnalogGaugeImageset_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo-750_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo_Glow-750_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo_Ammo-800_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo_Ammo_Glow-800_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "21:06:07.743 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "21:06:07.743 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 27.8323,
+          "forward_progress_m": 0.0,
+          "powered_samples": 0.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIIdleBehavior_Driver:1"
+        },
+        "1": {
+          "seconds": 27.8323,
+          "forward_progress_m": 0.0,
+          "powered_samples": 0.0,
+          "peak_gap_m": 19.9537,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "false",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIIdleBehavior_Driver:1"
+        }
+      },
+      "markers": []
+    },
+    {
+      "run": "fleet-bay-v6",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-bay-v6\\logs\\console.log",
+      "full_log": {
+        "bytes": 544689,
+        "sha256": "C469E7321F38C2CD1E8ED49928CB0CD88149FF9E05DFF68576932FCA24516FA9"
+      },
+      "terminal_prefix": {
+        "bytes": 512863,
+        "sha256": "B26BA54B8ABBEE3C45BD56F5F0ED68CAFE278482AD86FEDEBFEDDB5A3F0A4758"
+      },
+      "prefix_exact": true,
+      "terminal": "21:18:16.254 SCRIPT       : [ConvoyFollower] BAY_FEATURE_RESULT: feature_pass=false reason=return_owner_board_timeout moving_guard_attempted=false moving_guard_qualified=false moving_guard_preserved=false recorded=true admitted=true settled=true native_unload=true commanded_park=true parked=true lead_clear_signed_m=36.9438 lead_clear_powered=8 lead_bay_approach_m=64.0823 lead_bay_approach_powered=15 bay_signed_m=84.8266 bay_powered=12 park_signed_m=41.9764 park_powered=9 hold_max_drift_m=0.00245358 park_max_drift_m=0.00471514 physical_originals=true full_trip=false following_pass=false arrival_180s_claim=false input_claim=false",
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 19,
+          "script": 0,
+          "lines": [
+            "21:14:34.126   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "21:14:44.732           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "21:14:44.765         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "21:14:44.765         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "21:14:44.765         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "21:14:44.765         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "21:14:44.765         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "21:14:44.765         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "21:14:46.420 RESOURCES (E): Failed to load ''",
+            "21:14:46.422 RESOURCES (E): Failed to load ''",
+            "21:14:46.424 RESOURCES (E): Failed to load ''",
+            "21:14:46.427 RESOURCES (E): Failed to load ''",
+            "21:14:46.429 RESOURCES (E): Failed to load ''",
+            "21:14:46.429 RESOURCES (E): Failed to load ''",
+            "21:14:46.431 RESOURCES (E): Failed to load ''",
+            "21:14:46.435 RESOURCES (E): Failed to load ''",
+            "21:14:46.436 RESOURCES (E): Failed to load ''",
+            "21:14:46.505 RESOURCES (E): Failed to load ''",
+            "21:14:47.015         WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 61,
+          "script": 2,
+          "lines": [
+            "21:18:47.397 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:18:47.400 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:18:47.744 RESOURCES (E): ==== Resource leaks ====",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/VehicleInfo/AnalogGaugeImageset_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo-750_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo_Glow-750_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo_Ammo-800_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo_Ammo_Glow-800_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "21:18:47.744 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "21:18:47.744 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 26.904,
+          "forward_progress_m": 0.0,
+          "powered_samples": 0.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIIdleBehavior_Driver:1"
+        },
+        "1": {
+          "seconds": 26.904,
+          "forward_progress_m": 0.0,
+          "powered_samples": 0.0,
+          "peak_gap_m": 19.9537,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "false",
+          "pilot_seated": "false",
+          "getting_out": "false",
+          "behavior": "SCR_AIIdleBehavior_Driver:1"
+        }
+      },
+      "markers": []
+    },
+    {
+      "run": "fleet-bay-v8",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-bay-v8\\logs\\console.log",
+      "full_log": {
+        "bytes": 677247,
+        "sha256": "0D33CE39EB2DD7E5DFB098F31B732DA80181EFB2F38B722F97D61C7644D17B1F"
+      },
+      "terminal_prefix": {
+        "bytes": 619885,
+        "sha256": "CB662A2D10F8C6EA66DA4012DF355CA517E050D9C1D23CD2502A2D4577097EAB"
+      },
+      "prefix_exact": true,
+      "terminal": "21:29:41.272 SCRIPT       : [ConvoyFollower] BAY_FEATURE_RESULT: feature_pass=true reason=focused_bay_park_depart_powered_restart moving_guard_attempted=false moving_guard_qualified=false moving_guard_preserved=false recorded=true admitted=true settled=true native_unload=true commanded_park=true parked=true lead_clear_signed_m=38.7376 lead_clear_powered=7 lead_bay_approach_m=65.861 lead_bay_approach_powered=15 bay_signed_m=86.6499 bay_powered=13 park_signed_m=40.6274 park_powered=9 hold_max_drift_m=0.00341797 park_max_drift_m=0 physical_originals=true full_trip=false following_pass=false arrival_180s_claim=false input_claim=false",
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 19,
+          "script": 0,
+          "lines": [
+            "21:25:06.224   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "21:25:22.302           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "21:25:22.336         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "21:25:22.336         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "21:25:22.336         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "21:25:22.336         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "21:25:22.336         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "21:25:22.336         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "21:25:23.917 RESOURCES (E): Failed to load ''",
+            "21:25:23.918 RESOURCES (E): Failed to load ''",
+            "21:25:23.921 RESOURCES (E): Failed to load ''",
+            "21:25:23.923 RESOURCES (E): Failed to load ''",
+            "21:25:23.926 RESOURCES (E): Failed to load ''",
+            "21:25:23.926 RESOURCES (E): Failed to load ''",
+            "21:25:23.928 RESOURCES (E): Failed to load ''",
+            "21:25:23.934 RESOURCES (E): Failed to load ''",
+            "21:25:23.934 RESOURCES (E): Failed to load ''",
+            "21:25:24.222 RESOURCES (E): Failed to load ''",
+            "21:25:24.697         WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 62,
+          "script": 2,
+          "lines": [
+            "21:30:12.433 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:30:12.437 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:30:12.762 RESOURCES (E): ==== Resource leaks ====",
+            "21:30:12.762 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "21:30:12.762 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "21:30:12.762 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "21:30:12.762 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "21:30:12.762 RESOURCES (E): UI/Textures/DeployMenu/LoadoutIcons/LoadoutIcons-400_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/VehicleInfo/AnalogGaugeImageset_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo-750_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo_Glow-750_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo_Ammo-800_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/WeaponInfo/WeaponInfo_Ammo_Glow-800_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "21:30:12.763 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "21:30:12.763 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 28.902,
+          "forward_progress_m": 0.0,
+          "powered_samples": 0.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIIdleBehavior_Driver:1"
+        },
+        "1": {
+          "seconds": 28.902,
+          "forward_progress_m": 0.0,
+          "powered_samples": 0.0,
+          "peak_gap_m": 19.9537,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "false",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIIdleBehavior_Driver:1"
+        }
+      },
+      "markers": [
+        "21:29:41.272 SCRIPT       : [ConvoyFollower] BAY_RETURN_POWERED: single_order_signed_m=26.6949 powered_samples=8 original_assignment=true supplies_conserved=true home_arrival_unproved=true"
+      ]
+    },
+    {
+      "run": "fleet-five-v11",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-five-v11\\logs\\console.log",
+      "full_log": {
+        "bytes": 6486569,
+        "sha256": "EF66AFBD4D8715B0CF0722C39703D786104C56439704DC6C60C8CD3CE29CB51A"
+      },
+      "terminal_prefix": {
+        "bytes": 6358693,
+        "sha256": "72832203CC58DB154CECD331877385888B09C44A9393A8BEC4B732BAA3C48FAC"
+      },
+      "prefix_exact": true,
+      "terminal_found": true,
+      "terminal": "21:49:44.020 SCRIPT       : [ConvoyFollower] PACED_RESULT: FAIL run_id=0x400000000000000C {}_0 tick=347 seconds=348.515 expected=5 peak_gap_m=390.448 observation_samples=0 first_failure=spacing:link_over_60m_unit_3 owned_lead_park_retained=true",
+      "crashed": false,
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 9,
+          "script": 0,
+          "lines": [
+            "21:43:46.518   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "21:43:54.484           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "21:43:54.516         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "21:43:54.516         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "21:43:54.517         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "21:43:54.517         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "21:43:54.517         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "21:43:54.517         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "21:43:55.811       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 58,
+          "script": 2,
+          "lines": [
+            "21:50:14.507 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:50:14.510 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:50:14.723 RESOURCES (E): ==== Resource leaks ====",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/Conflict/services-icons-bw-400_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/DeployMenu/LoadoutIcons/LoadoutIcons-400_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "21:50:14.723 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "21:50:14.723 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 348.515,
+          "forward_progress_m": 318.967,
+          "powered_samples": 26.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIWaitBehavior:1"
+        },
+        "1": {
+          "seconds": 348.515,
+          "forward_progress_m": 316.619,
+          "powered_samples": 98.0,
+          "peak_gap_m": 82.187,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "2": {
+          "seconds": 348.515,
+          "forward_progress_m": 335.215,
+          "powered_samples": 44.0,
+          "peak_gap_m": 40.1415,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "3": {
+          "seconds": 348.515,
+          "forward_progress_m": 376.333,
+          "powered_samples": 44.0,
+          "peak_gap_m": 64.7691,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "4": {
+          "seconds": 348.515,
+          "forward_progress_m": 387.543,
+          "powered_samples": 41.0,
+          "peak_gap_m": 101.935,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "5": {
+          "seconds": 348.515,
+          "forward_progress_m": 15.6949,
+          "powered_samples": 15.0,
+          "peak_gap_m": 390.448,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIIdleBehavior_Driver:1"
+        }
+      },
+      "markers": [
+        "21:49:44.020 SCRIPT       : [ConvoyFollower] PACED_ROUTE_RESULT: run_id=0x400000000000000C {}_0 tick=347 seconds=348.515 legacy_pass=false powered_pass=false spacing_pass=false peak_gap_m=390.448 provisional=true"
+      ],
+      "last_contiguous_captured_wait_samples": {
+        "3": {
+          "start_seconds": 162.591,
+          "first_origin": [
+            1667.0,
+            18.5384,
+            3375.14
+          ],
+          "samples": 186,
+          "max_horizontal_drift_m": 2.374910524630327,
+          "end_seconds": 348.515,
+          "duration_seconds": 185.92399999999998
+        },
+        "4": {
+          "start_seconds": 166.607,
+          "first_origin": [
+            1658.75,
+            18.8866,
+            3368.16
+          ],
+          "samples": 182,
+          "max_horizontal_drift_m": 0.4070626487408894,
+          "end_seconds": 348.515,
+          "duration_seconds": 181.908
+        },
+        "1": {
+          "start_seconds": 278.169,
+          "first_origin": [
+            1668.34,
+            20.2465,
+            3352.89
+          ],
+          "samples": 71,
+          "max_horizontal_drift_m": 0.04472135954995512,
+          "end_seconds": 348.515,
+          "duration_seconds": 70.346
+        },
+        "2": {
+          "start_seconds": 298.284,
+          "first_origin": [
+            1662.7,
+            19.4676,
+            3360.6
+          ],
+          "samples": 51,
+          "max_horizontal_drift_m": 0,
+          "end_seconds": 348.515,
+          "duration_seconds": 50.230999999999995
+        }
+      }
+    },
+    {
+      "run": "fleet-five-v16",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-five-v16\\logs\\console.log",
+      "full_log": {
+        "bytes": 6293675,
+        "sha256": "0E908A28F547B8B825EE690C22289BD3BA5660C8D1EA54CA03915C78EE5E0C5F"
+      },
+      "terminal_prefix": {
+        "bytes": 6146040,
+        "sha256": "F9B702B7CF9BBBD6FF60E899AD12C1E8B569EF3B3318EEF25625DC35B3321FD9"
+      },
+      "prefix_exact": true,
+      "terminal_found": true,
+      "terminal": "11:13:13.407 SCRIPT       : [ConvoyFollower] PACED_RESULT: FAIL run_id=0x400000000000000C {}_0 tick=353 seconds=354.551 expected=5 peak_gap_m=81.862 observation_samples=180 first_failure=spacing:link_over_60m_unit_3 owned_lead_park_retained=true",
+      "crashed": false,
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 9,
+          "script": 0,
+          "lines": [
+            "11:07:03.673   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "11:07:17.856           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "11:07:17.890         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "11:07:17.890         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "11:07:17.891         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "11:07:17.891         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "11:07:17.891         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "11:07:17.891         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "11:07:19.196       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 58,
+          "script": 2,
+          "lines": [
+            "11:13:43.908 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "11:13:43.912 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "11:13:44.130 RESOURCES (E): ==== Resource leaks ====",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/Conflict/services-icons-bw-400_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/DeployMenu/LoadoutIcons/LoadoutIcons-400_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "11:13:44.130 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "11:13:44.131 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "11:13:44.131 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 354.551,
+          "forward_progress_m": 317.01,
+          "powered_samples": 26.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIWaitBehavior:1"
+        },
+        "1": {
+          "seconds": 354.551,
+          "forward_progress_m": 331.142,
+          "powered_samples": 40.0,
+          "peak_gap_m": 52.4383,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "2": {
+          "seconds": 354.551,
+          "forward_progress_m": 340.836,
+          "powered_samples": 37.0,
+          "peak_gap_m": 37.9078,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "3": {
+          "seconds": 354.551,
+          "forward_progress_m": 356.827,
+          "powered_samples": 34.0,
+          "peak_gap_m": 61.187,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "4": {
+          "seconds": 354.551,
+          "forward_progress_m": 367.133,
+          "powered_samples": 36.0,
+          "peak_gap_m": 71.1544,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "5": {
+          "seconds": 354.551,
+          "forward_progress_m": 377.687,
+          "powered_samples": 35.0,
+          "peak_gap_m": 81.862,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        }
+      },
+      "markers": [
+        "11:10:12.441 SCRIPT       : [ConvoyFollower] PACED_ROUTE_RESULT: run_id=0x400000000000000C {}_0 tick=173 seconds=173.592 legacy_pass=true powered_pass=true spacing_pass=false peak_gap_m=81.862 provisional=true",
+        "11:13:13.407 SCRIPT       : [ConvoyFollower] PACED_OBSERVATION_COMPLETE: run_id=0x400000000000000C {}_0 tick=353 seconds=354.551 observed_s=180.959 samples=180 drift_pass=true identities_retained=true lead_wait_selected=true"
+      ],
+      "last_contiguous_captured_wait_samples": {
+        "1": {
+          "start_seconds": 127.394,
+          "first_origin": [
+            1666.19,
+            20.1127,
+            3353.35
+          ],
+          "samples": 227,
+          "max_horizontal_drift_m": 0.036055512754796286,
+          "end_seconds": 354.551,
+          "duration_seconds": 227.15699999999998
+        },
+        "2": {
+          "start_seconds": 140.427,
+          "first_origin": [
+            1659.8,
+            19.3296,
+            3361.38
+          ],
+          "samples": 214,
+          "max_horizontal_drift_m": 0,
+          "end_seconds": 354.551,
+          "duration_seconds": 214.124
+        },
+        "3": {
+          "start_seconds": 144.443,
+          "first_origin": [
+            1650.43,
+            18.8839,
+            3366.32
+          ],
+          "samples": 210,
+          "max_horizontal_drift_m": 0,
+          "end_seconds": 354.551,
+          "duration_seconds": 210.10799999999998
+        },
+        "4": {
+          "start_seconds": 149.461,
+          "first_origin": [
+            1640.08,
+            19.098,
+            3367.33
+          ],
+          "samples": 205,
+          "max_horizontal_drift_m": 0,
+          "end_seconds": 354.551,
+          "duration_seconds": 205.08999999999997
+        },
+        "5": {
+          "start_seconds": 156.508,
+          "first_origin": [
+            1630.23,
+            19.4057,
+            3367.43
+          ],
+          "samples": 198,
+          "max_horizontal_drift_m": 0,
+          "end_seconds": 354.551,
+          "duration_seconds": 198.04299999999998
+        }
+      }
+    },
+    {
+      "run": "fleet-five-v2",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-five-v2\\logs\\console.log",
+      "full_log": {
+        "bytes": 7143422,
+        "sha256": "8E7A4B027CFF49D5730A161334C11E861F612DA8BFA75DAD4944D162DDFD58D8"
+      },
+      "terminal_prefix": {
+        "bytes": 6995642,
+        "sha256": "01999BC847F263476CA72E26F4161BF7AD461F18FE3D78803067C5CA13599AEB"
+      },
+      "prefix_exact": true,
+      "terminal": "20:55:21.064 SCRIPT       : [ConvoyFollower] PACED_RESULT: FAIL run_id=0x400000000000000C {}_0 tick=397 seconds=398.271 expected=5 peak_gap_m=157.674 observation_samples=180 first_failure=spacing:link_over_60m_unit_3 owned_lead_park_retained=true",
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 9,
+          "script": 0,
+          "lines": [
+            "20:48:29.714   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "20:48:41.809           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "20:48:41.842         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "20:48:41.842         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "20:48:41.843         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "20:48:41.843         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "20:48:41.843         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "20:48:41.843         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "20:48:43.119       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 56,
+          "script": 0,
+          "lines": [
+            "20:55:51.779 RESOURCES (E): ==== Resource leaks ====",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/Conflict/services-icons-bw-400_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/DeployMenu/LoadoutIcons/LoadoutIcons-400_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "20:55:51.779 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "20:55:51.779 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 398.271,
+          "forward_progress_m": 319.534,
+          "powered_samples": 26.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIWaitBehavior:1"
+        },
+        "1": {
+          "seconds": 398.271,
+          "forward_progress_m": 327.673,
+          "powered_samples": 51.0,
+          "peak_gap_m": 66.3157,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "2": {
+          "seconds": 398.271,
+          "forward_progress_m": 342.898,
+          "powered_samples": 38.0,
+          "peak_gap_m": 40.2508,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "3": {
+          "seconds": 398.271,
+          "forward_progress_m": 341.759,
+          "powered_samples": 38.0,
+          "peak_gap_m": 61.5651,
+          "max_drift_m": 3.98469,
+          "speed_kmh": 0.225371,
+          "drift_m": 3.98456,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIPilotMoveFromIncomingVehicleBehavior:0"
+        },
+        "4": {
+          "seconds": 398.271,
+          "forward_progress_m": 354.04,
+          "powered_samples": 37.0,
+          "peak_gap_m": 157.674,
+          "max_drift_m": 4.52883,
+          "speed_kmh": 0.216594,
+          "drift_m": 4.52828,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIPilotMoveFromIncomingVehicleBehavior:0"
+        },
+        "5": {
+          "seconds": 398.271,
+          "forward_progress_m": 371.405,
+          "powered_samples": 42.0,
+          "peak_gap_m": 153.955,
+          "max_drift_m": 3.24023,
+          "speed_kmh": 0.0475798,
+          "drift_m": 3.24023,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIPilotMoveFromIncomingVehicleBehavior:0"
+        }
+      },
+      "markers": [
+        "20:52:20.465 SCRIPT       : [ConvoyFollower] PACED_ROUTE_RESULT: run_id=0x400000000000000C {}_0 tick=217 seconds=217.674 legacy_pass=true powered_pass=true spacing_pass=false peak_gap_m=157.674 provisional=true",
+        "20:55:21.064 SCRIPT       : [ConvoyFollower] PACED_OBSERVATION_COMPLETE: run_id=0x400000000000000C {}_0 tick=397 seconds=398.271 observed_s=180.597 samples=180 drift_pass=false identities_retained=true lead_wait_selected=true"
+      ]
+    },
+    {
+      "run": "fleet-five-v5",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-five-v5\\logs\\console.log",
+      "full_log": {
+        "bytes": 6832961,
+        "sha256": "2F7E9699AA073BAFBCF3C89DEDF578B03DAA454936C1AD00124FA37AB42EF05B"
+      },
+      "terminal_prefix": {
+        "bytes": 6686305,
+        "sha256": "67F721F18B031D186BF11E76390DACE17E3809F5A758E98B9F210AA659CC8CC6"
+      },
+      "prefix_exact": true,
+      "terminal": "21:13:34.301 SCRIPT       : [ConvoyFollower] PACED_RESULT: FAIL run_id=0x400000000000000C {}_0 tick=395 seconds=396.104 expected=5 peak_gap_m=208.168 observation_samples=180 first_failure=spacing:link_over_60m_unit_1 owned_lead_park_retained=true",
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 9,
+          "script": 0,
+          "lines": [
+            "21:06:50.154   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "21:06:57.185           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "21:06:57.219         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "21:06:57.219         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "21:06:57.220         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "21:06:57.220         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "21:06:57.220         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "21:06:57.220         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "21:06:58.514       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 58,
+          "script": 2,
+          "lines": [
+            "21:14:04.797 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:14:04.801 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:14:04.992 RESOURCES (E): ==== Resource leaks ====",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/Conflict/services-icons-bw-400_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/DeployMenu/LoadoutIcons/LoadoutIcons-400_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "21:14:04.992 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "21:14:04.992 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 396.104,
+          "forward_progress_m": 318.835,
+          "powered_samples": 28.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIWaitBehavior:1"
+        },
+        "1": {
+          "seconds": 396.104,
+          "forward_progress_m": 332.624,
+          "powered_samples": 60.0,
+          "peak_gap_m": 208.168,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "2": {
+          "seconds": 396.104,
+          "forward_progress_m": 341.48,
+          "powered_samples": 76.0,
+          "peak_gap_m": 154.49,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "3": {
+          "seconds": 396.104,
+          "forward_progress_m": 358.045,
+          "powered_samples": 66.0,
+          "peak_gap_m": 60.9171,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "4": {
+          "seconds": 396.104,
+          "forward_progress_m": 371.543,
+          "powered_samples": 66.0,
+          "peak_gap_m": 50.2348,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "5": {
+          "seconds": 396.104,
+          "forward_progress_m": 390.531,
+          "powered_samples": 51.0,
+          "peak_gap_m": 104.104,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        }
+      },
+      "markers": [
+        "21:10:33.702 SCRIPT       : [ConvoyFollower] PACED_ROUTE_RESULT: run_id=0x400000000000000C {}_0 tick=215 seconds=215.514 legacy_pass=true powered_pass=true spacing_pass=false peak_gap_m=208.168 provisional=true",
+        "21:13:34.301 SCRIPT       : [ConvoyFollower] PACED_OBSERVATION_COMPLETE: run_id=0x400000000000000C {}_0 tick=395 seconds=396.104 observed_s=180.591 samples=180 drift_pass=true identities_retained=true lead_wait_selected=true"
+      ]
+    },
+    {
+      "run": "fleet-five-v8",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-five-v8\\logs\\console.log",
+      "full_log": {
+        "bytes": 6396017,
+        "sha256": "DB4505148E45F3427051F13EAF538F3424731D28F35310EEAEE209939D7A9E27"
+      },
+      "terminal_prefix": {
+        "bytes": 6265217,
+        "sha256": "204F8A7E7A1EB721E98A9817F431B71998130835E14177C52529A35B8762B650"
+      },
+      "prefix_exact": true,
+      "terminal_found": true,
+      "terminal": "21:38:48.667 SCRIPT       : [ConvoyFollower] PACED_RESULT: FAIL run_id=0x400000000000000C {}_0 tick=349 seconds=350.42 expected=5 peak_gap_m=354.964 observation_samples=0 first_failure=spacing:link_over_60m_unit_3 owned_lead_park_retained=true",
+      "crashed": false,
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 9,
+          "script": 0,
+          "lines": [
+            "21:32:46.981   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "21:32:57.155           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "21:32:57.187         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "21:32:57.187         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "21:32:57.188         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "21:32:57.188         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "21:32:57.188         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "21:32:57.188         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "21:32:58.561       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 58,
+          "script": 2,
+          "lines": [
+            "21:39:19.161 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:39:19.164 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:39:19.373 RESOURCES (E): ==== Resource leaks ====",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/Conflict/services-icons-bw-400_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/DeployMenu/LoadoutIcons/LoadoutIcons-400_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "21:39:19.373 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "21:39:19.373 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 350.42,
+          "forward_progress_m": 319.356,
+          "powered_samples": 26.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIWaitBehavior:1"
+        },
+        "1": {
+          "seconds": 350.42,
+          "forward_progress_m": 332.799,
+          "powered_samples": 43.0,
+          "peak_gap_m": 50.2163,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "2": {
+          "seconds": 350.42,
+          "forward_progress_m": 344.115,
+          "powered_samples": 37.0,
+          "peak_gap_m": 39.5485,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "3": {
+          "seconds": 350.42,
+          "forward_progress_m": 359.868,
+          "powered_samples": 39.0,
+          "peak_gap_m": 67.018,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "4": {
+          "seconds": 350.42,
+          "forward_progress_m": 372.352,
+          "powered_samples": 37.0,
+          "peak_gap_m": 160.366,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        },
+        "5": {
+          "seconds": 350.42,
+          "forward_progress_m": 37.4222,
+          "powered_samples": 18.0,
+          "peak_gap_m": 354.964,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIIdleBehavior_Driver:1"
+        }
+      },
+      "markers": [
+        "21:38:48.667 SCRIPT       : [ConvoyFollower] PACED_ROUTE_RESULT: run_id=0x400000000000000C {}_0 tick=349 seconds=350.42 legacy_pass=false powered_pass=false spacing_pass=false peak_gap_m=354.964 provisional=true"
+      ]
+    },
+    {
+      "run": "fleet-hit-v11",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-hit-v11\\logs\\console.log",
+      "full_log": {
+        "bytes": 1134125,
+        "sha256": "4981567146713309786A5BD1C87A5466B73B37212E776334083D15D0532E0759"
+      },
+      "terminal_prefix": {
+        "bytes": 1085548,
+        "sha256": "6A955636E10879C148362543D8167B04B46CA242463C1C54E01F7C466761EDC4"
+      },
+      "prefix_exact": true,
+      "terminal_found": true,
+      "terminal": "21:42:52.625 SCRIPT       : [ConvoyFollower] UNDER_FIRE_FEATURE_RESULT: pass=false reason=120s_attack_course_timeout native_shots=unmeasured enemy_groups=1 kinetic_hits=0 original_seated=true post_hit_signed_m=0 post_hit_power=0 full_trip=false enemy_AI_single_rifleman=true broader_stress=false",
+      "crashed": false,
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 12,
+          "script": 0,
+          "lines": [
+            "21:40:22.989   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "21:40:36.163           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "21:40:36.196         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "21:40:36.196         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "21:40:36.196         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "21:40:36.196         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "21:40:36.196         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "21:40:36.196         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "21:40:37.426       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)",
+            "21:41:10.990   RESOURCES (E): Wrong GUID/name for resource @\"{0000000000000000}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Rifleman.et\" in property \"<missing-def>\"",
+            "21:41:10.992   RESOURCES (E): Wrong GUID/name for resource @\"{0000000000000000}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Rifleman.et\" in property \"<missing-def>\"",
+            "21:41:10.992   RESOURCES (E): Wrong GUID/name for resource @\"{0000000000000000}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Rifleman.et\" in property \"<missing-def>\""
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 58,
+          "script": 2,
+          "lines": [
+            "21:43:23.105 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:43:23.108 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "21:43:23.363 RESOURCES (E): ==== Resource leaks ====",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/Conflict/services-icons-bw-400_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/DeployMenu/LoadoutIcons/LoadoutIcons-400_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "21:43:23.363 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "21:43:23.363 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 135.523,
+          "forward_progress_m": 318.543,
+          "powered_samples": 23.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIWaitBehavior:1"
+        },
+        "1": {
+          "seconds": 135.523,
+          "forward_progress_m": 332.579,
+          "powered_samples": 38.0,
+          "peak_gap_m": 48.2841,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        }
+      },
+      "markers": [
+        "21:42:31.524 SCRIPT       : [ConvoyFollower] PACED_ROUTE_RESULT: run_id=0x4000000000000006 {}_0 tick=114 seconds=114.424 legacy_pass=true powered_pass=true spacing_pass=true peak_gap_m=48.2841 provisional=true",
+        "21:42:52.625 SCRIPT       : [ConvoyFollower] UNDER_FIRE_FEATURE_RESULT: pass=false reason=120s_attack_course_timeout native_shots=unmeasured enemy_groups=1 kinetic_hits=0 original_seated=true post_hit_signed_m=0 post_hit_power=0 full_trip=false enemy_AI_single_rifleman=true broader_stress=false"
+      ]
+    },
+    {
+      "run": "fleet-hit-v12",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-hit-v12\\logs\\console.log",
+      "full_log": {
+        "bytes": 1208078,
+        "sha256": "79F0CE475585D43586403E0EE08703D75E64469A28047C24DB223A721A276C19"
+      },
+      "terminal_prefix": {
+        "bytes": 1149830,
+        "sha256": "E869C542B0F3B186D95C9E983C61706ED9977F7167D55DBCF3D821ACFB744D05"
+      },
+      "prefix_exact": true,
+      "terminal_found": true,
+      "terminal": "21:53:04.802 SCRIPT       : [ConvoyFollower] UNDER_FIRE_FEATURE_RESULT: pass=false reason=120s_attack_course_timeout native_shots=unmeasured enemy_groups=1 kinetic_hits=0 original_seated=true post_hit_signed_m=0 post_hit_power=0 full_trip=false enemy_AI_single_rifleman=true broader_stress=false",
+      "crashed": false,
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 9,
+          "script": 0,
+          "lines": [
+            "21:50:38.867   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "21:50:47.296           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "21:50:47.328         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "21:50:47.328         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "21:50:47.329         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "21:50:47.329         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "21:50:47.329         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "21:50:47.329         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "21:50:48.636       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 56,
+          "script": 0,
+          "lines": [
+            "21:53:35.769 RESOURCES (E): ==== Resource leaks ====",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/Conflict/services-icons-bw-400_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/DeployMenu/LoadoutIcons/LoadoutIcons-400_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "21:53:35.769 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "21:53:35.769 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 136.492,
+          "forward_progress_m": 321.873,
+          "powered_samples": 25.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIWaitBehavior:1"
+        },
+        "1": {
+          "seconds": 136.492,
+          "forward_progress_m": 299.146,
+          "powered_samples": 37.0,
+          "peak_gap_m": 48.8036,
+          "max_drift_m": 0.0,
+          "speed_kmh": 3.81928,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIMoveInFormationBehavior:1"
+        }
+      },
+      "markers": [
+        "21:53:04.802 SCRIPT       : [ConvoyFollower] UNDER_FIRE_FEATURE_RESULT: pass=false reason=120s_attack_course_timeout native_shots=unmeasured enemy_groups=1 kinetic_hits=0 original_seated=true post_hit_signed_m=0 post_hit_power=0 full_trip=false enemy_AI_single_rifleman=true broader_stress=false"
+      ],
+      "last_contiguous_captured_wait_samples": {}
+    },
+    {
+      "run": "fleet-hit-v13",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-hit-v13\\logs\\console.log",
+      "full_log": {
+        "bytes": 1233147,
+        "sha256": "3F893F0AC7C6BD0B02000B5E27EA36CCA1DDDBF82CCA55F1B39C0A47AD9975CA"
+      },
+      "terminal_prefix": {
+        "bytes": 1185155,
+        "sha256": "2D8260E0DA77BCACC944F5E46E6C4D0B519090AFBABC25D9713AC0E5820BC2F3"
+      },
+      "prefix_exact": true,
+      "terminal_found": true,
+      "terminal": "10:54:36.292 SCRIPT       : [ConvoyFollower] UNDER_FIRE_FEATURE_RESULT: pass=false reason=120s_attack_course_timeout native_shots=unmeasured enemy_groups=1 kinetic_hits=0 original_seated=true post_hit_signed_m=0 post_hit_power=0 full_trip=false enemy_AI_single_rifleman=true broader_stress=false",
+      "crashed": false,
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 9,
+          "script": 0,
+          "lines": [
+            "10:52:10.423   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "10:52:19.796           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "10:52:19.829         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "10:52:19.829         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "10:52:19.830         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "10:52:19.830         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "10:52:19.830         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "10:52:19.830         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "10:52:21.193       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 58,
+          "script": 2,
+          "lines": [
+            "10:55:06.789 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "10:55:06.792 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "10:55:07.021 RESOURCES (E): ==== Resource leaks ====",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/Conflict/services-icons-bw-400_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/DeployMenu/LoadoutIcons/LoadoutIcons-400_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "10:55:07.021 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "10:55:07.021 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 135.428,
+          "forward_progress_m": 321.312,
+          "powered_samples": 25.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIWaitBehavior:1"
+        },
+        "1": {
+          "seconds": 135.428,
+          "forward_progress_m": 312.371,
+          "powered_samples": 45.0,
+          "peak_gap_m": 50.6891,
+          "max_drift_m": 0.0,
+          "speed_kmh": 1.7164,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIMoveInFormationBehavior:1"
+        }
+      },
+      "markers": [
+        "10:54:36.292 SCRIPT       : [ConvoyFollower] UNDER_FIRE_FEATURE_RESULT: pass=false reason=120s_attack_course_timeout native_shots=unmeasured enemy_groups=1 kinetic_hits=0 original_seated=true post_hit_signed_m=0 post_hit_power=0 full_trip=false enemy_AI_single_rifleman=true broader_stress=false"
+      ],
+      "last_contiguous_captured_wait_samples": {}
+    },
+    {
+      "run": "fleet-hit-v14",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-hit-v14\\logs\\console.log",
+      "full_log": {
+        "bytes": 335201,
+        "sha256": "82A40018BB9D2293B8D7F52FA19FF369ECEDE3E5E128A826BCF53496733E60C5"
+      },
+      "terminal_prefix": {
+        "bytes": 283037,
+        "sha256": "02527F7F8CA367CD0634400F579FB5F16CBAFDEB065EE1E3AB9B4D0CCE507AC2"
+      },
+      "prefix_exact": true,
+      "terminal_found": true,
+      "terminal": "10:56:48.285 SCRIPT       : [ConvoyFollower] PACED_RESULT: FAIL run_id=0x4000000000000006 {}_0 tick=39 seconds=39.0309 expected=1 peak_gap_m=61.3348 observation_samples=0 first_failure=spacing:link_over_60m_unit_1 owned_lead_park_retained=true",
+      "crashed": false,
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 9,
+          "script": 0,
+          "lines": [
+            "10:55:59.784   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "10:56:08.281           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "10:56:08.313         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "10:56:08.315         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "10:56:08.315         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "10:56:08.315         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "10:56:08.315         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "10:56:08.315         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "10:56:09.577       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 63,
+          "script": 6,
+          "lines": [
+            "10:57:18.759 SCRIPT    (E): Cannot find editor component 'SCR_MenuLayoutEditorComponent', local instance of editor manager not found!",
+            "10:57:18.759 SCRIPT    (E): Cannot find editor component 'SCR_MenuLayoutEditorComponent', local instance of editor manager not found!",
+            "10:57:18.761 SCRIPT    (E): Cannot find editor component 'SCR_MenuLayoutEditorComponent', local instance of editor manager not found!",
+            "10:57:18.761 SCRIPT    (E): Cannot find editor component 'SCR_MenuLayoutEditorComponent', local instance of editor manager not found!",
+            "10:57:18.785 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "10:57:18.788 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "10:57:19.005 RESOURCES (E): ==== Resource leaks ====",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/Hint/Hint.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/Conflict/services-icons-bw-400_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/DeployMenu/LoadoutIcons/LoadoutIcons-400_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "10:57:19.005 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "10:57:19.005 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 39.0309,
+          "forward_progress_m": 101.035,
+          "powered_samples": 17.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 25.6543,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIMoveInFormationBehavior:1"
+        },
+        "1": {
+          "seconds": 39.0309,
+          "forward_progress_m": 64.1442,
+          "powered_samples": 12.0,
+          "peak_gap_m": 61.3348,
+          "max_drift_m": 0.0,
+          "speed_kmh": 12.7349,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIMoveInFormationBehavior:1"
+        }
+      },
+      "markers": [],
+      "last_contiguous_captured_wait_samples": {}
+    },
+    {
+      "run": "fleet-hit-v15",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-hit-v15\\logs\\console.log",
+      "full_log": {
+        "bytes": 1125238,
+        "sha256": "EDE00171E9A18A8E230F1D0E4C73A9693D1FE88C0C2D5671B86DCB67E6A891B4"
+      },
+      "terminal_prefix": {
+        "bytes": 1076956,
+        "sha256": "6273FA9A6FA4AD3E778FEFC5BB045C252288A07B7A4F9573895F309FCCDE3B5D"
+      },
+      "prefix_exact": true,
+      "terminal_found": true,
+      "terminal": "11:03:28.032 SCRIPT       : [ConvoyFollower] UNDER_FIRE_FEATURE_RESULT: pass=false reason=120s_attack_course_timeout native_shots=unmeasured enemy_groups=1 kinetic_hits=0 original_seated=true post_hit_signed_m=0 post_hit_power=0 full_trip=false enemy_AI_single_rifleman=true broader_stress=false",
+      "crashed": false,
+      "normal_native_exit": true,
+      "errors": {
+        "before_terminal": {
+          "total": 9,
+          "script": 0,
+          "lines": [
+            "11:01:03.682   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "11:01:11.668           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "11:01:11.702         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "11:01:11.702         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "11:01:11.703         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "11:01:11.703         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "11:01:11.703         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "11:01:11.703         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "11:01:13.080       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 58,
+          "script": 2,
+          "lines": [
+            "11:03:58.503 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "11:03:58.506 SCRIPT    (E): 'SCR_BaseResupplySupportStationComponent' needs a entity catalog manager!",
+            "11:03:58.737 RESOURCES (E): ==== Resource leaks ====",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-48_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/Editor/Camera/CameraIcons_ui.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/Conflict/services-icons-bw-400_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/MilitarySymbol/AMP_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/MilitarySymbol/ICO_Land_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/DeployMenu/LoadoutIcons/LoadoutIcons-400_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/MilitarySymbol/ID_D_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/Notifications/NotificationIcons-400_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/LoadingDots/LoadingDots_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/Tasks/Task_Icons-100_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Chat/chat_32_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Chat/chat_badge_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-glow-200_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Chat/chat_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/Conflict/conflict-no-signal_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/MilitaryIcons/MilitaryIcons-400_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64-glow_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32-glow_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Nametags/nametagicons-800_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Icons/icons_mouse/icons_mouse-200_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Icons/icons_gamepad/icons_gamepad-200_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-200_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Icons/icons_keyboard/icons_keyboard-glow-200_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-32_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-64_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/Editor/editor_icons_map.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/Conflict/conflict-icons-bw_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Map/topographicIcons/icons_topographic_map_atlasSRGB.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Editor/Logos/Editor-Logo-400_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-glow-400_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Icons/icons_wrapperUI-400_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline-400_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners-400_atlas.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/debugUI.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1",
+            "11:03:58.737 RESOURCES (E): UI/Imagesets/default.edds   1",
+            "11:03:58.737 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+          ]
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 135.283,
+          "forward_progress_m": 321.556,
+          "powered_samples": 24.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIWaitBehavior:1"
+        },
+        "1": {
+          "seconds": 135.283,
+          "forward_progress_m": 334.994,
+          "powered_samples": 34.0,
+          "peak_gap_m": 74.2484,
+          "max_drift_m": 0.0,
+          "speed_kmh": 0.0,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "CF_EntityCapturedWait:1"
+        }
+      },
+      "markers": [
+        "11:02:56.933 SCRIPT       : [ConvoyFollower] PACED_ROUTE_RESULT: run_id=0x4000000000000006 {}_0 tick=104 seconds=104.185 legacy_pass=true powered_pass=true spacing_pass=false peak_gap_m=74.2484 provisional=true",
+        "11:03:28.032 SCRIPT       : [ConvoyFollower] UNDER_FIRE_FEATURE_RESULT: pass=false reason=120s_attack_course_timeout native_shots=unmeasured enemy_groups=1 kinetic_hits=0 original_seated=true post_hit_signed_m=0 post_hit_power=0 full_trip=false enemy_AI_single_rifleman=true broader_stress=false"
+      ],
+      "last_contiguous_captured_wait_samples": {
+        "1": {
+          "start_seconds": 90.1012,
+          "first_origin": [
+            1667.56,
+            20.362,
+            3349.98
+          ],
+          "samples": 46,
+          "max_horizontal_drift_m": 0,
+          "end_seconds": 135.283,
+          "duration_seconds": 45.18179999999998
+        }
+      }
+    },
+    {
+      "run": "fleet-hit-v9",
+      "log_path": "D:\\ReforgerAgentRuns\\fleet-hit-v9\\logs\\console.log",
+      "full_log": {
+        "bytes": 321039,
+        "sha256": "8C4439781430769F08ADA1DC69CEE60578A476376206B92DD8AE039062B3CFE1"
+      },
+      "terminal_prefix": {
+        "bytes": 321039,
+        "sha256": "8C4439781430769F08ADA1DC69CEE60578A476376206B92DD8AE039062B3CFE1"
+      },
+      "prefix_exact": true,
+      "terminal_found": false,
+      "terminal": "ABSENT: run ended without a feature or paced terminal marker",
+      "crashed": true,
+      "normal_native_exit": false,
+      "errors": {
+        "before_terminal": {
+          "total": 13,
+          "script": 0,
+          "lines": [
+            "21:30:25.883   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+            "21:30:33.741           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+            "21:30:33.773         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+            "21:30:33.773         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+            "21:30:33.774         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+            "21:30:33.774         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+            "21:30:33.774         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+            "21:30:33.774         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+            "21:30:35.146       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)",
+            "21:31:08.768 RESOURCES (E): Wrong GUID/name for resource @\"{0000000000000000}Prefabs/Weapons/Ammo/Ammo_556x45_Ball_M193.et\" in property \"<missing-def>\"",
+            "21:31:09.752 RESOURCES (E): Wrong GUID/name for resource @\"{0000000000000000}Prefabs/Weapons/Ammo/Ammo_556x45_Ball_M193.et\" in property \"<missing-def>\"",
+            "21:31:10.751 RESOURCES (E): Wrong GUID/name for resource @\"{0000000000000000}Prefabs/Weapons/Ammo/Ammo_556x45_Ball_M193.et\" in property \"<missing-def>\"",
+            "21:31:18.994   ENGINE    (E): Application crashed! Generated memory dump: D:\\ReforgerAgentRuns\\fleet-hit-v9\\logs\\ArmaReforgerSteam_2026-09-30_21-31-18.mdmp"
+          ]
+        },
+        "after_terminal": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        },
+        "shutdown": {
+          "total": 0,
+          "script": 0,
+          "lines": []
+        }
+      },
+      "terminal_units": {
+        "0": {
+          "seconds": 42.9454,
+          "forward_progress_m": 123.733,
+          "powered_samples": 20.0,
+          "peak_gap_m": 0.0,
+          "max_drift_m": 0.0,
+          "speed_kmh": 26.7115,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIMoveInFormationBehavior:1"
+        },
+        "1": {
+          "seconds": 42.9454,
+          "forward_progress_m": 104.204,
+          "powered_samples": 16.0,
+          "peak_gap_m": 49.5766,
+          "max_drift_m": 0.0,
+          "speed_kmh": 27.2442,
+          "drift_m": 0.0,
+          "identity_retained": "true",
+          "pilot_seated": "true",
+          "getting_out": "false",
+          "behavior": "SCR_AIMoveInFormationBehavior:1"
+        }
+      },
+      "markers": []
+    }
+  ],
+  "builds": {
+    "v2": {
+      "source_files": 866,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66667093,
+          "sha256": "180FF5988BD45D9980921DA7A12EFEFD2F228996DBD532260ECC6C9C0C915A1A"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44394,
+          "sha256": "75E4764971D66CA8F3F69850BDB6AB7127BCFC42A7E149FB6DBA87226DA98ED2"
+        }
+      ]
+    },
+    "v4": {
+      "source_files": 866,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66667541,
+          "sha256": "B3AF339F2BECF1640CE2C735635E31D75F6F000341ADB86E1696633BF106C108"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44394,
+          "sha256": "75E4764971D66CA8F3F69850BDB6AB7127BCFC42A7E149FB6DBA87226DA98ED2"
+        }
+      ]
+    },
+    "v5": {
+      "source_files": 866,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66667687,
+          "sha256": "12A893C2EC3D5BCA2B13ED6C46AD6AC55208A150776DD8258FE2558F20B63691"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44394,
+          "sha256": "75E4764971D66CA8F3F69850BDB6AB7127BCFC42A7E149FB6DBA87226DA98ED2"
+        }
+      ]
+    },
+    "v6": {
+      "source_files": 866,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66667835,
+          "sha256": "2E62B7F2B00EC76413D6A96A52375286998A55E89D66802C4D62F4EEF4FDB134"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44394,
+          "sha256": "75E4764971D66CA8F3F69850BDB6AB7127BCFC42A7E149FB6DBA87226DA98ED2"
+        }
+      ]
+    },
+    "v8": {
+      "source_files": 870,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66671146,
+          "sha256": "76EA7439A95250A4F7F1A9534D2BCB238FE80444E350C15A7FDB72F58D2D5783"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44718,
+          "sha256": "C50AC26C2E526C3B2C9E311D15B05B35D03A4D07C8B3E0E78260226736CF985B"
+        }
+      ]
+    },
+    "v9": {
+      "source_files": 870,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66671241,
+          "sha256": "388CABBA697DCC34ECD8E92BA4915ABABC5B6EFE2FC35856814BB4A9BDE490F2"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44718,
+          "sha256": "C50AC26C2E526C3B2C9E311D15B05B35D03A4D07C8B3E0E78260226736CF985B"
+        }
+      ]
+    },
+    "v10": {
+      "source_files": 872,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66671467,
+          "sha256": "CA4482F076CE11ED0D3ACE9DA01893DEF36E3F78F7D15E178B513E062D3BA34B"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44784,
+          "sha256": "7B0B8D0E81EFF678A444FC8B1DF9B7B8F902AC04853F20F4E782143998F88D33"
+        }
+      ]
+    },
+    "v11": {
+      "source_files": 872,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66671638,
+          "sha256": "3440DE02CD73336B4CA965531E969DE13070661F458F4A98BBFE95B80D828451"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44784,
+          "sha256": "7B0B8D0E81EFF678A444FC8B1DF9B7B8F902AC04853F20F4E782143998F88D33"
+        }
+      ]
+    },
+    "v12": {
+      "source_files": 872,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66671861,
+          "sha256": "C810C24DC788A7759B35247B17466A1206428A714B4FEE940230336E3FA1DFF1"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44784,
+          "sha256": "7B0B8D0E81EFF678A444FC8B1DF9B7B8F902AC04853F20F4E782143998F88D33"
+        }
+      ]
+    },
+    "v13": {
+      "source_files": 872,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66672407,
+          "sha256": "3ED5B2BE62A3F72C7017276C0CCACCA52EB001AD8E36C4201C029C3D3BCF4407"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44784,
+          "sha256": "7B0B8D0E81EFF678A444FC8B1DF9B7B8F902AC04853F20F4E782143998F88D33"
+        }
+      ]
+    },
+    "v14": {
+      "source_files": 872,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66672567,
+          "sha256": "2D5FCFA500706A304B8CC50E14CC37E6A7B0C0452B4EF3D36D8C225878F6CA18"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44784,
+          "sha256": "7B0B8D0E81EFF678A444FC8B1DF9B7B8F902AC04853F20F4E782143998F88D33"
+        }
+      ]
+    },
+    "v15": {
+      "source_files": 872,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66672835,
+          "sha256": "1B448A2C5E9EB8D5C41B1D0DA5006B14D51150CAF930F692E46A05BA5A38EA15"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44784,
+          "sha256": "7B0B8D0E81EFF678A444FC8B1DF9B7B8F902AC04853F20F4E782143998F88D33"
+        }
+      ]
+    },
+    "v16": {
+      "source_files": 872,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66672854,
+          "sha256": "EEE0B1E335DAE30374C9ADD0F91AAFDEA3DE11597C9724CAC2126AB34EEF46E4"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 44784,
+          "sha256": "7B0B8D0E81EFF678A444FC8B1DF9B7B8F902AC04853F20F4E782143998F88D33"
+        }
+      ]
+    },
+    "player-v1": {
+      "source_files": 852,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66650811,
+          "sha256": "CDEB599FBF66784CC3C937278D250CFD4BC1DE107E1ED9575EFC2931E38E10A1"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 43291,
+          "sha256": "6AA9ABA1FC4E96F00B70177428985DFC5418F470E5FA3026D55304E4AA7C402B"
+        }
+      ]
+    },
+    "player-v2": {
+      "source_files": 852,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66650982,
+          "sha256": "766A7AA72DFD0B162CE6A0832FE712AE31B5C3189B206F7731AEEFD39E47A6AD"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 43291,
+          "sha256": "6AA9ABA1FC4E96F00B70177428985DFC5418F470E5FA3026D55304E4AA7C402B"
+        }
+      ]
+    },
+    "player-v3": {
+      "source_files": 852,
+      "runtime": [
+        {
+          "path": "addon.gproj",
+          "bytes": 135,
+          "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+        },
+        {
+          "path": "data.pak",
+          "bytes": 66650993,
+          "sha256": "5F831B62CBECA399ACB8D92661420947297ED70A502BA36DF862C07173AF72A7"
+        },
+        {
+          "path": "resourceDatabase.rdb",
+          "bytes": 43291,
+          "sha256": "6AA9ABA1FC4E96F00B70177428985DFC5418F470E5FA3026D55304E4AA7C402B"
+        }
+      ]
+    }
+  }
+}

@@ -1,41 +1,35 @@
-# Convoy Follower: a short supply trip
+# Convoy Follower: five-truck supply test
 
-**Development build.** An automated two-truck load/deliver/Hold/Resume trip is complete. Large head gaps and the normal-input workflow remain unresolved. See [current validation](convoy-validation-current.md).
+Development build, September 30, 2026. Marco has observed five original followers reach a destination. Arrival creeping, unloading and departure are being checked independently; this is not a release or completed ten-truck test. Testing is capped at five followers, excluding your lead.
 
-## Set up and deliver
+## Recruit and start
 
-1. **Place drivers and trucks separately.** In Game Master, place a one-member **Convoy Driver** group (US) or **Convoy Driver (USSR)** beside each empty wheeled vehicle. Keep a separate lead vehicle for yourself. [Road81 Supply Day](convoy-road81-supply-day.md) provides two US drivers, follower trucks, your lead and storage for a short trip; start with one follower, then two. The earlier [Arland Supply Day](convoy-supply-showcase.md) is also available; its third truck starts outside loading range.
-2. **Load before recruiting.** Enter character play and close the GM editor. On foot at each truck's rear, use the native continuous supply-loading action, then stop it. Verify matching source decrease/truck increase. Supplies must be enabled and storage in range; cargo transfer is manual.
-3. **Recruit front to back.** On the driver, choose **Join my convoy in closest empty vehicle**. The nearest eligible empty wheeled vehicle wins—including a Jeep. Wait for the intended truck's driver seat to be occupied before recruiting another. **Follow me on foot** can stage an idle driver first. Then enter your separate lead.
-4. **Drive, stop and Hold.** The chain is **your lead → Unit One → Unit Two → later units**, with five followers maximum, excluding your lead, and one spokesperson. Stop near the destination with room behind you. Open the normal map (normally **M**), choose **HOLD ALL SEATED**, and wait for **completed: all trucks holding in vehicles**. Check they are still before exiting.
-5. **Unload and Resume.** Use **CLOSE MAP**, then the native continuous unloading action at each truck's rear. Stop it and verify matching truck decrease/destination increase; each truck needs actual storage reach. Return to the **same lead**, settle into its driver or passenger seat, choose **RESUME ALL**, close the map and drive on.
+Place a one-member Convoy Driver group beside each empty transport truck and keep a separate lead vehicle. Recruit front to back with **Join my convoy in closest empty vehicle**; wait for each intended driver seat before recruiting the next. Newly recruited drivers wait for **Start convoy**. Enter your original lead, open the assigned convoy menu key, choose Start and drive forward with a clear gap.
 
-## Know what each control does
+**Hold all trucks** keeps assignments and seated drivers. **Resume all trucks** restarts a held convoy from the original lead. Start is the initial authorization; Resume is for an existing held assignment. Read the blocked reason and wait for physical movement or a stationary completed state. Commands do not repair an impossible native route.
 
-### Keep the line together
+## Native loading and unloading
 
-The map panel shows each truck's gap to the vehicle ahead. **Ease up** means a link is stretching; **wait safely** asks you to choose a safe stopping place and let it close. The leader gives restrained warning calls, while the panel identifies the affected unit. You control your lead vehicle's speed.
+On foot, approach the M923A1 or standard Ural transport's rear cargo interaction. Use the native continuous Load/Unload supplies action, stop it, and verify the truck and nearby storage counts. The addon does not transfer cargo automatically. Supplies must be enabled, real storage must be within range, and the truck must contain supplies to unload. The refreshed Everon night scene enables native supplies and uses physical supply-stack containers; its five follower trucks start near two source stacks of900 supplies each, positioned for front and rear access (1800 total). A LAV lead is not a substitute for a cargo truck.
 
-At an ordinary stop, **convoy closing up** or **convoy spacing together** describes spacing. Check each driver's order status before moving. **Pace: not assessed** means advice is unavailable; it gives no permission to accelerate. Explicit Hold, boarding, recovery and unloading maneuvers can suspend assessment.
+## Unload one truck at a time
 
-Advice does not order Hold. Use **HOLD ALL SEATED** before unloading and **RESUME ALL** afterward. This feedback is integrated, but ordinary input and reliable full-trip cohesion still need validation.
+1. Stop the lead where you want trucks unloaded. Choose **Unload bay → 1. Save bay / Hold queue**. The original position is saved automatically; no later “mark moved out” action is needed.
+2. Unload your lead if applicable. Drive clear to a wide, flat waiting area and stop. For five trucks, allow roughly 70 metres from the bay and ample clear space beside and behind the lead. Choose **2. Set waiting area**. The command checks every future parking slot before accepting the area; read its specific reason if blocked.
+3. Choose **3. Admit next truck**. Wait for the original truck to reach the loading area, stop and report ready. An exact heading match is not required. A road is not mandatory: off-road native navigation can be attempted, but buildings, rocks, steep ground and tight turns can still block it.
+4. Get out and use that truck's native rear unloading action. When done, choose **4. Park unloaded truck** from the bay menu. It sends the truck to a fixed slot near the saved waiting area; you may give this order on foot near your original stopped lead. Wait until it is physically parked and held before admitting the next truck.
+5. Repeat Admit, native Unload and Park for each truck. Do not move the waiting-area anchor after parking begins. After the last truck parks, enter your original lead and choose **Depart / return convoy**. This releases the whole original roster and reconnects its order; drive forward safely, then lead it home. Resume does not complete an active bay maneuver.
 
-### Commands
+If an approach or parking route fails, stop and read the reason. **Options / recovery → Cancel bay** is a recovery path; it retains Hold, so Resume is a separate action. Cancel is not the normal completion step. Parking preflight checks slopes, vehicle occupancy and bay clearance, not every static obstacle.
 
-The panel appears with the normal map for the active convoy owner, seated or on foot. **Selecting a row does not make Hold or Resume an individual order.** Read server feedback: accepted/executing means work is underway; completed reports the observed result, and blocked gives a reason.
+## Controls, voices and driver behavior
 
-| Control | Meaning and conditions |
-| --- | --- |
-| **HOLD ALL SEATED** | Applies to the whole active convoy, preserving assignments. Stop the lead first; drivers must be seated and no conflicting maneuver may be active. The owner may ride in a settled passenger seat of the established lead, or order Hold on foot within 25 m of that stopped lead. Wait for completion before unloading. |
-| **RESUME ALL** | Applies to the whole held convoy. The original owner must be fully seated in the same established lead; on foot, another vehicle or a seat transition is rejected. All assigned drivers must be seated and able to resume, with no conflicting maneuver. |
-| **REBOARD SELECTED** | Select an affected row after an unexpected driver exit during explicit Hold and after automatic recovery becomes blocked. Requires the original, usable truck to be stopped with its driver seat free, the driver on foot and under AI control, and the other members held. The panel shows the eligibility reason. Wait for **completed: Unit … seated in original truck; Hold retained**; then issue Resume separately. Duplicate requests do not restart an active attempt. |
-| **Stand down** | An interaction on the owned driver that dismisses them and releases the truck assignment; remaining members reconnect. This is not temporary dismount or a way to retain that driver's place. |
-| **CLOSE MAP** | Closes the native map and panel. The complete ordinary opening/clicking/restored-driving-input loop remains a validation requirement. |
+The main wheel has convoy commands and a single **Units** submenu; numbered drivers do not crowd the main wheel. Hover explanations describe eligibility. Options includes Finish / Hold, debug and recovery. **Finish / Hold** requests a seated stop and an end call; it does not dismiss the drivers or unload cargo.
 
-If a seated driver reports a failed movement order, stop your lead and request **HOLD ALL SEATED**. Once all trucks are holding, **RESUME ALL** can retry an eligible failed order without recruiting the driver again. Wait for actual movement and the panel result. A blocked route or damaged vehicle may still need attention; repeated clicks do not restart an order already executing. This command recovery passed a controlled failure test; recovery during a complete delivery is still being checked.
+Generated voices are the default. Start, Resume, saving a bay, physical bay readiness, parking, physical parking completion, departure and Finish have varied acknowledgements. Confirmed damaging hits can report under fire. Spacing advice and actual range warnings share a 90-second cooldown, require sustained pressure and rotate wording; repeated acceleration alone does not rearm an episode. Original recordings remain selectable in the server profile.
 
-Temporary dismount with retained assignments is unavailable; there is no **DISMOUNT ALL** button. Selected Reboard recovers an unexpected exit, not a deliberate dismount order.
+Healthy owned transport drivers retain their seats during combat behavior. Death, incapacitation, a destroyed truck, possession, dismissal and ended ownership retain native safety behavior. This is not invulnerability or a promise to drive a disabled vehicle.
 
-**Optional experimental maneuvers:** **PULL AHEAD AND WAIT** and **PULL OFF / REGROUP** have separate placement/recovery rules. They are unnecessary for basic held delivery; see [advanced unloading/return](../addons/ConvoyFollower/README.md#destination-unloading-and-return).
+Use the debug HUD to compare actual speed, brake/throttle, native path, gap and the cruise request. A speed request is a ceiling, not proof that the AI is accelerating. Native steering and braking can still cause delays.
 
-Source: [recruit action](../addons/ConvoyFollower/Scripts/Game/CF_AssignTruckAction.c), [panel](../addons/ConvoyFollower/Scripts/Game/CF_ConvoyMapPanel.c), [session](../addons/ConvoyFollower/Scripts/Game/CF_ConvoySession.c). Server-command tests do not certify normal input, Soviet parity or multiplayer.
+For the next player test, check all five Start, ordinary stops stay still, native rear supplies appear, every admitted truck parks, the final whole-convoy departure works, and voices vary. Keep enemy-fire testing separate from the cargo sequence so a damaged truck does not obscure an unloading failure. See [current validation](convoy-validation-current.md) for measured results and limits.
