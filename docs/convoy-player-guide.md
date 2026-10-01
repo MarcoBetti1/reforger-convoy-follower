@@ -10,7 +10,7 @@ Place a one-member Convoy Driver group beside each empty transport truck and kee
 
 ## Native loading and unloading
 
-On foot, approach the M923A1 or standard Ural transport's rear cargo interaction. Use the native continuous Load/Unload supplies action, stop it, and verify the truck and nearby storage counts. The addon does not transfer cargo automatically. Supplies must be enabled, real storage must be within range, and the truck must contain supplies to unload. The refreshed Everon night scene enables native supplies and uses physical supply-stack containers; its five follower trucks start near the source. A LAV lead is not a substitute for a cargo truck.
+On foot, approach the M923A1 or standard Ural transport's rear cargo interaction. Use the native continuous Load/Unload supplies action, stop it, and verify the truck and nearby storage counts. The addon does not transfer cargo automatically. Supplies must be enabled, real storage must be within range, and the truck must contain supplies to unload. The refreshed Everon night scene enables native supplies and uses physical supply-stack containers; its five follower trucks start near two source stacks of900 supplies each, positioned for front and rear access (1800 total). A LAV lead is not a substitute for a cargo truck.
 
 ## Unload one truck at a time
 

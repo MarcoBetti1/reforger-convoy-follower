@@ -1,5 +1,9 @@
 # Short feature courses
 
+## September 30 five-truck limit and explicit bay courses
+
+Updated October1. Use frozen fleet-workflow-v8 for the closed one-truck bay course. V11 carries the second stop-episode correction; V16 corrects Units Four/Five road staging with the same production code and unchanged acceptance gates. Worlds are ConvoyFollower_Everon_LoadedOrdinary_1Truck.ent, ConvoyFollower_Arland_Fleet_5Trucks.ent and ConvoyFollower_Arland_UnderFire_Feature.ent under Worlds/Tests. V13–V15 combat diagnostics are private; their failed logs are retained. The ordinary player package is fleet-workflow-player-v3 and excludes private attack/fleet orchestration. Do not run the ten-truck fixture. See [exact courses, failed attempts and hashes](convoy-fleet-unload-2026-09-30.md).
+
 ## Current ordinary-driver courses
 
 ### Fresh Everon daylight preflight

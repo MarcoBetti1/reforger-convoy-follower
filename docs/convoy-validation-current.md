@@ -1,6 +1,8 @@
 # Current validation checkpoint
 
-Updated September 30, 2026. **The mod is not release ready.** This page separates completed evidence from work still in progress.
+## Five-truck fleet / unload follow-up — September 30, 2026
+
+Updated October1. Testing is capped at five. V16 corrected rear-truck starting geometry and established all-five original powered arrival plus180.959s stationary with zero measured drift. The strict result remains FAIL for81.862m peak spacing against60m. V11’s LOST fifth truck and2.37491m captured-Wait drift remain failed history. The V8 focused bay course passed native100-supply unloading,30s stable parking and powered public departure26.6949m/8 intervals. Whole-fleet unloading/home return and damaging-hit continuation remain unverified. All-link pacing is excluded. Player V3 is the current ordinary frozen package. See [the fleet report](convoy-fleet-unload-2026-09-30.md); older sections below are historical.
 
 ## Bay unloading, infantry clothing and voice variety — September 30, 2026
 

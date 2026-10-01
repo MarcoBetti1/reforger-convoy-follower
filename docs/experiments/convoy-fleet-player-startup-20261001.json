@@ -1,0 +1,57 @@
+{
+  "run": "fleet-player-v3",
+  "world": "Worlds/Tests/ConvoyFollower_Everon_Night.ent",
+  "addon": "5A5FB20BD40C7C70",
+  "runtime": [
+    {
+      "path": "addon.gproj",
+      "bytes": 135,
+      "sha256": "1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579"
+    },
+    {
+      "path": "data.pak",
+      "bytes": 66650993,
+      "sha256": "5F831B62CBECA399ACB8D92661420947297ED70A502BA36DF862C07173AF72A7"
+    },
+    {
+      "path": "resourceDatabase.rdb",
+      "bytes": 43291,
+      "sha256": "6AA9ABA1FC4E96F00B70177428985DFC5418F470E5FA3026D55304E4AA7C402B"
+    }
+  ],
+  "profile": "D:/ReforgerAgentRuns/fleet-player-v3/profile",
+  "log": "D:\\ReforgerAgentRuns\\fleet-player-v3\\logs\\console.log",
+  "untimed": true,
+  "player_input_automated": false,
+  "GAME_seen": true,
+  "native_supplies_enabled": true,
+  "command_listener_registered": true,
+  "visual_observation": "Game Master at Regina sports ground, five driver-group markers/truck line; parent world daytime12:01. No deployment or input automated.",
+  "startup_prefix": {
+    "bytes": 25083,
+    "sha256": "1EDF9F84922CEA7741873E0D009F457A6FCE8DD21F23346DE3049E8C7D7A3751"
+  },
+  "startup_errors": [
+    "11:16:04.297   GUI       (E): Unknown class 'SCR_WidgetExportRuleRoot' at offset 282(0x11a)",
+    "11:16:21.021           WORLD     (E): Unknown keyword/data 'SlidingTrackMaterial' at offset 19441(0x4bf1)",
+    "11:16:21.050         WORLD     (E): Unknown keyword/data 'Parent' at offset 35955(0x8c73)",
+    "11:16:21.050         WORLD     (E): Unknown keyword/data 'Parent' at offset 36915(0x9033)",
+    "11:16:21.052         WORLD     (E): Unknown keyword/data 'Parent' at offset 42646(0xa696)",
+    "11:16:21.052         WORLD     (E): Unknown keyword/data 'Parent' at offset 43645(0xaa7d)",
+    "11:16:21.052         WORLD     (E): Unknown keyword/data 'Parent' at offset 44617(0xae49)",
+    "11:16:21.052         WORLD     (E): Unknown keyword/data 'Parent' at offset 45590(0xb216)",
+    "11:16:22.842 RESOURCES (E): Failed to load ''",
+    "11:16:22.905 RESOURCES (E): Failed to load ''",
+    "11:16:22.905 RESOURCES (E): Failed to load ''",
+    "11:16:22.908 RESOURCES (E): Failed to load ''",
+    "11:16:22.910 RESOURCES (E): Failed to load ''",
+    "11:16:22.912 RESOURCES (E): Failed to load ''",
+    "11:16:22.912 RESOURCES (E): Failed to load ''",
+    "11:16:22.915 RESOURCES (E): Failed to load ''",
+    "11:16:22.920 RESOURCES (E): Failed to load ''",
+    "11:16:22.920 RESOURCES (E): Failed to load ''",
+    "11:16:23.206       WORLD     (E): Unknown keyword/data 'm_bShowDebugShape' at offset 2307(0x903)"
+  ],
+  "gameplay_checks_complete": false,
+  "full_lifecycle_complete": false
+}

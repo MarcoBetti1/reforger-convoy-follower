@@ -1,5 +1,9 @@
 # Reforger operations playbook
 
+## September 30 fleet course handoff and cleanup discipline
+
+Updated October1. The closed bay fixture puts both original owner and native lead pilot on foot for actual rear unloading. Reboard the owner directly into the empty original lead; the earlier pilot-to-owner handoff precondition does not apply. Return immediately after a phase transition so the old phase elapsed time cannot trigger a new phase timeout in the same callback. Public Depart acceptance must be followed by exact original powered movement. Refresh selected game windows after client restarts. Preserve the unsupported projectile crash. A spawned armed agent without a hit earns no combat credit; explicit Attack, faction/visibility logs and normal damage callbacks must distinguish firing geometry, dead lead crews and actual surviving-driver continuation. Registered and character-affiliated faction reads differed, so do not infer a production faction bug from that alone. Five-truck fixtures require surveyed road-aligned starting geometry: the earlier fifth truck started11.5m off-road and repeatedly reversed. Private clients are bounded and capped at five; player sessions use --keep-open.
+
 ## September 29: computer-use initialization and player-controlled handoff
 
 The supported Windows computer-use runtime could not initialize: importing `@oai/sky` through `node_repl` failed with `failed to write kernel assets: The system cannot find the path specified. (os error 3)`. One runtime reset and retry produced the same error. No desktop inputs were issued. Stop unchanged retries; this failure does not establish capture, activation or key delivery.

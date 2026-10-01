@@ -1,5 +1,9 @@
 # Everon night convoy demo
 
+## Current five-truck checkpoint — October 1, 2026
+
+The current scene has **five** follower trucks/ground-driver groups, a separate LAV lead, two900-supply source stacks and an empty3000-capacity destination. Native supplies are enabled. Follow [the current five-truck player steps](convoy-player-guide.md), including explicit Start, fixed waiting area, on-foot Park and final Depart / return convoy. Earlier three-truck descriptions and automatic return-line crossing below describe the older scene and workflow. The ordinary frozen Player V3 client rendered Game Master in daylight at12:01; bare-world launch does not establish the night mission header. See [current validation](convoy-validation-current.md).
+
 This is a separate Convoy Follower test scene. The Arland test scene remains available. The Everon world inherits the installed `GM_Eden.ent` Game Master world; Everon is named **Eden** in the game resources, and the map labels the destination **Levie**.
 
 ## Open and play
