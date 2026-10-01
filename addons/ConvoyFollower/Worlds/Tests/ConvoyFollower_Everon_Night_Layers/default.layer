@@ -47,7 +47,7 @@ GenericEntity : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Ba
     SCR_ResourceComponent "{5D247A59598D71AE}" {
      m_aContainers {
       SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
-       m_fResourceValueCurrent 1800
+       m_fResourceValueCurrent 900
        m_fResourceValueMax 3000
       }
      }
@@ -102,4 +102,24 @@ SCR_AIGroup : "{949579FDD2398E3C}Prefabs/Groups/Group_CF_Driver.et" {
 Vehicle CF_EveronTruck5 : "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et" {
  coords 7233.0 138.9 2512.0
  angles 0 180 0
+}
+
+GenericEntity : "{08B059F856BF38EF}Prefabs/Compositions/Slotted/SupplyStorage_Base.et" {
+ coords 7218.0 138.9 2505.0
+ angles 0 90 0
+ {
+  GenericEntity : "{52E67D46C7855822}Prefabs/Props/Military/SupplyBox/SupplyStack/SupplyStack_Large_01/SupplyStack_Large_01_storage_US_covered.et" {
+   coords 0 0 0
+   components {
+    SCR_ResourceComponent "{5D247A59598D71AE}" {
+     m_aContainers {
+      SCR_ResourceContainer "{5D3CDAE74F1A6127}" {
+       m_fResourceValueCurrent 900
+       m_fResourceValueMax 3000
+      }
+     }
+    }
+   }
+  }
+ }
 }

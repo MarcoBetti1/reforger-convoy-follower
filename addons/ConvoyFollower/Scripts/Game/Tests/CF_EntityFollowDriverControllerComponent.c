@@ -1826,6 +1826,16 @@ class CF_EntityFollowDriverControllerComponent : CF_DriverControllerComponent
 			m_fTargetStillSeconds = 0;
 			m_bEntityStablePoseValid = false;
 			m_fEntityStableSeconds = 0;
+			// A captured arrival no longer has a live MOVE lease. Keep its
+			// original stop episode while the guarded seated Wait still owns
+			// the pilot; otherwise a predecessor settling forwards silently
+			// clears the binding and revokes Wait before actual departure.
+			ChimeraCharacter capturedDriver = ChimeraCharacter.Cast(m_Driver);
+			if (m_EntityCapturedWait && CF_HasCapturedWaitLease(m_EntityCapturedWait, capturedDriver, m_Truck, m_Group))
+			{
+				Print("[ConvoyFollower] ENTITY_CAPTURE_WAIT_SETTLE_RETAINED: unit=" + m_iUnitNumber + " original_stop_episode=true departure_guards_unchanged=true");
+				return;
+			}
 			if (CF_CanRetainArrivalEpisodeDuringTargetMotion()) return;
 			m_bStopSettleIssued = false;
 			CF_ResetEntityStopEpisode();
