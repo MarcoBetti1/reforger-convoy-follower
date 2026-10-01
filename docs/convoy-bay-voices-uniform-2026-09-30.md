@@ -24,22 +24,29 @@ All 96 WAV files passed format, hash and unclipped peak checks; the existing 66 
 
 ## Exact player candidate
 
-`player-bay-voices-uniform-v3` passed WORKBENCH, PC, XBOX, PS4 and PS5 script configurations and packaging. Frozen source has 667 files and 230 packed text resources verified against it. Production controllers match the passing course; private reporters, synthetic audio dispatch and private course worlds are excluded.
+Implementation commit `13b2195` contains the physical bay fix, uniforms and voice expansion. V4 adds the reviewed menu availability correction; V3 remains a historical package, not the current launch target.
 
-Runtime parent: `C:/Users/marco/.codex/worktrees/175a/REFORGER/.cache/player-addons/player-bay-voices-uniform-v3`, containing one `ConvoyFollower_5A5FB20BD40C7C70` child.
+`player-bay-voices-uniform-v4` passed WORKBENCH, PC, XBOX, PS4 and PS5 script configurations and packaging. Frozen source has 667 files and 230 packed text resources verified against it. Bay movement, parking, settings and radio controllers match the passing course. The final menu-only correction reads shared bay availability from the first active roster row; later queued trucks no longer overwrite it with their own blocked parking status. Private reporters, synthetic audio dispatch and private course worlds are excluded.
+
+Runtime parent: `C:/Users/marco/.codex/worktrees/175a/REFORGER/.cache/player-addons/player-bay-voices-uniform-v4`, containing one `ConvoyFollower_5A5FB20BD40C7C70` child.
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
 | addon.gproj | 135 | `1DFE7E1AE0E2194C703300ED5D60FB41FDD3D365282A0A5FC03E86B622CB3579` |
-| data.pak | 41853900 | `A254287244B25FE8677D53C49F9BE5E0603299BD38B64FCD067880E75C249614` |
+| data.pak | 41853981 | `17C6DC348C252F1627002A301E6367662A2404AE6BA6BADBAB5EF3F579130DDF` |
 | resourceDatabase.rdb | 36741 | `8D5A361B667DC1C2F059B72E3E0634A63A444593F89213771408BDE30189468E` |
 
 Prepared, not launched as an ordinary player session. From the implementation checkout, launch without a player timeout:
 
 ```powershell
-npm run client:run -- --profile D:/ReforgerAgentRuns/everon-journey-manual-v8/profile --run-dir D:/ReforgerAgentRuns/player-bay-voices-uniform-v3 --world Worlds/Tests/ConvoyFollower_Everon_Night.ent --addon 5A5FB20BD40C7C70 --addons-dir .cache/player-addons/player-bay-voices-uniform-v3 --force-update --keep-open --expect-game --execute
+npm run client:run -- --profile D:/ReforgerAgentRuns/everon-journey-manual-v8/profile --run-dir D:/ReforgerAgentRuns/player-bay-voices-uniform-v4 --world Worlds/Tests/ConvoyFollower_Everon_Night.ent --addon 5A5FB20BD40C7C70 --addons-dir .cache/player-addons/player-bay-voices-uniform-v4 --force-update --keep-open --expect-game --execute
 ```
 
 Verify the loaded trio and rendered gameplay; let Marco control deployment and testing. The corrected settings file is `D:/ReforgerAgentRuns/everon-journey-manual-v8/profile/profile/ConvoyFollowerSettings.json`. Old custom thresholds override new defaults if explicitly present.
 
 Next: test ordinary wheel parking, then a second truck through the same bay without cancellation, confirm alternate wording and uniforms, and repeat return regroup. If those work, increase to five trucks and inspect spacing, queues, native supplies and recovery before staging the video. General AI braking/gap lag remains unresolved; no new driving improvement is claimed.
+
+
+## GitHub checkpoint
+
+The implementation is pushed on `codex/convoy-player-trip-20260929`; the control index is synchronized on `codex/release-hardening`. The exact V4 frozen player source/runtime, passing private course source/runtime, complete failed and successful logs, terminal snapshot, build logs and audio audit are backed up in draft release `convoy-takeover-2026-09-30`. Archive `convoy-bay-voices-uniform-v4.zip`: 145534173 bytes, SHA-256 `DC02BA3BCBF7BF02DFDFDB06DB381FFF7DF377CD7CE6432F4437055EF0A89AFD`; all1367 payload file hashes verified locally and GitHub asset digest matched. The earlier V3 archive remains historical.

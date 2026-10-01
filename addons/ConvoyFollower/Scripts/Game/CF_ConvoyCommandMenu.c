@@ -181,7 +181,9 @@ class CF_ConvoyCommandMenu : SCR_RadialMenu
 			if (fields.Count() < 5) continue;
 			int identity = fields[0].ToInt();
 			if (identity <= 0) continue;
-			CF_ReadBayMenuState(fields);
+			// Shared bay availability was read from the first active roster row
+			// by CF_SetSnapshot. Later queued units cannot park yet and must
+			// not overwrite the admitted front truck's ready state here.
 			SCR_SelectionMenuCategoryEntry truck = new SCR_SelectionMenuCategoryEntry();
 			truck.SetName("Unit " + identity);
 			truck.SetDescription(CF_TruckDescription(fields));
