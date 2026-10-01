@@ -50,3 +50,8 @@ Next: test ordinary wheel parking, then a second truck through the same bay with
 ## GitHub checkpoint
 
 The implementation is pushed on `codex/convoy-player-trip-20260929`; the control index is synchronized on `codex/release-hardening`. The exact V4 frozen player source/runtime, passing private course source/runtime, complete failed and successful logs, terminal snapshot, build logs and audio audit are backed up in draft release `convoy-takeover-2026-09-30`. Archive `convoy-bay-voices-uniform-v4.zip`: 145534173 bytes, SHA-256 `DC02BA3BCBF7BF02DFDFDB06DB381FFF7DF377CD7CE6432F4437055EF0A89AFD`; all1367 payload file hashes verified locally and GitHub asset digest matched. The earlier V3 archive remains historical.
+
+
+## Open player retest — 20:09 Central
+
+Launched at Marco’s request with the exact verified V4 trio and --keep-open (no timeout), launcher session32345. Console `D:/ReforgerAgentRuns/player-bay-voices-uniform-v4/logs/console.log` reached GAME20:09:03.321 and registered the native command listener20:09:03.325. Supported desktop capture confirms rendered Game Master at Regina; bare-world startup shows12:00, not the scenario header’s night time. Only window activation was automated; no deployment or player commands. Marco controls deployment and testing. This is an open run: no new gameplay result or shutdown claim.
