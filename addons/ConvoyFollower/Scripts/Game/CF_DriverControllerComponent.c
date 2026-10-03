@@ -6052,8 +6052,8 @@ class CF_DriverControllerComponent : ScriptComponent
 				}
 				else
 				{
-					if (CF_HasPersistentFollowFailure())
-						return; // The handled private failure is not recovery.
+					if (CF_HasPersistentFollowFailure() || !HasOwnWaypointInGroup())
+						return; // A handled refusal without a live waypoint is not recovery.
 					if (m_iState == CF_ARRIVING && m_bStopSettleIssued)
 					{
 						SCR_AIWaypoint settledWaypoint = SCR_AIWaypoint.Cast(m_Waypoint);
